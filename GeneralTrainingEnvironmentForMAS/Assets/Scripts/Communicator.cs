@@ -1,0 +1,339 @@
+﻿using System;
+using System.Collections;
+using System.Net;
+using System.Text;
+using System.Threading;
+using TheKiwiCoder;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using PimDeWitte.UnityMainThreadDispatcher;
+using System.Collections.Generic;
+using System.Linq;
+
+public class Communicator : MonoBehaviour {
+    [SerializeField] private string BtSource; // = "SoccerBts";
+    [SerializeField] private string GameSceneName; // = "SoccerSceneGame";
+    /*[SerializeField] private string[] GameScenarios; /* = { 
+        "SoccerSceneAgents1", 
+        "SoccerSceneAgents2", 
+        "SoccerSceneAgents3", 
+        "SoccerSceneAgents4", 
+        "SoccerSceneAgents5", 
+        //"SoccerSceneAgents6", 
+        //"SoccerSceneAgents7", 
+        "SoccerSceneAgents8" 
+    };*/
+    [SerializeField] GameScenario[] GameScenarios;
+
+    [SerializeField] private float TimeScale = 1f;
+    [SerializeField] private int BatchSize = 1;
+
+    [SerializeField] int MinLayerId = 6;
+    [SerializeField] int MaxLayerId = 26;
+
+    [HideInInspector] public static Communicator Instance;
+
+    private int CurrentIndividualID = 0;
+
+    private LayerBTIndex[] LayerIds;
+    // 0 - Available; 1 - Reserverd; 2 - In Use
+    private int[] LayerAvailability;
+
+    private int BTsLoaded;
+
+    private HttpListener Listener;
+    private Thread ListenerThread;
+
+    private PopFitness PopFitness;
+
+    private BehaviourTree[] PopBTs;
+
+    private bool BatchExecuting;
+
+    private void Awake() {
+        // Initialize layer data
+        LayerIds = new LayerBTIndex[MaxLayerId - MinLayerId + 1];
+        LayerAvailability = new int[LayerIds.Length];
+
+        for (int i = 0; i < LayerIds.Length; i++) {
+            LayerIds[i] = new LayerBTIndex(MinLayerId + i, -1);
+            LayerAvailability[i] = 0; // All are default available
+        }
+    }
+
+    void Start() {
+        if (Instance != null) {
+            Destroy(this);
+        }
+        else {
+            Instance = this;
+            DontDestroyOnLoad(this);
+        }
+
+        Listener = new HttpListener();
+        Listener.Prefixes.Add("http://localhost:4444/");
+        Listener.Start();
+
+        ListenerThread = new Thread(StartListener);
+        ListenerThread.Start();
+
+        EnvironmentControllerBase.OnGameFinished += EnvironmentController_OnGameFinished;
+
+        Time.timeScale = TimeScale;
+        BatchExecuting = false;
+    }
+
+    private void EnvironmentController_OnGameFinished(object sender, EnvironmentControllerBase.OnGameFinishedEventargs e) {
+        foreach (GroupFitness fitnessGroup in e.FitnessGroups) {
+            foreach (FitnessIndividual fitnessIndividual in fitnessGroup.FitnessIndividuals) {
+                if (fitnessIndividual.IndividualId < 0)
+                    Debug.LogError("IndividualID is -1");
+
+                PopFitness.Fitnesses[fitnessIndividual.IndividualId] += fitnessIndividual.Fitness.GetFitness();
+            }
+        }
+
+        ReleaseLayer(e.LayerId);
+    }
+
+    private void StartListener() {
+        while (Listener.IsListening) {
+            try {
+                var context = Listener.GetContext(); // Block until a client connects.
+                ThreadPool.QueueUserWorkItem(o => HandleRequest(context));
+            }
+            catch (HttpListenerException) {
+                // The Listener was stopped, exit the loop
+                break;
+            }
+        }
+    }
+
+    private void HandleRequest(HttpListenerContext context) {
+        if (NumberOfUsedLayeres() > 0) {
+            context.Response.StatusCode = 888;
+            context.Response.OutputStream.Close();
+            return;
+        }
+
+        UnityMainThreadDispatcher.Instance().Enqueue((PerformEvaluation(context)));
+    }
+
+    IEnumerator PerformEvaluation(HttpListenerContext context) {
+
+        // Refresh the Asset Database
+#if UNITY_EDITOR
+        UnityEditor.AssetDatabase.Refresh();
+#endif
+
+        // Load coresponding behaviour trees and order them by name 
+        PopBTs = Resources.LoadAll<BehaviourTree>(BtSource);
+        PopBTs = PopBTs.OrderBy(bt => bt.id).ToArray();
+
+        // Reset variables
+        //pop_fitness = new float[PopBTs.Length];
+        PopFitness = new PopFitness(PopBTs.Length);
+
+        CurrentIndividualID = 0;
+
+        // For each behaviour Tree execute evaluation
+        // TODO comment this code (Deprecated)
+        /*for (int i = 0; i < PopBTs.Length; i += BatchSize) {
+            for (int soccerSceneIndex = 0; soccerSceneIndex < GameScenarios.Length; soccerSceneIndex++) {
+                CurrentResponses = 0;
+                CurrentLayerId = 6;
+
+                // Load GameScene
+                SceneManager.LoadScene(GameSceneName);
+
+                BatchExecuting = true;
+                // Load BatchSize of agent scenes
+                CurrentBatchSize = (Math.Abs(i - PopBTs.Length) < BatchSize) ? Math.Abs(i - PopBTs.Length) : BatchSize;
+                for (int j = 0; j < CurrentBatchSize; j++) {
+                    SceneManager.LoadScene(GameScenarios[soccerSceneIndex].GameSceneName, LoadSceneMode.Additive);
+                }
+
+                // Wait until all environments finish
+                while (BatchExecuting) {
+                    yield return null;
+                }
+
+                if (soccerSceneIndex < GameScenarios.Length - 1) {
+                    CurrentIndividualID = CurrentIndividualID - CurrentBatchSize;
+                }
+            }
+        }*/
+
+        /////////////////////////////////////////////////////////////////
+        // Load GameScene (the same for every game scenario?
+
+        foreach (GameScenario scenario in GameScenarios) {
+            BTsLoaded = 0;
+            // For each scenario all population must be evaluated
+            while (BTsLoaded < PopBTs.Length) {
+                while(!IsBatchExecuted()) {
+                    yield return null;
+                }
+
+                switch (scenario.BTLoadMode) {
+                    case BTLoadMode.Single:
+                        LoadGameScenarioSingle(scenario.AgentSceneName);
+                        break;
+                    case BTLoadMode.Full:
+                        LoadGameScenarioFull(scenario.AgentSceneName);
+                        break;
+                    case BTLoadMode.Custom:
+                        LoadGameScenarioCustom(scenario.AgentSceneName);
+                        break;
+                }
+
+                // Check if there is available layer
+                while (!CanUseAnotherLayer()) {
+                    BatchExecuting = true;
+                    yield return null;
+                }
+            }
+        }
+
+        // Wait for all scene to finish when all different game scenarios have been loaded
+        while (NumberOfUsedLayeres() > 0) {
+            yield return null;
+        }
+
+        /////////////////////////////////////////////////////////////////
+
+        Debug.Log("PerformEvaluation function finished");
+
+        SceneManager.UnloadSceneAsync(GameSceneName);
+
+        // TODO add support for other methods (std. deviation, min, max, ...)
+        // Average all fitneses by the number of scenes 
+        for (int i = 0; i < PopFitness.Fitnesses.Length; i++) {
+            PopFitness.Fitnesses[i] = PopFitness.Fitnesses[i] / GameScenarios.Length;
+        }
+
+        HttpServerResponse response = new HttpServerResponse() { PopFitness = PopFitness.Fitnesses };
+        string responseJson = JsonUtility.ToJson(response);
+
+        byte[] buffer = Encoding.UTF8.GetBytes(responseJson);
+        context.Response.ContentLength64 = buffer.Length;
+        context.Response.OutputStream.Write(buffer, 0, buffer.Length);
+        context.Response.OutputStream.Close();
+    }
+
+    bool IsBatchExecuted() {
+        if(NumberOfUsedLayeres() == 0) {
+            if(SceneManager.sceneCount > 1)
+                SceneManager.UnloadSceneAsync(GameSceneName);
+            SceneManager.LoadScene(GameSceneName);
+        }
+        return true;
+    }
+
+    void LoadGameScenarioSingle(string gameSceneName) {
+        while(BTsLoaded < PopBTs.Length && GetAndReserveAvailableLayer(BTsLoaded) >= 0) {
+            SceneManager.LoadScene(gameSceneName, LoadSceneMode.Additive);
+            BTsLoaded++;
+        }
+    }
+
+    void LoadGameScenarioFull(string gameSceneName) {
+        if (GetAndReserveAvailableLayer(-1) >= 0) {
+            SceneManager.LoadScene(gameSceneName, LoadSceneMode.Additive);
+            BTsLoaded = PopBTs.Length;
+        }
+    }
+
+    void LoadGameScenarioCustom(string gameSceneName) {
+        // TODO Implement in future
+    }
+
+    public bool ScenesLoaded(List<AsyncOperation> operations) {
+        foreach (AsyncOperation op in operations) {
+            if (!op.isDone) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public int GetCurrentIndividualID() {
+        return CurrentIndividualID++;
+    }
+
+    public BehaviourTree[] GetBehaviourTrees(BTLoadMode bTLoadMode, int startIndex = -1, int endIndex = -1) {
+        switch (bTLoadMode) {
+            case BTLoadMode.Single:
+                return new BehaviourTree[]{ PopBTs[startIndex]};
+            case BTLoadMode.Full:
+                return PopBTs;
+            case BTLoadMode.Custom:
+                return new ArraySegment<BehaviourTree>(PopBTs, startIndex, endIndex - startIndex).ToArray();
+        }
+
+        Debug.LogError("GetBehaviourTrees returned null");
+        return null;
+    }
+
+
+    int NumberOfUsedLayeres() {
+        int counter = 0;
+        foreach(int layerAvailability in LayerAvailability) {
+            if(layerAvailability > 0)
+                counter++;
+        }
+        return counter;
+    }
+
+    int GetAndReserveAvailableLayer(int BtIndex) {
+        if (CanUseAnotherLayer()) {
+            for (int i = 0; i < LayerAvailability.Length; i++) {
+                if (LayerAvailability[i] == 0) {
+                    LayerAvailability[i] = 1; // Set Layer to reserved
+                    LayerIds[i].BTIndex = BtIndex;
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
+    bool CanUseAnotherLayer() {
+        if(NumberOfUsedLayeres() >= BatchSize)
+            return false;
+        return true;
+    }
+
+    void ReleaseLayer(int layerId) {
+        for (int i = 0; i < LayerIds.Length; i++) {
+            if (LayerIds[i].LayerId == layerId) {
+                LayerAvailability[i] = 0;
+            }
+        }
+    }
+
+    public LayerBTIndex GetReservedLayer() {
+        for (int i = 0; i < LayerAvailability.Length; i++) {
+            if (LayerAvailability[i] == 1) {
+                LayerAvailability[i] = 2;
+                return LayerIds[i];
+            }
+        }
+        Debug.LogError("GetReservedLayer() method returned null");
+        return null;
+    }
+}
+
+public class HttpServerResponse {
+    public float[] PopFitness;
+}
+
+public class LayerBTIndex {
+    public int LayerId;
+    public int BTIndex;
+
+    public LayerBTIndex(int layerId, int btIndex) {
+        LayerId = layerId;
+        BTIndex = btIndex;
+    }
+}
