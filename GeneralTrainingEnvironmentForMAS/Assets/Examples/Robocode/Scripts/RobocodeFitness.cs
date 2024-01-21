@@ -14,8 +14,8 @@ public class RobocodeFitness: Fitness {
         LastSurvivalBonus
     }
 
-    public static int MISSILE_HIT_TANK = 1;
-    public static int TANK_HIT_BY_ROCKET = -2;
+    public static int MISSILE_HIT_TANK = 2;
+    public static int TANK_HIT_BY_ROCKET = -3;
     public static int MISSILE_HIT_OBSTACLE = -2;
     public static int SURVIVAL_BONUS = 50;
     public static int LAST_SURVIVAL_BONUS = 20;

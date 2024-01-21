@@ -13,6 +13,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     [SerializeField] public bool Debug = false;
     [SerializeField] public BTLoadMode BTLoadMode;
     [SerializeField] public float AgentStartFitness;
+    [SerializeField] public bool MinimizeResults = true; // If true lower fitness is better
 
     // Random agent Initializaion section START
     [SerializeField] public bool RandomAgentInitialization = false;
@@ -239,8 +240,10 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
         GroupFitness[] FitnessGroups = new GroupFitness[1];
         FitnessGroups[0] = new GroupFitness(Agents.Length);
 
+        float minimizer = MinimizeResults ? -1.0f : 1.0f;
         for (int i = 0; i < Agents.Length; i++) {
-            FitnessGroups[0].FitnessIndividuals[i] = Agents[i].AgentFitness;
+            Agents[i].AgentFitness.Fitness.SetFitness(Agents[i].AgentFitness.Fitness.GetFitness() * minimizer);
+            FitnessGroups[0].FitnessIndividuals[i] =  Agents[i].AgentFitness;
         }
 
         return FitnessGroups;

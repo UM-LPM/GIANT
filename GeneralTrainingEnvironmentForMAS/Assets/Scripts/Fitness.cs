@@ -20,6 +20,10 @@ public class Fitness {
         return Value;
     }
 
+    public void SetFitness(float value) {
+        this.Value = value;
+    }
+
     public virtual void UpdateFitness(float value) {
         this.Value += value;
     }
@@ -27,10 +31,15 @@ public class Fitness {
 }
 
 public class PopFitness {
-    public float[] Fitnesses { get; set; }
+    public float[] FinalFitnesses { get; set; }
+    public List<float>[] Fitnesses { get; set; }
 
     public PopFitness(int popSize) {
-        Fitnesses = new float[popSize];
+        FinalFitnesses = new float[popSize]; // Used to store final fitness (mean, std deviation, min, max,...)
+        Fitnesses = new List<float>[popSize]; // Used to store all fitnesses from different game scenarios
+        for (int i = 0; i < Fitnesses.Length; i++) {
+            Fitnesses[i] = new List<float>();
+        }
     }
 }
 

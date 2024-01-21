@@ -13,16 +13,7 @@ using System.Linq;
 public class Communicator : MonoBehaviour {
     [SerializeField] private string BtSource; // = "SoccerBts";
     [SerializeField] private string GameSceneName; // = "SoccerSceneGame";
-    /*[SerializeField] private string[] GameScenarios; /* = { 
-        "SoccerSceneAgents1", 
-        "SoccerSceneAgents2", 
-        "SoccerSceneAgents3", 
-        "SoccerSceneAgents4", 
-        "SoccerSceneAgents5", 
-        //"SoccerSceneAgents6", 
-        //"SoccerSceneAgents7", 
-        "SoccerSceneAgents8" 
-    };*/
+    
     [SerializeField] GameScenario[] GameScenarios;
 
     [SerializeField] private float TimeScale = 1f;
@@ -30,6 +21,8 @@ public class Communicator : MonoBehaviour {
 
     [SerializeField] int MinLayerId = 6;
     [SerializeField] int MaxLayerId = 26;
+
+    [SerializeField] FitnessStatisticType FitnessStatisticType = FitnessStatisticType.Mean;
 
     [HideInInspector] public static Communicator Instance;
 
@@ -88,8 +81,7 @@ public class Communicator : MonoBehaviour {
             foreach (FitnessIndividual fitnessIndividual in fitnessGroup.FitnessIndividuals) {
                 if (fitnessIndividual.IndividualId < 0)
                     Debug.LogError("IndividualID is -1");
-
-                PopFitness.Fitnesses[fitnessIndividual.IndividualId] += fitnessIndividual.Fitness.GetFitness();
+                PopFitness.Fitnesses[fitnessIndividual.IndividualId].Add(fitnessIndividual.Fitness.GetFitness());
             }
         }
 
@@ -136,36 +128,8 @@ public class Communicator : MonoBehaviour {
 
         CurrentIndividualID = 0;
 
-        // For each behaviour Tree execute evaluation
-        // TODO comment this code (Deprecated)
-        /*for (int i = 0; i < PopBTs.Length; i += BatchSize) {
-            for (int soccerSceneIndex = 0; soccerSceneIndex < GameScenarios.Length; soccerSceneIndex++) {
-                CurrentResponses = 0;
-                CurrentLayerId = 6;
-
-                // Load GameScene
-                SceneManager.LoadScene(GameSceneName);
-
-                BatchExecuting = true;
-                // Load BatchSize of agent scenes
-                CurrentBatchSize = (Math.Abs(i - PopBTs.Length) < BatchSize) ? Math.Abs(i - PopBTs.Length) : BatchSize;
-                for (int j = 0; j < CurrentBatchSize; j++) {
-                    SceneManager.LoadScene(GameScenarios[soccerSceneIndex].GameSceneName, LoadSceneMode.Additive);
-                }
-
-                // Wait until all environments finish
-                while (BatchExecuting) {
-                    yield return null;
-                }
-
-                if (soccerSceneIndex < GameScenarios.Length - 1) {
-                    CurrentIndividualID = CurrentIndividualID - CurrentBatchSize;
-                }
-            }
-        }*/
-
         /////////////////////////////////////////////////////////////////
-        // Load GameScene (the same for every game scenario?
+        //TODO Add support for different GameScene
 
         foreach (GameScenario scenario in GameScenarios) {
             BTsLoaded = 0;
@@ -206,19 +170,43 @@ public class Communicator : MonoBehaviour {
 
         SceneManager.UnloadSceneAsync(GameSceneName);
 
-        // TODO add support for other methods (std. deviation, min, max, ...)
-        // Average all fitneses by the number of scenes 
-        for (int i = 0; i < PopFitness.Fitnesses.Length; i++) {
-            PopFitness.Fitnesses[i] = PopFitness.Fitnesses[i] / GameScenarios.Length;
-        }
+        // Based on FitnessStatisticType calculate fitness statistics
+        CalculateFitnessStatistics();
 
-        HttpServerResponse response = new HttpServerResponse() { PopFitness = PopFitness.Fitnesses };
+        HttpServerResponse response = new HttpServerResponse() { PopFitness = PopFitness.FinalFitnesses };
         string responseJson = JsonUtility.ToJson(response);
 
         byte[] buffer = Encoding.UTF8.GetBytes(responseJson);
         context.Response.ContentLength64 = buffer.Length;
         context.Response.OutputStream.Write(buffer, 0, buffer.Length);
         context.Response.OutputStream.Close();
+    }
+
+    void CalculateFitnessStatistics() {
+        switch (FitnessStatisticType) {
+            case FitnessStatisticType.Mean:
+                for (int i = 0; i < PopFitness.Fitnesses.Length; i++) {
+                    PopFitness.FinalFitnesses[i] = PopFitness.Fitnesses[i].Average();
+                }
+                break;
+            case FitnessStatisticType.StdDeviation:
+                for (int i = 0; i < PopFitness.Fitnesses.Length; i++) {
+                    double mean = PopFitness.Fitnesses[i].Average();
+                    double variance = PopFitness.Fitnesses[i].Select(n => Math.Pow(n - mean, 2)).Average();
+                    PopFitness.FinalFitnesses[i] = (float) Math.Sqrt(variance);
+                }
+                break;
+            case FitnessStatisticType.Min:
+                for (int i = 0; i < PopFitness.Fitnesses.Length; i++) {
+                    PopFitness.FinalFitnesses[i] = PopFitness.Fitnesses[i].Min();
+                }
+                break;
+            case FitnessStatisticType.Max:
+                for (int i = 0; i < PopFitness.Fitnesses.Length; i++) {
+                    PopFitness.FinalFitnesses[i] = PopFitness.Fitnesses[i].Max();
+                }
+                break;
+        }
     }
 
     bool IsBatchExecuted() {
@@ -336,4 +324,11 @@ public class LayerBTIndex {
         LayerId = layerId;
         BTIndex = btIndex;
     }
+}
+
+public enum FitnessStatisticType {
+    Mean,
+    StdDeviation,
+    Min,
+    Max
 }
