@@ -168,7 +168,9 @@ public class Communicator : MonoBehaviour {
 
         Debug.Log("PerformEvaluation function finished");
 
-        SceneManager.UnloadSceneAsync(GameSceneName);
+        // Only unload game scene if There were any game scenarios
+        if(GameScenarios.Length > 0)
+            SceneManager.UnloadSceneAsync(GameSceneName);
 
         // Based on FitnessStatisticType calculate fitness statistics
         CalculateFitnessStatistics();

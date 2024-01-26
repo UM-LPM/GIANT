@@ -24,7 +24,7 @@
 //        private Rigidbody agentRb;
 //        private SoccerSettings m_SoccerSettings;
 
-//        Util util;
+//        Util Util;
 
 //        // Start is called before the first frame update
 //        void Start() {
@@ -37,7 +37,7 @@
 //            m_SoccerSettings = FindObjectOfType<SoccerSettings>();
 //            agentRb = GetComponent<Rigidbody>();
 //            agentRb.maxAngularVelocity = 500;
-//            util = context.gameObject.GetComponentInParent<Util>();
+//            Util = context.gameObject.GetComponentInParent<Util>();
 //        }
 
 //        // Update is called once per frame
@@ -51,9 +51,9 @@
 //            ActionBuffers actionBuffers = new ActionBuffers(null, new int[] { 3, 3, 3 });
 //            UpdateTree(actionBuffers);
 //            /*var discreteActionsOut = actionBuffers.DiscreteActions;
-//            discreteActionsOut[0] = util.rnd.Next(3);
-//            discreteActionsOut[1] = util.rnd.Next(3);
-//            discreteActionsOut[2] = util.rnd.Next(3);*/
+//            discreteActionsOut[0] = Util.rnd.Next(3);
+//            discreteActionsOut[1] = Util.rnd.Next(3);
+//            discreteActionsOut[2] = Util.rnd.Next(3);*/
 //            MoveAgent(actionBuffers.DiscreteActions);
 
 //        }

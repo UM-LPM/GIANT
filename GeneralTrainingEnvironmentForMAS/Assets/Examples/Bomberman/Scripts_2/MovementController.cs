@@ -22,7 +22,7 @@ public class MovementController : MonoBehaviour
     public Rigidbody2D Rigidbody { get; private set; }
 
 
-    private Vector2 direction = Vector2.down;
+    private Vector2 Direction = Vector2.down;
 
     
     void Awake()
@@ -52,13 +52,13 @@ public class MovementController : MonoBehaviour
 
     private void FixedUpdate() {
         Vector2 position = Rigidbody.position;
-        Vector2 translation = direction * Speed * Time.fixedDeltaTime;
+        Vector2 translation = Direction * Speed * Time.fixedDeltaTime;
 
         Rigidbody.MovePosition(position + translation);
     }
 
     private void SetDirection(Vector2 newDirection, AnimatedSpriteRenderer spriteRenderer) {
-        direction = newDirection;
+        Direction = newDirection;
 
         SpriteRendererUp.enabled = spriteRenderer == SpriteRendererUp;
         SpriteRendererDown.enabled = spriteRenderer == SpriteRendererDown;
@@ -66,7 +66,7 @@ public class MovementController : MonoBehaviour
         SpriteRendererRight.enabled = spriteRenderer == SpriteRendererRight;
 
         ActiveSpriteRenderer = spriteRenderer;
-        ActiveSpriteRenderer.Idle = direction == Vector2.zero;
+        ActiveSpriteRenderer.Idle = Direction == Vector2.zero;
     }
 
 

@@ -9,7 +9,9 @@ using UnityEngine.EventSystems;
 public class RobocodeEnvironmentController : EnvironmentControllerBase {
 
     public static int MissileHealthDamage = 1;
+    public Rigidbody Rigidbody { get; set; }
 
+    [Header("Robocode configuration")]
     [SerializeField] float MissileShootCooldown = 1.0f;
     [SerializeField] float MissleLaunchSpeed = 30f;
     [SerializeField] float ForwardSpeed = 1f;
@@ -23,9 +25,11 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
     float AgentRotationSpeed = 80f;
     float AgentTurrentRotationSpeed = 90f;
 
+
     protected override void DefineAdditionalDataOnStart() {
         foreach (RobocodeAgentComponent agent in Agents) {
             agent.Health =  AgentStartHealth;
+            agent.Rigidbody = agent.GetComponent<Rigidbody>();
         }
     }
 
@@ -102,10 +106,10 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
         agent.transform.Rotate(rotateDir, Time.fixedDeltaTime * AgentRotationSpeed);*/
 
         // Movement Version 2
-        agent.Rigidbody.MovePosition(agent.Rigidbody.position + (dirToGo * AgentMoveSpeed * Time.fixedDeltaTime));
+        (agent as RobocodeAgentComponent).Rigidbody.MovePosition((agent as RobocodeAgentComponent).Rigidbody.position + (dirToGo * AgentMoveSpeed * Time.fixedDeltaTime));
         Quaternion turnRotation = Quaternion.Euler(0.0f, rotateDir.y * Time.fixedDeltaTime * AgentRotationSpeed, 0.0f);
-        agent.Rigidbody.MoveRotation(agent.Rigidbody.rotation * turnRotation);
-
+        (agent as RobocodeAgentComponent).Rigidbody.MoveRotation((agent as RobocodeAgentComponent).Rigidbody.rotation * turnRotation);
+        
         // Turrent rotation
         (agent as RobocodeAgentComponent).Turret.transform.Rotate(rotateTurrentDir, Time.fixedDeltaTime * AgentTurrentRotationSpeed);
     }
@@ -156,11 +160,11 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
 
         for (int i = 0; i < Agents.Length; i++) { 
             Vector3 moveDirection = Agents[i].transform.forward * verticalInput * AgentMoveSpeed * Time.fixedDeltaTime;
-            Agents[i].Rigidbody.MovePosition(Agents[i].Rigidbody.position + moveDirection);
+            (Agents[i] as RobocodeAgentComponent).Rigidbody.MovePosition((Agents[i] as RobocodeAgentComponent).Rigidbody.position + moveDirection);
 
             float rotation = horizontalInput * AgentRotationSpeed * Time.fixedDeltaTime;
             Quaternion turnRotation = Quaternion.Euler(0.0f, rotation, 0.0f);
-            Agents[i].Rigidbody.MoveRotation(Agents[i].Rigidbody.rotation * turnRotation);
+            (Agents[i] as RobocodeAgentComponent).Rigidbody.MoveRotation((Agents[i] as RobocodeAgentComponent).Rigidbody.rotation * turnRotation);
         }
     }
 

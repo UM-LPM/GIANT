@@ -9,14 +9,12 @@ using UnityEngine;
 public class AgentComponent : MonoBehaviour {
 
     public BehaviourTree BehaviourTree { get; set; }
-    public Rigidbody Rigidbody { get; set; }
 
     public FitnessIndividual AgentFitness { get; set; }
 
     public bool HasPredefinedBehaviour { get; set; }
 
     private void Awake() {
-        this.Rigidbody = GetComponent<Rigidbody>();
         AgentFitness = new FitnessIndividual();
 
         DefineAdditionalDataOnAwake();
@@ -33,14 +31,14 @@ public class AgentComponent : MonoBehaviour {
         // The GameObject that collided with this one
         GameObject otherGameObject = collision.gameObject;
 
-        // The direction of the collision
+        // The MoveDirection of the collision
         Vector3 collisionDirection = collision.contacts[0].normal;
 
         if (otherGameObject.name.Contains("Agent")) {
             // Print the collision information
             Debug.Log("Collision strength: " + collisionStrength);
             Debug.Log("Collided with: " + otherGameObject.name);
-            Debug.Log("Collision direction: " + collisionDirection);
+            Debug.Log("Collision MoveDirection: " + collisionDirection);
         }
 
         if (Vector3.Dot(collisionDirection, transform.forward) < 0) {

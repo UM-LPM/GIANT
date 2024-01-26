@@ -5,14 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 
 public class RobocodeFitness: Fitness {
-    public enum ActionPerformed {
-        MissileHitTank,
-        TankHitByRocket,
-        RamDamage,
-        RocketHitObstacle,
-        SurvivalBonus,
-        LastSurvivalBonus
-    }
 
     public static int MISSILE_HIT_TANK = 2;
     public static int TANK_HIT_BY_ROCKET = -3;

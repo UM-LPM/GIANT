@@ -8,6 +8,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
 
     public static event EventHandler<OnGameFinishedEventargs> OnGameFinished;
 
+    [Header("Base configuration")]
     [SerializeField] public float SimulationTime = 10f;
     [SerializeField] public int IndividualId;
     [SerializeField] public bool Debug = false;
@@ -16,6 +17,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     [SerializeField] public bool MinimizeResults = true; // If true lower fitness is better
 
     // Random agent Initializaion section START
+    [Header("Random agent Initializaion")]
     [SerializeField] public bool RandomAgentInitialization = false;
     [SerializeField] public GameObject AgentPrefab;
     [SerializeField] public Vector3 ArenaSize;
@@ -61,6 +63,10 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
 
         DefineAdditionalDataOnStart();
 
+    }
+
+    private void Update() {
+        OnUpdate();
     }
 
     private void FixedUpdate() {
@@ -202,9 +208,10 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
 
     protected virtual void DefineAdditionalDataOnStart() { }
     protected virtual void DefineAdditionalDataOnAwake() { }
+    protected virtual void OnUpdate() { }
     protected virtual void OnFixedUpdate() { }
 
-    void SetLayerRecursively(GameObject obj, int newLayer) {
+    public static void SetLayerRecursively(GameObject obj, int newLayer) {
         obj.layer = newLayer;
         //obj.GetComponent<Collider>().includeLayers = newLayer;
         foreach (Transform child in obj.transform) {
