@@ -75,7 +75,7 @@ public class BombExplosionController : MonoBehaviour {
             BombermanAgentComponent hitAgent;
             collider.TryGetComponent<BombermanAgentComponent>(out hitAgent);
             if (!hitAgent) {
-                ClearDestructible(position);
+                ClearDestructible(position, agent);
                 return;
             }
         }
@@ -91,7 +91,7 @@ public class BombExplosionController : MonoBehaviour {
         Explode(position, direction, length - 1, agent);
     }
 
-    public void ClearDestructible(Vector2 position) {
+    public void ClearDestructible(Vector2 position, BombermanAgentComponent agent) {
         Debug.Log("ClearDestructible()");
         Vector3Int cell = DestructibleTiles.WorldToCell(position);
         TileBase tile = DestructibleTiles.GetTile(cell);
@@ -102,6 +102,8 @@ public class BombExplosionController : MonoBehaviour {
             EnvironmentControllerBase.SetLayerRecursively(destructible.gameObject, gameObject.layer);
 
             DestructibleTiles.SetTile(cell, null);
+
+            agent.AgentFitness.Fitness.UpdateFitness(BombermanFitness.BLOCK_DESTROYED);
         }
     }
 

@@ -195,17 +195,6 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
 
     // Old controllers END
 
-    int GetNumOfActiveAgents() {
-        int counter = 0;
-
-        foreach (var agent in Agents) {
-            if(agent.gameObject.activeSelf) 
-                counter++;
-        }
-
-        return counter;
-    }
-
     public void AddSurvivalFitnessBonus() {
         bool lastSurvival = GetNumOfActiveAgents() > 1? false: true;
         // Survival bonus

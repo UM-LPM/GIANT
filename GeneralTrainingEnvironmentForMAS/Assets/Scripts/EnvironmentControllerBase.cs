@@ -256,6 +256,17 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
         return FitnessGroups;
     }
 
+    public int GetNumOfActiveAgents() {
+        int counter = 0;
+
+        foreach (var agent in Agents) {
+            if (agent.gameObject.activeSelf)
+                counter++;
+        }
+
+        return counter;
+    }
+
     public abstract void UpdateAgents();
 }
 

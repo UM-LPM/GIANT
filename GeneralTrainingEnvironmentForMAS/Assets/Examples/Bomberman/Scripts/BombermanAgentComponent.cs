@@ -25,6 +25,7 @@ public class BombermanAgentComponent : AgentComponent {
     [Header("Bomb")]
     [SerializeField] public KeyCode BombKey = KeyCode.Space;
 
+    public BombermanEnvironmentController BombermanEnvironmentController{ get; set; }
     public Rigidbody2D Rigidbody { get; set; }
 
     public float MoveSpeed { get; set; }
@@ -35,6 +36,7 @@ public class BombermanAgentComponent : AgentComponent {
     public int BombsRemaining { get; set; }
 
     public int Health { get; set; }
+    public float NextDamageTime { get; set; } // Required to prevent constant damage from explosions
 
     public AnimatedSpriteRenderer ActiveSpriteRenderer { get; set; }
 
@@ -61,30 +63,9 @@ public class BombermanAgentComponent : AgentComponent {
 
     private void OnTriggerEnter2D(Collider2D collision) {
         ExplosionComponent explosion;
-
+        
         if(collision.gameObject.TryGetComponent<ExplosionComponent>(out explosion)) {
-            Health--;
-
-            if(this == explosion.Parent) {
-                AgentFitness.Fitness.UpdateFitness(BombermanFitness.AGENT_HIT_BY_BOMB);
-            }
-            else {
-                AgentFitness.Fitness.UpdateFitness(BombermanFitness.AGENT_HIT_BY_BOMB);
-                explosion.Parent.AgentFitness.Fitness.UpdateFitness(BombermanFitness.BOMB_HIT_AGENT);
-            }
-
-            if (Health <= 0) {
-                // Agent has died
-                if (this == explosion.Parent) {
-                    AgentFitness.Fitness.UpdateFitness(BombermanFitness.AGENT_HIT_BY_BOMB);
-                }
-                else {
-                    AgentFitness.Fitness.UpdateFitness(BombermanFitness.AGENT_HEALTH_ZERO);
-                    explosion.Parent.AgentFitness.Fitness.UpdateFitness(BombermanFitness.AGENT_KILLED);
-                }
-
-                DeathSequence();
-            }
+            BombermanEnvironmentController.ExlosionHitAgent(this, explosion);
         }
     }
 
