@@ -11,12 +11,10 @@ public class BombExplosionController : MonoBehaviour {
     [Header("Bomb")]
     [SerializeField] BombComponent BombPrefab;
     [SerializeField] float BombFuseTime = 3f;
-    [SerializeField] int StartAgentBombAmout = 1;
 
     [Header("Explosion")]
     [SerializeField] ExplosionComponent ExplosionPrefab;
     [SerializeField] float ExplosionDuration = 1f;
-    [SerializeField] public int StartExplosionRadius = 1;
 
     [Header("Destructible")]
     [SerializeField] Tilemap DestructibleTiles;

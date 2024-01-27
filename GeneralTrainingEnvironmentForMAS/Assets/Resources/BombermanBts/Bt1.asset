@@ -1,5 +1,26 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-3960069918227816547
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e4181f6492e3fc45bf357f24d63fd4d, type: 3}
+  m_Name: MoveSide
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 82a686d6563b11049973345518739ffc
+  position: {x: 1, y: 243}
+  blackboard:
+    moveToPosition: {x: 0, y: 0, z: 0}
+  description: 
+  drawGizmos: 0
+  moveSideDirection: 2
 --- !u!114 &-2379257401261310369
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15,12 +36,36 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 6d7ecbe20a856e3479979282e45c2f31
-  position: {x: 1, y: 123}
+  position: {x: -149, y: 243}
   blackboard:
     moveToPosition: {x: 0, y: 0, z: 0}
   description: 
   drawGizmos: 0
   moveForwardDirection: 3
+--- !u!114 &-740646440565893054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
+  m_Name: Sequencer
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 7a584981bd3ece14a81ccf5193c82f02
+  position: {x: 1, y: 115}
+  blackboard:
+    moveToPosition: {x: 0, y: 0, z: 0}
+  description: 
+  drawGizmos: 0
+  children:
+  - {fileID: -2379257401261310369}
+  - {fileID: -3960069918227816547}
+  - {fileID: 8072795943272664391}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -40,6 +85,9 @@ MonoBehaviour:
   - {fileID: 7841327901685452797}
   - {fileID: 4546460540501574767}
   - {fileID: -2379257401261310369}
+  - {fileID: -3960069918227816547}
+  - {fileID: -740646440565893054}
+  - {fileID: 8072795943272664391}
   blackboard:
     moveToPosition: {x: 0, y: 0, z: 0}
   bTNodes: []
@@ -58,12 +106,12 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 1bac0571742dfe049b5485440538371a
-  position: {x: 1, y: -10}
+  position: {x: 1, y: -9}
   blackboard:
     moveToPosition: {x: 0, y: 0, z: 0}
   description: 
   drawGizmos: 0
-  child: {fileID: -2379257401261310369}
+  child: {fileID: -740646440565893054}
   restartOnSuccess: 1
   restartOnFailure: 0
 --- !u!114 &7841327901685452797
@@ -87,3 +135,23 @@ MonoBehaviour:
   description: 
   drawGizmos: 0
   child: {fileID: 4546460540501574767}
+--- !u!114 &8072795943272664391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfab410791810f74995e77be14f491cb, type: 3}
+  m_Name: PlaceBomb
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 553bc243519b25f419dd9ae06a9d3f7c
+  position: {x: 151, y: 243}
+  blackboard:
+    moveToPosition: {x: 0, y: 0, z: 0}
+  description: 
+  drawGizmos: 0

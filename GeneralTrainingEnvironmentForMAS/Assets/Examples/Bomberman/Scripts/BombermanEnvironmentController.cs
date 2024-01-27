@@ -7,6 +7,8 @@ using UnityEngine;
 
 public class BombermanEnvironmentController: EnvironmentControllerBase {
 
+    [SerializeField] public bool ManualAgentControl = false;
+
     [Header("Bomberman Agent configuration")]
     [SerializeField] float AgentStartMoveSpeed = 5f;
     [SerializeField] int StartAgentBombAmout = 1;
@@ -31,44 +33,48 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
         }
     }
 
-    protected override void OnUpdate() {
-        foreach (BombermanAgentComponent agent in Agents) {
-            if (agent.gameObject.activeSelf) {
-                if (Input.GetKey(agent.InputUp)) {
-                    agent.SetDirection(Vector2.up, agent.SpriteRendererUp);
-                }
-                else if (Input.GetKey(agent.InputDown)) {
-                    agent.SetDirection(Vector2.down, agent.SpriteRendererDown);
-                }
-                else if (Input.GetKey(agent.InputLeft)) {
-                    agent.SetDirection(Vector2.left, agent.SpriteRendererLeft);
-                }
-                else if (Input.GetKey(agent.InputRight)) {
-                    agent.SetDirection(Vector2.right, agent.SpriteRendererRight);
-                }
-                else {
-                    // Player is not moving
-                    agent.SetDirection(Vector2.zero, agent.ActiveSpriteRenderer);
-                }
+    public override void UpdateAgents() {
+        
+        if(ManualAgentControl)
+            MoveAgents();
+        else
+            UpdateAgentsWithBTs();
+    }
 
-                if (agent.BombsRemaining > 0 && Input.GetKeyDown(agent.BombKey)) {
-                    StartCoroutine(BombExplosionController.PlaceBomb(agent));
+    protected override void OnUpdate() {
+        if (ManualAgentControl) {
+            foreach (BombermanAgentComponent agent in Agents) {
+                if (agent.gameObject.activeSelf && agent.enabled) {
+                    if (Input.GetKey(agent.InputUp)) {
+                        agent.SetDirection(Vector2.up, agent.SpriteRendererUp);
+                    }
+                    else if (Input.GetKey(agent.InputDown)) {
+                        agent.SetDirection(Vector2.down, agent.SpriteRendererDown);
+                    }
+                    else if (Input.GetKey(agent.InputLeft)) {
+                        agent.SetDirection(Vector2.left, agent.SpriteRendererLeft);
+                    }
+                    else if (Input.GetKey(agent.InputRight)) {
+                        agent.SetDirection(Vector2.right, agent.SpriteRendererRight);
+                    }
+                    else {
+                        // Player is not moving
+                        agent.SetDirection(Vector2.zero, agent.ActiveSpriteRenderer);
+                    }
+
+                    if (agent.BombsRemaining > 0 && Input.GetKeyDown(agent.BombKey)) {
+                        StartCoroutine(BombExplosionController.PlaceBomb(agent));
+                    }
                 }
             }
         }
-    }
-
-    public override void UpdateAgents() {
-        MoveAgents();
-
-        //MoveAgentsWithBehaviourTrees();
     }
 
     public void AddSurvivalFitnessBonus() {
         bool lastSurvival = GetNumOfActiveAgents() > 1 ? false : true;
         // Survival bonus
         foreach (var agent in Agents) {
-            if (agent.gameObject.activeSelf) {
+            if (agent.gameObject.activeSelf && agent.enabled) {
                 agent.AgentFitness.Fitness.UpdateFitness(BombermanFitness.SURVIVAL_BONUS);
 
                 // Last survival bonus
@@ -114,12 +120,63 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
 
     public void MoveAgents() {
         foreach(BombermanAgentComponent agent in Agents) {
-            if (agent.gameObject.activeSelf) {
+            if (agent.gameObject.activeSelf && agent.enabled) {
                 Vector2 position = agent.Rigidbody.position;
                 Vector2 translation = agent.MoveDirection * agent.MoveSpeed * Time.fixedDeltaTime;
 
                 agent.Rigidbody.MovePosition(position + translation);
             }
+        }
+    }
+
+    public void UpdateAgentsWithBTs() {
+        ActionBuffers actionBuffers;
+        foreach(BombermanAgentComponent agent in Agents) { 
+        //for (int i = 0; i < Agents.Length; i++) {
+            if (agent.gameObject.activeSelf && agent.enabled) {
+                actionBuffers = new ActionBuffers(null, new int[] { 0, 0, 0 }); // Forward, Side, Place bomb
+
+                agent.BehaviourTree.UpdateTree(actionBuffers);
+
+                MoveAgent(agent, actionBuffers);
+                PlaceBomb(agent, actionBuffers);
+            }
+        }
+    }
+
+    public void MoveAgent(BombermanAgentComponent agent, ActionBuffers actionBuffers) {
+
+        // Set direction
+        var verticalAxis = actionBuffers.DiscreteActions[0];
+        var horizontalAxis = actionBuffers.DiscreteActions[1];
+
+        switch (verticalAxis) {
+            case 1:
+                agent.SetDirection(Vector2.up, agent.SpriteRendererUp);
+                break;
+            case 2:
+                agent.SetDirection(Vector2.down, agent.SpriteRendererDown);
+                break;
+        }
+        switch (horizontalAxis) {
+            case 1:
+                agent.SetDirection(Vector2.left, agent.SpriteRendererLeft);
+                break;
+            case 2:
+                agent.SetDirection(Vector2.right, agent.SpriteRendererRight);
+                break;
+        }
+
+        // Move agent
+        Vector2 position = agent.Rigidbody.position;
+        Vector2 translation = agent.MoveDirection * agent.MoveSpeed * Time.fixedDeltaTime;
+
+        agent.Rigidbody.MovePosition(position + translation);
+    }
+
+    public void PlaceBomb(BombermanAgentComponent agent, ActionBuffers actionBuffers) {
+        if (agent.BombsRemaining > 0 && actionBuffers.DiscreteActions[2] == 1) {
+            StartCoroutine(BombExplosionController.PlaceBomb(agent));
         }
     }
 
