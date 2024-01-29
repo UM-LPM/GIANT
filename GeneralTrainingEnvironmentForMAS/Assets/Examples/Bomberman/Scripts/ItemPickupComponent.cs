@@ -14,8 +14,7 @@ public class ItemPickupComponent : MonoBehaviour {
 
     [SerializeField] ItemType Type;
 
-    void OnItemPickup(BombermanAgentComponent agent) {
-        Debug.Log("item type : " + Type);
+    public void OnItemPickup(BombermanAgentComponent agent) {
         switch (Type) {
             case ItemType.ExtraBomb:
                 agent.AddBomb();

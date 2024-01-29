@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class BombermanEnvironmentController: EnvironmentControllerBase {
@@ -16,6 +17,11 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
     [SerializeField] int StartHealth = 1;
     [SerializeField] public float ExplosionDamageCooldown = 0.8f;
 
+    [Header("Descrete Agent movement configuration")]
+    [SerializeField] public bool DiscreteAgentMovement = true;
+    [SerializeField] public float AgentUpdateinterval = 0.8f;
+    [SerializeField] public int BombPushDistance = 2;
+
     private BombExplosionController BombExplosionController { get; set; }
 
     protected override void DefineAdditionalDataOnAwake() {
@@ -25,7 +31,7 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
     protected override void DefineAdditionalDataOnStart() {
         foreach (BombermanAgentComponent agent in Agents) {
             agent.BombermanEnvironmentController = this;
-            agent.Rigidbody = agent.GetComponent<Rigidbody2D>();
+            //agent.Rigidbody = agent.GetComponent<Rigidbody2D>();
             agent.MoveSpeed = AgentStartMoveSpeed;
             agent.Health = StartHealth;
             agent.ExplosionRadius = StartExplosionRadius;
@@ -39,6 +45,8 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
             MoveAgents();
         else
             UpdateAgentsWithBTs();
+
+        AgentsOverExplosion();
     }
 
     protected override void OnUpdate() {
@@ -86,6 +94,22 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
 
     }
 
+    void AgentsOverExplosion() {
+        foreach (BombermanAgentComponent agent in Agents) {
+            if (agent.gameObject.activeSelf && agent.enabled) {
+                Collider2D[] hitColliders = Physics2D.OverlapBoxAll(agent.transform.position, new Vector2(1 / 1.15f, 1 / 1.15f), 0f);
+
+                foreach (Collider2D collider in hitColliders) {
+                    ExplosionComponent explosion = collider.GetComponent<ExplosionComponent>();
+                    if (explosion != null) {
+                        ExlosionHitAgent(agent, explosion);
+                        return; // TODO OK?
+                    }
+                }
+            }
+        }
+    }
+
     public void ExlosionHitAgent(BombermanAgentComponent agent, ExplosionComponent explosion) {
         if (agent.NextDamageTime <= CurrentSimulationTime) {
             agent.NextDamageTime = CurrentSimulationTime + ExplosionDamageCooldown;
@@ -119,12 +143,62 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
     }
 
     public void MoveAgents() {
-        foreach(BombermanAgentComponent agent in Agents) {
+        foreach (BombermanAgentComponent agent in Agents) {
             if (agent.gameObject.activeSelf && agent.enabled) {
-                Vector2 position = agent.Rigidbody.position;
+                /*Vector2 position = agent.Rigidbody.position;
                 Vector2 translation = agent.MoveDirection * agent.MoveSpeed * Time.fixedDeltaTime;
 
-                agent.Rigidbody.MovePosition(position + translation);
+                agent.Rigidbody.MovePosition(position + translation);*/
+
+                if (DiscreteAgentMovement) {
+                    if (agent.NextAgentUpdateTime <= CurrentSimulationTime && agent.MoveDirection != Vector2.zero) {
+                        if (AgentCanMove(agent)) {
+                            agent.transform.Translate(new Vector3(agent.MoveDirection.x, agent.MoveDirection.y, 0));
+                            agent.NextAgentUpdateTime = CurrentSimulationTime + AgentUpdateinterval;
+                            CheckIfAgentOverPowerUp(agent);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    bool AgentCanMove(BombermanAgentComponent agent) {
+        Vector3 newPos = agent.transform.position + new Vector3(agent.MoveDirection.x, agent.MoveDirection.y, 0);
+        Collider2D[] hitColliders = Physics2D.OverlapBoxAll(newPos, new Vector2(1 / 1.15f, 1 / 1.15f), 0f);
+
+        foreach(Collider2D collider in hitColliders) {
+            BombComponent bombComponent = collider.GetComponent<BombComponent>();
+            if(bombComponent != null) {
+                return BombMove(bombComponent, bombComponent.transform.position, agent.MoveDirection, 0) ? true : false;
+            }
+            else if(!collider.isTrigger)
+                return false;
+        }
+
+        return true;
+    }
+
+    bool BombMove(BombComponent bomb, Vector3 pos, Vector2 moveDirection, int deep) {
+        Vector3 newPos = pos + new Vector3(moveDirection.x, moveDirection.y, 0);
+        Collider2D[] hitColliders = Physics2D.OverlapBoxAll(newPos, new Vector2(1 / 1.15f, 1 / 1.15f), 0f);
+        if(hitColliders.Length > 0) {
+            return deep > 0? true : false;
+        }
+        else {
+            bomb.transform.Translate(moveDirection);
+            return BombMove(bomb, newPos, moveDirection, deep + 1);
+        }
+    }
+
+    void CheckIfAgentOverPowerUp(BombermanAgentComponent agent) {
+        Collider2D[] hitColliders = Physics2D.OverlapBoxAll(agent.transform.position, new Vector2(1 / 1.15f, 1 / 1.15f), 0f);
+
+        foreach (Collider2D collider in hitColliders) {
+            ItemPickupComponent itemPickup = collider.GetComponent<ItemPickupComponent>();
+            if(itemPickup != null) {
+                itemPickup.OnItemPickup(agent);
+                return; // TODO OK?
             }
         }
     }
@@ -168,10 +242,10 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
         }
 
         // Move agent
-        Vector2 position = agent.Rigidbody.position;
+        /*Vector2 position = agent.Rigidbody.position;
         Vector2 translation = agent.MoveDirection * agent.MoveSpeed * Time.fixedDeltaTime;
 
-        agent.Rigidbody.MovePosition(position + translation);
+        agent.Rigidbody.MovePosition(position + translation);*/
     }
 
     public void PlaceBomb(BombermanAgentComponent agent, ActionBuffers actionBuffers) {

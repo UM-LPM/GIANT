@@ -26,7 +26,7 @@ public class BombermanAgentComponent : AgentComponent {
     [SerializeField] public KeyCode BombKey = KeyCode.Space;
 
     public BombermanEnvironmentController BombermanEnvironmentController{ get; set; }
-    public Rigidbody2D Rigidbody { get; set; }
+    //public Rigidbody2D Rigidbody { get; set; }
 
     public float MoveSpeed { get; set; }
     public int MaxAgentBombAmout { get; set; }
@@ -41,11 +41,12 @@ public class BombermanAgentComponent : AgentComponent {
     public AnimatedSpriteRenderer ActiveSpriteRenderer { get; set; }
 
     public Vector2 MoveDirection { get; private set; }
+    public float NextAgentUpdateTime { get; set; }
 
     protected override void DefineAdditionalDataOnAwake() {
-        Rigidbody = GetComponent<Rigidbody2D>();
+        //Rigidbody = GetComponent<Rigidbody2D>();
         ActiveSpriteRenderer = SpriteRendererDown;
-        MoveDirection = Vector2.down;
+        MoveDirection = Vector2.zero;
     }
 
     public void SetDirection(Vector2 newDirection, AnimatedSpriteRenderer spriteRenderer) {
