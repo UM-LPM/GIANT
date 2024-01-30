@@ -1336,6 +1336,7 @@ GameObject:
   - component: {fileID: 623201107}
   - component: {fileID: 623201108}
   - component: {fileID: 623201111}
+  - component: {fileID: 623201112}
   m_Layer: 0
   m_Name: Agent1
   m_TagString: Agent
@@ -1420,6 +1421,30 @@ MonoBehaviour:
   SpriteRendererRight: {fileID: 1554857125}
   SpriteRendererDeath: {fileID: 1727629538}
   BombKey: 32
+--- !u!114 &623201112
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 623201105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aab5705658e2d2b49b7c53ff2b7f6d69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Name>k__BackingField: GridSensor
+  discretizeGridPos: 0
+  gridSize: {x: 5, y: 5}
+  cellSize: {x: 1, y: 1}
+  cellSpacing: {x: 1, y: 1}
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  centerOffset: {x: -2, y: -2}
+  fixedPosition: 0
+  position: {x: 0, y: 0}
+  sensorCapturePreview: {fileID: 0}
 --- !u!1 &692537100
 GameObject:
   m_ObjectHideFlags: 0
@@ -3997,6 +4022,7 @@ GameObject:
   - component: {fileID: 1451893422}
   - component: {fileID: 1451893421}
   - component: {fileID: 1451893418}
+  - component: {fileID: 1451893423}
   m_Layer: 0
   m_Name: Agent2
   m_TagString: Agent
@@ -4013,7 +4039,7 @@ Transform:
   m_GameObject: {fileID: 1451893416}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 6, y: -5, z: 0}
+  m_LocalPosition: {x: 6, y: 5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4108,6 +4134,30 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
+--- !u!114 &1451893423
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1451893416}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aab5705658e2d2b49b7c53ff2b7f6d69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Name>k__BackingField: GridSensor
+  discretizeGridPos: 0
+  gridSize: {x: 5, y: 5}
+  cellSize: {x: 1, y: 1}
+  cellSpacing: {x: 1, y: 1}
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  centerOffset: {x: -2, y: -2}
+  fixedPosition: 0
+  position: {x: 0, y: 0}
+  sensorCapturePreview: {fileID: 0}
 --- !u!1 &1554857122
 GameObject:
   m_ObjectHideFlags: 0
@@ -4459,7 +4509,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27f33f1219c9939489b23267e06aefa4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SimulationTime: 20
+  SimulationTime: 50
   IndividualId: 0
   Debug: 1
   BTLoadMode: 0

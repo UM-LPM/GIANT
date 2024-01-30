@@ -69,7 +69,7 @@ public class BombExplosionController : MonoBehaviour {
         position += direction;
 
         Collider2D collider = Physics2D.OverlapBox(position, Vector2.one / 2f, 0f, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)));
-        if(collider != null) {
+        if(collider != null && !collider.isTrigger) {
             BombermanAgentComponent hitAgent;
             collider.TryGetComponent<BombermanAgentComponent>(out hitAgent);
             if (!hitAgent) {
@@ -90,7 +90,6 @@ public class BombExplosionController : MonoBehaviour {
     }
 
     public void ClearDestructible(Vector2 position, BombermanAgentComponent agent) {
-        Debug.Log("ClearDestructible()");
         Vector3Int cell = DestructibleTiles.WorldToCell(position);
         TileBase tile = DestructibleTiles.GetTile(cell);
 

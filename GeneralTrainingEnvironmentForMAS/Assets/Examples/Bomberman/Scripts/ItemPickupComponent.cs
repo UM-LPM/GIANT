@@ -32,10 +32,10 @@ public class ItemPickupComponent : MonoBehaviour {
         Destroy(gameObject);
     }
 
-    private void OnTriggerEnter2D(Collider2D collision) {
+    /*private void OnTriggerEnter2D(Collider2D collision) {
         BombermanAgentComponent agent;
         if(collision.gameObject.TryGetComponent<BombermanAgentComponent>(out agent)) {
             OnItemPickup(agent);
         }
-    }
+    }*/
 }

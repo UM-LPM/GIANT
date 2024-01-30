@@ -26,7 +26,6 @@ public class BombermanAgentComponent : AgentComponent {
     [SerializeField] public KeyCode BombKey = KeyCode.Space;
 
     public BombermanEnvironmentController BombermanEnvironmentController{ get; set; }
-    //public Rigidbody2D Rigidbody { get; set; }
 
     public float MoveSpeed { get; set; }
     public int MaxAgentBombAmout { get; set; }
@@ -44,7 +43,6 @@ public class BombermanAgentComponent : AgentComponent {
     public float NextAgentUpdateTime { get; set; }
 
     protected override void DefineAdditionalDataOnAwake() {
-        //Rigidbody = GetComponent<Rigidbody2D>();
         ActiveSpriteRenderer = SpriteRendererDown;
         MoveDirection = Vector2.zero;
     }
@@ -62,7 +60,7 @@ public class BombermanAgentComponent : AgentComponent {
     }
 
 
-    private void OnTriggerEnter2D(Collider2D collision) {
+    /*private void OnTriggerEnter2D(Collider2D collision) {
         ExplosionComponent explosion;
         
         if(collision.gameObject.TryGetComponent<ExplosionComponent>(out explosion)) {
@@ -76,7 +74,7 @@ public class BombermanAgentComponent : AgentComponent {
         if (bombComponent) {
             other.isTrigger = false;
         }
-    }
+    }*/
 
     public void DeathSequence() {
         this.enabled = false;

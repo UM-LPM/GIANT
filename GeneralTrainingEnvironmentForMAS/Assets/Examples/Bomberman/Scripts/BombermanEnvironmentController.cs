@@ -17,10 +17,10 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
     [SerializeField] int StartHealth = 1;
     [SerializeField] public float ExplosionDamageCooldown = 0.8f;
 
+    // TODO Add support for continuous movement ???
     [Header("Descrete Agent movement configuration")]
     [SerializeField] public bool DiscreteAgentMovement = true;
-    [SerializeField] public float AgentUpdateinterval = 0.8f;
-    [SerializeField] public int BombPushDistance = 2;
+    [SerializeField] public float AgentUpdateinterval = 0.1f;
 
     private BombExplosionController BombExplosionController { get; set; }
 
@@ -31,7 +31,6 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
     protected override void DefineAdditionalDataOnStart() {
         foreach (BombermanAgentComponent agent in Agents) {
             agent.BombermanEnvironmentController = this;
-            //agent.Rigidbody = agent.GetComponent<Rigidbody2D>();
             agent.MoveSpeed = AgentStartMoveSpeed;
             agent.Health = StartHealth;
             agent.ExplosionRadius = StartExplosionRadius;
@@ -103,7 +102,7 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
                     ExplosionComponent explosion = collider.GetComponent<ExplosionComponent>();
                     if (explosion != null) {
                         ExlosionHitAgent(agent, explosion);
-                        return; // TODO OK?
+                        return;
                     }
                 }
             }
@@ -145,10 +144,6 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
     public void MoveAgents() {
         foreach (BombermanAgentComponent agent in Agents) {
             if (agent.gameObject.activeSelf && agent.enabled) {
-                /*Vector2 position = agent.Rigidbody.position;
-                Vector2 translation = agent.MoveDirection * agent.MoveSpeed * Time.fixedDeltaTime;
-
-                agent.Rigidbody.MovePosition(position + translation);*/
 
                 if (DiscreteAgentMovement) {
                     if (agent.NextAgentUpdateTime <= CurrentSimulationTime && agent.MoveDirection != Vector2.zero) {
@@ -157,7 +152,17 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
                             agent.NextAgentUpdateTime = CurrentSimulationTime + AgentUpdateinterval;
                             CheckIfAgentOverPowerUp(agent);
                         }
+                        else {
+                            agent.SetDirection(Vector2.zero, agent.SpriteRendererDown);
+                        }
                     }
+                }
+                else {
+                    // TODO ?
+                    /*Vector2 position = agent.Rigidbody.position;
+                    Vector2 translation = agent.MoveDirection * agent.MoveSpeed * Time.fixedDeltaTime;
+
+                    agent.Rigidbody.MovePosition(position + translation);*/
                 }
             }
         }
@@ -198,7 +203,7 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
             ItemPickupComponent itemPickup = collider.GetComponent<ItemPickupComponent>();
             if(itemPickup != null) {
                 itemPickup.OnItemPickup(agent);
-                return; // TODO OK?
+                return;
             }
         }
     }
@@ -206,7 +211,6 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
     public void UpdateAgentsWithBTs() {
         ActionBuffers actionBuffers;
         foreach(BombermanAgentComponent agent in Agents) { 
-        //for (int i = 0; i < Agents.Length; i++) {
             if (agent.gameObject.activeSelf && agent.enabled) {
                 actionBuffers = new ActionBuffers(null, new int[] { 0, 0, 0 }); // Forward, Side, Place bomb
 
@@ -241,11 +245,25 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
                 break;
         }
 
-        // Move agent
-        /*Vector2 position = agent.Rigidbody.position;
-        Vector2 translation = agent.MoveDirection * agent.MoveSpeed * Time.fixedDeltaTime;
+        if (DiscreteAgentMovement) {
+            if (agent.NextAgentUpdateTime <= CurrentSimulationTime && agent.MoveDirection != Vector2.zero) {
+                if (AgentCanMove(agent)) {
+                    agent.transform.Translate(new Vector3(agent.MoveDirection.x, agent.MoveDirection.y, 0));
+                    agent.NextAgentUpdateTime = CurrentSimulationTime + AgentUpdateinterval;
+                    CheckIfAgentOverPowerUp(agent);
+                }
+                else {
+                    agent.SetDirection(Vector2.zero, agent.SpriteRendererDown);
+                }
+            }
+        }
+        else {
+            // Move agent TODO ?
+            /*Vector2 position = agent.Rigidbody.position;
+            Vector2 translation = agent.MoveDirection * agent.MoveSpeed * Time.fixedDeltaTime;
 
-        agent.Rigidbody.MovePosition(position + translation);*/
+            agent.Rigidbody.MovePosition(position + translation);*/
+        }
     }
 
     public void PlaceBomb(BombermanAgentComponent agent, ActionBuffers actionBuffers) {
