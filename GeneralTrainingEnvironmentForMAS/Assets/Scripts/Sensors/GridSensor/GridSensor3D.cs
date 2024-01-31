@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class GridSensor3D : Sensor<GridSensorOutput[,,]> {
+public class GridSensor3D : Sensor<SensorPerceiveOutput[,,]> {
 
     [Header("Base configuration")]
     [SerializeField] Vector3Int gridSize;
@@ -21,7 +21,7 @@ public class GridSensor3D : Sensor<GridSensorOutput[,,]> {
     [Header("Sensor result")]
     [SerializeField] Texture3D sensorCapturePreview;
 
-    public GridSensorOutput[,,] GridSensorOutputs { get; private set; }
+    public SensorPerceiveOutput[,,] GridSensorOutputs { get; private set; }
 
     private void Awake() {
     }
@@ -30,13 +30,13 @@ public class GridSensor3D : Sensor<GridSensorOutput[,,]> {
 
     }
 
-    public override GridSensorOutput[,,] Perceive() {
+    public override SensorPerceiveOutput[,,] Perceive() {
         // Create a new 3D array to store the detected objects
-        GridSensorOutputs = new GridSensorOutput[gridSize.x, gridSize.y, gridSize.z];
+        GridSensorOutputs = new SensorPerceiveOutput[gridSize.x, gridSize.y, gridSize.z];
 
         Vector3 cellWorldPosition = fixedPosition ? position : (transform.position + centerOffset);
 
-        // Loop through each cell in the GridSensorOutputs
+        // Loop through each cell in the SensorPerceiveOutputs
         for (int x = 0; x < gridSize.x; x++) {
             for (int y = 0; y < gridSize.y; y++) {
                 for (int z = 0; z < gridSize.z; z++) {
@@ -45,12 +45,12 @@ public class GridSensor3D : Sensor<GridSensorOutput[,,]> {
 
                     // Use Physics.OverlapBox to detect objects in the cell
                     Collider[] hitColliders = Physics.OverlapBox(cellCenter, new Vector3(cellSize.x / 2, cellSize.y / 2, cellSize.z / 2), Quaternion.identity, layerMask);
-                    // If any objects were detected, store the first one in the GridSensorOutputs array
+                    // If any objects were detected, store the first one in the SensorPerceiveOutputs array
                     if (hitColliders.Length > 0 && hitColliders[0].gameObject != gameObject) {
-                        GridSensorOutputs[x, y, z] = new GridSensorOutput { HasHit = true, HitGameObjects = hitColliders.Select(a => a.gameObject).ToArray() };
+                        GridSensorOutputs[x, y, z] = new SensorPerceiveOutput { HasHit = true, HitGameObjects = hitColliders.Select(a => a.gameObject).ToArray() };
                     }
                     else {
-                        GridSensorOutputs[x, y, z] = new GridSensorOutput { HasHit = false, HitGameObjects = null };
+                        GridSensorOutputs[x, y, z] = new SensorPerceiveOutput { HasHit = false, HitGameObjects = null };
                     }
                 }
             }
@@ -64,7 +64,7 @@ public class GridSensor3D : Sensor<GridSensorOutput[,,]> {
 
         Vector3 cellWorldPosition = fixedPosition ? position : (transform.position + centerOffset);
 
-        // Loop through each cell in the GridSensorOutputs
+        // Loop through each cell in the SensorPerceiveOutputs
         for (int x = 0; x < gridSize.x; x++) {
             for (int y = 0; y < gridSize.y; y++) {
                 for (int z = 0; z < gridSize.z; z++) {
