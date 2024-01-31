@@ -8,5 +8,5 @@ using UnityEngine;
 public class SensorPerceiveOutput {
     public bool HasHit;
     public GameObject[] HitGameObjects;
-    public Vector2 HitCenterPos;
+    public Vector2 HitGameObjectCenterPos;
 }
