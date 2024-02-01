@@ -11,8 +11,8 @@ using System.Collections.Generic;
 using System.Linq;
 
 public class Communicator : MonoBehaviour {
-    [SerializeField] private string BtSource; // = "SoccerBts";
-    [SerializeField] private string GameSceneName; // = "SoccerSceneGame";
+    [SerializeField] private string BtSource;
+    [SerializeField] private string GameSceneName;
     
     [SerializeField] GameScenario[] GameScenarios;
 
@@ -123,7 +123,6 @@ public class Communicator : MonoBehaviour {
         PopBTs = PopBTs.OrderBy(bt => bt.id).ToArray();
 
         // Reset variables
-        //pop_fitness = new float[PopBTs.Length];
         PopFitness = new PopFitness(PopBTs.Length);
 
         CurrentIndividualID = 0;
@@ -169,7 +168,7 @@ public class Communicator : MonoBehaviour {
         Debug.Log("PerformEvaluation function finished");
 
         // Only unload game scene if There were any game scenarios
-        if(GameScenarios.Length > 0)
+        if(GameScenarios.Length > 0 && PopBTs.Length > 0)
             SceneManager.UnloadSceneAsync(GameSceneName);
 
         // Based on FitnessStatisticType calculate fitness statistics

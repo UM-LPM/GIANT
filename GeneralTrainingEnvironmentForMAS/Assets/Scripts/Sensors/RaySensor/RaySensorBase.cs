@@ -190,22 +190,24 @@ public abstract class RaySensorBase : Sensor<SensorPerceiveOutput[]> {
     }
 
     void DrawRaycastGizmos(SensorPerceiveOutput rayOutput, float alpha = 1.0f) {
-        var startPositionWorld = rayOutput.StartPositionWorld;
-        var endPositionWorld = rayOutput.EndPositionWorld;
-        var rayDirection = endPositionWorld - startPositionWorld;
-        rayDirection *= rayOutput.HitFraction;
+        if ((DrawOnlyHitSensors && rayOutput.HasHit) || !DrawOnlyHitSensors) {
+            var startPositionWorld = rayOutput.StartPositionWorld;
+            var endPositionWorld = rayOutput.EndPositionWorld;
+            var rayDirection = endPositionWorld - startPositionWorld;
+            rayDirection *= rayOutput.HitFraction;
 
-        // hit fraction ^2 will shift "far" hits closer to the hit color
-        var lerpT = rayOutput.HitFraction * rayOutput.HitFraction;
-        var color = Color.Lerp(HitSensorColor, BaseSensorColor, lerpT);
-        color.a *= alpha;
-        Gizmos.color = color;
-        Gizmos.DrawRay(startPositionWorld, rayDirection);
+            // hit fraction ^2 will shift "far" hits closer to the hit color
+            var lerpT = rayOutput.HitFraction * rayOutput.HitFraction;
+            var color = Color.Lerp(HitSensorColor, BaseSensorColor, lerpT);
+            color.a *= alpha;
+            Gizmos.color = color;
+            Gizmos.DrawRay(startPositionWorld, rayDirection);
 
-        // Draw the hit point as a sphere. If using rays to cast (0 radius), use a small sphere.
-        if (rayOutput.HasHit) {
-            var hitRadius = Mathf.Max(SphereCastRadius, .05f);
-            Gizmos.DrawWireSphere(startPositionWorld + rayDirection, hitRadius);
+            // Draw the hit point as a sphere. If using rays to cast (0 radius), use a small sphere.
+            if (rayOutput.HasHit) {
+                var hitRadius = Mathf.Max(SphereCastRadius, .05f);
+                Gizmos.DrawWireSphere(startPositionWorld + rayDirection, hitRadius);
+            }
         }
     }
 }

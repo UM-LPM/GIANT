@@ -48,13 +48,13 @@
 //        }
 
 //        public void UpdateTreeAndMoveAgent() {
-//            ActionBuffers actionBuffers = new ActionBuffers(null, new int[] { 3, 3, 3 });
-//            UpdateTree(actionBuffers);
-//            /*var discreteActionsOut = actionBuffers.DiscreteActions;
+//            ActionBuffers ActionBuffer = new ActionBuffers(null, new int[] { 3, 3, 3 });
+//            UpdateTree(ActionBuffer);
+//            /*var discreteActionsOut = ActionBuffer.DiscreteActions;
 //            discreteActionsOut[0] = Util.rnd.Next(3);
 //            discreteActionsOut[1] = Util.rnd.Next(3);
 //            discreteActionsOut[2] = Util.rnd.Next(3);*/
-//            MoveAgent(actionBuffers.DiscreteActions);
+//            MoveAgent(ActionBuffer.DiscreteActions);
 
 //        }
 
