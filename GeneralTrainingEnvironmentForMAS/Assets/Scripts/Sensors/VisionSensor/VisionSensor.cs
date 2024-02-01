@@ -9,20 +9,23 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 
-[ExecuteInEditMode]
-public class VisionSensor : MonoBehaviour {
+public class VisionSensor : Sensor<SensorPerceiveOutput[]> {
+
+    [Header("Vision Sensor Configuration")]
+    [Range(0f, 100f)]
     [SerializeField] float Distance = 10f;
+    [Range(0f, 180f)]
     [SerializeField] float Angle = 30f;
+    [Range(0f, 10f)]
     [SerializeField] float StartHeight = 1f;
+    [Range(0f, 10f)]
     [SerializeField] float EndHeight = 1f;
+    [Range(1, 1000)]
     [SerializeField] int Segments = 10;
-    [SerializeField] Color MeshColor = Color.red;
-    [SerializeField] int ScanFrequency = 30;
-    [SerializeField] LayerMask ScanableLayers;
+    [Range(0,1000)]
+    [SerializeField] int ScanFrequency = 0;
     [SerializeField] Vector3 StartOffset;
     [SerializeField] Vector3 EndOffset;
-
-    public List<GameObject> Objects = new List<GameObject>(); // Objects that are inside of mesh
 
     Collider[] colliders = new Collider[50]; // All objects that are inside the certain radius
     Mesh mesh;
@@ -32,32 +35,49 @@ public class VisionSensor : MonoBehaviour {
 
     MeshCollider meshCollider;
 
-    private void Start() {
-        scanInterval = 1f / ScanFrequency;
+    public VisionSensor() : base ("Vision Sensor") { }
 
-        meshCollider = gameObject.AddComponent<MeshCollider>();
+    private void Start() {
+        scanInterval = ScanFrequency > 0 ? 1f / ScanFrequency : 0;
+
+        if (gameObject.TryGetComponent<MeshCollider>(out meshCollider))
+            meshCollider = gameObject.AddComponent<MeshCollider>();
         meshCollider.sharedMesh = CreateWedgeMesh();
     }
 
     private void FixedUpdate() {
-        scanTimer -= Time.fixedDeltaTime;
-        if (scanTimer < 0) {
-            scanTimer += scanInterval;
-            Scan();
+        if (ScanFrequency > 0) {
+            scanTimer -= Time.fixedDeltaTime;
+            if (scanTimer < 0) {
+                scanTimer += scanInterval;
+                Perceive();
+            }
         }
     }
 
-    void Scan() {
-        count = Physics.OverlapSphereNonAlloc(transform.position, Distance, colliders, ScanableLayers, QueryTriggerInteraction.Collide);
 
-        Objects.Clear();
-        for (int i = 0; i < count; i++) {
-            GameObject obj = colliders[i].gameObject;
-            if (IsInSight(obj)) {
-                Objects.Add(obj);
+    public override SensorPerceiveOutput[] Perceive() {
+        if (ScanFrequency <= 0) {
+            List<SensorPerceiveOutput> outputs = new List<SensorPerceiveOutput>();
+
+            count = Physics.OverlapSphereNonAlloc(transform.position, Distance, colliders, LayerMask, QueryTriggerInteraction.Collide);
+
+            outputs.Clear();
+            for (int i = 0; i < count; i++) {
+                GameObject obj = colliders[i].gameObject;
+                if (IsInSight(obj)) {
+                    outputs.Add(new SensorPerceiveOutput {
+                        HasHit = true,
+                        StartPositionWorld = obj.transform.position,
+                        HitGameObjects = new GameObject[] { obj },
+                    });
+                }
             }
+
+            SensorPerceiveOutputs = outputs.ToArray();
         }
 
+        return SensorPerceiveOutputs == null ? new SensorPerceiveOutput[0] : SensorPerceiveOutputs.ToArray();
     }
 
     bool IsInSight(GameObject obj) {
@@ -158,24 +178,34 @@ public class VisionSensor : MonoBehaviour {
     }
 
     private void OnValidate() {
+        if(meshCollider == null) {
+            gameObject.TryGetComponent<MeshCollider>(out meshCollider);
+            if (meshCollider == null)
+                meshCollider = gameObject.AddComponent<MeshCollider>();
+        }
+
         mesh = CreateWedgeMesh();
         scanInterval = 1f / ScanFrequency;
 
-        meshCollider.sharedMesh = CreateWedgeMesh();
+        meshCollider.sharedMesh = mesh;
         meshCollider.convex = true;
         meshCollider.isTrigger = true;
     }
 
-    private void OnDrawGizmos() {
-        Scan();
-        if (mesh) {
-            Gizmos.color = MeshColor;
-            Gizmos.DrawMesh(mesh, transform.position, transform.rotation);
-        }
+    private void OnDrawGizmosSelected() {
+        if (DrawGizmos) {
+            Perceive();
+            if (mesh) {
+                Gizmos.color = BaseSensorColor;
+                Gizmos.DrawMesh(mesh, transform.position, transform.rotation);
+            }
 
-        Gizmos.color = new Color(Color.green.r, Color.green.g, Color.green.b, 0.2f);
-        for (int i = 0; i < Objects.Count; i++) {
-            Gizmos.DrawSphere(Objects[i].transform.position, 1f);
+            if (SensorPerceiveOutputs != null) {
+                Gizmos.color = HitSensorColor;
+                for (int i = 0; i < SensorPerceiveOutputs.Length; i++) {
+                    Gizmos.DrawSphere(SensorPerceiveOutputs[i].HitGameObjects[0].transform.position, 1f);
+                }
+            }
         }
     }
 

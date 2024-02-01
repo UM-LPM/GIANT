@@ -19,9 +19,6 @@ public class GridSensor2D : Sensor<SensorPerceiveOutput[,]> {
     [SerializeField] bool fixedPosition;
     [SerializeField] Vector2 position;
 
-    [Header("Sensor result")]
-    [SerializeField] Texture2D sensorCapturePreview; // TODO
-
     public GridSensor2D() : base("Grid Sensor 2D") {
 
     }

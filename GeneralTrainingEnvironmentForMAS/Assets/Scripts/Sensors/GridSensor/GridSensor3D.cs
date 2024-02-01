@@ -17,9 +17,6 @@ public class GridSensor3D : Sensor<SensorPerceiveOutput[,,]> {
     [SerializeField] bool fixedPosition;
     [SerializeField] Vector3 position;
 
-    [Header("Sensor result")]
-    [SerializeField] Texture3D sensorCapturePreview; // TODO
-
     public GridSensor3D() : base("Grid Sensor 3D") {
 
     }
