@@ -27,11 +27,7 @@ public struct RayPerceptionInput {
         return ((DetectableTags?.Count ?? 0) + 2) * (Angles?.Count ?? 0);
     }
 
-    /// <summary>
-    /// Get the cast start and end points for the given ray index/
-    /// </summary>
-    /// <param name="rayIndex"></param>
-    /// <returns>A tuple of the start and end positions in world space.</returns>
+
     public (Vector3 StartPositionWorld, Vector3 EndPositionWorld) RayExtents(int rayIndex) {
         var angle = Angles[rayIndex];
         Vector3 startPositionLocal, endPositionLocal;
@@ -52,18 +48,12 @@ public struct RayPerceptionInput {
         return (StartPositionWorld: startPositionWorld, EndPositionWorld: endPositionWorld);
     }
 
-    /// <summary>
-    /// Converts polar coordinate to cartesian coordinate.
-    /// </summary>
     static internal Vector3 PolarToCartesian3D(float radius, float angleDegrees) {
         var x = radius * Mathf.Cos(Mathf.Deg2Rad * angleDegrees);
         var z = radius * Mathf.Sin(Mathf.Deg2Rad * angleDegrees);
         return new Vector3(x, 0f, z);
     }
 
-    /// <summary>
-    /// Converts polar coordinate to cartesian coordinate.
-    /// </summary>
     static internal Vector2 PolarToCartesian2D(float radius, float angleDegrees) {
         var x = radius * Mathf.Cos(Mathf.Deg2Rad * angleDegrees);
         var y = radius * Mathf.Sin(Mathf.Deg2Rad * angleDegrees);

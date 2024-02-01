@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8628561572362355062}
   - component: {fileID: 3593895596500776169}
   - component: {fileID: 3264553904254602630}
+  - component: {fileID: 139298571616084058}
   m_Layer: 0
   m_Name: TankTurret
   m_TagString: Untagged
@@ -98,6 +99,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38aead0bd39bd3c4fbd8132069a15fc2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &139298571616084058
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 303889696367157986}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a453122b562a6ce40ba1cc15402292f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  DetectableTags: []
+  BaseSensorColor: {r: 1, g: 1, b: 1, a: 1}
+  HitSensorColor: {r: 0, g: 1, b: 0.09055543, a: 1}
+  DrawOnlyHitSensors: 0
+  DrawGizmos: 1
+  <Name>k__BackingField: Ray Sensor 3D
+  RaysPerDirection: 6
+  MaxRayDegrees: 70
+  SphereCastRadius: 0.5
+  RayLength: 20
+  StartVerticalOffset: 0.5
+  EndVerticalOffset: 0.5
 --- !u!1 &1423284767539159844
 GameObject:
   m_ObjectHideFlags: 0
@@ -358,7 +386,6 @@ GameObject:
   - component: {fileID: 178722927008230191}
   - component: {fileID: 482064953687907040}
   - component: {fileID: 2776734746861007911}
-  - component: {fileID: 887946433986229101}
   m_Layer: 0
   m_Name: Agent 1
   m_TagString: Untagged
@@ -442,32 +469,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05b9479bba4d9fc44ad3fd846518fd7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &887946433986229101
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8451660173961605848}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c94971a2cd1123440a1b2a99d5c59c8a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SensorName: RayPerceptionSensor
-  m_DetectableTags: []
-  m_RaysPerDirection: 6
-  m_MaxRayDegrees: 70
-  m_SphereCastRadius: 0.5
-  m_RayLength: 20
-  m_RayLayerMask:
-    serializedVersion: 2
-    m_Bits: 4294967283
-  m_ObservationStacks: 1
-  rayHitColor: {r: 1, g: 0, b: 0, a: 1}
-  rayMissColor: {r: 1, g: 1, b: 1, a: 1}
-  m_StartVerticalOffset: 0.5
-  m_EndVerticalOffset: 0.5
 --- !u!1 &8578296427062003348
 GameObject:
   m_ObjectHideFlags: 0

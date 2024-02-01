@@ -42,29 +42,28 @@ public class RayHitObject : ConditionNode {
     }
 
     protected override bool CheckConditions() {
-        RayPerceptionSensorComponent3D rayPerceptionSensorComponent = context.gameObject.GetComponent<RayPerceptionSensorComponent3D>();
-        rayPerceptionSensorComponent.RayLayerMask = (1 << context.gameObject.layer) + 1; // base layer + default
+        RaySensorBase raySensor = context.gameObject.GetComponentInChildren<RaySensorBase>();
+        raySensor.LayerMask = (1 << context.gameObject.layer) + 1; // base layer + default
 
-        RayPerceptionOutput rayPerceptionOutput = RayPerceptionSensor.Perceive(rayPerceptionSensorComponent.GetRayPerceptionInput());
+        SensorPerceiveOutput[] sensorPerceiveOutputs = raySensor.Perceive();
 
         bool targetHit = false;
 
         if (side == AgentSideAdvanced.Center) {
-            //float hitDistancee = Vector3.Distance(rayPerceptionOutput.RayOutputs[0].StartPositionWorld, rayPerceptionOutput.RayOutputs[0].EndPositionWorld);
-            if (rayPerceptionOutput.RayOutputs[0].HasHit && rayPerceptionOutput.RayOutputs[0].HitGameObject.name.Contains(TargetGameObjectsToString(targetGameObject)))
+            if (sensorPerceiveOutputs[0].HasHit && sensorPerceiveOutputs[0].HitGameObjects[0].name.Contains(TargetGameObjectsToString(targetGameObject)))
                 targetHit = true;
             else
                 targetHit = false;
         }
         else if (side == AgentSideAdvanced.Left) {
-            for (int i = 2; i < rayPerceptionOutput.RayOutputs.Length; i += 2) {
-                if (rayPerceptionOutput.RayOutputs[i].HasHit && rayPerceptionOutput.RayOutputs[i].HitGameObject.name.Contains(TargetGameObjectsToString(targetGameObject)))
+            for (int i = 2; i < sensorPerceiveOutputs.Length; i += 2) {
+                if (sensorPerceiveOutputs[i].HasHit && sensorPerceiveOutputs[i].HitGameObjects[0].name.Contains(TargetGameObjectsToString(targetGameObject)))
                     targetHit = true;
             }
         }
         else if (side == AgentSideAdvanced.Right) {
-            for (int i = 1; i < rayPerceptionOutput.RayOutputs.Length; i += 2) {
-                if (rayPerceptionOutput.RayOutputs[i].HasHit && rayPerceptionOutput.RayOutputs[i].HitGameObject.name.Contains(TargetGameObjectsToString(targetGameObject)))
+            for (int i = 1; i < sensorPerceiveOutputs.Length; i += 2) {
+                if (sensorPerceiveOutputs[i].HasHit && sensorPerceiveOutputs[i].HitGameObjects[0].name.Contains(TargetGameObjectsToString(targetGameObject)))
                     targetHit = true;
             }
         }

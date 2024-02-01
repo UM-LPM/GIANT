@@ -22,8 +22,6 @@ public class GridSensor2D : Sensor<SensorPerceiveOutput[,]> {
     [Header("Sensor result")]
     [SerializeField] Texture2D sensorCapturePreview; // TODO
 
-    public SensorPerceiveOutput[,] SensorPerceiveOutputs { get; private set; }
-
     public GridSensor2D() : base("Grid Sensor 2D") {
 
     }
@@ -44,10 +42,10 @@ public class GridSensor2D : Sensor<SensorPerceiveOutput[,]> {
                 Collider2D[] hitColliders = Physics2D.OverlapBoxAll(cellCenter, new Vector2(CellSize.x / 1.15f, CellSize.y / 1.15f), 0f, LayerMask);
                 // If any objects were detected, store the first one in the SensorPerceiveOutputs array
                 if (hitColliders.Length > 0 && hitColliders[0].gameObject != gameObject) {
-                    SensorPerceiveOutputs[x, y] = new SensorPerceiveOutput { HasHit = true, HitGameObjects = hitColliders.Select(a => a.gameObject).ToArray(), HitGameObjectCenterPos = cellCenter };
+                    SensorPerceiveOutputs[x, y] = new SensorPerceiveOutput { HasHit = true, HitGameObjects = hitColliders.Select(a => a.gameObject).ToArray(), EndPositionWorld = cellCenter };
                 }
                 else {
-                    SensorPerceiveOutputs[x, y] = new SensorPerceiveOutput { HasHit = false, HitGameObjects = null, HitGameObjectCenterPos = cellCenter };
+                    SensorPerceiveOutputs[x, y] = new SensorPerceiveOutput { HasHit = false, HitGameObjects = null, EndPositionWorld = cellCenter };
                 }
             }
         }
@@ -65,7 +63,7 @@ public class GridSensor2D : Sensor<SensorPerceiveOutput[,]> {
                     // Draw a wire cube at the cell's position with the cell's size
                     if ((DrawOnlyHitSensors && SensorPerceiveOutputs[x, y].HasHit) || !DrawOnlyHitSensors) {
                         Gizmos.color = SensorPerceiveOutputs[x, y] != null && SensorPerceiveOutputs[x, y].HasHit ? HitSensorColor : BaseSensorColor;
-                        Gizmos.DrawWireCube(SensorPerceiveOutputs[x, y].HitGameObjectCenterPos, new Vector2(CellSize.x, CellSize.y));
+                        Gizmos.DrawWireCube(SensorPerceiveOutputs[x, y].EndPositionWorld, new Vector2(CellSize.x, CellSize.y));
                     }
                 }
             }

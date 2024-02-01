@@ -15,6 +15,8 @@ public abstract class Sensor<T> : MonoBehaviour {
     [field: SerializeField]
     public string Name { get; set; }
 
+    public T SensorPerceiveOutputs { get; protected set; }
+
     public Sensor(string name) {
         Name = name;
     }

@@ -7,6 +7,10 @@ using UnityEngine;
 
 public class SensorPerceiveOutput {
     public bool HasHit;
+    public bool HasHitTaggedObject;
+    public int HitTagIndex;
+    public float HitFraction;
     public GameObject[] HitGameObjects;
-    public Vector2 HitGameObjectCenterPos;
+    public Vector3 StartPositionWorld;
+    public Vector2 EndPositionWorld;
 }
