@@ -8,7 +8,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
 
     public static event EventHandler<OnGameFinishedEventargs> OnGameFinished;
 
-    [Header("Base configuration")]
+    [Header("Base Configuration")]
     [SerializeField] public float SimulationTime = 10f;
     [SerializeField] public int IndividualId;
     [SerializeField] public bool Debug = false;
@@ -16,17 +16,20 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     [SerializeField] public float AgentStartFitness;
     [SerializeField] public bool MinimizeResults = true; // If true lower fitness is better
 
-    // Random agent Initializaion section START
-    [Header("Random agent Initializaion")]
+    [Header("Random Agent Initializaion Configuration")]
     [SerializeField] public bool RandomAgentInitialization = false;
     [SerializeField] public GameObject AgentPrefab;
     [SerializeField] public Vector3 ArenaSize;
     [SerializeField] public float ArenaOffset = 3f;
     [SerializeField] public float MinPlayerDistance = 3f;
-    // Random agent Initializaion section END
+
+    [Header("Agent Control Configuration")]
+    [SerializeField] public bool ManualAgentControl = false;
+    [SerializeField] public bool ManualAgentPredefinedBehaviourControl = false;
 
     protected BehaviourTree[] AgentBehaviourTrees;
     protected AgentComponent[] Agents;
+    protected AgentComponent[] AgentsPredefinedBehaviour;
     protected float CurrentSimulationTime;
     protected GameState GameState;
     protected Util Util;
@@ -164,13 +167,19 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     void DefineAgents() {
         Agents = FindObjectsOfType<AgentComponent>();
         List<AgentComponent> agentsInLayer = new List<AgentComponent>();
+        List<AgentComponent> agentsPredefinedBehaviourInLayer = new List<AgentComponent>();
 
         for (int i = 0; i < Agents.Length; i++) {
+            // Find agents that are on the same layer and don't have predefined behaviour
             if (Agents[i].gameObject.layer == gameObject.layer) {
-                agentsInLayer.Add(Agents[i]);
+                if(Agents[i].HasPredefinedBehaviour)
+                    agentsPredefinedBehaviourInLayer.Add(Agents[i]);
+                else
+                    agentsInLayer.Add(Agents[i]);
             }
         }
         Agents = agentsInLayer.ToArray();
+        AgentsPredefinedBehaviour = agentsPredefinedBehaviourInLayer.ToArray();
     }
 
     void InitializeFitness() {
@@ -188,6 +197,10 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
                     break;
             }
         }
+
+        for (int i = 0; i < AgentsPredefinedBehaviour.Length; i++) {
+            AgentsPredefinedBehaviour[i].AgentFitness = new FitnessIndividual(-1, AgentStartFitness);
+        }
     }
 
     void AssignBehaviourTrees() {
@@ -195,7 +208,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
             UnityEngine.Debug.LogError("Communicator instance not found");
             return;
         }
-        BehaviourTree bt = AgentBehaviourTrees[0]; // = Communicator.Instance.GetBehaviourTree(IndividualId);
+        BehaviourTree bt = AgentBehaviourTrees[0];
 
         for(int i = 0; i < Agents.Length; i++) {
             if (BTLoadMode == BTLoadMode.Full)
@@ -213,7 +226,6 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
 
     public static void SetLayerRecursively(GameObject obj, int newLayer) {
         obj.layer = newLayer;
-        //obj.GetComponent<Collider>().includeLayers = newLayer;
         foreach (Transform child in obj.transform) {
             SetLayerRecursively(child.gameObject, newLayer);
         }

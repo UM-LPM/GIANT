@@ -25,6 +25,12 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
     float AgentRotationSpeed = 80f;
     float AgentTurrentRotationSpeed = 90f;
 
+    bool IsPressingShoot;
+    float TurretMoveDir;
+    [Header("User Input")]
+    [SerializeField] KeyCode ShootKey = KeyCode.Space;
+    [SerializeField] KeyCode TurretMovementLeft = KeyCode.Q;
+    [SerializeField] KeyCode TurretMovementRight = KeyCode.E;
 
     protected override void DefineAdditionalDataOnStart() {
         foreach (RobocodeAgentComponent agent in Agents) {
@@ -33,29 +39,63 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
         }
     }
 
-    public override void UpdateAgents() {
-        //MoveAgentsWithController1();
-        //MoveAgentsWithController2();
-        //AgentsShoot();
-        
-        MoveAgentsWithBehaviourTrees();
+    protected override void OnUpdate() {
+        if(Input.GetKey(ShootKey))
+            IsPressingShoot = true;
+        else
+            IsPressingShoot = false;
+
+        if (Input.GetKey(TurretMovementLeft))
+            TurretMoveDir = -1f;
+        else if (Input.GetKey(TurretMovementRight))
+            TurretMoveDir = 1f;
+        else
+            TurretMoveDir = 0f;
     }
 
-    void MoveAgentsWithBehaviourTrees() {
+    public override void UpdateAgents() {
+        //MoveAgentsWithController1(Agents);
+
+        if (ManualAgentControl) {
+            MoveAgentsWithController2(Agents);
+            if (IsPressingShoot)
+                AgentsShoot(Agents);
+            if(TurretMoveDir != 0) {
+                AgentsMoveTurret(Agents);
+            }
+        }
+        else {
+            UpdateAgentsWithBTs(Agents);
+        }
+
+        if(ManualAgentPredefinedBehaviourControl) {
+            MoveAgentsWithController2(AgentsPredefinedBehaviour);
+            if (IsPressingShoot)
+                AgentsShoot(AgentsPredefinedBehaviour);
+            if (TurretMoveDir != 0) {
+                AgentsMoveTurret(AgentsPredefinedBehaviour);
+            }
+        }
+        else {
+            UpdateAgentsWithBTs(AgentsPredefinedBehaviour);
+        }
+    }
+
+    void UpdateAgentsWithBTs(AgentComponent[] agents) {
         ActionBuffers actionBuffers;
-        for (int i = 0; i < Agents.Length; i++) {
-            if (Agents[i].gameObject.activeSelf) {
+        foreach(RobocodeAgentComponent agent in agents) {
+            if (agent.gameObject.activeSelf) {
                 actionBuffers = new ActionBuffers(null, new int[] { 0, 0, 0, 0, 0 }); // Forward, Side, Rotate, TurrentRotation, Shoot
 
-                Agents[i].BehaviourTree.UpdateTree(actionBuffers);
-                MoveAgent(Agents[i], actionBuffers);
-                ShootMissile(Agents[i], actionBuffers);
+                agent.BehaviourTree.UpdateTree(actionBuffers);
+                MoveAgent(agent, actionBuffers);
+                ShootMissile(agent, actionBuffers);
             }
         }
 
     }
 
-    void MoveAgent(AgentComponent agent, ActionBuffers actionBuffer) {
+    void MoveAgent(RobocodeAgentComponent agent, ActionBuffers actionBuffer) {
         var dirToGo = Vector3.zero;
         var rotateDir = Vector3.zero;
         var rotateTurrentDir = Vector3.zero;
@@ -73,15 +113,6 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
                 dirToGo = agent.transform.forward * -ForwardSpeed;
                 break;
         }
-
-        /*switch (rightAxis) {
-            case 1:
-                dirToGo = agent.transform.right * tanksController.LateralSpeed;
-                break;
-            case 2:
-                dirToGo = agent.transform.right * -tanksController.LateralSpeed;
-                break;
-        }*/
 
         switch (rotateAxis) {
             case 1:
@@ -106,12 +137,12 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
         agent.transform.Rotate(rotateDir, Time.fixedDeltaTime * AgentRotationSpeed);*/
 
         // Movement Version 2
-        (agent as RobocodeAgentComponent).Rigidbody.MovePosition((agent as RobocodeAgentComponent).Rigidbody.position + (dirToGo * AgentMoveSpeed * Time.fixedDeltaTime));
+        agent.Rigidbody.MovePosition(agent.Rigidbody.position + (dirToGo * AgentMoveSpeed * Time.fixedDeltaTime));
         Quaternion turnRotation = Quaternion.Euler(0.0f, rotateDir.y * Time.fixedDeltaTime * AgentRotationSpeed, 0.0f);
-        (agent as RobocodeAgentComponent).Rigidbody.MoveRotation((agent as RobocodeAgentComponent).Rigidbody.rotation * turnRotation);
+        agent.Rigidbody.MoveRotation(agent.Rigidbody.rotation * turnRotation);
         
         // Turrent rotation
-        (agent as RobocodeAgentComponent).Turret.transform.Rotate(rotateTurrentDir, Time.fixedDeltaTime * AgentTurrentRotationSpeed);
+        agent.Turret.transform.Rotate(rotateTurrentDir, Time.fixedDeltaTime * AgentTurrentRotationSpeed);
     }
 
     void ShootMissile(AgentComponent agent, ActionBuffers actionBuffers) {
@@ -137,47 +168,42 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
         }
     }
 
-    // Old controllers START
-    void MoveAgentsWithController1() {
+
+    void MoveAgentsWithController1(AgentComponent[] agents) {
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
-        horizontalInput = 1f;
-        verticalInput = 1f;
 
-        for (int i = 0; i < Agents.Length; i++) {
-            Agents[i].transform.Translate(Vector3.forward * Time.fixedDeltaTime * verticalInput * AgentMoveSpeed);
-            Agents[i].transform.Rotate(Vector3.up, horizontalInput * Time.fixedDeltaTime * AgentRotationSpeed);
-
+        foreach (RobocodeAgentComponent agent in agents) {
+            agent.transform.Translate(Vector3.forward * Time.fixedDeltaTime * verticalInput * AgentMoveSpeed);
+            agent.transform.Rotate(Vector3.up, horizontalInput * Time.fixedDeltaTime * AgentRotationSpeed);
         }
     }
 
-    void MoveAgentsWithController2() {
+    void MoveAgentsWithController2(AgentComponent[] agents) {
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
 
-        horizontalInput = 1f;
-        verticalInput = 1f;
-
-        for (int i = 0; i < Agents.Length; i++) { 
-            Vector3 moveDirection = Agents[i].transform.forward * verticalInput * AgentMoveSpeed * Time.fixedDeltaTime;
-            (Agents[i] as RobocodeAgentComponent).Rigidbody.MovePosition((Agents[i] as RobocodeAgentComponent).Rigidbody.position + moveDirection);
+        foreach(RobocodeAgentComponent agent in agents) {
+            Vector3 moveDirection = agent.transform.forward * verticalInput * AgentMoveSpeed * Time.fixedDeltaTime;
+            agent.Rigidbody.MovePosition(agent.Rigidbody.position + moveDirection);
 
             float rotation = horizontalInput * AgentRotationSpeed * Time.fixedDeltaTime;
             Quaternion turnRotation = Quaternion.Euler(0.0f, rotation, 0.0f);
-            (Agents[i] as RobocodeAgentComponent).Rigidbody.MoveRotation((Agents[i] as RobocodeAgentComponent).Rigidbody.rotation * turnRotation);
+            agent.Rigidbody.MoveRotation(agent.Rigidbody.rotation * turnRotation);
         }
     }
 
-    void AgentsShoot() {
+    void AgentsShoot(AgentComponent[] agents) {
         GameObject obj;
         Rigidbody rb;
         MissileComponent mc;
-        for (int i = 0; i < Agents.Length; i++) {
-            if (Util.rnd.NextDouble() > 0.5f && (Agents[i] as RobocodeAgentComponent).NextShootTime <= CurrentSimulationTime) {
-                Vector3 spawnPosition = (Agents[i] as RobocodeAgentComponent).MissileSpawnPoint.transform.position;
-                Quaternion spawnRotation = Agents[i].transform.rotation;
+        
+        foreach (RobocodeAgentComponent agent in agents) {
+            if (Util.rnd.NextDouble() > 0.5f && agent.NextShootTime <= CurrentSimulationTime) {
+                Vector3 spawnPosition = agent.MissileSpawnPoint.transform.position;
+                Quaternion spawnRotation = agent.Turret.transform.rotation;
 
-                Vector3 localXDir = (Agents[i] as RobocodeAgentComponent).MissileSpawnPoint.transform.TransformDirection(Vector3.forward);
+                Vector3 localXDir = agent.MissileSpawnPoint.transform.TransformDirection(Vector3.forward);
                 Vector3 velocity = localXDir * MissleLaunchSpeed;
 
                 //Instantiate object
@@ -186,14 +212,19 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
                 rb = obj.GetComponent<Rigidbody>();
                 rb.velocity = velocity;
                 mc = obj.GetComponent<MissileComponent>();
-                mc.Parent = Agents[i];
+                mc.Parent = agent;
                 mc.RobocodeEnvironmentController = this;
-                (Agents[i] as RobocodeAgentComponent).NextShootTime = CurrentSimulationTime + MissileShootCooldown;
+                agent.NextShootTime = CurrentSimulationTime + MissileShootCooldown;
             }
         }
     }
 
-    // Old controllers END
+    void AgentsMoveTurret(AgentComponent[] agents) {
+        foreach(RobocodeAgentComponent agent in agents) {
+            Vector3 rotateTurrentDir = agent.transform.up * TurretMoveDir;
+            agent.Turret.transform.Rotate(rotateTurrentDir, Time.fixedDeltaTime * AgentTurrentRotationSpeed);
+        }
+    }
 
     public void AddSurvivalFitnessBonus() {
         bool lastSurvival = GetNumOfActiveAgents() > 1? false: true;
