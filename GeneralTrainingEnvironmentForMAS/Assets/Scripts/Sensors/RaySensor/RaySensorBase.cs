@@ -183,13 +183,13 @@ public abstract class RaySensorBase : Sensor<SensorPerceiveOutput[]> {
             var rayInput = GetRayPerceptionInput();
             rayInput.DetectableTags = null;
             for (var rayIndex = 0; rayIndex < rayInput.Angles.Count; rayIndex++) {
-                var rayOutput = RayPerceptionSensor.PerceiveSingleRay(rayInput, rayIndex);
+                var rayOutput = PerceiveSingleRay(rayInput, rayIndex);
                 DrawRaycastGizmos(rayOutput);
             }
         }
     }
 
-    void DrawRaycastGizmos(RayPerceptionOutput.RayOutput rayOutput, float alpha = 1.0f) {
+    void DrawRaycastGizmos(SensorPerceiveOutput rayOutput, float alpha = 1.0f) {
         var startPositionWorld = rayOutput.StartPositionWorld;
         var endPositionWorld = rayOutput.EndPositionWorld;
         var rayDirection = endPositionWorld - startPositionWorld;
@@ -204,7 +204,7 @@ public abstract class RaySensorBase : Sensor<SensorPerceiveOutput[]> {
 
         // Draw the hit point as a sphere. If using rays to cast (0 radius), use a small sphere.
         if (rayOutput.HasHit) {
-            var hitRadius = Mathf.Max(rayOutput.ScaledCastRadius, .05f);
+            var hitRadius = Mathf.Max(SphereCastRadius, .05f);
             Gizmos.DrawWireSphere(startPositionWorld + rayDirection, hitRadius);
         }
     }

@@ -9,6 +9,6 @@ public class RaySensor2D : RaySensorBase {
     }
 
     public override RayPerceptionCastType GetCastType() {
-        return RayPerceptionCastType.Cast3D;
+        return RayPerceptionCastType.Cast2D;
     }
 }

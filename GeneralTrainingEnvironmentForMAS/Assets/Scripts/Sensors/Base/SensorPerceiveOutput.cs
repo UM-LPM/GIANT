@@ -12,5 +12,5 @@ public class SensorPerceiveOutput {
     public float HitFraction;
     public GameObject[] HitGameObjects;
     public Vector3 StartPositionWorld;
-    public Vector2 EndPositionWorld;
+    public Vector3 EndPositionWorld;
 }
