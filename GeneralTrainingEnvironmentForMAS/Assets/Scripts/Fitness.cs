@@ -57,6 +57,7 @@ public class FitnessIndividual {
 
     public FitnessIndividual() {
         IndividualId = -1;
+        Fitness = new Fitness();
     }
 
     public FitnessIndividual(int individualId) { 

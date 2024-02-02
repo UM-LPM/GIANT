@@ -19,7 +19,7 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
     [SerializeField] GameObject MissilePrefab;
     [SerializeField] MissileController MissileController;
     [SerializeField] int AgentStartHealth = 10;
-    [SerializeField] GameScenarioType GameScenarioType = GameScenarioType.Normal;
+    [SerializeField] RobocodeGameScenarioType GameScenarioType = RobocodeGameScenarioType.Normal;
 
     float AgentMoveSpeed = 5f;
     float AgentRotationSpeed = 80f;
@@ -35,6 +35,11 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
     protected override void DefineAdditionalDataOnStart() {
         foreach (RobocodeAgentComponent agent in Agents) {
             agent.Health =  AgentStartHealth;
+            agent.Rigidbody = agent.GetComponent<Rigidbody>();
+        }
+
+        foreach (RobocodeAgentComponent agent in AgentsPredefinedBehaviour) {
+            agent.Health = AgentStartHealth;
             agent.Rigidbody = agent.GetComponent<Rigidbody>();
         }
     }
@@ -234,10 +239,10 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
         }
     }
 
-    public void AddSurvivalFitnessBonus() {
+    public void AddSurvivalFitnessBonus(AgentComponent[] agents) {
         bool lastSurvival = GetNumOfActiveAgents() > 1? false: true;
         // Survival bonus
-        foreach (var agent in Agents) {
+        foreach (RobocodeAgentComponent agent in agents) {
             if (agent.gameObject.activeSelf) {
                 agent.AgentFitness.Fitness.UpdateFitness(RobocodeFitness.SURVIVAL_BONUS);
 
@@ -274,11 +279,13 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
 
         if (rba.Health <= 0) {
             switch (GameScenarioType) {
-                case GameScenarioType.Normal:
+                case RobocodeGameScenarioType.Normal:
                     hitAgent.gameObject.SetActive(false);
-                    AddSurvivalFitnessBonus();
+                    AddSurvivalFitnessBonus(Agents);
+                    AddSurvivalFitnessBonus(AgentsPredefinedBehaviour);
+                    CheckEndingState();
                     break;
-                case GameScenarioType.Deathmatch:
+                case RobocodeGameScenarioType.Deathmatch:
                     missile.Parent.AgentFitness.Fitness.UpdateFitness(RobocodeFitness.TANK_DESTROYED_BONUS);
                     hitAgent.AgentFitness.Fitness.UpdateFitness(RobocodeFitness.DEATH_PENALTY);
                     RespawnAgent(hitAgent);
@@ -314,7 +321,7 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
 
 }
 
-public enum GameScenarioType {
+public enum RobocodeGameScenarioType {
     Normal,
     Deathmatch
 }

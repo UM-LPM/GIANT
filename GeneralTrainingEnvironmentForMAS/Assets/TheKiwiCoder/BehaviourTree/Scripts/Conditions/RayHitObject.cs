@@ -23,6 +23,13 @@ public enum TargetGameObject {
     Agent,
     Wall,
     Obstacle,
+    Target1,
+    Target2,
+    Target3,
+    Target4,
+    Target5,
+    Target6,
+    Target7,
     Unknown
 }
 
@@ -79,6 +86,20 @@ public class RayHitObject : ConditionNode {
                 return "Wall";
             case TargetGameObject.Obstacle:
                 return "Obstacle";
+            case TargetGameObject.Target1:
+                return "Target1";
+            case TargetGameObject.Target2:
+                return "Target2";
+            case TargetGameObject.Target3:
+                return "Target3";
+            case TargetGameObject.Target4:
+                return "Target4";
+            case TargetGameObject.Target5:
+                return "Target5";
+            case TargetGameObject.Target6:
+                return "Target6";
+            case TargetGameObject.Target7:
+                return "Target7";
         }
         return "";
     }
@@ -91,6 +112,20 @@ public class RayHitObject : ConditionNode {
                 return TargetGameObject.Wall;
             case "Obstacle":
                 return TargetGameObject.Obstacle;
+            case "Target1":
+                return TargetGameObject.Target1;
+            case "Target2":
+                return TargetGameObject.Target2;
+            case "Target3":
+                return TargetGameObject.Target3;
+            case "Target4":
+                return TargetGameObject.Target4;
+            case "Target5":
+                return TargetGameObject.Target5;
+            case "Target6":
+                return TargetGameObject.Target6;
+            case "Target7":
+                return TargetGameObject.Target7;
         }
 
         return TargetGameObject.Unknown;

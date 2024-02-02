@@ -217,6 +217,19 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
             Agents[i].BehaviourTree.Bind(BehaviourTree.CreateBehaviourTreeContext(Agents[i].gameObject));
 
         }
+
+        // Clone BTs of agents with predefined behaviour and bind them
+        for (int i = 0; i < AgentsPredefinedBehaviour.Length; i++) {
+            if(!ManualAgentPredefinedBehaviourControl) {
+                if(AgentsPredefinedBehaviour[i].BehaviourTree == null) {
+                    UnityEngine.Debug.LogError("Behaviour tree for agent with predefined behaviour not set");
+                }
+                else {
+                    AgentsPredefinedBehaviour[i].BehaviourTree = AgentsPredefinedBehaviour[i].BehaviourTree.Clone();
+                    AgentsPredefinedBehaviour[i].BehaviourTree.Bind(BehaviourTree.CreateBehaviourTreeContext(AgentsPredefinedBehaviour[i].gameObject));
+                }
+            }
+        }
     }
 
     protected virtual void DefineAdditionalDataOnStart() { }
@@ -257,12 +270,31 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
 
     GroupFitness[] GetAgentFitnesses() {
         GroupFitness[] FitnessGroups = new GroupFitness[1];
-        FitnessGroups[0] = new GroupFitness(Agents.Length);
 
-        float minimizer = MinimizeResults ? -1.0f : 1.0f;
-        for (int i = 0; i < Agents.Length; i++) {
-            Agents[i].AgentFitness.Fitness.SetFitness(Agents[i].AgentFitness.Fitness.GetFitness() * minimizer);
-            FitnessGroups[0].FitnessIndividuals[i] =  Agents[i].AgentFitness;
+         float minimizer = MinimizeResults ? -1.0f : 1.0f;
+
+        // Based on BtLoadMode set fitness
+        // BTLoadMode.Full -> Each agents fitness corresponds to one FitnesIndividual
+        // BTLoadMode.Single -> All agents fitnesses corresponds to the same FitnessIndividual
+        if (BTLoadMode == BTLoadMode.Full) {
+            FitnessGroups[0] = new GroupFitness(Agents.Length);
+            for (int i = 0; i < Agents.Length; i++) {
+                Agents[i].AgentFitness.Fitness.SetFitness(Agents[i].AgentFitness.Fitness.GetFitness() * minimizer);
+
+                FitnessGroups[0].FitnessIndividuals[i] = Agents[i].AgentFitness;
+            }
+        }
+        else if (BTLoadMode == BTLoadMode.Single) {
+            FitnessGroups[0] = new GroupFitness(1);
+            FitnessIndividual fitnessIndividual = new FitnessIndividual();
+            for (int i = 0; i < Agents.Length; i++) {
+                Agents[i].AgentFitness.Fitness.SetFitness(Agents[i].AgentFitness.Fitness.GetFitness() * minimizer);
+
+                fitnessIndividual.Fitness.UpdateFitness(Agents[i].AgentFitness.Fitness.GetFitness());
+            }
+
+            fitnessIndividual.IndividualId = Agents[0].AgentFitness.IndividualId; // All agents have the same individual Id
+            FitnessGroups[0].FitnessIndividuals[0] = fitnessIndividual;
         }
 
         return FitnessGroups;
@@ -276,7 +308,18 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
                 counter++;
         }
 
+        foreach (var agent in AgentsPredefinedBehaviour) {
+            if (agent.gameObject.activeSelf)
+                counter++;
+        }
+
         return counter;
+    }
+
+    public virtual void CheckEndingState() {
+        if (GetNumOfActiveAgents() == 1) {
+            FinishGame();
+        }
     }
 
     public abstract void UpdateAgents();
