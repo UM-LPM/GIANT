@@ -18,7 +18,7 @@ public class SoccerEnvironmentController : EnvironmentControllerBase {
 
     SoccerBallComponent SoccerBall;
 
-    private ActionBuffers ActionBuffersManual;
+    private ActionBuffer ActionBufferManual;
     GoalComponent GoalPurple;
     GoalComponent GoalBlue;
 
@@ -49,8 +49,8 @@ public class SoccerEnvironmentController : EnvironmentControllerBase {
     }
 
     void OnGameInput() {
-        ActionBuffersManual = new ActionBuffers(null, new int[] { 0, 0, 0}); // Forward, Side, Rotate
-        var discreteActionsOut = ActionBuffersManual.DiscreteActions;
+        ActionBufferManual = new ActionBuffer(null, new int[] { 0, 0, 0}); // Forward, Side, Rotate
+        var discreteActionsOut = ActionBufferManual.DiscreteActions;
         //forward
         if (Input.GetKey(KeyCode.W)) {
             discreteActionsOut[0] = 1;
@@ -75,30 +75,30 @@ public class SoccerEnvironmentController : EnvironmentControllerBase {
     }
 
     void MoveAgentsManualInput(AgentComponent[] agents) {
-        if(ActionBuffersManual.DiscreteActions.Length == 0)
+        if(ActionBufferManual.DiscreteActions.Length == 0)
             return;
 
         foreach (SoccerAgentComponent agent in agents) {
             if(agent.gameObject.activeSelf) {
-                MoveAgent(agent, ActionBuffersManual);
+                MoveAgent(agent, ActionBufferManual);
             }
         }
     }
 
     void UpdateAgentsWithBTs(AgentComponent[] agents) {
-        ActionBuffers actionBuffers;
+        ActionBuffer actionBuffer;
         foreach (SoccerAgentComponent agent in agents) {
             if (agent.gameObject.activeSelf) {
-                actionBuffers = new ActionBuffers(null, new int[] { 0, 0, 0}); // Forward, Side, Rotate
+                actionBuffer = new ActionBuffer(null, new int[] { 0, 0, 0}); // Forward, Side, Rotate
 
-                agent.BehaviourTree.UpdateTree(actionBuffers);
-                MoveAgent(agent, actionBuffers);
+                agent.BehaviourTree.UpdateTree(actionBuffer);
+                MoveAgent(agent, actionBuffer);
             }
         }
     }
 
 
-    void MoveAgent(SoccerAgentComponent agent, ActionBuffers actionBuffer) {
+    void MoveAgent(SoccerAgentComponent agent, ActionBuffer actionBuffer) {
         var dirToGo = Vector3.zero;
         var rotateDir = Vector3.zero;
 

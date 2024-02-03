@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 
 namespace TheKiwiCoder {
+    // TODO Meant for Heterogenous agents
     [CreateAssetMenu(menuName ="BTs/Behaviour Tree Group")]
     public class BehaviourTreeGroup : ScriptableObject {
         public BehaviourTree[] BehaviourTrees;

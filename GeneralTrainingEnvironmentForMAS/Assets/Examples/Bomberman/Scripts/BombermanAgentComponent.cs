@@ -91,6 +91,7 @@ public class BombermanAgentComponent : AgentComponent {
 
     void OnDeathSequnceEnded() {
         gameObject.SetActive(false);
+        BombermanEnvironmentController.CheckEndingState();
     }
 
     public void AddBomb() {

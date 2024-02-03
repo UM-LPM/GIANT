@@ -87,20 +87,20 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
     }
 
     void UpdateAgentsWithBTs(AgentComponent[] agents) {
-        ActionBuffers actionBuffers;
+        ActionBuffer actionBuffer;
         foreach(RobocodeAgentComponent agent in agents) {
             if (agent.gameObject.activeSelf) {
-                actionBuffers = new ActionBuffers(null, new int[] { 0, 0, 0, 0, 0 }); // Forward, Side, Rotate, TurrentRotation, Shoot
+                actionBuffer = new ActionBuffer(null, new int[] { 0, 0, 0, 0, 0 }); // Forward, Side, Rotate, TurrentRotation, Shoot
 
-                agent.BehaviourTree.UpdateTree(actionBuffers);
-                MoveAgent(agent, actionBuffers);
-                ShootMissile(agent, actionBuffers);
+                agent.BehaviourTree.UpdateTree(actionBuffer);
+                MoveAgent(agent, actionBuffer);
+                ShootMissile(agent, actionBuffer);
             }
         }
 
     }
 
-    void MoveAgent(RobocodeAgentComponent agent, ActionBuffers actionBuffer) {
+    void MoveAgent(RobocodeAgentComponent agent, ActionBuffer actionBuffer) {
         var dirToGo = Vector3.zero;
         var rotateDir = Vector3.zero;
         var rotateTurrentDir = Vector3.zero;
@@ -150,11 +150,11 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
         agent.Turret.transform.Rotate(rotateTurrentDir, Time.fixedDeltaTime * AgentTurrentRotationSpeed);
     }
 
-    void ShootMissile(AgentComponent agent, ActionBuffers actionBuffers) {
+    void ShootMissile(AgentComponent agent, ActionBuffer actionBuffer) {
         GameObject obj;
         Rigidbody rb;
         MissileComponent mc;
-        if (actionBuffers.DiscreteActions[4] == 1 && (agent as RobocodeAgentComponent).NextShootTime <= CurrentSimulationTime) {
+        if (actionBuffer.DiscreteActions[4] == 1 && (agent as RobocodeAgentComponent).NextShootTime <= CurrentSimulationTime) {
             Vector3 spawnPosition = (agent as RobocodeAgentComponent).MissileSpawnPoint.transform.position;
             Quaternion spawnRotation = (agent as RobocodeAgentComponent).Turret.transform.rotation;
 

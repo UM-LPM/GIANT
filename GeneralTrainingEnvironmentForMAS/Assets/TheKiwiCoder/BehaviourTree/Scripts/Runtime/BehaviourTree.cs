@@ -102,7 +102,7 @@ namespace TheKiwiCoder {
             return Context.CreateFromGameObject(agentGameObject);
         }
 
-        public void UpdateTree(in ActionBuffers actionsOut) {
+        public void UpdateTree(in ActionBuffer actionsOut) {
             blackboard.actionsOut = actionsOut;
             Update();
             //UpdateEnchanced();

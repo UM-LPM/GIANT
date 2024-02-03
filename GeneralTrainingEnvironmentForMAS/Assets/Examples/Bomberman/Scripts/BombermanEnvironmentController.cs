@@ -225,20 +225,20 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
     }
 
     public void UpdateAgentsWithBTs(AgentComponent[] agents) {
-        ActionBuffers actionBuffers;
+        ActionBuffer actionBuffer;
         foreach(BombermanAgentComponent agent in agents) { 
             if (agent.gameObject.activeSelf && agent.enabled) {
-                actionBuffers = new ActionBuffers(null, new int[] { 0, 0, 0 }); // Forward, Side, Place bomb
+                actionBuffer = new ActionBuffer(null, new int[] { 0, 0, 0 }); // Forward, Side, Place bomb
 
-                agent.BehaviourTree.UpdateTree(actionBuffers);
+                agent.BehaviourTree.UpdateTree(actionBuffer);
 
-                MoveAgent(agent, actionBuffers);
-                PlaceBomb(agent, actionBuffers);
+                MoveAgent(agent, actionBuffer);
+                PlaceBomb(agent, actionBuffer);
             }
         }
     }
 
-    public void MoveAgent(BombermanAgentComponent agent, ActionBuffers actionBuffers) {
+    public void MoveAgent(BombermanAgentComponent agent, ActionBuffer actionBuffers) {
 
         // Set direction
         var verticalAxis = actionBuffers.DiscreteActions[0];
@@ -282,8 +282,8 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
         }
     }
 
-    public void PlaceBomb(BombermanAgentComponent agent, ActionBuffers actionBuffers) {
-        if (agent.BombsRemaining > 0 && actionBuffers.DiscreteActions[2] == 1) {
+    public void PlaceBomb(BombermanAgentComponent agent, ActionBuffer actionBuffer) {
+        if (agent.BombsRemaining > 0 && actionBuffer.DiscreteActions[2] == 1) {
             StartCoroutine(BombExplosionController.PlaceBomb(agent));
         }
     }
