@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 
 [Serializable]
-public class GameScenario {
+public class AgentScenario {
     public string AgentSceneName;
     public BTLoadMode BTLoadMode;
 }

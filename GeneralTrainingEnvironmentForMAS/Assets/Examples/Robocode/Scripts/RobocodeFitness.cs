@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 public class RobocodeFitness: Fitness {
 
-    public static int MISSILE_HIT_TANK = 2;
-    public static int TANK_HIT_BY_ROCKET = -3;
+    public static int MISSILE_HIT_TANK = 4;
+    public static int TANK_HIT_BY_ROCKET = -8;
     public static int MISSILE_HIT_OBSTACLE = -2;
     public static int SURVIVAL_BONUS = 50;
     public static int LAST_SURVIVAL_BONUS = 20;

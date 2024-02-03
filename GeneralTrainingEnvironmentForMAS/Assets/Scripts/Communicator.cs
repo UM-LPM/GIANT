@@ -14,7 +14,7 @@ public class Communicator : MonoBehaviour {
     [SerializeField] private string BtSource;
     [SerializeField] private string GameSceneName;
     
-    [SerializeField] GameScenario[] GameScenarios;
+    [SerializeField] AgentScenario[] AgentScenarios;
 
     [SerializeField] private float TimeScale = 1f;
     [SerializeField] private int BatchSize = 1;
@@ -130,7 +130,7 @@ public class Communicator : MonoBehaviour {
         /////////////////////////////////////////////////////////////////
         //TODO Add support for different GameScene
 
-        foreach (GameScenario scenario in GameScenarios) {
+        foreach (AgentScenario scenario in AgentScenarios) {
             BTsLoaded = 0;
             // For each scenario all population must be evaluated
             while (BTsLoaded < PopBTs.Length) {
@@ -168,7 +168,7 @@ public class Communicator : MonoBehaviour {
         Debug.Log("PerformEvaluation function finished");
 
         // Only unload game scene if There were any game scenarios
-        if(GameScenarios.Length > 0 && PopBTs.Length > 0)
+        if(AgentScenarios.Length > 0 && PopBTs.Length > 0)
             SceneManager.UnloadSceneAsync(GameSceneName);
 
         // Based on FitnessStatisticType calculate fitness statistics
