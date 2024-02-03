@@ -13,7 +13,8 @@ using System.Linq;
 public class Communicator : MonoBehaviour {
     [SerializeField] private string BtSource;
     [SerializeField] private string GameSceneName;
-    
+
+    [SerializeField] GameScenario[] GameScenarios;
     [SerializeField] AgentScenario[] AgentScenarios;
 
     [SerializeField] private float TimeScale = 1f;
@@ -128,37 +129,49 @@ public class Communicator : MonoBehaviour {
         CurrentIndividualID = 0;
 
         /////////////////////////////////////////////////////////////////
-        //TODO Add support for different GameScene
+        foreach (GameScenario gameScenario in GameScenarios) {
+            SceneManager.LoadScene(gameScenario.GameSceneName);
 
-        foreach (AgentScenario scenario in AgentScenarios) {
-            BTsLoaded = 0;
-            // For each scenario all population must be evaluated
-            while (BTsLoaded < PopBTs.Length) {
-                while(!IsBatchExecuted()) {
-                    yield return null;
-                }
+            foreach (AgentScenario scenario in AgentScenarios) {
+                if (!scenario.ContainsGameScenario(gameScenario.GameSceneName))
+                    continue;
 
-                switch (scenario.BTLoadMode) {
-                    case BTLoadMode.Single:
-                        LoadGameScenarioSingle(scenario.AgentSceneName);
-                        break;
-                    case BTLoadMode.Full:
-                        LoadGameScenarioFull(scenario.AgentSceneName);
-                        break;
-                    case BTLoadMode.Custom:
-                        LoadGameScenarioCustom(scenario.AgentSceneName);
-                        break;
-                }
+                BTsLoaded = 0;
+                // For each scenario all population must be evaluated
+                while (BTsLoaded < PopBTs.Length) {
+                    while (!IsBatchExecuted(gameScenario.GameSceneName)) {
+                        yield return null;
+                    }
 
-                // Check if there is available layer
-                while (!CanUseAnotherLayer()) {
-                    BatchExecuting = true;
-                    yield return null;
+                    switch (scenario.BTLoadMode) {
+                        case BTLoadMode.Single:
+                            LoadAgentScenarioSingle(scenario.AgentSceneName);
+                            break;
+                        case BTLoadMode.Full:
+                            LoadAgentScenarioFull(scenario.AgentSceneName);
+                            break;
+                        case BTLoadMode.Custom:
+                            LoadAgentScenarioCustom(scenario.AgentSceneName);
+                            break;
+                    }
+
+                    // Check if there is available layer
+                    while (!CanUseAnotherLayer()) {
+                        BatchExecuting = true;
+                        yield return null;
+                    }
                 }
             }
+
+            // Wait for all agent scenarios for current game scenario be finished before continuing to the other one (To prevent collision detection problems)
+            while (NumberOfUsedLayeres() > 0) {
+                yield return null;
+            }
+
+            SceneManager.UnloadSceneAsync(gameScenario.GameSceneName);
         }
 
-        // Wait for all scene to finish when all different game scenarios have been loaded
+        // Wait for all scene to finish when all different game and agent scenarios have been loaded
         while (NumberOfUsedLayeres() > 0) {
             yield return null;
         }
@@ -168,8 +181,8 @@ public class Communicator : MonoBehaviour {
         Debug.Log("PerformEvaluation function finished");
 
         // Only unload game scene if There were any game scenarios
-        if(AgentScenarios.Length > 0 && PopBTs.Length > 0)
-            SceneManager.UnloadSceneAsync(GameSceneName);
+        //if(AgentScenarios.Length > 0 && PopBTs.Length > 0)
+        //    SceneManager.UnloadSceneAsync(GameSceneName);
 
         // Based on FitnessStatisticType calculate fitness statistics
         CalculateFitnessStatistics();
@@ -210,30 +223,30 @@ public class Communicator : MonoBehaviour {
         }
     }
 
-    bool IsBatchExecuted() {
+    bool IsBatchExecuted(string gameSceneName) {
         if(NumberOfUsedLayeres() == 0) {
             if(SceneManager.sceneCount > 1)
-                SceneManager.UnloadSceneAsync(GameSceneName);
-            SceneManager.LoadScene(GameSceneName);
+                SceneManager.UnloadSceneAsync(gameSceneName);
+            SceneManager.LoadScene(gameSceneName);
         }
         return true;
     }
 
-    void LoadGameScenarioSingle(string gameSceneName) {
+    void LoadAgentScenarioSingle(string agentSceneName) {
         while(BTsLoaded < PopBTs.Length && GetAndReserveAvailableLayer(BTsLoaded) >= 0) {
-            SceneManager.LoadScene(gameSceneName, LoadSceneMode.Additive);
+            SceneManager.LoadScene(agentSceneName, LoadSceneMode.Additive);
             BTsLoaded++;
         }
     }
 
-    void LoadGameScenarioFull(string gameSceneName) {
+    void LoadAgentScenarioFull(string agentSceneName) {
         if (GetAndReserveAvailableLayer(-1) >= 0) {
-            SceneManager.LoadScene(gameSceneName, LoadSceneMode.Additive);
+            SceneManager.LoadScene(agentSceneName, LoadSceneMode.Additive);
             BTsLoaded = PopBTs.Length;
         }
     }
 
-    void LoadGameScenarioCustom(string gameSceneName) {
+    void LoadAgentScenarioCustom(string agentSceneName) {
         // TODO Implement in future
     }
 
