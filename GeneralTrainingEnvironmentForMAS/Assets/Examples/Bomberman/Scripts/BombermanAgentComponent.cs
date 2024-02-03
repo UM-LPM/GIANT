@@ -86,7 +86,7 @@ public class BombermanAgentComponent : AgentComponent {
 
         SpriteRendererDeath.enabled = true;
 
-        Invoke(nameof(OnDeathSequnceEnded), 1.25f);
+        Invoke(nameof(OnDeathSequnceEnded), 0.5f);
     }
 
     void OnDeathSequnceEnded() {

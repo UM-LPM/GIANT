@@ -15,6 +15,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     [SerializeField] public BTLoadMode BTLoadMode;
     [SerializeField] public float AgentStartFitness;
     [SerializeField] public bool MinimizeResults = true; // If true lower fitness is better
+    [SerializeField] public LayerMask DefaultLayer = 0;
 
     [Header("Random Agent Initializaion Configuration")]
     [SerializeField] public bool RandomAgentInitialization = false;

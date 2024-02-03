@@ -63,6 +63,7 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
             agent.Health = StartHealth;
             agent.ExplosionRadius = StartExplosionRadius;
             agent.SetBombs(StartAgentBombAmout);
+            agent.SetDirection(Vector2.zero, agent.SpriteRendererDown);
         }
     }
 
@@ -112,7 +113,7 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
     void AgentsOverExplosion() {
         foreach (BombermanAgentComponent agent in Agents) {
             if (agent.gameObject.activeSelf && agent.enabled) {
-                Collider2D[] hitColliders = Physics2D.OverlapBoxAll(agent.transform.position, new Vector2(1 / 1.15f, 1 / 1.15f), 0f);
+                Collider2D[] hitColliders = Physics2D.OverlapBoxAll(agent.transform.position, new Vector2(1 / 1.15f, 1 / 1.15f), 0f, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)) + DefaultLayer);
 
                 foreach (Collider2D collider in hitColliders) {
                     ExplosionComponent explosion = collider.GetComponent<ExplosionComponent>();
@@ -186,7 +187,7 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
 
     bool AgentCanMove(BombermanAgentComponent agent) {
         Vector3 newPos = agent.transform.position + new Vector3(agent.MoveDirection.x, agent.MoveDirection.y, 0);
-        Collider2D[] hitColliders = Physics2D.OverlapBoxAll(newPos, new Vector2(1 / 1.15f, 1 / 1.15f), 0f);
+        Collider2D[] hitColliders = Physics2D.OverlapBoxAll(newPos, new Vector2(1 / 1.15f, 1 / 1.15f), 0f, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)) + DefaultLayer);
 
         foreach(Collider2D collider in hitColliders) {
             BombComponent bombComponent = collider.GetComponent<BombComponent>();
@@ -202,7 +203,7 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
 
     bool BombMove(BombComponent bomb, Vector3 pos, Vector2 moveDirection, int deep) {
         Vector3 newPos = pos + new Vector3(moveDirection.x, moveDirection.y, 0);
-        Collider2D[] hitColliders = Physics2D.OverlapBoxAll(newPos, new Vector2(1 / 1.15f, 1 / 1.15f), 0f);
+        Collider2D[] hitColliders = Physics2D.OverlapBoxAll(newPos, new Vector2(1 / 1.15f, 1 / 1.15f), 0f, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)) + DefaultLayer);
         if(hitColliders.Length > 0) {
             return deep > 0? true : false;
         }
@@ -213,7 +214,7 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
     }
 
     void CheckIfAgentOverPowerUp(BombermanAgentComponent agent) {
-        Collider2D[] hitColliders = Physics2D.OverlapBoxAll(agent.transform.position, new Vector2(1 / 1.15f, 1 / 1.15f), 0f);
+        Collider2D[] hitColliders = Physics2D.OverlapBoxAll(agent.transform.position, new Vector2(1 / 1.15f, 1 / 1.15f), 0f, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)) + DefaultLayer);
 
         foreach (Collider2D collider in hitColliders) {
             ItemPickupComponent itemPickup = collider.GetComponent<ItemPickupComponent>();
@@ -238,11 +239,11 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
         }
     }
 
-    public void MoveAgent(BombermanAgentComponent agent, ActionBuffer actionBuffers) {
+    public void MoveAgent(BombermanAgentComponent agent, ActionBuffer actionBuffer) {
 
         // Set direction
-        var verticalAxis = actionBuffers.DiscreteActions[0];
-        var horizontalAxis = actionBuffers.DiscreteActions[1];
+        var verticalAxis = actionBuffer.DiscreteActions[0];
+        var horizontalAxis = actionBuffer.DiscreteActions[1];
 
         switch (verticalAxis) {
             case 1:
