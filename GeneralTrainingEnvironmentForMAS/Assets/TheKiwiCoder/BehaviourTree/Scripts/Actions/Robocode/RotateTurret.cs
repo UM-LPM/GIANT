@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using global::TheKiwiCoder;
 
-public class RotateTurrent : ActionNode {
+public class RotateTurret : ActionNode {
 
     public RotateDirection rotateDirection = RotateDirection.Random;
 

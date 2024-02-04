@@ -199,8 +199,6 @@ public class SoccerEnvironmentController : EnvironmentControllerBase {
             Vector3 directionToTarget = (goal.transform.position - soccerBall.transform.position).normalized;
             float dotProduct = Vector3.Dot(soccerBall.Rigidbody.velocity.normalized, directionToTarget);
 
-            UnityEngine.Debug.Log(dotProduct);
-
             if (dotProduct > PassTolerance) {
                 // The object is moving towards the target
                 agent.AgentFitness.Fitness.UpdateFitness(SoccerFitness.PASS_TO_OPONENT_GOAL);

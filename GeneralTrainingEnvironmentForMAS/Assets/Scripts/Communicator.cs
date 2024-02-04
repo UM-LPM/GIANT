@@ -12,7 +12,6 @@ using System.Linq;
 
 public class Communicator : MonoBehaviour {
     [SerializeField] private string BtSource;
-    [SerializeField] private string GameSceneName;
 
     [SerializeField] GameScenario[] GameScenarios;
     [SerializeField] AgentScenario[] AgentScenarios;
@@ -179,10 +178,6 @@ public class Communicator : MonoBehaviour {
         /////////////////////////////////////////////////////////////////
 
         Debug.Log("PerformEvaluation function finished");
-
-        // Only unload game scene if There were any game scenarios
-        //if(AgentScenarios.Length > 0 && PopBTs.Length > 0)
-        //    SceneManager.UnloadSceneAsync(GameSceneName);
 
         // Based on FitnessStatisticType calculate fitness statistics
         CalculateFitnessStatistics();
