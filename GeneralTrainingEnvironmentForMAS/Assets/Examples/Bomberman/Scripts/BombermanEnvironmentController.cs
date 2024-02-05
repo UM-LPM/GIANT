@@ -44,7 +44,8 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
         else
             UpdateAgentsWithBTs(AgentsPredefinedBehaviour);
 
-        AgentsOverExplosion();
+        AgentsOverExplosion(Agents);
+        AgentsOverExplosion(AgentsPredefinedBehaviour);
     }
 
     protected override void OnUpdate() {
@@ -110,8 +111,8 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
 
     }
 
-    void AgentsOverExplosion() {
-        foreach (BombermanAgentComponent agent in Agents) {
+    void AgentsOverExplosion(AgentComponent[] agents) {
+        foreach (BombermanAgentComponent agent in agents) {
             if (agent.gameObject.activeSelf && agent.enabled) {
                 Collider2D[] hitColliders = Physics2D.OverlapBoxAll(agent.transform.position, new Vector2(1 / 1.15f, 1 / 1.15f), 0f, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)) + DefaultLayer);
 
@@ -119,7 +120,7 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
                     ExplosionComponent explosion = collider.GetComponent<ExplosionComponent>();
                     if (explosion != null) {
                         ExlosionHitAgent(agent, explosion);
-                        return;
+                        break;
                     }
                 }
             }

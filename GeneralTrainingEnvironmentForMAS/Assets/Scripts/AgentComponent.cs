@@ -13,9 +13,11 @@ public class AgentComponent : MonoBehaviour {
     [field: SerializeField]
     public BehaviourTree BehaviourTree { get; set; }
     public FitnessIndividual AgentFitness { get; set; }
+    public Vector3 StartOffset { get; set; }
 
     private void Awake() {
         AgentFitness = new FitnessIndividual();
+        StartOffset = transform.parent.position;
 
         DefineAdditionalDataOnAwake();
     }
