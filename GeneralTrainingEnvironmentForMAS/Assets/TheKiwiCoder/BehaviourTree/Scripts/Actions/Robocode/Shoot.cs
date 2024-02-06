@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using global::TheKiwiCoder;
+﻿using TheKiwiCoder;
 
 public class Shoot : ActionNode {
 
@@ -19,4 +15,3 @@ public class Shoot : ActionNode {
         return State.Success;
     }
 }
-

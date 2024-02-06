@@ -24,8 +24,15 @@ public class SoccerEnvironmentController : EnvironmentControllerBase {
 
     protected override void DefineAdditionalDataOnAwake() {
         SoccerBall = GetComponentInChildren<SoccerBallComponent>();
-        GoalBlue = FindObjectsByType<GoalComponent>(FindObjectsSortMode.InstanceID).Where(a => a.Team == Team.Blue).First();
-        GoalPurple = FindObjectsByType<GoalComponent>(FindObjectsSortMode.InstanceID).Where(a => a.Team == Team.Purple).First();
+
+        if (SceneLoadMode == SceneLoadMode.LayerMode) {
+            GoalBlue = FindObjectsByType<GoalComponent>(FindObjectsSortMode.InstanceID).Where(a => a.Team == Team.Blue).First();
+            GoalPurple = FindObjectsByType<GoalComponent>(FindObjectsSortMode.InstanceID).Where(a => a.Team == Team.Purple).First();
+        }
+        else {
+            GoalBlue = GetComponentsInChildren<GoalComponent>().Where(a => a.Team == Team.Blue).First();
+            GoalPurple = GetComponentsInChildren<GoalComponent>().Where(a => a.Team == Team.Purple).First();
+        }
     }
 
     protected override void OnUpdate() {

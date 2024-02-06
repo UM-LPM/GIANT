@@ -16,6 +16,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     [SerializeField] public float AgentStartFitness;
     [SerializeField] public bool MinimizeResults = true; // If true lower fitness is better
     [SerializeField] public LayerMask DefaultLayer = 0;
+    [SerializeField] GameObject Environment;
 
     [Header("Random Agent Initializaion Configuration")]
     [SerializeField] public bool RandomAgentInitialization = false;
@@ -34,24 +35,40 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     protected float CurrentSimulationTime;
     protected GameState GameState;
     protected Util Util;
+
     protected LayerBTIndex LayerBTIndex;
+    protected GridCell GridCell;
+    protected SceneLoadMode SceneLoadMode;
 
     public class OnGameFinishedEventargs : EventArgs {
         public GroupFitness[] FitnessGroups;
         public int LayerId;
+        public GridCell GridCell;
     }
 
     protected virtual void Awake() {
         GameState = GameState.IDLE;
         Util = GetComponent<Util>();
 
+        SceneLoadMode = Communicator.Instance.SceneLoadMode;
+
+        if (SceneLoadMode == SceneLoadMode.LayerMode) {
+            LayerBTIndex = Communicator.Instance.GetReservedLayer();
+            if(Environment != null)
+                Environment.SetActive(false);
+        }
+        else {
+            GridCell = Communicator.Instance.GetReservedGridCell();
+            transform.position = GridCell.GridCellPosition; // Check if this must go to Awake method
+            Environment.SetActive(true);
+        }
+
         DefineAdditionalDataOnAwake();
     }
 
     protected virtual void Start() {
-        LayerBTIndex = Communicator.Instance.GetReservedLayer();
 
-        GetAgentBehaviourTrees();
+        GetAgentBehaviourTrees(SceneLoadMode == SceneLoadMode.LayerMode? LayerBTIndex.BTIndex : GridCell.BTIndex);
 
         if (RandomAgentInitialization) {
             InitializeRandomAgents();
@@ -63,7 +80,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
 
         AssignBehaviourTrees();
 
-        InitializeFitness();
+        InitializeFitness(SceneLoadMode == SceneLoadMode.LayerMode ? LayerBTIndex.BTIndex : GridCell.BTIndex);
 
         DefineAdditionalDataOnStart();
 
@@ -88,8 +105,8 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
         OnFixedUpdate();
     }
 
-    void GetAgentBehaviourTrees() {
-        int startIndex = BTLoadMode == BTLoadMode.Single? LayerBTIndex.BTIndex : - 1; // TODO update this if BTLoadMode == Single | Custom 
+    void GetAgentBehaviourTrees(int BTIndex) {
+        int startIndex = BTLoadMode == BTLoadMode.Single? BTIndex : - 1; // TODO update this if BTLoadMode == Single | Custom 
         int endIdex = -1; // TODO update this if BTLoadMode == Custom
         AgentBehaviourTrees = Communicator.Instance.GetBehaviourTrees(BTLoadMode, startIndex, endIdex);
         if(AgentBehaviourTrees == null || AgentBehaviourTrees.Length == 0 ) {
@@ -162,32 +179,33 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
             return;
         }
         IndividualId = Communicator.Instance.GetCurrentIndividualID();
-        SetLayerRecursively(this.gameObject, LayerBTIndex.LayerId);
+        
+        SetLayerRecursively(this.gameObject, SceneLoadMode == SceneLoadMode.LayerMode? LayerBTIndex.LayerId: GridCell.Layer);
     }
 
     void DefineAgents() {
-        Agents = FindObjectsOfType<AgentComponent>();
+        Agents = GetComponentsInChildren<AgentComponent>(); // FindObjectsOfType<AgentComponent>();
         List<AgentComponent> agentsInLayer = new List<AgentComponent>();
         List<AgentComponent> agentsPredefinedBehaviourInLayer = new List<AgentComponent>();
 
         for (int i = 0; i < Agents.Length; i++) {
             // Find agents that are on the same layer and don't have predefined behaviour
-            if (Agents[i].gameObject.layer == gameObject.layer) {
+            //if (Agents[i].gameObject.layer == gameObject.layer) {
                 if(Agents[i].HasPredefinedBehaviour)
                     agentsPredefinedBehaviourInLayer.Add(Agents[i]);
                 else
                     agentsInLayer.Add(Agents[i]);
-            }
+            //}
         }
         Agents = agentsInLayer.ToArray();
         AgentsPredefinedBehaviour = agentsPredefinedBehaviourInLayer.ToArray();
     }
 
-    void InitializeFitness() {
+    void InitializeFitness(int BTIndex) {
         for (int i = 0; i < Agents.Length; i++) {
             switch (BTLoadMode) {
                 case BTLoadMode.Single:
-                    Agents[i].AgentFitness = new FitnessIndividual(LayerBTIndex.BTIndex, AgentStartFitness);
+                    Agents[i].AgentFitness = new FitnessIndividual(BTIndex, AgentStartFitness);
                     break;
                 case BTLoadMode.Full:
                     Agents[i].AgentFitness = new FitnessIndividual(i, AgentStartFitness);
@@ -250,7 +268,8 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
             // Send event about finished game
             OnGameFinished?.Invoke(this, new OnGameFinishedEventargs() {
                 FitnessGroups = GetAgentFitnesses(),
-                LayerId = gameObject.layer
+                LayerId = gameObject.layer,
+                GridCell = GridCell
             });
 
             if (Debug) {
