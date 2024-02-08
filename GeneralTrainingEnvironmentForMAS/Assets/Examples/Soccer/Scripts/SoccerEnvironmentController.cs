@@ -143,7 +143,8 @@ public class SoccerEnvironmentController : EnvironmentControllerBase {
                 break;
         }
 
-        agent.transform.Rotate(rotateDir, Time.fixedDeltaTime * AgentRotationSpeed);
+        Quaternion turnRotation = Quaternion.Euler(0.0f, rotateDir.y * Time.fixedDeltaTime * AgentRotationSpeed, 0.0f);
+        agent.Rigidbody.MoveRotation(agent.Rigidbody.rotation * turnRotation);
         agent.Rigidbody.AddForce(dirToGo * AgentRunSpeed, ForceMode.VelocityChange);
     }
 
