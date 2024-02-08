@@ -126,6 +126,8 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
         int counter = 0;
         while (counter < AgentBehaviourTrees.Length) {
             spawnPos = GetAgentRandomSpawnPoint();
+            if(SceneLoadMode == SceneLoadMode.GridMode)
+                spawnPos += GridCell.GridCellPosition;
 
             rotation = GetAgentRandomRotation();
 
