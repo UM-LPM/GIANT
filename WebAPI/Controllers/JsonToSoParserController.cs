@@ -10,7 +10,7 @@ namespace WebAPI.Controllers {
         [HttpPost]
         public async Task<IActionResult> ParseJson([FromBody] TreeModel[] treeModels) {
             try {
-                string filePath = @"C:\Users\marko\UnityProjects\GeneralTrainingEnvironmentForMAS\GeneralTrainingEnvironmentForMAS\Assets\Resources\SoccerBts\";
+                string filePath = @"C:\Users\marko\UnityProjects\GeneralTrainingEnvironmentForMAS\GeneralTrainingEnvironmentForMAS\Assets\Resources\RobocodeBts\";
 
                 ClearFolder(filePath);
 

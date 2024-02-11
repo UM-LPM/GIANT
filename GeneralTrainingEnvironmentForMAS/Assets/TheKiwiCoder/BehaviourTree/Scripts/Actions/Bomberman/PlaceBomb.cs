@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using TheKiwiCoder;
 
 public class PlaceBomb : ActionNode {
+
+    public int placeBomb = 1;
+
     protected override void OnStart() {
     }
 
@@ -14,7 +17,7 @@ public class PlaceBomb : ActionNode {
 
     protected override State OnUpdate() {
         var discreteActionsOut = blackboard.actionsOut.DiscreteActions;
-        discreteActionsOut[2] = 1;
+        discreteActionsOut[2] = placeBomb;
 
         return State.Success;
     }

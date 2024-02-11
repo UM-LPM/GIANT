@@ -19,7 +19,8 @@ public enum TargetGameObject2D {
 public class GridCellContainsObject : ConditionNode {
 
     public TargetGameObject2D targetGameObject;
-    public Vector2Int gridPosition;
+    public int gridPositionX;
+    public int gridPositionY;
 
     protected override void OnStart() {
     }
@@ -38,8 +39,8 @@ public class GridCellContainsObject : ConditionNode {
 
         bool gridContainsTarget = false;
 
-        if (sensorOutputs[gridPosition.x, gridPosition.y] != null && sensorOutputs[gridPosition.x, gridPosition.y].HasHit) {
-            foreach (GameObject obj in sensorOutputs[gridPosition.x, gridPosition.y].HitGameObjects) {
+        if (sensorOutputs[gridPositionX, gridPositionY] != null && sensorOutputs[gridPositionX, gridPositionY].HasHit) {
+            foreach (GameObject obj in sensorOutputs[gridPositionX, gridPositionY].HitGameObjects) {
                 switch (targetGameObject) {
                     case TargetGameObject2D.Agent:
                         if (obj.GetComponent<BombermanAgentComponent>() != null) {

@@ -186,21 +186,21 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     }
 
     void DefineAgents() {
-        Agents = GetComponentsInChildren<AgentComponent>(); // FindObjectsOfType<AgentComponent>();
-        List<AgentComponent> agentsInLayer = new List<AgentComponent>();
-        List<AgentComponent> agentsPredefinedBehaviourInLayer = new List<AgentComponent>();
+        Agents = GetComponentsInChildren<AgentComponent>();
+        List<AgentComponent> activeAgents = new List<AgentComponent>();
+        List<AgentComponent> activeAgentsPredefinedBehaviour = new List<AgentComponent>();
 
         for (int i = 0; i < Agents.Length; i++) {
-            // Find agents that are on the same layer and don't have predefined behaviour
-            //if (Agents[i].gameObject.layer == gameObject.layer) {
-                if(Agents[i].HasPredefinedBehaviour)
-                    agentsPredefinedBehaviourInLayer.Add(Agents[i]);
+            // Get only agents that are active
+            if (Agents[i].gameObject.activeSelf) {
+                if (Agents[i].HasPredefinedBehaviour)
+                    activeAgentsPredefinedBehaviour.Add(Agents[i]);
                 else
-                    agentsInLayer.Add(Agents[i]);
-            //}
+                    activeAgents.Add(Agents[i]);
+            }
         }
-        Agents = agentsInLayer.ToArray();
-        AgentsPredefinedBehaviour = agentsPredefinedBehaviourInLayer.ToArray();
+        Agents = activeAgents.ToArray();
+        AgentsPredefinedBehaviour = activeAgentsPredefinedBehaviour.ToArray();
     }
 
     void InitializeFitness(int BTIndex) {

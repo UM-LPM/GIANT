@@ -2,6 +2,7 @@
 
 public class Shoot : ActionNode {
 
+    public int shoot = 1;
     protected override void OnStart() {
     }
 
@@ -10,7 +11,7 @@ public class Shoot : ActionNode {
 
     protected override State OnUpdate() {
         var discreteActionsOut = blackboard.actionsOut.DiscreteActions;
-        discreteActionsOut[4] = 1;
+        discreteActionsOut[4] = shoot;
 
         return State.Success;
     }

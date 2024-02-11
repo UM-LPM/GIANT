@@ -181,11 +181,16 @@ public class Communicator : MonoBehaviour {
             }
         }
         else if(SceneLoadMode == SceneLoadMode.GridMode) {
+            SceneManager.LoadScene(GameScenarios[0].GameSceneName); // Dummy scene for deterministic execution
             // In GridMode we don't load gameScenes as they are supposed to be inside of every scene
             foreach (AgentScenario scenario in AgentScenarios) {
                 BTsLoaded = 0;
                 // For each scenario all population must be evaluated
                 while (BTsLoaded < PopBTs.Length) {
+                    while (!Grid.IsBatchExecuted(GameScenarios[0].GameSceneName)) {
+                        yield return null;
+                    }
+
                     switch (scenario.BTLoadMode) {
                         case BTLoadMode.Single:
                             LoadAgentScenarioSingleGridMode(scenario.AgentSceneName);
@@ -209,6 +214,7 @@ public class Communicator : MonoBehaviour {
             while (Grid.NumberOfUsedGridCells() > 0) {
                 yield return null;
             }
+            SceneManager.UnloadSceneAsync(GameScenarios[0].GameSceneName);
         }
 
         /////////////////////////////////////////////////////////////////

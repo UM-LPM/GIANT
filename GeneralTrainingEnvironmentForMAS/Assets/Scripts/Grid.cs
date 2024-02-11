@@ -65,6 +65,15 @@ public class Grid {
         return null;
     }
 
+    public bool IsBatchExecuted(string gameSceneName) {
+        if (NumberOfUsedGridCells() == 0) {
+            if (SceneManager.sceneCount > 1)
+                SceneManager.UnloadSceneAsync(gameSceneName);
+            SceneManager.LoadScene(gameSceneName);
+        }
+        return true;
+    }
+
     public bool CanUseAnotherGridCell() {
         if (NumberOfUsedGridCells() >= (GridSize.x * GridSize.y * GridSize.z))
             return false;
