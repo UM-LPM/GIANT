@@ -52,6 +52,10 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
 
         SceneLoadMode = Communicator.Instance.SceneLoadMode;
 
+        // TODO Check if this is OK
+        //if (Environment != null)
+        //    Environment.SetActive(false);
+
         if (SceneLoadMode == SceneLoadMode.LayerMode) {
             LayerBTIndex = Communicator.Instance.GetReservedLayer();
             if(Environment != null)
@@ -131,7 +135,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
 
             rotation = GetAgentRandomRotation();
 
-            if (!SpawnPointSuitable(spawnPos, usedSpawnPoints)) {
+            if (!SpawnPointSuitable(spawnPos, rotation, usedSpawnPoints)) {
                 continue;
             }
 
@@ -155,8 +159,15 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
         return Quaternion.AngleAxis(Util.NextFloat(0, 360), new Vector3(0, 1, 0));
     }
 
-    public bool RespawnPointSuitable(Vector3 newRespawnPos) {
-        foreach(var agent in Agents) {
+    public bool RespawnPointSuitable(Vector3 newRespawnPos, Quaternion newRotation) {
+        Collider agentCol = AgentPrefab.GetComponent<Collider>();
+
+        Collider[] colliders = Physics.OverlapBox(newRespawnPos, agentCol.bounds.extents * 0.495f, newRotation, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)) + DefaultLayer);
+        if (colliders.Length > 0) {
+            return false;
+        }
+
+        foreach (var agent in Agents) {
             if (Vector3.Distance(newRespawnPos, agent.transform.position) < MinPlayerDistance) {
                 return false;
             }
@@ -164,12 +175,20 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
         return true;
     }
 
-    public bool SpawnPointSuitable(Vector3 newSpawnPos, List<Vector3> usedSpawnPoints) {
+    public virtual bool SpawnPointSuitable(Vector3 newSpawnPos, Quaternion newRotation, List<Vector3> usedSpawnPoints) {
+        Collider agentCol = AgentPrefab.GetComponent<Collider>();
+
+        Collider[] colliders = Physics.OverlapBox(newSpawnPos, agentCol.bounds.extents * 0.495f, newRotation, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)) + DefaultLayer);
+        if(colliders.Length > 0) {
+            return false;
+        }
+
         foreach (var usedSpawnPoint in usedSpawnPoints) {
             if (Vector3.Distance(newSpawnPos, usedSpawnPoint) < MinPlayerDistance) {
                 return false;
             }
         }
+
         return true;
     }
 

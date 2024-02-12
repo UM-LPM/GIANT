@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &361660638820219323
+--- !u!114 &134888824114975756
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: c63e3012-fb4a-4ce0-902e-926ccf78a99f
+  guid: 378b53cb-3258-4d86-af66-35f2ae88e774
   position: {x: 170, y: 0}
   blackboard:
   description: 
   drawGizmos: 0
-  child:  { fileID: 303616669763245887 }
---- !u!114 &303616669763245887
+  child:  { fileID: 141887332613024651 }
+--- !u!114 &141887332613024651
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -34,35 +34,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: 968747f8-640e-470b-8d82-ee15d489b4b1
+  guid: 18c609c5-bf2f-4207-93a7-ec04b845e7e6
   position: {x: 170, y: 140}
   blackboard:
   description: 
   drawGizmos: 0
   restartOnSuccess: 1
   restartOnFailure: 1
-  child:  { fileID: 819834789874381753 }
---- !u!114 &819834789874381753
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
-  m_Name: Inverter
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 07af9d0e-abf7-4d92-91bb-a8d678b93f6d
-  position: {x: 170, y: 280}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  child:  { fileID: 236652665548984324 }
---- !u!114 &236652665548984324
+  child:  { fileID: 296421118446732531 }
+--- !u!114 &296421118446732531
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -76,15 +56,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: f0feadb4-811e-48e0-890e-94bdb9f3377f
-  position: {x: 170, y: 420}
+  guid: 708896be-4daa-4962-a916-70ff93d485cc
+  position: {x: 170, y: 280}
   blackboard:
   description: 
   drawGizmos: 0
   children:  
-  - { fileID: 269192800835452996 }
-  - { fileID: 384634360048416200 }
---- !u!114 &269192800835452996
+  - { fileID: 395052796483113419 }
+--- !u!114 &395052796483113419
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -93,38 +72,38 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1fd1e85f30abba2499f6834e124b1450, type: 3}
-  m_Name: MoveForward
+  m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
+  m_Name: Inverter
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: b9891d67-8eaa-461e-88bc-3810cb594c54
+  guid: 6596f08a-119f-4549-bffa-b5165313f061
+  position: {x: 170, y: 420}
+  blackboard:
+  description: 
+  drawGizmos: 0
+  child:  { fileID: 813354629294938383 }
+--- !u!114 &813354629294938383
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1191a1255814faa47b52cc65d43e6285, type: 3}
+  m_Name: RotateTurret
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: a2f45994-f22f-4304-ae14-518dae95bd93
   position: {x: 170, y: 560}
   blackboard:
   description: 
   drawGizmos: 0
-  shoot: 3
---- !u!114 &384634360048416200
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a3dc491c3b458a945b4bd32e24ed7627, type: 3}
-  m_Name: Shoot
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 3a7f8326-434f-407a-8c5a-48fd9227cb03
-  position: {x: 340, y: 560}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  rotateDirection: 1
---- !u!114 &462359935209846399
+  rotateDirection: 3
+--- !u!114 &211417152893001872
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -137,13 +116,12 @@ MonoBehaviour:
   m_Name: BAS59
   m_EditorClassIdentifier: 
   id: 59
-  rootNode: {fileID: 361660638820219323}
+  rootNode: {fileID: 134888824114975756}
   treeState: 0
   nodes: 
-  - {fileID: 361660638820219323}
-  - {fileID: 303616669763245887}
-  - {fileID: 819834789874381753}
-  - {fileID: 236652665548984324}
-  - {fileID: 269192800835452996}
-  - {fileID: 384634360048416200}
+  - {fileID: 134888824114975756}
+  - {fileID: 141887332613024651}
+  - {fileID: 296421118446732531}
+  - {fileID: 395052796483113419}
+  - {fileID: 813354629294938383}
   blackboard: 

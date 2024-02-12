@@ -11,15 +11,31 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
     public static int MissileHealthDamage = 1;
     public Rigidbody Rigidbody { get; set; }
 
-    [Header("Robocode configuration")]
+    [Header("Robocode configuration Missile")]
+    [SerializeField, Tooltip("Destroy Missile After X seconds")] public float DestroyMissileAfter = 3.0f;
     [SerializeField] float MissileShootCooldown = 1.0f;
     [SerializeField] float MissleLaunchSpeed = 30f;
+
+    [Header("Robocode configuration Movement")]
     [SerializeField] float ForwardSpeed = 1f;
     [SerializeField] float LateralSpeed = 1f;
+
+    [Header("Robocode configuration Agent Move Fitness")]
+    [SerializeField] float AgentMoveFitnessUpdateInterval = 5f;
+    [SerializeField] float AgentMoveFitnessMinDistance = 2f;
+    [Header("Robocode configuration Agent Aim Fitness")]
+    [SerializeField] float AgentAimFitnessUpdateInterval = 2f;
+
+    [Header("Robocode configuration General")]
     [SerializeField] GameObject MissilePrefab;
     [SerializeField] MissileController MissileController;
     [SerializeField] int AgentStartHealth = 10;
     [SerializeField] RobocodeGameScenarioType GameScenarioType = RobocodeGameScenarioType.Normal;
+
+    [Header("User Input")]
+    [SerializeField] KeyCode ShootKey = KeyCode.Space;
+    [SerializeField] KeyCode TurretMovementLeft = KeyCode.Q;
+    [SerializeField] KeyCode TurretMovementRight = KeyCode.E;
 
     float AgentMoveSpeed = 5f;
     float AgentRotationSpeed = 80f;
@@ -27,10 +43,8 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
 
     bool IsPressingShoot;
     float TurretMoveDir;
-    [Header("User Input")]
-    [SerializeField] KeyCode ShootKey = KeyCode.Space;
-    [SerializeField] KeyCode TurretMovementLeft = KeyCode.Q;
-    [SerializeField] KeyCode TurretMovementRight = KeyCode.E;
+    float NextAgentMoveFitnessUpdate = 0;
+    float NextAgentAimFitnessUpdate = 0;
 
     protected override void DefineAdditionalDataOnStart() {
         foreach (RobocodeAgentComponent agent in Agents) {
@@ -65,7 +79,7 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
             MoveAgentsWithController2(Agents);
             if (IsPressingShoot)
                 AgentsShoot(Agents);
-            if(TurretMoveDir != 0) {
+            if (TurretMoveDir != 0) {
                 AgentsMoveTurret(Agents);
             }
         }
@@ -73,7 +87,7 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
             UpdateAgentsWithBTs(Agents);
         }
 
-        if(ManualAgentPredefinedBehaviourControl) {
+        if (ManualAgentPredefinedBehaviourControl) {
             MoveAgentsWithController2(AgentsPredefinedBehaviour);
             if (IsPressingShoot)
                 AgentsShoot(AgentsPredefinedBehaviour);
@@ -83,6 +97,20 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
         }
         else {
             UpdateAgentsWithBTs(AgentsPredefinedBehaviour);
+        }
+
+        // Update agent move fitness
+        if(CurrentSimulationTime >= NextAgentMoveFitnessUpdate) {
+            UpdateAgentMoveFitness(Agents);
+            UpdateAgentMoveFitness(AgentsPredefinedBehaviour);
+            NextAgentMoveFitnessUpdate += AgentMoveFitnessUpdateInterval;
+        }
+
+        // Update agent aim fitness
+        if (CurrentSimulationTime >= NextAgentAimFitnessUpdate) {
+            UpdateAgentAimFitness(Agents);
+            UpdateAgentAimFitness(AgentsPredefinedBehaviour);
+            NextAgentAimFitnessUpdate += AgentAimFitnessUpdateInterval;
         }
     }
 
@@ -260,17 +288,17 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
         UpdateAgentHealth(missile, hitAgent as RobocodeAgentComponent);
     }
 
-    public void ObstacleHit(MissileComponent missile) {
-        missile.Parent.AgentFitness.Fitness.UpdateFitness(RobocodeFitness.MISSILE_HIT_OBSTACLE);
+    public void ObstacleMissedAgent(MissileComponent missile) {
+        missile.Parent.AgentFitness.Fitness.UpdateFitness(RobocodeFitness.MISSILE_MISSED_AGENT);
     }
 
 
     void UpdateFitnesses(MissileComponent missile, AgentComponent hitAgent) {
         // Update Agent whose missile hit the other tank
-        missile.Parent.AgentFitness.Fitness.UpdateFitness(RobocodeFitness.MISSILE_HIT_TANK);
+        missile.Parent.AgentFitness.Fitness.UpdateFitness(RobocodeFitness.MISSILE_HIT_AGENT);
 
         // Update Agent who got hit by a missile
-        hitAgent.AgentFitness.Fitness.UpdateFitness(RobocodeFitness.TANK_HIT_BY_ROCKET);
+        hitAgent.AgentFitness.Fitness.UpdateFitness(RobocodeFitness.AGENT_HIT_BY_ROCKET);
     }
 
     void UpdateAgentHealth(MissileComponent missile, RobocodeAgentComponent hitAgent) {
@@ -286,7 +314,7 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
                     CheckEndingState();
                     break;
                 case RobocodeGameScenarioType.Deathmatch:
-                    missile.Parent.AgentFitness.Fitness.UpdateFitness(RobocodeFitness.TANK_DESTROYED_BONUS);
+                    missile.Parent.AgentFitness.Fitness.UpdateFitness(RobocodeFitness.AGENT_DESTROYED_BONUS);
                     hitAgent.AgentFitness.Fitness.UpdateFitness(RobocodeFitness.DEATH_PENALTY);
                     RespawnAgent(hitAgent);
                     break;
@@ -309,7 +337,7 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
             rotation = GetAgentRandomRotation();
 
 
-        } while (RespawnPointSuitable(respawnPos));
+        } while (!RespawnPointSuitable(respawnPos, rotation));
 
         agent.transform.position = respawnPos;
         agent.transform.rotation = rotation;
@@ -318,6 +346,39 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
             UnityEngine.Debug.Log("Agent respawned!");
     }
 
+    void UpdateAgentMoveFitness(AgentComponent[] agents) {
+        foreach(RobocodeAgentComponent agent in agents) {
+            // Only update agents that are active
+            if (agent.gameObject.activeSelf) {
+                if (agent.LastKnownPosition != Vector3.zero) {
+                    float distance = Vector3.Distance(agent.LastKnownPosition, agent.transform.position);
+                    if (distance >= AgentMoveFitnessMinDistance) {
+                        agent.AgentFitness.Fitness.UpdateFitness(RobocodeFitness.AGENT_MOVED_BONUS);
+                    }
+                }
+                agent.LastKnownPosition = agent.transform.position;
+            }
+        }
+
+    }
+
+    void UpdateAgentAimFitness(AgentComponent[] agents) {
+        foreach (RobocodeAgentComponent agent in agents) {
+            if (agent.gameObject.activeSelf) {
+                RaySensorBase raySensor = agent.gameObject.GetComponentInChildren<RaySensorBase>();
+                raySensor.LayerMask = (1 << gameObject.layer) + 1; // base layer + default
+
+                SensorPerceiveOutput[] sensorPerceiveOutputs = raySensor.Perceive();
+
+                if (sensorPerceiveOutputs[0].HasHit) {
+                    AgentComponent otherAgent = sensorPerceiveOutputs[0].HitGameObjects[0].GetComponent<AgentComponent>();
+                    if(otherAgent != null) {
+                        agent.AgentFitness.Fitness.UpdateFitness(RobocodeFitness.AGENT_AIMING_OPPONENT);
+                    }
+                }
+            }
+        }
+    }
 
 }
 

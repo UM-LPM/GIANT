@@ -6,13 +6,15 @@ using System.Threading.Tasks;
 
 public class RobocodeFitness: Fitness {
 
-    public static int MISSILE_HIT_TANK = 4;
-    public static int TANK_HIT_BY_ROCKET = -8;
-    public static int MISSILE_HIT_OBSTACLE = -2;
+    public static int MISSILE_HIT_AGENT = 5;
+    public static int AGENT_HIT_BY_ROCKET = -10;
+    public static int MISSILE_MISSED_AGENT = -5;
     public static int SURVIVAL_BONUS = 50;
-    public static int LAST_SURVIVAL_BONUS = 20;
-    public static int DEATH_PENALTY = -20;
-    public static int TANK_DESTROYED_BONUS = 25;
+    public static int LAST_SURVIVAL_BONUS = 30;
+    public static int DEATH_PENALTY = -30;
+    public static int AGENT_DESTROYED_BONUS = 25;
+    public static int AGENT_MOVED_BONUS = 5;
+    public static int AGENT_AIMING_OPPONENT = 2;
 
     /*public void UpdateFitness(ActionPerformed action) {
         switch (action) {

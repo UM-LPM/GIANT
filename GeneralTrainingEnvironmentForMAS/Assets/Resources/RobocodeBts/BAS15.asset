@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &628177068993838985
+--- !u!114 &700509587631761554
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: 134405d8-a440-46de-a5a3-f31506e282d2
+  guid: 3b738a58-f9fd-4247-8fc8-f84dee4d6a62
   position: {x: 170, y: 0}
   blackboard:
   description: 
   drawGizmos: 0
-  child:  { fileID: 144184343344855287 }
---- !u!114 &144184343344855287
+  child:  { fileID: 966758779317045267 }
+--- !u!114 &966758779317045267
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -34,15 +34,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: c5654f48-cfe1-46be-8d33-5d52c37df587
+  guid: fce13a32-e639-4994-b175-841ead87b3f8
   position: {x: 170, y: 140}
   blackboard:
   description: 
   drawGizmos: 0
   restartOnSuccess: 1
   restartOnFailure: 1
-  child:  { fileID: 188370202879879761 }
---- !u!114 &188370202879879761
+  child:  { fileID: 258361892480241387 }
+--- !u!114 &258361892480241387
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -56,13 +56,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: 038c3972-b0ce-493a-b4f3-1880aefd5232
+  guid: 4ddd955d-5d61-46b5-bd58-42366129a134
   position: {x: 170, y: 280}
   blackboard:
   description: 
   drawGizmos: 0
-  child:  { fileID: 210429292889634916 }
---- !u!114 &210429292889634916
+  child:  { fileID: 328632849082814109 }
+--- !u!114 &328632849082814109
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -76,13 +76,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: 346efb49-80da-4458-adbd-244cdbbb7be7
+  guid: 130dbe2b-9798-4882-80b1-774444221a7f
   position: {x: 170, y: 420}
   blackboard:
   description: 
   drawGizmos: 0
-  child:  { fileID: 953538372759248782 }
---- !u!114 &953538372759248782
+  child:  { fileID: 580848366233786717 }
+--- !u!114 &580848366233786717
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -91,23 +91,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
-  m_Name: Sequencer
+  m_Script: {fileID: 11500000, guid: 460be9e34c566ea45b9e282b1adcb028, type: 3}
+  m_Name: Selector
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: 2f58265b-2196-4c6e-bda5-c765bbeafceb
+  guid: 07dad3e9-8fb3-4f36-a270-42ca3cdbb53e
   position: {x: 170, y: 560}
   blackboard:
   description: 
   drawGizmos: 0
   children:  
-  - { fileID: 499456890677538685 }
-  - { fileID: 338009141406656062 }
-  - { fileID: 489811549839624569 }
-  - { fileID: 543297722161908239 }
-  - { fileID: 375903930042468860 }
---- !u!114 &499456890677538685
+  - { fileID: 695151487004932114 }
+  - { fileID: 915135376835268222 }
+  - { fileID: 139635326630762347 }
+--- !u!114 &695151487004932114
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -116,18 +114,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
-  m_Name: Rotate
+  m_Script: {fileID: 11500000, guid: 1191a1255814faa47b52cc65d43e6285, type: 3}
+  m_Name: RotateTurret
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: 785b152e-1871-4b48-bb81-d85151fe94e2
+  guid: 280f3c88-dad1-49b0-bd0f-e151831e3087
   position: {x: 170, y: 700}
   blackboard:
   description: 
   drawGizmos: 0
-  rotateDirection: 1
---- !u!114 &338009141406656062
+  rotateDirection: 2
+--- !u!114 &915135376835268222
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -136,19 +134,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2896f3e48c4d62d40be88fb007bb6361, type: 3}
-  m_Name: RayHitObject
+  m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
+  m_Name: Inverter
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: 3ff5c0b2-275b-4c9a-92e2-6f605b8eff51
+  guid: 163292df-2be2-4bc7-80f9-2c7dc0dc7c66
   position: {x: 340, y: 700}
   blackboard:
   description: 
   drawGizmos: 0
-  targetGameObject: 0
-  side: 0
---- !u!114 &489811549839624569
+  child:  { fileID: 941275766809804398 }
+--- !u!114 &139635326630762347
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -157,39 +154,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a3dc491c3b458a945b4bd32e24ed7627, type: 3}
-  m_Name: Shoot
+  m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
+  m_Name: Inverter
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: 61d97502-2021-4d63-b87e-247ec4d0149f
+  guid: ea516089-2d1e-4232-b115-3a515d5fab69
   position: {x: 510, y: 700}
   blackboard:
   description: 
   drawGizmos: 0
-  rotateDirection: 1
---- !u!114 &543297722161908239
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 460be9e34c566ea45b9e282b1adcb028, type: 3}
-  m_Name: Selector
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: c61fd01a-975b-4dd5-a5b5-4ebaeba95eb9
-  position: {x: 680, y: 700}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  children:  
-  - { fileID: 410048870618482691 }
---- !u!114 &375903930042468860
+  child:  { fileID: 509969836545230983 }
+--- !u!114 &941275766809804398
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -203,152 +179,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: e75b1b1f-3b66-42a5-85d9-83d6343d43e6
-  position: {x: 850, y: 700}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  children:  
-  - { fileID: 293933265665825226 }
-  - { fileID: 233163905703921484 }
-  - { fileID: 839902473501373126 }
-  - { fileID: 184560044973200079 }
-  - { fileID: 473183416929553081 }
---- !u!114 &410048870618482691
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
-  m_Name: Rotate
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 338da462-b27a-4c35-8d12-1431acef51d7
+  guid: d6e7d33f-868c-4ac1-b706-b962c22a67cf
   position: {x: 170, y: 840}
   blackboard:
   description: 
   drawGizmos: 0
-  rotateDirection: 3
---- !u!114 &293933265665825226
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
-  m_Name: Rotate
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 2dffed80-18f0-42e5-b1fc-90652cbc0c29
-  position: {x: 340, y: 840}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  rotateDirection: 1
---- !u!114 &233163905703921484
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
-  m_Name: Sequencer
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 9d3ae026-7a96-4a32-b72a-1a3bf3152a81
-  position: {x: 510, y: 840}
-  blackboard:
-  description: 
-  drawGizmos: 0
   children:  
-  - { fileID: 196851043123294576 }
-  - { fileID: 137014583815465112 }
-  - { fileID: 514949462214037158 }
-  - { fileID: 615763018956922101 }
-  - { fileID: 382107329237316041 }
---- !u!114 &839902473501373126
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
-  m_Name: Sequencer
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 061d4d7d-70b6-41c1-a19a-0f17d92755b0
-  position: {x: 680, y: 840}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  children:  
-  - { fileID: 410427831695148575 }
-  - { fileID: 403393444007319876 }
-  - { fileID: 300514260455153465 }
-  - { fileID: 236071773019917710 }
-  - { fileID: 158416343717300480 }
---- !u!114 &184560044973200079
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
-  m_Name: Rotate
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 1634ba77-11e8-426c-bcf0-7b89c42c5aa5
-  position: {x: 850, y: 840}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  rotateDirection: 2
---- !u!114 &473183416929553081
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
-  m_Name: Sequencer
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: f2dbf13c-4db9-43fe-a59c-54f8e4c3e76c
-  position: {x: 1020, y: 840}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  children:  
-  - { fileID: 732470432057620839 }
-  - { fileID: 345025312458111733 }
-  - { fileID: 953805368080928665 }
-  - { fileID: 189137099142973609 }
---- !u!114 &196851043123294576
+  - { fileID: 151840755600861660 }
+  - { fileID: 474720790692890063 }
+  - { fileID: 325876526332019937 }
+  - { fileID: 555632161694365463 }
+--- !u!114 &509969836545230983
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -362,18 +203,38 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: 9c553fb7-33e8-46b8-acca-4ee3f4ca33a8
+  guid: 6d9d84a1-eb1c-4f48-ac06-2bdc4e72613a
+  position: {x: 340, y: 840}
+  blackboard:
+  description: 
+  drawGizmos: 0
+  children:  
+  - { fileID: 134071447632412283 }
+  - { fileID: 701141908789339309 }
+--- !u!114 &151840755600861660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 460be9e34c566ea45b9e282b1adcb028, type: 3}
+  m_Name: Selector
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 7c70a3e2-4b04-402e-abcd-bc3ad70e1c01
   position: {x: 170, y: 980}
   blackboard:
   description: 
   drawGizmos: 0
   children:  
-  - { fileID: 694709165119723583 }
-  - { fileID: 453888406899746106 }
-  - { fileID: 610838395064991554 }
-  - { fileID: 305043730586207346 }
-  - { fileID: 930817737023601521 }
---- !u!114 &137014583815465112
+  - { fileID: 283014810457844128 }
+  - { fileID: 808115492749461298 }
+  - { fileID: 436769833901101594 }
+--- !u!114 &474720790692890063
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -382,18 +243,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
-  m_Name: Inverter
+  m_Script: {fileID: 11500000, guid: 2896f3e48c4d62d40be88fb007bb6361, type: 3}
+  m_Name: RayHitObject
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: d40bc7e2-f355-4a7d-a19f-d79819607c0a
+  guid: d5aba6c9-3b13-486c-a384-c21cdc6e5857
   position: {x: 340, y: 980}
   blackboard:
   description: 
   drawGizmos: 0
-  child:  { fileID: 192649859879093061 }
---- !u!114 &514949462214037158
+  targetGameObject: 1
+  side: 2
+--- !u!114 &325876526332019937
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -407,34 +269,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: 963eaccd-6f03-4869-9290-b549e6dce48a
+  guid: 9e5d4f3d-a02c-45cb-a7a7-7d38ebdd842c
   position: {x: 510, y: 980}
   blackboard:
   description: 
   drawGizmos: 0
   children:  
-  - { fileID: 578049202029582199 }
---- !u!114 &615763018956922101
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1191a1255814faa47b52cc65d43e6285, type: 3}
-  m_Name: RotateTurret
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: dbcbd4fd-dd8f-43a3-a77f-7cc539e24a9e
-  position: {x: 680, y: 980}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  rotateDirection: 2
---- !u!114 &382107329237316041
+  - { fileID: 798758309881542787 }
+  - { fileID: 593688475785823327 }
+--- !u!114 &555632161694365463
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -448,230 +291,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: aa181125-ec73-44ed-82f0-4e742f271ff2
-  position: {x: 850, y: 980}
+  guid: fe58129a-7d8e-4056-b927-aba4052ab6cc
+  position: {x: 680, y: 980}
   blackboard:
   description: 
   drawGizmos: 0
   rotateDirection: 1
---- !u!114 &410427831695148575
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
-  m_Name: Rotate
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: a590185a-7231-49b8-aaff-d9284d49f292
-  position: {x: 1020, y: 980}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  rotateDirection: 1
---- !u!114 &403393444007319876
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2896f3e48c4d62d40be88fb007bb6361, type: 3}
-  m_Name: RayHitObject
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 3c9e4b28-943b-440c-8c5f-c1865901c0f0
-  position: {x: 1190, y: 980}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  targetGameObject: 0
-  side: 0
---- !u!114 &300514260455153465
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2896f3e48c4d62d40be88fb007bb6361, type: 3}
-  m_Name: RayHitObject
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: f405bafc-b835-4c22-a9f1-7ba9ef3db662
-  position: {x: 1360, y: 980}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  targetGameObject: 0
-  side: 0
---- !u!114 &236071773019917710
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
-  m_Name: Rotate
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: feae736c-d856-4c3c-81e5-50159e6f33dc
-  position: {x: 1530, y: 980}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  rotateDirection: 3
---- !u!114 &158416343717300480
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
-  m_Name: Sequencer
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 91907878-5059-4720-ad29-f7e57ee5c28f
-  position: {x: 1700, y: 980}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  children:  
-  - { fileID: 232694706845780124 }
-  - { fileID: 394923196395022954 }
-  - { fileID: 656704539625534421 }
-  - { fileID: 184430669690904173 }
---- !u!114 &732470432057620839
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1191a1255814faa47b52cc65d43e6285, type: 3}
-  m_Name: RotateTurret
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 1a22ca79-39f2-4f10-8b7c-03ea143be15c
-  position: {x: 1870, y: 980}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  rotateDirection: 1
---- !u!114 &345025312458111733
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
-  m_Name: Sequencer
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 5fd587b2-a8b9-4160-b8a1-47bc67a1342c
-  position: {x: 2040, y: 980}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  children:  
-  - { fileID: 292640012932664546 }
-  - { fileID: 492937315521029301 }
-  - { fileID: 463070882223869452 }
-  - { fileID: 227944839878730246 }
-  - { fileID: 612943347788739935 }
---- !u!114 &953805368080928665
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2896f3e48c4d62d40be88fb007bb6361, type: 3}
-  m_Name: RayHitObject
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: f3f257fe-cdac-4136-bd60-5a52d2cc3343
-  position: {x: 2210, y: 980}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  targetGameObject: 0
-  side: 0
---- !u!114 &189137099142973609
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
-  m_Name: Sequencer
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: b75d7880-2448-4551-bcaa-019976ace4c3
-  position: {x: 2380, y: 980}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  children:  
-  - { fileID: 371258028377586825 }
-  - { fileID: 292423067357763388 }
-  - { fileID: 416173004332027838 }
-  - { fileID: 810263792516946187 }
-  - { fileID: 140759195294521144 }
---- !u!114 &694709165119723583
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1fd1e85f30abba2499f6834e124b1450, type: 3}
-  m_Name: MoveForward
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 71c6a3a3-8184-46be-bf54-52dd0c991e69
-  position: {x: 170, y: 1120}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  shoot: 1
---- !u!114 &453888406899746106
+--- !u!114 &134071447632412283
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -685,13 +311,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: 67f8669b-d0d3-418a-9cf7-173e141d8762
-  position: {x: 340, y: 1120}
+  guid: 7a5a25f0-f926-424f-a4ca-7d13a7fcfd12
+  position: {x: 850, y: 980}
   blackboard:
   description: 
   drawGizmos: 0
-  child:  { fileID: 636338089878115452 }
---- !u!114 &610838395064991554
+  child:  { fileID: 871086462600807297 }
+--- !u!114 &701141908789339309
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 460be9e34c566ea45b9e282b1adcb028, type: 3}
+  m_Name: Selector
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 67b38213-c0f0-458b-8b5d-ae01b08be345
+  position: {x: 1020, y: 980}
+  blackboard:
+  description: 
+  drawGizmos: 0
+  children:  
+  - { fileID: 709199906043909128 }
+--- !u!114 &283014810457844128
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -705,15 +352,59 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: 0c7e073f-1c34-4265-8e24-2f02a686ef73
+  guid: ecf8981d-2636-41ba-9052-c274aceb2460
+  position: {x: 170, y: 1120}
+  blackboard:
+  description: 
+  drawGizmos: 0
+  children:  
+  - { fileID: 428635526737006136 }
+  - { fileID: 660321784911627925 }
+  - { fileID: 683271115701112638 }
+--- !u!114 &808115492749461298
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
+  m_Name: Inverter
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: abc84a96-def7-430c-9095-c3df701a6237
+  position: {x: 340, y: 1120}
+  blackboard:
+  description: 
+  drawGizmos: 0
+  child:  { fileID: 116932666862058158 }
+--- !u!114 &436769833901101594
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 460be9e34c566ea45b9e282b1adcb028, type: 3}
+  m_Name: Selector
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 94832fd9-9749-41fc-9408-1c6e2bee3775
   position: {x: 510, y: 1120}
   blackboard:
   description: 
   drawGizmos: 0
   children:  
-  - { fileID: 291535038242819147 }
-  - { fileID: 696467805618556030 }
---- !u!114 &305043730586207346
+  - { fileID: 586948526929003261 }
+  - { fileID: 966711721508062189 }
+  - { fileID: 353269530930831324 }
+--- !u!114 &798758309881542787
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -727,18 +418,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: 163d8c5c-131a-4492-bb38-c3bf9a984d22
+  guid: db6bf594-22c6-4989-a50b-17ff4e151646
   position: {x: 680, y: 1120}
   blackboard:
   description: 
   drawGizmos: 0
   children:  
-  - { fileID: 387742891989309877 }
-  - { fileID: 795017501749062171 }
-  - { fileID: 804885940041629426 }
-  - { fileID: 296428912655199682 }
-  - { fileID: 836470860683306488 }
---- !u!114 &930817737023601521
+  - { fileID: 151616531883167916 }
+--- !u!114 &593688475785823327
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -752,15 +439,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: f40dc124-1fc3-42b5-b3bb-2f01e13625de
+  guid: 0271b2b8-b377-44ff-bba7-92b6f5781bea
   position: {x: 850, y: 1120}
   blackboard:
   description: 
   drawGizmos: 0
   children:  
-  - { fileID: 820164531973194872 }
-  - { fileID: 191734357058987487 }
---- !u!114 &192649859879093061
+  - { fileID: 985308151854857108 }
+  - { fileID: 310143737561815912 }
+--- !u!114 &871086462600807297
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -769,19 +456,42 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2896f3e48c4d62d40be88fb007bb6361, type: 3}
-  m_Name: RayHitObject
+  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
+  m_Name: Sequencer
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: 82f5a08b-029b-43dc-af3a-e913e12606fd
+  guid: 4c786d9b-0948-4e74-a07f-d4168394d21d
   position: {x: 1020, y: 1120}
   blackboard:
   description: 
   drawGizmos: 0
-  targetGameObject: 0
-  side: 1
---- !u!114 &578049202029582199
+  children:  
+  - { fileID: 349583143116298268 }
+  - { fileID: 772629350560936139 }
+  - { fileID: 177632078542197776 }
+  - { fileID: 469452255212252089 }
+--- !u!114 &709199906043909128
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
+  m_Name: Inverter
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 2bfa1fee-b230-4428-9edb-d827affa36ae
+  position: {x: 1190, y: 1120}
+  blackboard:
+  description: 
+  drawGizmos: 0
+  child:  { fileID: 803929921048694175 }
+--- !u!114 &428635526737006136
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -795,348 +505,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: e1f0d1c9-09c8-42f4-9d70-424eef6297ec
-  position: {x: 1190, y: 1120}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  children:  
-  - { fileID: 502791553554130869 }
-  - { fileID: 859205240763192563 }
-  - { fileID: 835235479595029447 }
-  - { fileID: 256554012577551972 }
---- !u!114 &232694706845780124
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a3dc491c3b458a945b4bd32e24ed7627, type: 3}
-  m_Name: Shoot
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: a9f07124-3332-4ee1-8c59-21332e5bf12f
-  position: {x: 1360, y: 1120}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  rotateDirection: 1
---- !u!114 &394923196395022954
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
-  m_Name: Sequencer
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: b6273bb1-880a-48c7-a6c5-0bb6c8d19397
-  position: {x: 1530, y: 1120}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  children:  
-  - { fileID: 891014409100968001 }
-  - { fileID: 186236624998734764 }
-  - { fileID: 771961815929454197 }
-  - { fileID: 125725178432719449 }
-  - { fileID: 245488384097367101 }
---- !u!114 &656704539625534421
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1191a1255814faa47b52cc65d43e6285, type: 3}
-  m_Name: RotateTurret
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 7547c0de-b520-447e-a774-12cbe97a9072
-  position: {x: 1700, y: 1120}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  rotateDirection: 3
---- !u!114 &184430669690904173
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
-  m_Name: Sequencer
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 659a0b0a-c749-4cab-ad05-8647871a212d
-  position: {x: 1870, y: 1120}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  children:  
-  - { fileID: 548830087818716575 }
---- !u!114 &292640012932664546
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a3dc491c3b458a945b4bd32e24ed7627, type: 3}
-  m_Name: Shoot
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 0068f5b4-b0c5-43f7-ab1b-3b2b5fb347a6
-  position: {x: 2040, y: 1120}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  rotateDirection: 1
---- !u!114 &492937315521029301
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
-  m_Name: Rotate
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 819ab6f7-a064-4f82-81e9-c3fa690cd663
-  position: {x: 2210, y: 1120}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  rotateDirection: 2
---- !u!114 &463070882223869452
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
-  m_Name: Rotate
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 50e10d30-e9da-461a-abdb-fee503fc9660
-  position: {x: 2380, y: 1120}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  rotateDirection: 2
---- !u!114 &227944839878730246
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1191a1255814faa47b52cc65d43e6285, type: 3}
-  m_Name: RotateTurret
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 3d24fccc-26be-4589-b738-b548d4d85270
-  position: {x: 2550, y: 1120}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  rotateDirection: 2
---- !u!114 &612943347788739935
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a3dc491c3b458a945b4bd32e24ed7627, type: 3}
-  m_Name: Shoot
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: dad3dfd6-d398-48fb-a778-23520e526c56
-  position: {x: 2720, y: 1120}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  rotateDirection: 1
---- !u!114 &371258028377586825
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
-  m_Name: Rotate
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 18746195-8783-4e63-b571-de1a285346e2
-  position: {x: 2890, y: 1120}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  rotateDirection: 3
---- !u!114 &292423067357763388
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2896f3e48c4d62d40be88fb007bb6361, type: 3}
-  m_Name: RayHitObject
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: d7b4084a-31da-4686-9f29-e93d9f72b46c
-  position: {x: 3060, y: 1120}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  targetGameObject: 0
-  side: 0
---- !u!114 &416173004332027838
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1191a1255814faa47b52cc65d43e6285, type: 3}
-  m_Name: RotateTurret
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: b7d453f5-02ba-42d5-a651-798066008e4f
-  position: {x: 3230, y: 1120}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  rotateDirection: 3
---- !u!114 &810263792516946187
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
-  m_Name: Rotate
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 7cd6a027-85e8-4cca-89ca-3dc87e532bc1
-  position: {x: 3400, y: 1120}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  rotateDirection: 1
---- !u!114 &140759195294521144
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
-  m_Name: Sequencer
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: ae67edb1-aad6-4e93-94e8-7a2cd87c8d47
-  position: {x: 3570, y: 1120}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  children:  
-  - { fileID: 251182576216585560 }
-  - { fileID: 886667602521601409 }
-  - { fileID: 684897039247279031 }
-  - { fileID: 907626120992088447 }
---- !u!114 &636338089878115452
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
-  m_Name: Rotate
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 4057fd3c-f4a0-4506-a9d3-cdb188d50536
+  guid: 7669a52d-0688-40a4-ae3e-c18a4ddbd465
   position: {x: 170, y: 1260}
   blackboard:
   description: 
   drawGizmos: 0
-  rotateDirection: 3
---- !u!114 &291535038242819147
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
-  m_Name: Rotate
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 8b7f84e9-40b3-42ef-98b4-7620697b9795
-  position: {x: 340, y: 1260}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  rotateDirection: 2
---- !u!114 &696467805618556030
+  children:  
+  - { fileID: 364347218111549768 }
+  - { fileID: 504078148936976726 }
+  - { fileID: 339206710070981914 }
+--- !u!114 &660321784911627925
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1150,14 +528,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: d2ef39f1-f62b-4802-b8d0-2f9f571bf96c
-  position: {x: 510, y: 1260}
+  guid: fd50e13d-262f-4b9b-bd78-b9571fe6676a
+  position: {x: 340, y: 1260}
   blackboard:
   description: 
   drawGizmos: 0
-  targetGameObject: 2
-  side: 0
---- !u!114 &387742891989309877
+  targetGameObject: 9
+  side: 1
+--- !u!114 &683271115701112638
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1166,23 +544,39 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
-  m_Name: Sequencer
+  m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
+  m_Name: Inverter
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: 70319c92-f2ea-4e36-a3cd-8b139f4e266a
+  guid: 9c7a1730-f4fe-4172-aec0-a9ab55ee3d08
+  position: {x: 510, y: 1260}
+  blackboard:
+  description: 
+  drawGizmos: 0
+  child:  { fileID: 146492383943373419 }
+--- !u!114 &116932666862058158
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 460be9e34c566ea45b9e282b1adcb028, type: 3}
+  m_Name: Selector
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: d198617b-1715-40d2-9efd-d16000f2655a
   position: {x: 680, y: 1260}
   blackboard:
   description: 
   drawGizmos: 0
   children:  
-  - { fileID: 618394726251350929 }
-  - { fileID: 567801603813869331 }
-  - { fileID: 689214352212442621 }
-  - { fileID: 469097315065695968 }
-  - { fileID: 238823225998357889 }
---- !u!114 &795017501749062171
+  - { fileID: 513537454876389865 }
+--- !u!114 &586948526929003261
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1196,13 +590,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: f2233f8b-5b42-4739-a999-5fb9d92ac4be
+  guid: 5f6037bf-71b0-4d78-abd0-db9e1bf63c61
   position: {x: 850, y: 1260}
   blackboard:
   description: 
   drawGizmos: 0
-  rotateDirection: 1
---- !u!114 &804885940041629426
+  rotateDirection: 3
+--- !u!114 &966711721508062189
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1211,18 +605,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
-  m_Name: Rotate
+  m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
+  m_Name: Inverter
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: 49c2d036-d9d2-4d7f-a9df-1e5edfebead5
+  guid: 6dd56731-4156-4301-82d0-02b5287f5ebc
   position: {x: 1020, y: 1260}
   blackboard:
   description: 
   drawGizmos: 0
-  rotateDirection: 3
---- !u!114 &296428912655199682
+  child:  { fileID: 744513864986656303 }
+--- !u!114 &353269530930831324
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1231,44 +625,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
-  m_Name: Sequencer
+  m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
+  m_Name: Inverter
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: a8c21bf9-7be6-4795-a85c-344b23a9fc96
+  guid: 0ec3fb40-79b1-4971-9e7e-51e4735059ac
   position: {x: 1190, y: 1260}
   blackboard:
   description: 
   drawGizmos: 0
-  children:  
-  - { fileID: 724610973495667552 }
---- !u!114 &836470860683306488
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 460be9e34c566ea45b9e282b1adcb028, type: 3}
-  m_Name: Selector
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: a167154d-89e3-46ec-a797-6bb543f7dadd
-  position: {x: 1360, y: 1260}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  children:  
-  - { fileID: 642835218503388970 }
-  - { fileID: 821966502701674050 }
-  - { fileID: 861529520480807766 }
-  - { fileID: 202060129666159726 }
-  - { fileID: 578894061717012924 }
---- !u!114 &820164531973194872
+  child:  { fileID: 284269803850770174 }
+--- !u!114 &151616531883167916
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1282,14 +650,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: 85fb0a3e-8e85-45af-8ec9-247f15f401ec
+  guid: 7c45d176-60fa-4925-b053-56f8fce51acc
+  position: {x: 1360, y: 1260}
+  blackboard:
+  description: 
+  drawGizmos: 0
+  targetGameObject: 10
+  side: 1
+--- !u!114 &985308151854857108
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
+  m_Name: Inverter
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 5e68ce13-1f90-448b-a86d-afab5530ab38
   position: {x: 1530, y: 1260}
   blackboard:
   description: 
   drawGizmos: 0
-  targetGameObject: 2
-  side: 2
---- !u!114 &191734357058987487
+  child:  { fileID: 596984649415582297 }
+--- !u!114 &310143737561815912
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1298,58 +686,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
-  m_Name: Inverter
+  m_Script: {fileID: 11500000, guid: 460be9e34c566ea45b9e282b1adcb028, type: 3}
+  m_Name: Selector
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: 85df8fbc-0107-4f8a-9887-5a7bd6849acf
+  guid: 9206e67a-ed14-43f6-a2fe-a8b705d300cd
   position: {x: 1700, y: 1260}
   blackboard:
   description: 
   drawGizmos: 0
-  child:  { fileID: 702415043486568605 }
---- !u!114 &502791553554130869
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
-  m_Name: Rotate
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 13b2252d-6433-4d88-97a5-79191e046c1a
-  position: {x: 1870, y: 1260}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  rotateDirection: 1
---- !u!114 &859205240763192563
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
-  m_Name: Rotate
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 73ee04e7-cefc-4e52-a64f-0f7df9dc16ba
-  position: {x: 2040, y: 1260}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  rotateDirection: 1
---- !u!114 &835235479595029447
+  children:  
+  - { fileID: 588649309870620875 }
+--- !u!114 &349583143116298268
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1363,13 +712,80 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: c2872dda-2a43-43da-aabb-6272c0570c52
+  guid: 306b9581-2fe6-4a5a-a42d-87b7e4cdc340
+  position: {x: 1870, y: 1260}
+  blackboard:
+  description: 
+  drawGizmos: 0
+  child:  { fileID: 124772786131316555 }
+--- !u!114 &772629350560936139
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 460be9e34c566ea45b9e282b1adcb028, type: 3}
+  m_Name: Selector
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 27dfc92f-48f3-47b6-bf7c-c4ebd68262b2
+  position: {x: 2040, y: 1260}
+  blackboard:
+  description: 
+  drawGizmos: 0
+  children:  
+  - { fileID: 939229338702663182 }
+  - { fileID: 139876833449233537 }
+  - { fileID: 403466652510738883 }
+--- !u!114 &177632078542197776
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 460be9e34c566ea45b9e282b1adcb028, type: 3}
+  m_Name: Selector
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: b0547efd-d0d4-4390-aaa4-df546578eaab
   position: {x: 2210, y: 1260}
   blackboard:
   description: 
   drawGizmos: 0
-  child:  { fileID: 666731021152019067 }
---- !u!114 &256554012577551972
+  children:  
+  - { fileID: 445901078090550493 }
+  - { fileID: 282898648154607869 }
+  - { fileID: 662583891294890451 }
+  - { fileID: 662084434764857902 }
+--- !u!114 &469452255212252089
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3dc491c3b458a945b4bd32e24ed7627, type: 3}
+  m_Name: Shoot
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 04302f58-fbfb-4740-8c8f-a9a60bd55203
+  position: {x: 2380, y: 1260}
+  blackboard:
+  description: 
+  drawGizmos: 0
+  rotateDirection: 1
+--- !u!114 &803929921048694175
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1383,307 +799,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: e2a1abb4-7957-47a8-a45d-9ead42f07a1e
-  position: {x: 2380, y: 1260}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  shoot: 3
---- !u!114 &891014409100968001
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a3dc491c3b458a945b4bd32e24ed7627, type: 3}
-  m_Name: Shoot
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 1a9a5ef7-38ae-40ae-adc6-818db8f55597
+  guid: fa99b938-3c2a-49b9-b0cb-7b2706c77b30
   position: {x: 2550, y: 1260}
   blackboard:
   description: 
   drawGizmos: 0
-  rotateDirection: 1
---- !u!114 &186236624998734764
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
-  m_Name: Rotate
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 7ee697a6-9efa-43f8-b7b1-de22baf053d8
-  position: {x: 2720, y: 1260}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  rotateDirection: 2
---- !u!114 &771961815929454197
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a3dc491c3b458a945b4bd32e24ed7627, type: 3}
-  m_Name: Shoot
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 25d71abc-a7e6-4a08-a877-10572d74c432
-  position: {x: 2890, y: 1260}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  rotateDirection: 1
---- !u!114 &125725178432719449
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1191a1255814faa47b52cc65d43e6285, type: 3}
-  m_Name: RotateTurret
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 14711dd4-e49e-461e-9f9d-b8f43b4448f4
-  position: {x: 3060, y: 1260}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  rotateDirection: 2
---- !u!114 &245488384097367101
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2896f3e48c4d62d40be88fb007bb6361, type: 3}
-  m_Name: RayHitObject
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: afa5c470-50f4-40fe-9cb7-696cc63aeb01
-  position: {x: 3230, y: 1260}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  targetGameObject: 0
-  side: 1
---- !u!114 &548830087818716575
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a3dc491c3b458a945b4bd32e24ed7627, type: 3}
-  m_Name: Shoot
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: d6be15e9-a982-4c50-a91f-0140177502fd
-  position: {x: 3400, y: 1260}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  rotateDirection: 1
---- !u!114 &251182576216585560
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a3dc491c3b458a945b4bd32e24ed7627, type: 3}
-  m_Name: Shoot
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 9a09d210-0ba0-4965-8aac-fad20b0dedd8
-  position: {x: 3570, y: 1260}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  rotateDirection: 1
---- !u!114 &886667602521601409
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2896f3e48c4d62d40be88fb007bb6361, type: 3}
-  m_Name: RayHitObject
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 18878f1b-a6cd-4e2b-85b9-0e7ba739f1dd
-  position: {x: 3740, y: 1260}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  targetGameObject: 7
-  side: 2
---- !u!114 &684897039247279031
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2896f3e48c4d62d40be88fb007bb6361, type: 3}
-  m_Name: RayHitObject
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: df9b186a-3ce7-4c2e-b0c7-5140a6b763a0
-  position: {x: 3910, y: 1260}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  targetGameObject: 0
-  side: 0
---- !u!114 &907626120992088447
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
-  m_Name: Rotate
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: c7685d6c-0648-4d65-bb41-77cc7a4d6f21
-  position: {x: 4080, y: 1260}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  rotateDirection: 1
---- !u!114 &618394726251350929
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 460be9e34c566ea45b9e282b1adcb028, type: 3}
-  m_Name: Selector
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 7bbe5ca9-a593-4242-86db-d267aa07a35a
-  position: {x: 170, y: 1400}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  children:  
-  - { fileID: 234631551953703923 }
---- !u!114 &567801603813869331
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
-  m_Name: Sequencer
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 52d72bf7-c08a-4a53-b68d-c2fa8ea54e03
-  position: {x: 340, y: 1400}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  children:  
-  - { fileID: 186320394190480599 }
-  - { fileID: 494646593290950772 }
-  - { fileID: 515679795657459598 }
-  - { fileID: 330875534169285879 }
-  - { fileID: 791315006646338535 }
---- !u!114 &689214352212442621
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
-  m_Name: Sequencer
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: cc5b1c5f-96ad-43e2-8081-72ec3080a440
-  position: {x: 510, y: 1400}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  children:  
-  - { fileID: 541341730067852815 }
-  - { fileID: 444850546801050167 }
-  - { fileID: 678865899843362729 }
-  - { fileID: 226702996068297089 }
---- !u!114 &469097315065695968
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 460be9e34c566ea45b9e282b1adcb028, type: 3}
-  m_Name: Selector
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 994e76b1-d930-45e0-8d82-5b8d93759f49
-  position: {x: 680, y: 1400}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  children:  
-  - { fileID: 616788039637407446 }
---- !u!114 &238823225998357889
+  shoot: 2
+--- !u!114 &364347218111549768
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1697,13 +819,96 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: 933152d5-4f76-44d6-a597-231e45ec55ed
+  guid: 657ef2db-a7d9-4ae5-a239-2c4d5215f730
+  position: {x: 170, y: 1400}
+  blackboard:
+  description: 
+  drawGizmos: 0
+  child:  { fileID: 604362975031513111 }
+--- !u!114 &504078148936976726
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1191a1255814faa47b52cc65d43e6285, type: 3}
+  m_Name: RotateTurret
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 7006e4a7-d0a5-4a2d-9014-8312effd8021
+  position: {x: 340, y: 1400}
+  blackboard:
+  description: 
+  drawGizmos: 0
+  rotateDirection: 2
+--- !u!114 &339206710070981914
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2896f3e48c4d62d40be88fb007bb6361, type: 3}
+  m_Name: RayHitObject
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 195a2c24-2b2d-42cf-8541-7e5e9200aa7d
+  position: {x: 510, y: 1400}
+  blackboard:
+  description: 
+  drawGizmos: 0
+  targetGameObject: 0
+  side: 0
+--- !u!114 &146492383943373419
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1191a1255814faa47b52cc65d43e6285, type: 3}
+  m_Name: RotateTurret
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 30830732-5382-45b7-a52c-228aaf8f4a75
+  position: {x: 680, y: 1400}
+  blackboard:
+  description: 
+  drawGizmos: 0
+  rotateDirection: 1
+--- !u!114 &513537454876389865
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 460be9e34c566ea45b9e282b1adcb028, type: 3}
+  m_Name: Selector
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: a251bca5-875f-4925-866b-134e4edc92a1
   position: {x: 850, y: 1400}
   blackboard:
   description: 
   drawGizmos: 0
-  child:  { fileID: 453541630805115641 }
---- !u!114 &724610973495667552
+  children:  
+  - { fileID: 913520685585820358 }
+  - { fileID: 236209071113374514 }
+--- !u!114 &744513864986656303
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1712,18 +917,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
-  m_Name: Rotate
+  m_Script: {fileID: 11500000, guid: 460be9e34c566ea45b9e282b1adcb028, type: 3}
+  m_Name: Selector
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: 140dfb32-2994-4a80-8db8-a415eef383df
+  guid: 8b902c15-857f-4a4d-baa5-6233f35c6eef
   position: {x: 1020, y: 1400}
   blackboard:
   description: 
   drawGizmos: 0
-  rotateDirection: 3
---- !u!114 &642835218503388970
+  children:  
+  - { fileID: 741565815056568962 }
+  - { fileID: 849926256400879111 }
+  - { fileID: 469620286018026864 }
+--- !u!114 &284269803850770174
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1737,13 +945,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: 1c629ca4-3ddc-4f60-93e5-a2bbb8325f9c
+  guid: ab30b6c0-db82-454b-b97d-9067bcd603ef
   position: {x: 1190, y: 1400}
   blackboard:
   description: 
   drawGizmos: 0
   rotateDirection: 1
---- !u!114 &821966502701674050
+--- !u!114 &596984649415582297
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1752,18 +960,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
-  m_Name: Rotate
+  m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
+  m_Name: Inverter
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: e1b0cfd5-9692-4c97-ad9c-3809c431bb60
+  guid: 70740570-0feb-46b1-9e57-22cf0ef0fd12
   position: {x: 1360, y: 1400}
   blackboard:
   description: 
   drawGizmos: 0
-  rotateDirection: 2
---- !u!114 &861529520480807766
+  child:  { fileID: 229615149725892519 }
+--- !u!114 &588649309870620875
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1777,17 +985,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: ccfe2d26-f93c-41c1-99d5-edc1e131965e
+  guid: 8b31185a-4dea-4e11-9553-e5c3a155b807
   position: {x: 1530, y: 1400}
   blackboard:
   description: 
   drawGizmos: 0
   children:  
-  - { fileID: 639062930570233949 }
-  - { fileID: 505307414177218250 }
-  - { fileID: 446749647796247013 }
-  - { fileID: 953973542150407256 }
---- !u!114 &202060129666159726
+  - { fileID: 928066473149393435 }
+  - { fileID: 942314107726973064 }
+--- !u!114 &124772786131316555
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1796,19 +1002,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2896f3e48c4d62d40be88fb007bb6361, type: 3}
-  m_Name: RayHitObject
+  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
+  m_Name: Rotate
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: d62e3deb-64af-475e-b83c-d28afa3e12ec
+  guid: f292acc3-c8a6-4b2a-abbb-63845159e8df
   position: {x: 1700, y: 1400}
   blackboard:
   description: 
   drawGizmos: 0
-  targetGameObject: 7
-  side: 2
---- !u!114 &578894061717012924
+  rotateDirection: 3
+--- !u!114 &939229338702663182
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1817,18 +1022,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
-  m_Name: Inverter
+  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
+  m_Name: Sequencer
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: c9aaac82-1bed-4371-8435-192eb774e931
+  guid: 574bb01a-69c3-4860-b7d2-3da161860917
   position: {x: 1870, y: 1400}
   blackboard:
   description: 
   drawGizmos: 0
-  child:  { fileID: 339316859741146808 }
---- !u!114 &702415043486568605
+  children:  
+  - { fileID: 434340370477873920 }
+  - { fileID: 692581754774584223 }
+  - { fileID: 439643287178293349 }
+--- !u!114 &139876833449233537
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1837,18 +1045,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
-  m_Name: Inverter
+  m_Script: {fileID: 11500000, guid: 460be9e34c566ea45b9e282b1adcb028, type: 3}
+  m_Name: Selector
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: f58b8cbe-8590-4eba-b315-e304d50f494d
+  guid: 5592d9d1-3734-4a8d-be11-1041538fd8ba
   position: {x: 2040, y: 1400}
   blackboard:
   description: 
   drawGizmos: 0
-  child:  { fileID: 761255044649428058 }
---- !u!114 &666731021152019067
+  children:  
+  - { fileID: 908600698644643304 }
+  - { fileID: 627067140786450727 }
+--- !u!114 &403466652510738883
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1857,59 +1067,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1191a1255814faa47b52cc65d43e6285, type: 3}
-  m_Name: RotateTurret
+  m_Script: {fileID: 11500000, guid: 2896f3e48c4d62d40be88fb007bb6361, type: 3}
+  m_Name: RayHitObject
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: f3d334ad-b714-4d00-989e-f09366c20656
+  guid: 91a89b34-1dc6-4f63-910e-5d7385c14bf9
   position: {x: 2210, y: 1400}
   blackboard:
   description: 
   drawGizmos: 0
-  rotateDirection: 2
---- !u!114 &234631551953703923
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1191a1255814faa47b52cc65d43e6285, type: 3}
-  m_Name: RotateTurret
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: e033f538-6d9c-4125-8afe-1aaa92f9e339
-  position: {x: 170, y: 1540}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  rotateDirection: 3
---- !u!114 &186320394190480599
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2896f3e48c4d62d40be88fb007bb6361, type: 3}
-  m_Name: RayHitObject
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 57934fe7-81c1-428a-9960-b3c2e53c138f
-  position: {x: 340, y: 1540}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  targetGameObject: 7
+  targetGameObject: 4
   side: 1
---- !u!114 &494646593290950772
+--- !u!114 &445901078090550493
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1918,78 +1088,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1191a1255814faa47b52cc65d43e6285, type: 3}
-  m_Name: RotateTurret
+  m_Script: {fileID: 11500000, guid: 460be9e34c566ea45b9e282b1adcb028, type: 3}
+  m_Name: Selector
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: 3985553e-6f48-4f8c-ac0e-64f004572d61
-  position: {x: 510, y: 1540}
+  guid: fb39a31c-f5dc-4095-8e6a-96ed35d89493
+  position: {x: 2380, y: 1400}
   blackboard:
   description: 
   drawGizmos: 0
-  rotateDirection: 1
---- !u!114 &515679795657459598
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
-  m_Name: Rotate
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: facef83b-55c3-4ea9-862a-8df5b7191d27
-  position: {x: 680, y: 1540}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  rotateDirection: 2
---- !u!114 &330875534169285879
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1191a1255814faa47b52cc65d43e6285, type: 3}
-  m_Name: RotateTurret
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 48079da3-d9c2-4a43-95a6-ed005fa55fa7
-  position: {x: 850, y: 1540}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  rotateDirection: 2
---- !u!114 &791315006646338535
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
-  m_Name: Rotate
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: fce31e9c-d828-4c3b-8561-8e95be997a29
-  position: {x: 1020, y: 1540}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  rotateDirection: 3
---- !u!114 &541341730067852815
+  children:  
+  - { fileID: 394822933530849846 }
+  - { fileID: 958919251801074619 }
+  - { fileID: 175679750166128539 }
+--- !u!114 &282898648154607869
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2003,136 +1116,54 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: f210579f-8216-471e-9a17-42ddb3df33ec
-  position: {x: 1190, y: 1540}
+  guid: 76f3edf0-fdc0-46a3-ba3c-24d5f853307f
+  position: {x: 2550, y: 1400}
+  blackboard:
+  description: 
+  drawGizmos: 0
+  shoot: 3
+--- !u!114 &662583891294890451
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2896f3e48c4d62d40be88fb007bb6361, type: 3}
+  m_Name: RayHitObject
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: c558fba1-6c8c-415b-926d-3af075359d40
+  position: {x: 2720, y: 1400}
+  blackboard:
+  description: 
+  drawGizmos: 0
+  targetGameObject: 1
+  side: 0
+--- !u!114 &662084434764857902
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fd1e85f30abba2499f6834e124b1450, type: 3}
+  m_Name: MoveForward
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 640f168f-7b5a-4c0a-916e-ff30cc290f1a
+  position: {x: 2890, y: 1400}
   blackboard:
   description: 
   drawGizmos: 0
   shoot: 2
---- !u!114 &444850546801050167
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1fd1e85f30abba2499f6834e124b1450, type: 3}
-  m_Name: MoveForward
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 02e1902c-758d-4619-91e8-bee496eed035
-  position: {x: 1360, y: 1540}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  shoot: 3
---- !u!114 &678865899843362729
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2896f3e48c4d62d40be88fb007bb6361, type: 3}
-  m_Name: RayHitObject
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 268d0ba9-0ed2-4af1-9d8e-466fdef28f4d
-  position: {x: 1530, y: 1540}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  targetGameObject: 2
-  side: 2
---- !u!114 &226702996068297089
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1fd1e85f30abba2499f6834e124b1450, type: 3}
-  m_Name: MoveForward
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: e2939a76-ae13-403a-b0e7-6266dd432a47
-  position: {x: 1700, y: 1540}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  shoot: 3
---- !u!114 &616788039637407446
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2896f3e48c4d62d40be88fb007bb6361, type: 3}
-  m_Name: RayHitObject
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: e47fb5ae-a76c-4f21-a3ed-6b6e6d5169b6
-  position: {x: 1870, y: 1540}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  targetGameObject: 9
-  side: 2
---- !u!114 &453541630805115641
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
-  m_Name: Rotate
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: d2858639-810d-4798-974f-03f32df05b1b
-  position: {x: 2040, y: 1540}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  rotateDirection: 2
---- !u!114 &639062930570233949
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2896f3e48c4d62d40be88fb007bb6361, type: 3}
-  m_Name: RayHitObject
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 28156acd-0899-4b97-a58e-66a09fb6cccc
-  position: {x: 2210, y: 1540}
-  blackboard:
-  description: 
-  drawGizmos: 0
-  targetGameObject: 3
-  side: 0
---- !u!114 &505307414177218250
+--- !u!114 &604362975031513111
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2146,13 +1177,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: 834c661b-b810-4bd2-93b1-a625948309d1
-  position: {x: 2380, y: 1540}
+  guid: 18c5bea8-628f-4efa-bcba-3f2fefbb5bc7
+  position: {x: 170, y: 1540}
   blackboard:
   description: 
   drawGizmos: 0
   rotateDirection: 1
---- !u!114 &446749647796247013
+--- !u!114 &913520685585820358
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2161,18 +1192,39 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1fd1e85f30abba2499f6834e124b1450, type: 3}
-  m_Name: MoveForward
+  m_Script: {fileID: 11500000, guid: a3dc491c3b458a945b4bd32e24ed7627, type: 3}
+  m_Name: Shoot
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: 6aed0448-6af2-4021-bf90-90359d5f3647
-  position: {x: 2550, y: 1540}
+  guid: 7676ef82-2fd9-4c36-91b9-0e00b1d8c23b
+  position: {x: 340, y: 1540}
   blackboard:
   description: 
   drawGizmos: 0
-  shoot: 3
---- !u!114 &953973542150407256
+  rotateDirection: 1
+--- !u!114 &236209071113374514
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2896f3e48c4d62d40be88fb007bb6361, type: 3}
+  m_Name: RayHitObject
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 077edd81-694b-4f69-9fdd-4962e8c5ad71
+  position: {x: 510, y: 1540}
+  blackboard:
+  description: 
+  drawGizmos: 0
+  targetGameObject: 9
+  side: 2
+--- !u!114 &741565815056568962
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2186,13 +1238,113 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: d29da42e-9df0-4e60-91a2-a9a730483514
-  position: {x: 2720, y: 1540}
+  guid: 376d5a68-72a0-4d0c-83d8-5b9c67cb3d2c
+  position: {x: 680, y: 1540}
   blackboard:
   description: 
   drawGizmos: 0
   rotateDirection: 1
---- !u!114 &339316859741146808
+--- !u!114 &849926256400879111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3dc491c3b458a945b4bd32e24ed7627, type: 3}
+  m_Name: Shoot
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 110cc24d-1e9f-4db8-8916-2606978e4531
+  position: {x: 850, y: 1540}
+  blackboard:
+  description: 
+  drawGizmos: 0
+  rotateDirection: 1
+--- !u!114 &469620286018026864
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
+  m_Name: Rotate
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 8a769855-fad9-47b8-9778-5c5422354743
+  position: {x: 1020, y: 1540}
+  blackboard:
+  description: 
+  drawGizmos: 0
+  rotateDirection: 2
+--- !u!114 &229615149725892519
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
+  m_Name: Rotate
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 315324ad-eadb-4e05-86cc-f551c25d4344
+  position: {x: 1190, y: 1540}
+  blackboard:
+  description: 
+  drawGizmos: 0
+  rotateDirection: 1
+--- !u!114 &928066473149393435
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
+  m_Name: Rotate
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: d1edefd7-b5ea-4bd6-b553-731c53873f4c
+  position: {x: 1360, y: 1540}
+  blackboard:
+  description: 
+  drawGizmos: 0
+  rotateDirection: 1
+--- !u!114 &942314107726973064
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3dc491c3b458a945b4bd32e24ed7627, type: 3}
+  m_Name: Shoot
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 651d8463-89cf-4604-9167-e1975bbf6153
+  position: {x: 1530, y: 1540}
+  blackboard:
+  description: 
+  drawGizmos: 0
+  rotateDirection: 1
+--- !u!114 &434340370477873920
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2206,14 +1358,54 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: 05176470-3b19-4669-8c62-2ef26759830e
-  position: {x: 2890, y: 1540}
+  guid: b557bb1a-62b0-4b59-80d6-1a1a47800734
+  position: {x: 1700, y: 1540}
   blackboard:
   description: 
   drawGizmos: 0
   targetGameObject: 4
   side: 0
---- !u!114 &761255044649428058
+--- !u!114 &692581754774584223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fd1e85f30abba2499f6834e124b1450, type: 3}
+  m_Name: MoveForward
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: c6b68f99-6596-4f4f-ac17-f05e4da74892
+  position: {x: 1870, y: 1540}
+  blackboard:
+  description: 
+  drawGizmos: 0
+  shoot: 3
+--- !u!114 &439643287178293349
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1191a1255814faa47b52cc65d43e6285, type: 3}
+  m_Name: RotateTurret
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: b58cedb8-de29-4f63-8287-f2b5faf2a609
+  position: {x: 2040, y: 1540}
+  blackboard:
+  description: 
+  drawGizmos: 0
+  rotateDirection: 3
+--- !u!114 &908600698644643304
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2227,14 +1419,95 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: e27cf731-148b-486f-9ee9-a00738655b96
-  position: {x: 3060, y: 1540}
+  guid: 1fb705c6-7176-4c24-b4b8-56eb09ec2a13
+  position: {x: 2210, y: 1540}
   blackboard:
   description: 
   drawGizmos: 0
-  targetGameObject: 10
+  targetGameObject: 8
   side: 2
---- !u!114 &575062692370983640
+--- !u!114 &627067140786450727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
+  m_Name: Rotate
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 6d1fb98e-d781-424c-be34-6de507ca9327
+  position: {x: 2380, y: 1540}
+  blackboard:
+  description: 
+  drawGizmos: 0
+  rotateDirection: 2
+--- !u!114 &394822933530849846
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fd1e85f30abba2499f6834e124b1450, type: 3}
+  m_Name: MoveForward
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 274eaf72-7751-4fe1-97e6-6b6e94df598a
+  position: {x: 2550, y: 1540}
+  blackboard:
+  description: 
+  drawGizmos: 0
+  shoot: 2
+--- !u!114 &958919251801074619
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1191a1255814faa47b52cc65d43e6285, type: 3}
+  m_Name: RotateTurret
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 1e13c537-371e-4b87-aa4b-42cf1b1210c6
+  position: {x: 2720, y: 1540}
+  blackboard:
+  description: 
+  drawGizmos: 0
+  rotateDirection: 3
+--- !u!114 &175679750166128539
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2896f3e48c4d62d40be88fb007bb6361, type: 3}
+  m_Name: RayHitObject
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: caa79b00-73dd-4e1e-a4da-dbc52f3a8d4f
+  position: {x: 2890, y: 1540}
+  blackboard:
+  description: 
+  drawGizmos: 0
+  targetGameObject: 9
+  side: 2
+--- !u!114 &758230792105374595
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2247,113 +1520,79 @@ MonoBehaviour:
   m_Name: BAS15
   m_EditorClassIdentifier: 
   id: 15
-  rootNode: {fileID: 628177068993838985}
+  rootNode: {fileID: 700509587631761554}
   treeState: 0
   nodes: 
-  - {fileID: 628177068993838985}
-  - {fileID: 144184343344855287}
-  - {fileID: 188370202879879761}
-  - {fileID: 210429292889634916}
-  - {fileID: 953538372759248782}
-  - {fileID: 499456890677538685}
-  - {fileID: 338009141406656062}
-  - {fileID: 489811549839624569}
-  - {fileID: 543297722161908239}
-  - {fileID: 375903930042468860}
-  - {fileID: 410048870618482691}
-  - {fileID: 293933265665825226}
-  - {fileID: 233163905703921484}
-  - {fileID: 839902473501373126}
-  - {fileID: 184560044973200079}
-  - {fileID: 473183416929553081}
-  - {fileID: 196851043123294576}
-  - {fileID: 137014583815465112}
-  - {fileID: 514949462214037158}
-  - {fileID: 615763018956922101}
-  - {fileID: 382107329237316041}
-  - {fileID: 410427831695148575}
-  - {fileID: 403393444007319876}
-  - {fileID: 300514260455153465}
-  - {fileID: 236071773019917710}
-  - {fileID: 158416343717300480}
-  - {fileID: 732470432057620839}
-  - {fileID: 345025312458111733}
-  - {fileID: 953805368080928665}
-  - {fileID: 189137099142973609}
-  - {fileID: 694709165119723583}
-  - {fileID: 453888406899746106}
-  - {fileID: 610838395064991554}
-  - {fileID: 305043730586207346}
-  - {fileID: 930817737023601521}
-  - {fileID: 192649859879093061}
-  - {fileID: 578049202029582199}
-  - {fileID: 232694706845780124}
-  - {fileID: 394923196395022954}
-  - {fileID: 656704539625534421}
-  - {fileID: 184430669690904173}
-  - {fileID: 292640012932664546}
-  - {fileID: 492937315521029301}
-  - {fileID: 463070882223869452}
-  - {fileID: 227944839878730246}
-  - {fileID: 612943347788739935}
-  - {fileID: 371258028377586825}
-  - {fileID: 292423067357763388}
-  - {fileID: 416173004332027838}
-  - {fileID: 810263792516946187}
-  - {fileID: 140759195294521144}
-  - {fileID: 636338089878115452}
-  - {fileID: 291535038242819147}
-  - {fileID: 696467805618556030}
-  - {fileID: 387742891989309877}
-  - {fileID: 795017501749062171}
-  - {fileID: 804885940041629426}
-  - {fileID: 296428912655199682}
-  - {fileID: 836470860683306488}
-  - {fileID: 820164531973194872}
-  - {fileID: 191734357058987487}
-  - {fileID: 502791553554130869}
-  - {fileID: 859205240763192563}
-  - {fileID: 835235479595029447}
-  - {fileID: 256554012577551972}
-  - {fileID: 891014409100968001}
-  - {fileID: 186236624998734764}
-  - {fileID: 771961815929454197}
-  - {fileID: 125725178432719449}
-  - {fileID: 245488384097367101}
-  - {fileID: 548830087818716575}
-  - {fileID: 251182576216585560}
-  - {fileID: 886667602521601409}
-  - {fileID: 684897039247279031}
-  - {fileID: 907626120992088447}
-  - {fileID: 618394726251350929}
-  - {fileID: 567801603813869331}
-  - {fileID: 689214352212442621}
-  - {fileID: 469097315065695968}
-  - {fileID: 238823225998357889}
-  - {fileID: 724610973495667552}
-  - {fileID: 642835218503388970}
-  - {fileID: 821966502701674050}
-  - {fileID: 861529520480807766}
-  - {fileID: 202060129666159726}
-  - {fileID: 578894061717012924}
-  - {fileID: 702415043486568605}
-  - {fileID: 666731021152019067}
-  - {fileID: 234631551953703923}
-  - {fileID: 186320394190480599}
-  - {fileID: 494646593290950772}
-  - {fileID: 515679795657459598}
-  - {fileID: 330875534169285879}
-  - {fileID: 791315006646338535}
-  - {fileID: 541341730067852815}
-  - {fileID: 444850546801050167}
-  - {fileID: 678865899843362729}
-  - {fileID: 226702996068297089}
-  - {fileID: 616788039637407446}
-  - {fileID: 453541630805115641}
-  - {fileID: 639062930570233949}
-  - {fileID: 505307414177218250}
-  - {fileID: 446749647796247013}
-  - {fileID: 953973542150407256}
-  - {fileID: 339316859741146808}
-  - {fileID: 761255044649428058}
+  - {fileID: 700509587631761554}
+  - {fileID: 966758779317045267}
+  - {fileID: 258361892480241387}
+  - {fileID: 328632849082814109}
+  - {fileID: 580848366233786717}
+  - {fileID: 695151487004932114}
+  - {fileID: 915135376835268222}
+  - {fileID: 139635326630762347}
+  - {fileID: 941275766809804398}
+  - {fileID: 509969836545230983}
+  - {fileID: 151840755600861660}
+  - {fileID: 474720790692890063}
+  - {fileID: 325876526332019937}
+  - {fileID: 555632161694365463}
+  - {fileID: 134071447632412283}
+  - {fileID: 701141908789339309}
+  - {fileID: 283014810457844128}
+  - {fileID: 808115492749461298}
+  - {fileID: 436769833901101594}
+  - {fileID: 798758309881542787}
+  - {fileID: 593688475785823327}
+  - {fileID: 871086462600807297}
+  - {fileID: 709199906043909128}
+  - {fileID: 428635526737006136}
+  - {fileID: 660321784911627925}
+  - {fileID: 683271115701112638}
+  - {fileID: 116932666862058158}
+  - {fileID: 586948526929003261}
+  - {fileID: 966711721508062189}
+  - {fileID: 353269530930831324}
+  - {fileID: 151616531883167916}
+  - {fileID: 985308151854857108}
+  - {fileID: 310143737561815912}
+  - {fileID: 349583143116298268}
+  - {fileID: 772629350560936139}
+  - {fileID: 177632078542197776}
+  - {fileID: 469452255212252089}
+  - {fileID: 803929921048694175}
+  - {fileID: 364347218111549768}
+  - {fileID: 504078148936976726}
+  - {fileID: 339206710070981914}
+  - {fileID: 146492383943373419}
+  - {fileID: 513537454876389865}
+  - {fileID: 744513864986656303}
+  - {fileID: 284269803850770174}
+  - {fileID: 596984649415582297}
+  - {fileID: 588649309870620875}
+  - {fileID: 124772786131316555}
+  - {fileID: 939229338702663182}
+  - {fileID: 139876833449233537}
+  - {fileID: 403466652510738883}
+  - {fileID: 445901078090550493}
+  - {fileID: 282898648154607869}
+  - {fileID: 662583891294890451}
+  - {fileID: 662084434764857902}
+  - {fileID: 604362975031513111}
+  - {fileID: 913520685585820358}
+  - {fileID: 236209071113374514}
+  - {fileID: 741565815056568962}
+  - {fileID: 849926256400879111}
+  - {fileID: 469620286018026864}
+  - {fileID: 229615149725892519}
+  - {fileID: 928066473149393435}
+  - {fileID: 942314107726973064}
+  - {fileID: 434340370477873920}
+  - {fileID: 692581754774584223}
+  - {fileID: 439643287178293349}
+  - {fileID: 908600698644643304}
+  - {fileID: 627067140786450727}
+  - {fileID: 394822933530849846}
+  - {fileID: 958919251801074619}
+  - {fileID: 175679750166128539}
   blackboard: 
