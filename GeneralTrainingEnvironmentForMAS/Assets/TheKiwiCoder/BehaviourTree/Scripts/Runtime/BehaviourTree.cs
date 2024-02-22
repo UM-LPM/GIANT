@@ -23,32 +23,6 @@ namespace TheKiwiCoder {
             }
             return treeState;
         }
-
-        /*public Node.State UpdateEnchanced() {
-            Queue<BTNode> bTNodeQueue = new Queue<BTNode>();
-
-            bTNodeQueue.Enqueue(bTNodes[0]);
-
-            BTNode currentBTNode;
-            while(bTNodeQueue.TryDequeue(out currentBTNode)) {
-                switch (currentBTNode.Node) {
-                    case RootNode root:
-                        break;
-                    case Repeat repeat:
-                        break;
-                    case Sequencer sequencer:
-                        break;
-                    case Selector selector:
-                        break;
-                    case ActionNode action:
-                        break;
-                }
-            }
-            
-
-            return treeState;
-        }*/
-
         public static List<Node> GetChildren(Node parent) {
             List<Node> children = new List<Node>();
 
@@ -105,30 +79,7 @@ namespace TheKiwiCoder {
         public void UpdateTree(in ActionBuffer actionsOut) {
             blackboard.actionsOut = actionsOut;
             Update();
-            //UpdateEnchanced();
         }
-
-        /*public void FillBTNodes() {
-            bTNodes = new BTNode[nodes.Count];
-
-            Queue<Node> nodeQueue = new Queue<Node>();
-            nodeQueue.Enqueue(rootNode);
-
-            int counter = 0;
-            Node currentNode;
-            while(nodeQueue.TryDequeue(out currentNode)) {
-                List<Node> children = currentNode.GetChildren();
-                int[] childrenIndexes = new int[children.Count];
-
-                for (int i = 0; i < children.Count; i++) {
-                    childrenIndexes[i] = counter + i;
-                    nodeQueue.Enqueue(children[i]);
-                }
-                bTNodes[counter] = new BTNode(currentNode, childrenIndexes);
-            }
-        }*/
-
-
 
         #region Editor Compatibility
 #if UNITY_EDITOR

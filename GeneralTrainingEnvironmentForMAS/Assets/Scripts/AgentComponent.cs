@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using TheKiwiCoder;
 using UnityEngine;
 
-public class AgentComponent : MonoBehaviour {
+public abstract class AgentComponent : MonoBehaviour {
 
     [field: SerializeField, Header("Base Agent Configuration")]
     public bool HasPredefinedBehaviour { get; set; }

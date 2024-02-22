@@ -12,6 +12,9 @@ using System.Linq;
 
 public class Communicator : MonoBehaviour {
 
+    [Header("HTTP Server Configuration")]
+    [SerializeField] private string uri = "http://localhost:4444/";
+
     [Header("Scene Loading Configuration")]
     [SerializeField] public SceneLoadMode SceneLoadMode = SceneLoadMode.LayerMode;
     
@@ -67,7 +70,7 @@ public class Communicator : MonoBehaviour {
         }
 
         Listener = new HttpListener();
-        Listener.Prefixes.Add("http://localhost:4444/");
+        Listener.Prefixes.Add(uri);
         Listener.Start();
 
         ListenerThread = new Thread(StartListener);
