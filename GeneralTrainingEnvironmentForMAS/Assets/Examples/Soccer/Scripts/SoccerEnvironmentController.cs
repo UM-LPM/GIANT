@@ -152,16 +152,16 @@ public class SoccerEnvironmentController : EnvironmentControllerBase {
         if(striker.Team == goalReceivingTeam) {
             // Autogol was scored
             // Add penalty to all the agents that received the autogoal
-            UpdateTeamFitness(Agents, goalReceivingTeam, SoccerFitness.AUTO_GOAL);
-            UpdateTeamFitness(AgentsPredefinedBehaviour, goalReceivingTeam, SoccerFitness.AUTO_GOAL);
+            UpdateTeamFitness(Agents, goalReceivingTeam, SoccerFitness.FitnessValues[SoccerFitness.FitnessKeys.AutoGoal.ToString()], SoccerFitness.FitnessKeys.AutoGoal.ToString());
+            UpdateTeamFitness(AgentsPredefinedBehaviour, goalReceivingTeam, SoccerFitness.FitnessValues[SoccerFitness.FitnessKeys.AutoGoal.ToString()], SoccerFitness.FitnessKeys.AutoGoal.ToString());
         }
         else {
             // Legit goal was scored
             // Add fitness only to the scorer but add penalty to all opponents
-            striker.AgentFitness.Fitness.UpdateFitness(SoccerFitness.GOAL_SCORED);
+            striker.AgentFitness.Fitness.UpdateFitness(SoccerFitness.FitnessValues[SoccerFitness.FitnessKeys.GoalScored.ToString()], SoccerFitness.FitnessKeys.GoalScored.ToString());
 
-            UpdateTeamFitness(Agents, goalReceivingTeam, SoccerFitness.GOAL_RECEIVED);
-            UpdateTeamFitness(AgentsPredefinedBehaviour, goalReceivingTeam, SoccerFitness.GOAL_RECEIVED);
+            UpdateTeamFitness(Agents, goalReceivingTeam, SoccerFitness.FitnessValues[SoccerFitness.FitnessKeys.GoalReceived.ToString()], SoccerFitness.FitnessKeys.GoalReceived.ToString());
+            UpdateTeamFitness(AgentsPredefinedBehaviour, goalReceivingTeam, SoccerFitness.FitnessValues[SoccerFitness.FitnessKeys.GoalReceived.ToString()], SoccerFitness.FitnessKeys.GoalReceived.ToString());
         }
 
         // Check engind state
@@ -194,9 +194,9 @@ public class SoccerEnvironmentController : EnvironmentControllerBase {
         SoccerBall.Rigidbody.angularVelocity = Vector3.zero;
     }
 
-    void UpdateTeamFitness(AgentComponent[] agents, Team team, float value) {
+    void UpdateTeamFitness(AgentComponent[] agents, Team team, float value, string key) {
         foreach (SoccerAgentComponent agent in agents.Where(a => (a as SoccerAgentComponent).Team == team)) {
-            agent.AgentFitness.Fitness.UpdateFitness(value);
+            agent.AgentFitness.Fitness.UpdateFitness(value, key);
         }
     }
 
@@ -209,15 +209,15 @@ public class SoccerEnvironmentController : EnvironmentControllerBase {
 
             if (dotProduct > PassTolerance) {
                 // The object is moving towards the target
-                agent.AgentFitness.Fitness.UpdateFitness(SoccerFitness.PASS_TO_OPONENT_GOAL);
+                agent.AgentFitness.Fitness.UpdateFitness(SoccerFitness.FitnessValues[SoccerFitness.FitnessKeys.PassToOponentGoal.ToString()], SoccerFitness.FitnessKeys.PassToOponentGoal.ToString());
             }
             else if(dotProduct < -PassTolerance) {
                 // The object is not moving towards the target
-                agent.AgentFitness.Fitness.UpdateFitness(SoccerFitness.PASS_TO_OWN_GOAL);
+                agent.AgentFitness.Fitness.UpdateFitness(SoccerFitness.FitnessValues[SoccerFitness.FitnessKeys.PassToOwnGoal.ToString()], SoccerFitness.FitnessKeys.PassToOwnGoal.ToString());
             }
             else {
-                // THe object is not moving in any dirrection
-                agent.AgentFitness.Fitness.UpdateFitness(SoccerFitness.PASS);
+                // The object is not moving in any dirrection
+                agent.AgentFitness.Fitness.UpdateFitness(SoccerFitness.FitnessValues[SoccerFitness.FitnessKeys.Pass.ToString()], SoccerFitness.FitnessKeys.Pass.ToString());
             }
         }
     }

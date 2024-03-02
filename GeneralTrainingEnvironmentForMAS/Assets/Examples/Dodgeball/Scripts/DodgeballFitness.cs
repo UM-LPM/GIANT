@@ -17,4 +17,6 @@ public class DodgeballFitness : Fitness {
         - return_flag_bonus	(default = 0.0) In Capture the Flag, a reward given to the team when it returns their own flag to their base, after it has been dropped by an opponent.
         - ctf_hit_reward	(default = 0.02) In Capture the Flag, a reward given to an agent when it hits an opponent with a ball.
      */
+
+
 }

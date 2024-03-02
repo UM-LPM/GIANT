@@ -9,6 +9,7 @@ using UnityEngine.SceneManagement;
 using PimDeWitte.UnityMainThreadDispatcher;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 
 public class Communicator : MonoBehaviour {
 
@@ -82,12 +83,12 @@ public class Communicator : MonoBehaviour {
     }
 
     private void EnvironmentController_OnGameFinished(object sender, EnvironmentControllerBase.OnGameFinishedEventargs e) {
-        foreach (GroupFitness fitnessGroup in e.FitnessGroups) {
-            foreach (FitnessIndividual fitnessIndividual in fitnessGroup.FitnessIndividuals) {
-                if (fitnessIndividual.IndividualId < 0)
-                    Debug.LogError("IndividualID is -1");
-                PopFitness.Fitnesses[fitnessIndividual.IndividualId].Add(fitnessIndividual.Fitness.GetFitness());
-            }
+        foreach (FitnessIndividual fitnessIndividual in e.FitnessIndividuals) {
+            if (fitnessIndividual.IndividualId < 0)
+                Debug.LogError("IndividualID is -1");
+            //PopFitness.Fitnesses[fitnessIndividual.IndividualId].Add(fitnessIndividual.Fitness.GetFitness());
+            //PopFitness.FitnessIndividuals[fitnessIndividual.IndividualId].Fitnesses.Add(e.GameScenarioName, fitnessIndividual.Fitness);
+            PopFitness.FitnessIndividuals[fitnessIndividual.IndividualId].Fitnesses.Add(e.ScenarioName, fitnessIndividual.Fitness);
         }
 
         if (SceneLoadMode == SceneLoadMode.LayerMode)
@@ -153,13 +154,13 @@ public class Communicator : MonoBehaviour {
 
                         switch (scenario.BTLoadMode) {
                             case BTLoadMode.Single:
-                                LoadAgentScenarioSingleLayerMode(scenario.AgentSceneName);
+                                LoadAgentScenarioSingleLayerMode(scenario.AgentSceneName, gameScenario.GameSceneName);
                                 break;
                             case BTLoadMode.Full:
-                                LoadAgentScenarioFullLayerMode(scenario.AgentSceneName);
+                                LoadAgentScenarioFullLayerMode(scenario.AgentSceneName, gameScenario.GameSceneName);
                                 break;
                             case BTLoadMode.Custom:
-                                LoadAgentScenarioCustomLayerMode(scenario.AgentSceneName);
+                                LoadAgentScenarioCustomLayerMode(scenario.AgentSceneName, gameScenario.GameSceneName);
                                 break;
                         }
 
@@ -196,13 +197,13 @@ public class Communicator : MonoBehaviour {
 
                     switch (scenario.BTLoadMode) {
                         case BTLoadMode.Single:
-                            LoadAgentScenarioSingleGridMode(scenario.AgentSceneName);
+                            LoadAgentScenarioSingleGridMode(scenario.AgentSceneName, GameScenarios[0].GameSceneName);
                             break;
                         case BTLoadMode.Full:
-                            LoadAgentScenarioFullGridMode(scenario.AgentSceneName);
+                            LoadAgentScenarioFullGridMode(scenario.AgentSceneName, GameScenarios[0].GameSceneName);
                             break;
                         case BTLoadMode.Custom:
-                            LoadAgentScenarioCustomGridMode(scenario.AgentSceneName);
+                            LoadAgentScenarioCustomGridMode(scenario.AgentSceneName, GameScenarios[0].GameSceneName);
                             break;
                     }
 
@@ -227,8 +228,9 @@ public class Communicator : MonoBehaviour {
         // Based on FitnessStatisticType calculate fitness statistics
         CalculateFitnessStatistics();
 
-        HttpServerResponse response = new HttpServerResponse() { PopFitness = PopFitness.FinalFitnesses };
-        string responseJson = JsonUtility.ToJson(response);
+        HttpServerResponse response = new HttpServerResponse() { PopFitness = PopFitness.FitnessIndividuals };
+        //string responseJson = JsonUtility.ToJson(response);
+        string responseJson = JsonConvert.SerializeObject(response);
 
         byte[] buffer = Encoding.UTF8.GetBytes(responseJson);
         context.Response.ContentLength64 = buffer.Length;
@@ -237,65 +239,59 @@ public class Communicator : MonoBehaviour {
     }
 
     void CalculateFitnessStatistics() {
-        switch (FitnessStatisticType) {
-            case FitnessStatisticType.Mean:
-                for (int i = 0; i < PopFitness.Fitnesses.Length; i++) {
-                    PopFitness.FinalFitnesses[i] = PopFitness.Fitnesses[i].Average();
-                }
-                break;
-            case FitnessStatisticType.StdDeviation:
-                for (int i = 0; i < PopFitness.Fitnesses.Length; i++) {
-                    double mean = PopFitness.Fitnesses[i].Average();
-                    double variance = PopFitness.Fitnesses[i].Select(n => Math.Pow(n - mean, 2)).Average();
-                    PopFitness.FinalFitnesses[i] = (float) Math.Sqrt(variance);
-                }
-                break;
-            case FitnessStatisticType.Min:
-                for (int i = 0; i < PopFitness.Fitnesses.Length; i++) {
-                    PopFitness.FinalFitnesses[i] = PopFitness.Fitnesses[i].Min();
-                }
-                break;
-            case FitnessStatisticType.Max:
-                for (int i = 0; i < PopFitness.Fitnesses.Length; i++) {
-                    PopFitness.FinalFitnesses[i] = PopFitness.Fitnesses[i].Max();
-                }
-                break;
+        for (int i = 0; i < PopFitness.FitnessIndividuals.Length; i++) {
+            PopFitness.FitnessIndividuals[i].FinalFitness = PopFitness.FitnessIndividuals[i].SumFitness();
+
+            switch (FitnessStatisticType) {
+                case FitnessStatisticType.Mean:
+                    PopFitness.FitnessIndividuals[i].FinalFitnessStats = PopFitness.FitnessIndividuals[i].MeanFitness();
+                    break;
+                case FitnessStatisticType.StdDeviation:
+                    PopFitness.FitnessIndividuals[i].FinalFitnessStats = PopFitness.FitnessIndividuals[i].StdDeviationFitness();
+                    break;
+                case FitnessStatisticType.Min:
+                    PopFitness.FitnessIndividuals[i].FinalFitnessStats = PopFitness.FitnessIndividuals[i].MinFitness();
+                    break;
+                case FitnessStatisticType.Max:
+                    PopFitness.FitnessIndividuals[i].FinalFitnessStats = PopFitness.FitnessIndividuals[i].MaxFitness();
+                    break;
+            }
         }
     }
 
-    void LoadAgentScenarioSingleLayerMode(string agentSceneName) {
-        while(BTsLoaded < PopBTs.Length && Layer.GetAndReserveAvailableLayer(BTsLoaded) >= 0) {
+    void LoadAgentScenarioSingleLayerMode(string agentSceneName, string gameSceneName) {
+        while(BTsLoaded < PopBTs.Length && Layer.GetAndReserveAvailableLayer(BTsLoaded, gameSceneName, agentSceneName) >= 0) {
             SceneManager.LoadScene(agentSceneName, LoadSceneMode.Additive);
             BTsLoaded++;
         }
     }
 
-    void LoadAgentScenarioFullLayerMode(string agentSceneName) {
-        if (Layer.GetAndReserveAvailableLayer(-1) >= 0) {
+    void LoadAgentScenarioFullLayerMode(string agentSceneName, string gameSceneName) {
+        if (Layer.GetAndReserveAvailableLayer(-1, gameSceneName, agentSceneName) >= 0) {
             SceneManager.LoadScene(agentSceneName, LoadSceneMode.Additive);
             BTsLoaded = PopBTs.Length;
         }
     }
 
-    void LoadAgentScenarioCustomLayerMode(string agentSceneName) {
+    void LoadAgentScenarioCustomLayerMode(string agentSceneName, string gameSceneName) {
         // TODO Custom loading scenario
     }
 
-    void LoadAgentScenarioSingleGridMode(string agentSceneName) {
-        while (BTsLoaded < PopBTs.Length && Grid.GetAndReserveAvailableGridlayer(BTsLoaded) != null) {
+    void LoadAgentScenarioSingleGridMode(string agentSceneName, string gameSceneName) {
+        while (BTsLoaded < PopBTs.Length && Grid.GetAndReserveAvailableGridlayer(BTsLoaded, gameSceneName, agentSceneName) != null) {
             SceneManager.LoadScene(agentSceneName, LoadSceneMode.Additive);
             BTsLoaded++;
         }
     }
 
-    void LoadAgentScenarioFullGridMode(string agentSceneName) {
-        if (Grid.GetAndReserveAvailableGridlayer(BTsLoaded) != null) {
+    void LoadAgentScenarioFullGridMode(string agentSceneName, string gameSceneName) {
+        if (Grid.GetAndReserveAvailableGridlayer(BTsLoaded, gameSceneName, agentSceneName) != null) {
             SceneManager.LoadScene(agentSceneName, LoadSceneMode.Additive);
             BTsLoaded = PopBTs.Length;
         }
     }
 
-    void LoadAgentScenarioCustomGridMode(string agentSceneName) {
+    void LoadAgentScenarioCustomGridMode(string agentSceneName, string gameSceneName) {
         // TODO Custom loading scenario
     }
 
@@ -326,7 +322,7 @@ public class Communicator : MonoBehaviour {
         return null;
     }
 
-    public LayerBTIndex GetReservedLayer() {
+    public LayerData GetReservedLayer() {
         return Layer.GetReservedLayer();
     }
 
@@ -336,17 +332,7 @@ public class Communicator : MonoBehaviour {
 }
 
 public class HttpServerResponse {
-    public float[] PopFitness;
-}
-
-public class LayerBTIndex {
-    public int LayerId;
-    public int BTIndex;
-
-    public LayerBTIndex(int layerId, int btIndex) {
-        LayerId = layerId;
-        BTIndex = btIndex;
-    }
+    public FitnessIndividual[] PopFitness { get; set; }
 }
 
 public enum FitnessStatisticType {

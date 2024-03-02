@@ -27,7 +27,7 @@ public class ItemPickupComponent : MonoBehaviour {
                 break;
         }
 
-        agent.AgentFitness.Fitness.UpdateFitness(BombermanFitness.POWER_UP_COLECTED);
+        agent.AgentFitness.Fitness.UpdateFitness(BombermanFitness.FitnessValues[BombermanFitness.FitnessKeys.PowerUpCollected.ToString()], BombermanFitness.FitnessKeys.PowerUpCollected.ToString());
 
         Destroy(gameObject);
     }

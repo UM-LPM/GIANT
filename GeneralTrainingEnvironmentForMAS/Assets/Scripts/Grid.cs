@@ -48,7 +48,7 @@ public class Grid {
         return usedGridCells;
     }
 
-    public GridCell GetAndReserveAvailableGridlayer(int BtIndex) {
+    public GridCell GetAndReserveAvailableGridlayer(int BtIndex, string gameSceneName, string agentSceneName) {
         if (CanUseAnotherGridCell()) {
             for (int x = 0; x < GridSize.x; x++) {
                 for (int y = 0; y < GridSize.y; y++) {
@@ -56,6 +56,8 @@ public class Grid {
                         if (GridCells[x, y, z].GridAvailability == 0) {
                             GridCells[x, y, z].GridAvailability = 1;
                             GridCells[x, y, z].BTIndex = BtIndex;
+                            GridCells[x, y, z].GameSceneName = gameSceneName;
+                            GridCells[x, y, z].AgentSceneName = agentSceneName;
                             return GridCells[x, y, z];
                         }
                     }
@@ -110,10 +112,14 @@ public class GridCell {
     public int BTIndex { get; set; }
     public int Layer { get; set; }
 
+    public string GameSceneName { get; set; }
+    public string AgentSceneName { get; set; }
+
     public GridCell(Vector3 gridCellPosition) {
         GridCellPosition = gridCellPosition;
         GridAvailability = 0;
         BTIndex = -1;
         Layer = 6; // Field1
+
     }
 }

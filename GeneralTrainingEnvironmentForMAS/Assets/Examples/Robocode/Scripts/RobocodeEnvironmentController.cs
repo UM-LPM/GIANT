@@ -18,7 +18,6 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
 
     [Header("Robocode configuration Movement")]
     [SerializeField] float ForwardSpeed = 1f;
-    [SerializeField] float LateralSpeed = 1f;
 
     [Header("Robocode configuration Agent Move Fitness")]
     [SerializeField] float AgentMoveFitnessUpdateInterval = 5f;
@@ -272,11 +271,11 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
         // Survival bonus
         foreach (RobocodeAgentComponent agent in agents) {
             if (agent.gameObject.activeSelf) {
-                agent.AgentFitness.Fitness.UpdateFitness(RobocodeFitness.SURVIVAL_BONUS);
+                agent.AgentFitness.Fitness.UpdateFitness(RobocodeFitness.FitnessValues[RobocodeFitness.FitnessKeys.SurvivalBonus.ToString()], RobocodeFitness.FitnessKeys.SurvivalBonus.ToString());
 
                 // Last survival bonus
                 if (lastSurvival) {
-                    agent.AgentFitness.Fitness.UpdateFitness(RobocodeFitness.LAST_SURVIVAL_BONUS);
+                    agent.AgentFitness.Fitness.UpdateFitness(RobocodeFitness.FitnessValues[RobocodeFitness.FitnessKeys.LastSurvivalBonus.ToString()], RobocodeFitness.FitnessKeys.LastSurvivalBonus.ToString());
                 }
             }
         }
@@ -289,16 +288,16 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
     }
 
     public void ObstacleMissedAgent(MissileComponent missile) {
-        missile.Parent.AgentFitness.Fitness.UpdateFitness(RobocodeFitness.MISSILE_MISSED_AGENT);
+        missile.Parent.AgentFitness.Fitness.UpdateFitness(RobocodeFitness.FitnessValues[RobocodeFitness.FitnessKeys.MissileMissedAgent.ToString()], RobocodeFitness.FitnessKeys.MissileMissedAgent.ToString());
     }
 
 
     void UpdateFitnesses(MissileComponent missile, AgentComponent hitAgent) {
         // Update Agent whose missile hit the other tank
-        missile.Parent.AgentFitness.Fitness.UpdateFitness(RobocodeFitness.MISSILE_HIT_AGENT);
+        missile.Parent.AgentFitness.Fitness.UpdateFitness(RobocodeFitness.FitnessValues[RobocodeFitness.FitnessKeys.MissileHitAgent.ToString()], RobocodeFitness.FitnessKeys.MissileHitAgent.ToString());
 
         // Update Agent who got hit by a missile
-        hitAgent.AgentFitness.Fitness.UpdateFitness(RobocodeFitness.AGENT_HIT_BY_ROCKET);
+        hitAgent.AgentFitness.Fitness.UpdateFitness(RobocodeFitness.FitnessValues[RobocodeFitness.FitnessKeys.AgentHitByRocket.ToString()], RobocodeFitness.FitnessKeys.AgentHitByRocket.ToString());
     }
 
     void UpdateAgentHealth(MissileComponent missile, RobocodeAgentComponent hitAgent) {
@@ -314,8 +313,8 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
                     CheckEndingState();
                     break;
                 case RobocodeGameScenarioType.Deathmatch:
-                    missile.Parent.AgentFitness.Fitness.UpdateFitness(RobocodeFitness.AGENT_DESTROYED_BONUS);
-                    hitAgent.AgentFitness.Fitness.UpdateFitness(RobocodeFitness.DEATH_PENALTY);
+                    missile.Parent.AgentFitness.Fitness.UpdateFitness(RobocodeFitness.FitnessValues[RobocodeFitness.FitnessKeys.AgentDestroyedBonus.ToString()], RobocodeFitness.FitnessKeys.AgentDestroyedBonus.ToString());
+                    hitAgent.AgentFitness.Fitness.UpdateFitness(RobocodeFitness.FitnessValues[RobocodeFitness.FitnessKeys.DeathPenalty.ToString()], RobocodeFitness.FitnessKeys.DeathPenalty.ToString());
                     RespawnAgent(hitAgent);
                     break;
             }
@@ -353,7 +352,7 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
                 if (agent.LastKnownPosition != Vector3.zero) {
                     float distance = Vector3.Distance(agent.LastKnownPosition, agent.transform.position);
                     if (distance >= AgentMoveFitnessMinDistance) {
-                        agent.AgentFitness.Fitness.UpdateFitness(RobocodeFitness.AGENT_MOVED_BONUS);
+                        agent.AgentFitness.Fitness.UpdateFitness(RobocodeFitness.FitnessValues[RobocodeFitness.FitnessKeys.AgentMovedBonus.ToString()], RobocodeFitness.FitnessKeys.AgentMovedBonus.ToString());
                     }
                 }
                 agent.LastKnownPosition = agent.transform.position;
@@ -373,7 +372,7 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
                 if (sensorPerceiveOutputs[0].HasHit) {
                     AgentComponent otherAgent = sensorPerceiveOutputs[0].HitGameObjects[0].GetComponent<AgentComponent>();
                     if(otherAgent != null) {
-                        agent.AgentFitness.Fitness.UpdateFitness(RobocodeFitness.AGENT_AIMING_OPPONENT);
+                        agent.AgentFitness.Fitness.UpdateFitness(RobocodeFitness.FitnessValues[RobocodeFitness.FitnessKeys.AgentAimingOpponent.ToString()], RobocodeFitness.FitnessKeys.AgentAimingOpponent.ToString());
                     }
                 }
             }

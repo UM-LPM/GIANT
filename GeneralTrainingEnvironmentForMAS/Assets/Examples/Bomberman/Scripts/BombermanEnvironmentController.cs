@@ -100,11 +100,11 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
         // Survival bonus
         foreach (var agent in Agents) {
             if (agent.gameObject.activeSelf && agent.enabled) {
-                agent.AgentFitness.Fitness.UpdateFitness(BombermanFitness.SURVIVAL_BONUS);
+                agent.AgentFitness.Fitness.UpdateFitness(BombermanFitness.FitnessValues[BombermanFitness.FitnessKeys.SurvivalBonus.ToString()], BombermanFitness.FitnessKeys.SurvivalBonus.ToString());
 
                 // Last survival bonus
                 if (lastSurvival) {
-                    agent.AgentFitness.Fitness.UpdateFitness(BombermanFitness.LAST_SURVIVAL_BONUS);
+                    agent.AgentFitness.Fitness.UpdateFitness(BombermanFitness.FitnessValues[BombermanFitness.FitnessKeys.LastSurvivalBonus.ToString()], BombermanFitness.FitnessKeys.LastSurvivalBonus.ToString());
                 }
             }
         }
@@ -134,21 +134,21 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
             agent.Health--;
 
             if (this == explosion.Parent) {
-                agent.AgentFitness.Fitness.UpdateFitness(BombermanFitness.AGENT_HIT_BY_OWN_BOMB);
+                agent.AgentFitness.Fitness.UpdateFitness(BombermanFitness.FitnessValues[BombermanFitness.FitnessKeys.AgentHitByOwnBomb.ToString()], BombermanFitness.FitnessKeys.AgentHitByOwnBomb.ToString());
             }
             else {
-                agent.AgentFitness.Fitness.UpdateFitness(BombermanFitness.AGENT_HIT_BY_BOMB);
-                explosion.Parent.AgentFitness.Fitness.UpdateFitness(BombermanFitness.BOMB_HIT_AGENT);
+                agent.AgentFitness.Fitness.UpdateFitness(BombermanFitness.FitnessValues[BombermanFitness.FitnessKeys.AgentHitByBomb.ToString()], BombermanFitness.FitnessKeys.AgentHitByBomb.ToString());
+                explosion.Parent.AgentFitness.Fitness.UpdateFitness(BombermanFitness.FitnessValues[BombermanFitness.FitnessKeys.BombHitAgent.ToString()], BombermanFitness.FitnessKeys.BombHitAgent.ToString());
             }
 
             if (agent.Health <= 0) {
                 // Agent has died
                 if (this == explosion.Parent) {
-                    agent.AgentFitness.Fitness.UpdateFitness(BombermanFitness.AGENT_HIT_BY_OWN_BOMB);
+                    agent.AgentFitness.Fitness.UpdateFitness(BombermanFitness.FitnessValues[BombermanFitness.FitnessKeys.AgentHitByOwnBomb.ToString()], BombermanFitness.FitnessKeys.AgentHitByOwnBomb.ToString());
                 }
                 else {
-                    agent.AgentFitness.Fitness.UpdateFitness(BombermanFitness.AGENT_HEALTH_ZERO);
-                    explosion.Parent.AgentFitness.Fitness.UpdateFitness(BombermanFitness.AGENT_KILLED);
+                    agent.AgentFitness.Fitness.UpdateFitness(BombermanFitness.FitnessValues[BombermanFitness.FitnessKeys.AgentHealthZero.ToString()], BombermanFitness.FitnessKeys.AgentHealthZero.ToString());
+                    explosion.Parent.AgentFitness.Fitness.UpdateFitness(BombermanFitness.FitnessValues[BombermanFitness.FitnessKeys.AgentKilled.ToString()], BombermanFitness.FitnessKeys.AgentKilled.ToString());
                 }
 
                 agent.DeathSequence();

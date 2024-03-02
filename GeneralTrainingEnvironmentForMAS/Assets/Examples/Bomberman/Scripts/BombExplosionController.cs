@@ -27,7 +27,7 @@ public class BombExplosionController : MonoBehaviour {
     }
 
     public IEnumerator PlaceBomb(BombermanAgentComponent agent) {
-        agent.AgentFitness.Fitness.UpdateFitness(BombermanFitness.BOMB_PLACED);
+        agent.AgentFitness.Fitness.UpdateFitness(BombermanFitness.FitnessValues[BombermanFitness.FitnessKeys.BombPlaced.ToString()], BombermanFitness.FitnessKeys.BombPlaced.ToString());
 
         Vector2 position = agent.transform.position;
         position.x = MathF.Round(position.x);
@@ -100,7 +100,7 @@ public class BombExplosionController : MonoBehaviour {
 
             DestructibleTiles.SetTile(cell, null);
 
-            agent.AgentFitness.Fitness.UpdateFitness(BombermanFitness.BLOCK_DESTROYED);
+            agent.AgentFitness.Fitness.UpdateFitness(BombermanFitness.FitnessValues[BombermanFitness.FitnessKeys.BlockDestroyed.ToString()], BombermanFitness.FitnessKeys.BlockDestroyed.ToString());
         }
     }
 

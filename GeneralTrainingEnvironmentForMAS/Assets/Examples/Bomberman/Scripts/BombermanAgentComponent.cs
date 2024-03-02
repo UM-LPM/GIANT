@@ -59,23 +59,6 @@ public class BombermanAgentComponent : AgentComponent {
         ActiveSpriteRenderer.Idle = MoveDirection == Vector2.zero;
     }
 
-
-    /*private void OnTriggerEnter2D(Collider2D collision) {
-        ExplosionComponent explosion;
-        
-        if(collision.gameObject.TryGetComponent<ExplosionComponent>(out explosion)) {
-            BombermanEnvironmentController.ExlosionHitAgent(this, explosion);
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D other) {
-        BombComponent bombComponent;
-        other.gameObject.TryGetComponent<BombComponent>(out bombComponent);
-        if (bombComponent) {
-            other.isTrigger = false;
-        }
-    }*/
-
     public void DeathSequence() {
         this.enabled = false;
 

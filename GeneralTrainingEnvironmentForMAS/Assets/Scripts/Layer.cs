@@ -7,17 +7,17 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class Layer {
-    public LayerBTIndex[] LayerIds { get; set; }
+    public LayerData[] LayerData { get; set; }
     // 0 - Available; 1 - Reserverd; 2 - In Use
     public int[] LayerAvailability { get; set; }
     public int BatchSize { get; set; }
 
     public Layer(int minlayerId, int maxLayerId, int batchSize) {
-        LayerIds = new LayerBTIndex[maxLayerId - minlayerId + 1];
-        LayerAvailability = new int[LayerIds.Length];
+        LayerData = new LayerData[maxLayerId - minlayerId + 1];
+        LayerAvailability = new int[LayerData.Length];
 
-        for (int i = 0; i < LayerIds.Length; i++) {
-            LayerIds[i] = new LayerBTIndex(minlayerId + i, -1);
+        for (int i = 0; i < LayerData.Length; i++) {
+            LayerData[i] = new LayerData(minlayerId + i, -1);
             LayerAvailability[i] = 0; // All are default available
         }
         BatchSize = batchSize;
@@ -41,12 +41,14 @@ public class Layer {
         return counter;
     }
 
-    public int GetAndReserveAvailableLayer(int BtIndex) {
+    public int GetAndReserveAvailableLayer(int BtIndex, string gameSceneName, string agentSceneName) {
         if (CanUseAnotherLayer()) {
             for (int i = 0; i < LayerAvailability.Length; i++) {
                 if (LayerAvailability[i] == 0) {
                     LayerAvailability[i] = 1; // Set Layer to reserved
-                    LayerIds[i].BTIndex = BtIndex;
+                    LayerData[i].BTIndex = BtIndex;
+                    LayerData[i].GameSceneName = gameSceneName;
+                    LayerData[i].AgentSceneName = agentSceneName;
                     return i;
                 }
             }
@@ -61,22 +63,34 @@ public class Layer {
     }
 
     public void ReleaseLayer(int layerId) {
-        for (int i = 0; i < LayerIds.Length; i++) {
-            if (LayerIds[i].LayerId == layerId) {
+        for (int i = 0; i < LayerData.Length; i++) {
+            if (LayerData[i].LayerId == layerId) {
                 LayerAvailability[i] = 0;
             }
         }
     }
 
-    public LayerBTIndex GetReservedLayer() {
+    public LayerData GetReservedLayer() {
         for (int i = 0; i < LayerAvailability.Length; i++) {
             if (LayerAvailability[i] == 1) {
                 LayerAvailability[i] = 2;
-                return LayerIds[i];
+                return LayerData[i];
             }
         }
         Debug.LogError("GetReservedLayer() method returned null");
         return null;
     }
 
+}
+
+public class LayerData {
+    public int LayerId;
+    public int BTIndex;
+    public string GameSceneName;
+    public string AgentSceneName;
+
+    public LayerData(int layerId, int btIndex) {
+        LayerId = layerId;
+        BTIndex = btIndex;
+    }
 }

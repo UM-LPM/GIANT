@@ -6,16 +6,33 @@ using System.Threading.Tasks;
 
 public class BombermanFitness : Fitness {
 
-    public static int AGENT_MOVE = 1; // TODO Not supported (Required?)
-    public static int BOMB_PLACED = 5;
-    public static int BLOCK_DESTROYED = 2;
-    public static int POWER_UP_COLECTED = 3;
-    public static int AGENT_HIT_BY_BOMB = -20;
-    public static int AGENT_HIT_BY_OWN_BOMB = -30;
-    public static int AGENT_HEALTH_ZERO = -10;
-    public static int BOMB_HIT_AGENT = 10;
-    public static int AGENT_KILLED = 20;
-    public static int SURVIVAL_BONUS = 8;
-    public static int LAST_SURVIVAL_BONUS = 10;
+    public static Dictionary<string, int> FitnessValues = new Dictionary<string, int> {
+        { "AgentMove", 1 },
+        { "BombPlaced", 5 },
+        { "BlockDestroyed", 2 },
+        { "PowerUpCollected", 3 },
+        { "AgentHitByBomb", -20 },
+        { "AgentHitByOwnBomb", -30 },
+        { "AgentHealthZero", -10 },
+        { "BombHitAgent", 10 },
+        { "AgentKilled", 20 },
+        { "SurvivalBonus", 8 },
+        { "LastSurvivalBonus", 10 }
+    };
 
+    public static string[] Keys = FitnessValues.Keys.ToArray();
+
+    public enum FitnessKeys {
+        AgentMove,
+        BombPlaced,
+        BlockDestroyed,
+        PowerUpCollected,
+        AgentHitByBomb,
+        AgentHitByOwnBomb,
+        AgentHealthZero,
+        BombHitAgent,
+        AgentKilled,
+        SurvivalBonus,
+        LastSurvivalBonus
+    }
 }

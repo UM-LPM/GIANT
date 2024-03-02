@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
+/// <summary>
+/// This class is responsible for controlling the missiles in the Robocode environment, when no physics is used (used by default).
+/// </summary>
 public class MissileController : MonoBehaviour {
 
     [SerializeField] Vector3 MissileSizeHalf = new Vector3(0.1f, 0.1f, 0.1f);
