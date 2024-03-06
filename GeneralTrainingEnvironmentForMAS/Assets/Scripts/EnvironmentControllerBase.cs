@@ -13,7 +13,6 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     [SerializeField] public int IndividualId;
     [SerializeField] public bool Debug = false;
     [SerializeField] public BTLoadMode BTLoadMode;
-    [SerializeField] public bool MinimizeResults = true; // If true lower fitness is better
     [SerializeField] public LayerMask DefaultLayer = 0;
     [SerializeField] GameObject Environment;
 
@@ -314,16 +313,12 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     FitnessIndividual[] GetAgentFitnesses() {
         FitnessIndividual[] fitnessIndividuals = new FitnessIndividual[0];
 
-         float minimizer = MinimizeResults ? -1.0f : 1.0f;
-
         // Based on BtLoadMode set fitness
         // BTLoadMode.Full -> Each agents fitness corresponds to one FitnesIndividual
         // BTLoadMode.Single -> All agents fitnesses corresponds to the same FitnessIndividual
         if (BTLoadMode == BTLoadMode.Full) {
             fitnessIndividuals = new FitnessIndividual[Agents.Length]; // Initialize FitnessIndividuals
             for (int i = 0; i < Agents.Length; i++) {
-                Agents[i].AgentFitness.Fitness.SetFitness(Agents[i].AgentFitness.Fitness.GetFitness() * minimizer);
-
                 fitnessIndividuals[i] = Agents[i].AgentFitness;
             }
         }
@@ -332,14 +327,10 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
             fitnessIndividuals[0].IndividualId = Agents[0].AgentFitness.IndividualId; // All agents have the same individual Id
 
             for (int i = 0; i < Agents.Length; i++) {
-                Agents[i].AgentFitness.Fitness.SetFitness(Agents[i].AgentFitness.Fitness.GetFitness() * minimizer);
-
                 foreach (KeyValuePair<string, float> fitness in Agents[i].AgentFitness.Fitness.IndividualValues) {
                     fitnessIndividuals[0].Fitness.UpdateFitness(fitness.Value, fitness.Key);
                 }
             }
-
-            fitnessIndividuals[0].Fitness.SetFitness(fitnessIndividuals[0].Fitness.GetFitness() * minimizer);
         }
 
         if(fitnessIndividuals.Length == 0) {

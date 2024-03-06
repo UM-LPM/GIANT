@@ -86,8 +86,6 @@ public class Communicator : MonoBehaviour {
         foreach (FitnessIndividual fitnessIndividual in e.FitnessIndividuals) {
             if (fitnessIndividual.IndividualId < 0)
                 Debug.LogError("IndividualID is -1");
-            //PopFitness.Fitnesses[fitnessIndividual.IndividualId].Add(fitnessIndividual.Fitness.GetFitness());
-            //PopFitness.FitnessIndividuals[fitnessIndividual.IndividualId].Fitnesses.Add(e.GameScenarioName, fitnessIndividual.Fitness);
             PopFitness.FitnessIndividuals[fitnessIndividual.IndividualId].Fitnesses.Add(e.ScenarioName, fitnessIndividual.Fitness);
         }
 

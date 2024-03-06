@@ -6,19 +6,19 @@ using UnityEngine;
 public class SoccerFitness : Fitness
 {
     public static Dictionary<string, int> FitnessValues = new Dictionary<string, int> {
-        { "GoalScored", 30 },
-        { "GoalReceived", -20 },
-        { "AutoGoal", -35 },
-        { "PassToOponentGoal", 2 },
-        { "PassToOwnGoal", -1 },
-        { "Pass", 1 },
+        { "GoalScored", -30 },
+        { "GoalReceived", 20 },
+        { "AutoGoal", 35 },
+        { "PassToOponentGoal", -2 },
+        { "PassToOwnGoal", 1 },
+        { "Pass", -1 },
         // TODO Include
-        { "TouchOtherAgent", -2 },
-        { "PositionCloseToBall", 1 },
-        { "WallTouch", -2 },
-        { "GoalTouch", -4 },
-        { "Move", 1 },
-        { "LookBall", 1 }
+        { "TouchOtherAgent", 2 },
+        { "PositionCloseToBall", -1 },
+        { "WallTouch", 2 },
+        { "GoalTouch", 4 },
+        { "Move", -1 },
+        { "LookBall", -1 }
     };
 
     public static string[] Keys = FitnessValues.Keys.ToArray();
