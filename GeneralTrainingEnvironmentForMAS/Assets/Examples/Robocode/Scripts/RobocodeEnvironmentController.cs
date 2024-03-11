@@ -24,6 +24,8 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
     [SerializeField] float AgentMoveFitnessMinDistance = 2f;
     [Header("Robocode configuration Agent Aim Fitness")]
     [SerializeField] float AgentAimFitnessUpdateInterval = 2f;
+    [Header("Robocode configuration Agent Near Wall Fitness")]
+    [SerializeField] float AgentNearWallUpdateInterval = 2f;
 
     [Header("Robocode configuration General")]
     [SerializeField] GameObject MissilePrefab;
@@ -44,6 +46,7 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
     float TurretMoveDir;
     float NextAgentMoveFitnessUpdate = 0;
     float NextAgentAimFitnessUpdate = 0;
+    float NextAgentNearWallFitnessUpdate = 0;
 
     protected override void DefineAdditionalDataOnStart() {
         foreach (RobocodeAgentComponent agent in Agents) {
@@ -110,6 +113,13 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
             UpdateAgentAimFitness(Agents);
             UpdateAgentAimFitness(AgentsPredefinedBehaviour);
             NextAgentAimFitnessUpdate += AgentAimFitnessUpdateInterval;
+        }
+
+        // Update agent near wall fitness
+        if (CurrentSimulationTime >= NextAgentNearWallFitnessUpdate) {
+            UpdateAgentNearWallFitness(Agents);
+            UpdateAgentNearWallFitness(AgentsPredefinedBehaviour);
+            NextAgentNearWallFitnessUpdate += AgentNearWallUpdateInterval;
         }
     }
 
@@ -252,6 +262,9 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
                     mc.Parent = agent;
                     mc.RobocodeEnvironmentController = this;
                     agent.NextShootTime = CurrentSimulationTime + MissileShootCooldown;
+
+                    // Update fitness
+                    agent.AgentFitness.Fitness.UpdateFitness(RobocodeFitness.FitnessValues[RobocodeFitness.FitnessKeys.AgentFiredMissile.ToString()], RobocodeFitness.FitnessKeys.AgentFiredMissile.ToString());
                 }
             }
         }
@@ -373,6 +386,21 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
                     AgentComponent otherAgent = sensorPerceiveOutputs[0].HitGameObjects[0].GetComponent<AgentComponent>();
                     if(otherAgent != null) {
                         agent.AgentFitness.Fitness.UpdateFitness(RobocodeFitness.FitnessValues[RobocodeFitness.FitnessKeys.AgentAimingOpponent.ToString()], RobocodeFitness.FitnessKeys.AgentAimingOpponent.ToString());
+                    }
+                }
+            }
+        }
+    }
+
+    void UpdateAgentNearWallFitness(AgentComponent[] agents) {
+        foreach (RobocodeAgentComponent agent in agents) {
+            if (agent.gameObject.activeSelf) {
+                Collider agentCol = agent.GetComponent<Collider>();
+
+                Collider[] colliders = Physics.OverlapBox(agent.transform.position, Vector3.one * 0.6f, agent.transform.rotation, LayerMask.GetMask(LayerMask.LayerToName(agent.gameObject.layer)) + DefaultLayer);
+                foreach (Collider col in colliders) {
+                    if (col.gameObject.tag.Contains("Wall")) {
+                        agent.AgentFitness.Fitness.UpdateFitness(RobocodeFitness.FitnessValues[RobocodeFitness.FitnessKeys.AgentNearWall.ToString()], RobocodeFitness.FitnessKeys.AgentNearWall.ToString());
                     }
                 }
             }

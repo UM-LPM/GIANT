@@ -14,8 +14,10 @@ public class RobocodeFitness: Fitness {
         { "LastSurvivalBonus", -30 },
         { "DeathPenalty", 30 },
         { "AgentDestroyedBonus", -25 },
-        { "AgentMovedBonus", -5 },
-        { "AgentAimingOpponent", -2 }
+        { "AgentMovedBonus", -1 },
+        { "AgentAimingOpponent", -1 },
+        { "AgentFiredMissile", -1 },
+        { "AgentNearWall", 1 }
     };
 
     public static string[] Keys = FitnessValues.Keys.ToArray();
@@ -29,6 +31,8 @@ public class RobocodeFitness: Fitness {
         DeathPenalty,
         AgentDestroyedBonus,
         AgentMovedBonus,
-        AgentAimingOpponent
+        AgentAimingOpponent,
+        AgentFiredMissile,
+        AgentNearWall
     }
 }
