@@ -1,9 +1,8 @@
 using TheKiwiCoder;
 
-public class DropFood : ActionNode
+public class MoveToHive : ActionNode
 {
 
-    public int shoot = 1;
     protected override void OnStart()
     {
     }
@@ -14,8 +13,7 @@ public class DropFood : ActionNode
 
     protected override State OnUpdate()
     {
-        var discreteActionsOut = blackboard.actionsOut.DiscreteActions;
-        discreteActionsOut[4] = shoot;
+        //Move toward the hive
 
         return State.Success;
     }

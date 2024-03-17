@@ -1,9 +1,8 @@
 using TheKiwiCoder;
 
-public class DropPheromone : ActionNode
+public class MoveRandomDirection : ActionNode
 {
 
-    public int shoot = 1;
     protected override void OnStart()
     {
     }

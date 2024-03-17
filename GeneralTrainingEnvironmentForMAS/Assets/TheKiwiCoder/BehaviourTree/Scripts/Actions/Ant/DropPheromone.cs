@@ -3,7 +3,6 @@ using TheKiwiCoder;
 public class DropPheromone : ActionNode
 {
 
-    public int shoot = 1;
     protected override void OnStart()
     {
     }
