@@ -10,9 +10,10 @@ public class AntEnvironmentController : EnvironmentControllerBase
     [Header("Ant configuration General")]
     [SerializeField] GameObject FoodPrefab;
     [SerializeField] GameObject HivePrefab;
+
     [SerializeField] int numFoodItems = 10;
     [SerializeField] int numHives = 5;
-    [SerializeField] GameObject PheromonePrefab;
+    [SerializeField]  public GameObject PheromonePrefab;
     [SerializeField] int AgentStartHealth = 400;
 
 
