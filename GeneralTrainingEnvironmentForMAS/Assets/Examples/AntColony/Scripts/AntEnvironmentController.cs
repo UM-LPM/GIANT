@@ -10,6 +10,8 @@ public class AntEnvironmentController : EnvironmentControllerBase
     [Header("Ant configuration General")]
     [SerializeField] GameObject FoodPrefab;
     [SerializeField] GameObject HivePrefab;
+    private List<GameObject> foodItems = new List<GameObject>();
+    public List<GameObject> FoodItems => foodItems;
 
     [SerializeField] int numFoodItems = 10;
     [SerializeField] int numHives = 5;
@@ -101,7 +103,8 @@ public class AntEnvironmentController : EnvironmentControllerBase
         for (int i = 0; i < numFoodItems; i++)
         {
             Vector3 spawnPos = GetRandomSpawnPoint();
-            Instantiate(FoodPrefab, spawnPos, Quaternion.identity);
+            GameObject foodItem = Instantiate(FoodPrefab, spawnPos, Quaternion.identity);
+            foodItems.Add(foodItem);
         }
     }
 
