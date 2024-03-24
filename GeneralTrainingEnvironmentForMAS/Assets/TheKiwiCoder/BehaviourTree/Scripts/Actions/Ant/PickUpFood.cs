@@ -7,7 +7,6 @@ public class PickUpFood : ActionNode
 
     protected override void OnStart()
     {
-        environmentController = context.gameObject.GetComponentInParent<AntEnvironmentController>();
 
     }
 
@@ -17,24 +16,10 @@ public class PickUpFood : ActionNode
 
     protected override State OnUpdate()
     {
-            Vector3 agentPosition = context.transform.position;
-
-            AntAgentComponent agentComponent = context.agent.GetComponent<AntAgentComponent>();
-
-
-        foreach (GameObject food in environmentController.FoodItems)
-        {
-            if (Vector3.Distance(agentPosition, food.transform.position) < 1.0f)
-            {
-                if (!agentComponent.hasFood)
-                {
-                    agentComponent.hasFood = true;
-                    Destroy(food);
+          
+                    var discreteActionsOut = blackboard.actionsOut.DiscreteActions;
+                    discreteActionsOut[5] = 1;
                     return State.Success;
-                }
-            }
-        }
-
-        return State.Failure;
+          
     }
 }
