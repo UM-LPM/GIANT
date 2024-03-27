@@ -23,13 +23,13 @@ public enum TargetGameObject {
     Agent,
     Wall,
     Obstacle,
-    Target1,
-    Target2,
-    Target3,
-    Target4,
-    Target5,
-    Target6,
-    Target7,
+    Object1,
+    Object2,
+    Object3,
+    Object4,
+    Object5,
+    Object6,
+    Object7,
     Unknown
 }
 
@@ -86,20 +86,20 @@ public class RayHitObject : ConditionNode {
                 return "Wall";
             case TargetGameObject.Obstacle:
                 return "Obstacle";
-            case TargetGameObject.Target1:
-                return "Target1";
-            case TargetGameObject.Target2:
-                return "Target2";
-            case TargetGameObject.Target3:
-                return "Target3";
-            case TargetGameObject.Target4:
-                return "Target4";
-            case TargetGameObject.Target5:
-                return "Target5";
-            case TargetGameObject.Target6:
-                return "Target6";
-            case TargetGameObject.Target7:
-                return "Target7";
+            case TargetGameObject.Object1:
+                return "Object1";
+            case TargetGameObject.Object2:
+                return "Object2";
+            case TargetGameObject.Object3:
+                return "Object3";
+            case TargetGameObject.Object4:
+                return "Object4";
+            case TargetGameObject.Object5:
+                return "Object5";
+            case TargetGameObject.Object6:
+                return "Object6";
+            case TargetGameObject.Object7:
+                return "Object7";
         }
         return "";
     }
@@ -112,20 +112,20 @@ public class RayHitObject : ConditionNode {
                 return TargetGameObject.Wall;
             case "Obstacle":
                 return TargetGameObject.Obstacle;
-            case "Target1":
-                return TargetGameObject.Target1;
-            case "Target2":
-                return TargetGameObject.Target2;
-            case "Target3":
-                return TargetGameObject.Target3;
-            case "Target4":
-                return TargetGameObject.Target4;
-            case "Target5":
-                return TargetGameObject.Target5;
-            case "Target6":
-                return TargetGameObject.Target6;
-            case "Target7":
-                return TargetGameObject.Target7;
+            case "Object1":
+                return TargetGameObject.Object1;
+            case "Object2":
+                return TargetGameObject.Object2;
+            case "Object3":
+                return TargetGameObject.Object3;
+            case "Object4":
+                return TargetGameObject.Object4;
+            case "Object5":
+                return TargetGameObject.Object5;
+            case "Object6":
+                return TargetGameObject.Object6;
+            case "Object7":
+                return TargetGameObject.Object7;
         }
 
         return TargetGameObject.Unknown;

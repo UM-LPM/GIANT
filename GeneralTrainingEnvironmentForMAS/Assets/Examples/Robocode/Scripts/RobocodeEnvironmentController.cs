@@ -9,7 +9,6 @@ using UnityEngine.EventSystems;
 public class RobocodeEnvironmentController : EnvironmentControllerBase {
 
     public static int MissileHealthDamage = 1;
-    public Rigidbody Rigidbody { get; set; }
 
     [Header("Robocode configuration Missile")]
     [SerializeField, Tooltip("Destroy Missile After X seconds")] public float DestroyMissileAfter = 3.0f;
@@ -21,11 +20,11 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
 
     [Header("Robocode configuration Agent Move Fitness")]
     [SerializeField] float AgentMoveFitnessUpdateInterval = 5f;
-    [SerializeField] float AgentMoveFitnessMinDistance = 2f;
+    [SerializeField] float AgentMoveFitnessMinDistance = 3f;
     [Header("Robocode configuration Agent Aim Fitness")]
-    [SerializeField] float AgentAimFitnessUpdateInterval = 2f;
+    [SerializeField] float AgentAimFitnessUpdateInterval = 5f;
     [Header("Robocode configuration Agent Near Wall Fitness")]
-    [SerializeField] float AgentNearWallUpdateInterval = 2f;
+    [SerializeField] float AgentNearWallUpdateInterval = 5f;
 
     [Header("Robocode configuration General")]
     [SerializeField] GameObject MissilePrefab;
@@ -399,7 +398,7 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
 
                 Collider[] colliders = Physics.OverlapBox(agent.transform.position, Vector3.one * 0.6f, agent.transform.rotation, LayerMask.GetMask(LayerMask.LayerToName(agent.gameObject.layer)) + DefaultLayer);
                 foreach (Collider col in colliders) {
-                    if (col.gameObject.tag.Contains("Wall")) {
+                    if (col.gameObject.tag.Contains("Wall") || col.gameObject.tag.Contains("Obstacle")) {
                         agent.AgentFitness.Fitness.UpdateFitness(RobocodeFitness.FitnessValues[RobocodeFitness.FitnessKeys.AgentNearWall.ToString()], RobocodeFitness.FitnessKeys.AgentNearWall.ToString());
                     }
                 }

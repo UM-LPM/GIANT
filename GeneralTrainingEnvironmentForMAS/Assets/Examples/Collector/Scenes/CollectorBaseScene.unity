@@ -358,25 +358,18 @@ MonoBehaviour:
   SceneLoadMode: 0
   MinLayerId: 6
   MaxLayerId: 26
-  BatchSize: 10
+  BatchSize: 20
   GridSize: {x: 100, y: 1, z: 80}
   GridSpacing: {x: 110, y: 0, z: 90}
-  BtSource: RobocodeBts
+  BtSource: CollectorBts
   GameScenarios:
-  - GameSceneName: RobocodeGameScene1
-  - GameSceneName: RobocodeGameScene2
-  - GameSceneName: RobocodeGameScene3
+  - GameSceneName: CollectorGameScene1
   AgentScenarios:
-  - AgentSceneName: RobocodeAgentScene5
-    BTLoadMode: 1
+  - AgentSceneName: CollectorAgentScene
+    BTLoadMode: 0
     GameScenarios:
-    - GameSceneName: RobocodeGameScene1
-    - GameSceneName: RobocodeGameScene2
-  - AgentSceneName: RobocodeAgentScene6
-    BTLoadMode: 1
-    GameScenarios:
-    - GameSceneName: RobocodeGameScene3
-  TimeScale: 3
+    - GameSceneName: CollectorGameScene1
+  TimeScale: 8
   FitnessStatisticType: 0
 --- !u!114 &1408735114
 MonoBehaviour:

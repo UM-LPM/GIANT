@@ -19,9 +19,12 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     [Header("Random Agent Initializaion Configuration")]
     [SerializeField] public bool RandomAgentInitialization = false;
     [SerializeField] public GameObject AgentPrefab;
-    [SerializeField] public Vector3 ArenaSize;
+    [SerializeField] public Vector3 ArenaSize; // For cube arena
+    [SerializeField] public float ArenaRadius; // For circular arena
+    [SerializeField] public Vector3 ArenaCenterPoint; // For circular arena
     [SerializeField] public float ArenaOffset = 3f;
     [SerializeField] public float MinPlayerDistance = 3f;
+    [SerializeField] public float AgentColliderExtendsMultiplier = 0.495f;
 
     [Header("Agent Control Configuration")]
     [SerializeField] public bool ManualAgentControl = false;
@@ -50,10 +53,6 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
         Util = GetComponent<Util>();
 
         SceneLoadMode = Communicator.Instance.SceneLoadMode;
-
-        // TODO Check if this is OK
-        //if (Environment != null)
-        //    Environment.SetActive(false);
 
         if (SceneLoadMode == SceneLoadMode.LayerMode) {
             LayerBTIndex = Communicator.Instance.GetReservedLayer();
@@ -147,11 +146,33 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     }
 
     public Vector3 GetAgentRandomSpawnPoint() {
-        return new Vector3 {
-            x = Util.NextFloat(-(ArenaSize.x / 2) + ArenaOffset, (ArenaSize.x / 2) - ArenaOffset),
-            y = ArenaSize.y,
-            z = Util.NextFloat(-(ArenaSize.z / 2) + ArenaOffset, (ArenaSize.z / 2) - ArenaOffset),
-        };
+        if(ArenaSize != Vector3.zero) {
+            return new Vector3 {
+                x = Util.NextFloat(-(ArenaSize.x / 2) + ArenaOffset, (ArenaSize.x / 2) - ArenaOffset),
+                y = ArenaSize.y,
+                z = Util.NextFloat(-(ArenaSize.z / 2) + ArenaOffset, (ArenaSize.z / 2) - ArenaOffset),
+            };
+        }
+        else {
+            return GetRandomSpawnPointInRadius(ArenaRadius, ArenaOffset);
+        }
+    }
+
+    public Vector3 GetRandomSpawnPointInRadius(float radius, float offset) {
+        // Generate a random angle in radians
+        float angle = Util.NextFloat(0f, Mathf.PI * 2f);
+
+        // Generate a random distance within the radius
+        float distance = Util.NextFloat(0f, radius) + offset;
+
+        // Calculate the x and z coordinates based on the angle and distance
+        float x = ArenaCenterPoint.x + distance * Mathf.Cos(angle);
+        float z = ArenaCenterPoint.z + distance * Mathf.Sin(angle);
+
+        // Create a Vector3 with the calculated coordinates
+        Vector3 randomLocation = new Vector3(x, ArenaCenterPoint.y, z);
+
+        return randomLocation;
     }
 
     public Quaternion GetAgentRandomRotation() {
@@ -159,9 +180,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     }
 
     public bool RespawnPointSuitable(Vector3 newRespawnPos, Quaternion newRotation) {
-        Collider agentCol = AgentPrefab.GetComponent<Collider>();
-
-        Collider[] colliders = Physics.OverlapBox(newRespawnPos, agentCol.bounds.extents * 0.495f, newRotation, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)) + DefaultLayer);
+        Collider[] colliders = Physics.OverlapBox(newRespawnPos, Vector3.one * AgentColliderExtendsMultiplier, newRotation, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)) + DefaultLayer);
         if (colliders.Length > 0) {
             return false;
         }
@@ -175,9 +194,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     }
 
     public virtual bool SpawnPointSuitable(Vector3 newSpawnPos, Quaternion newRotation, List<Vector3> usedSpawnPoints) {
-        Collider agentCol = AgentPrefab.GetComponent<Collider>();
-
-        Collider[] colliders = Physics.OverlapBox(newSpawnPos, agentCol.bounds.extents * 0.495f, newRotation, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)) + DefaultLayer);
+        Collider[] colliders = Physics.OverlapBox(newSpawnPos, Vector3.one * 0.495f, newRotation, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)) + DefaultLayer);
         if(colliders.Length > 0) {
             return false;
         }
