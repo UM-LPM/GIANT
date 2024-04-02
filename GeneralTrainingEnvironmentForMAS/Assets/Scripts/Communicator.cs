@@ -35,6 +35,7 @@ public class Communicator : MonoBehaviour {
 
     [Header("Execution Configuration")]
     [SerializeField] private float TimeScale = 1f;
+    [SerializeField] private int RerunTimes = 1;
 
     [Header("Response Configuration")]
     [SerializeField] FitnessStatisticType FitnessStatisticType = FitnessStatisticType.Mean;
@@ -54,6 +55,8 @@ public class Communicator : MonoBehaviour {
     private PopFitness PopFitness;
 
     private BehaviourTree[] PopBTs;
+
+    private int SimulationStepsCombined;
 
 
     private void Awake() {
@@ -93,6 +96,8 @@ public class Communicator : MonoBehaviour {
             Layer.ReleaseLayer(e.LayerId);
         else if (SceneLoadMode == SceneLoadMode.GridMode)
             Grid.ReleaseGridCell(e.GridCell);
+
+        SimulationStepsCombined += e.SimulationSteps;
     }
 
     private void StartListener() {
@@ -124,6 +129,8 @@ public class Communicator : MonoBehaviour {
 #if UNITY_EDITOR
         UnityEditor.AssetDatabase.Refresh();
 #endif
+        // Reset SimulationStepsCombined
+        SimulationStepsCombined = 0;
 
         // Load coresponding behaviour trees and order them by name 
         PopBTs = Resources.LoadAll<BehaviourTree>(BtSource);
@@ -135,93 +142,95 @@ public class Communicator : MonoBehaviour {
         CurrentIndividualID = 0;
 
         /////////////////////////////////////////////////////////////////
-        if (SceneLoadMode == SceneLoadMode.LayerMode) {
-            foreach (GameScenario gameScenario in GameScenarios) {
-                SceneManager.LoadScene(gameScenario.GameSceneName);
+        for (int i = 0; i < RerunTimes; i++) {
+            if (SceneLoadMode == SceneLoadMode.LayerMode) {
+                foreach (GameScenario gameScenario in GameScenarios) {
+                    SceneManager.LoadScene(gameScenario.GameSceneName);
 
+                    foreach (AgentScenario scenario in AgentScenarios) {
+                        if (!scenario.ContainsGameScenario(gameScenario.GameSceneName))
+                            continue;
+
+                        BTsLoaded = 0;
+                        // For each scenario all population must be evaluated
+                        while (BTsLoaded < PopBTs.Length) {
+                            while (!Layer.IsBatchExecuted(gameScenario.GameSceneName)) {
+                                yield return null;
+                            }
+
+                            switch (scenario.BTLoadMode) {
+                                case BTLoadMode.Single:
+                                    LoadAgentScenarioSingleLayerMode(scenario.AgentSceneName, gameScenario.GameSceneName);
+                                    break;
+                                case BTLoadMode.Full:
+                                    LoadAgentScenarioFullLayerMode(scenario.AgentSceneName, gameScenario.GameSceneName);
+                                    break;
+                                case BTLoadMode.Custom:
+                                    LoadAgentScenarioCustomLayerMode(scenario.AgentSceneName, gameScenario.GameSceneName);
+                                    break;
+                            }
+
+                            // Check if there is available layer
+                            while (!Layer.CanUseAnotherLayer()) {
+                                yield return null;
+                            }
+                        }
+                    }
+
+                    // Wait for all agent scenarios for current game scenario be finished before continuing to the other one (To prevent collision detection problems)
+                    while (Layer.NumberOfUsedLayeres() > 0) {
+                        yield return null;
+                    }
+
+                    SceneManager.UnloadSceneAsync(gameScenario.GameSceneName);
+                }
+
+                // Wait for all scene to finish when all different game and agent scenarios have been loaded
+                while (Layer.NumberOfUsedLayeres() > 0) {
+                    yield return null;
+                }
+            }
+            else if (SceneLoadMode == SceneLoadMode.GridMode) {
+                SceneManager.LoadScene(GameScenarios[0].GameSceneName); // Dummy scene for deterministic execution
+                                                                        // In GridMode we don't load gameScenes as they are supposed to be inside of every scene
                 foreach (AgentScenario scenario in AgentScenarios) {
-                    if (!scenario.ContainsGameScenario(gameScenario.GameSceneName))
-                        continue;
-
                     BTsLoaded = 0;
                     // For each scenario all population must be evaluated
                     while (BTsLoaded < PopBTs.Length) {
-                        while (!Layer.IsBatchExecuted(gameScenario.GameSceneName)) {
+                        while (!Grid.IsBatchExecuted(GameScenarios[0].GameSceneName)) {
                             yield return null;
                         }
 
                         switch (scenario.BTLoadMode) {
                             case BTLoadMode.Single:
-                                LoadAgentScenarioSingleLayerMode(scenario.AgentSceneName, gameScenario.GameSceneName);
+                                LoadAgentScenarioSingleGridMode(scenario.AgentSceneName, GameScenarios[0].GameSceneName);
                                 break;
                             case BTLoadMode.Full:
-                                LoadAgentScenarioFullLayerMode(scenario.AgentSceneName, gameScenario.GameSceneName);
+                                LoadAgentScenarioFullGridMode(scenario.AgentSceneName, GameScenarios[0].GameSceneName);
                                 break;
                             case BTLoadMode.Custom:
-                                LoadAgentScenarioCustomLayerMode(scenario.AgentSceneName, gameScenario.GameSceneName);
+                                LoadAgentScenarioCustomGridMode(scenario.AgentSceneName, GameScenarios[0].GameSceneName);
                                 break;
                         }
 
-                        // Check if there is available layer
-                        while (!Layer.CanUseAnotherLayer()) {
+                        // Check if there is available gridCell
+                        while (!Grid.CanUseAnotherGridCell()) {
                             yield return null;
                         }
                     }
                 }
 
-                // Wait for all agent scenarios for current game scenario be finished before continuing to the other one (To prevent collision detection problems)
-                while (Layer.NumberOfUsedLayeres() > 0) {
+                // Wait for all scene to finish when all different game and agent scenarios have been loaded
+                while (Grid.NumberOfUsedGridCells() > 0) {
                     yield return null;
                 }
-
-                SceneManager.UnloadSceneAsync(gameScenario.GameSceneName);
+                SceneManager.UnloadSceneAsync(GameScenarios[0].GameSceneName);
             }
-
-            // Wait for all scene to finish when all different game and agent scenarios have been loaded
-            while (Layer.NumberOfUsedLayeres() > 0) {
-                yield return null;
-            }
-        }
-        else if(SceneLoadMode == SceneLoadMode.GridMode) {
-            SceneManager.LoadScene(GameScenarios[0].GameSceneName); // Dummy scene for deterministic execution
-            // In GridMode we don't load gameScenes as they are supposed to be inside of every scene
-            foreach (AgentScenario scenario in AgentScenarios) {
-                BTsLoaded = 0;
-                // For each scenario all population must be evaluated
-                while (BTsLoaded < PopBTs.Length) {
-                    while (!Grid.IsBatchExecuted(GameScenarios[0].GameSceneName)) {
-                        yield return null;
-                    }
-
-                    switch (scenario.BTLoadMode) {
-                        case BTLoadMode.Single:
-                            LoadAgentScenarioSingleGridMode(scenario.AgentSceneName, GameScenarios[0].GameSceneName);
-                            break;
-                        case BTLoadMode.Full:
-                            LoadAgentScenarioFullGridMode(scenario.AgentSceneName, GameScenarios[0].GameSceneName);
-                            break;
-                        case BTLoadMode.Custom:
-                            LoadAgentScenarioCustomGridMode(scenario.AgentSceneName, GameScenarios[0].GameSceneName);
-                            break;
-                    }
-
-                    // Check if there is available gridCell
-                    while (!Grid.CanUseAnotherGridCell()) {
-                        yield return null;
-                    }
-                }
-            }
-
-            // Wait for all scene to finish when all different game and agent scenarios have been loaded
-            while (Grid.NumberOfUsedGridCells() > 0) {
-                yield return null;
-            }
-            SceneManager.UnloadSceneAsync(GameScenarios[0].GameSceneName);
         }
 
         /////////////////////////////////////////////////////////////////
 
-        Debug.Log("PerformEvaluation function finished");
+        Debug.Log("PerformEvaluation function finished (Simulation steps: " + SimulationStepsCombined + ")");
 
         // Based on FitnessStatisticType calculate fitness statistics
         CalculateFitnessStatistics();

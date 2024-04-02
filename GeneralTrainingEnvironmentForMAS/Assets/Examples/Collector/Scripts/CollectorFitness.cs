@@ -3,11 +3,12 @@ using System.Linq;
 
 public class CollectorFitness : Fitness {
 
-    public static Dictionary<string, int> FitnessValues = new Dictionary<string, int> {
-        { "AgentPickedTarget", -10 },
-        { "AgentMovedBonus", -1 },
-        { "AgentNearWall", 1 },
-        { "AgentNearTarget", 0 }, //-1 },
+    public static Dictionary<string, float> FitnessValues = new Dictionary<string, float> {
+        { "AgentPickedTarget", -5f },
+        { "AgentMovedBonus", -0.005f },
+        { "AgentNearWall", 0f }, //0.005f },
+        { "AgentNearTarget", 0f }, //-1 },
+        { "TimePassedPenalty", 0f }, //0.001f },
     };
 
     public static string[] Keys = FitnessValues.Keys.ToArray();
@@ -16,7 +17,8 @@ public class CollectorFitness : Fitness {
         AgentPickedTarget,
         AgentMovedBonus,
         AgentNearWall,
-        AgentNearTarget
+        AgentNearTarget,
+        TimePassedPenalty
     }
 }
 

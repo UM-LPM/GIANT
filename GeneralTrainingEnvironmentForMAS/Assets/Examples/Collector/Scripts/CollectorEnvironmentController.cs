@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEditor.Tilemaps;
 using UnityEngine;
 
+public enum CollectorGameMode {
+    SingleTargetPickup,
+    InfiniteTargetPickup
+}
 public class CollectorEnvironmentController : EnvironmentControllerBase {
 
     [Header("Collector target configuration")]
@@ -25,6 +29,9 @@ public class CollectorEnvironmentController : EnvironmentControllerBase {
     [Header("Collector configuration Agent Near Target Fitness")]
     [SerializeField] float AgentNearTargetUpdateInterval = 4f;
     [SerializeField] float AgentNearTargetExtends = 1.5f;
+
+    [Header("Collector configuration Collector Game Mode")]
+    [SerializeField] CollectorGameMode GameMode = CollectorGameMode.SingleTargetPickup;
 
     float ForwardSpeed = 1f;
     float NextAgentMoveFitnessUpdate = 0;
@@ -80,6 +87,10 @@ public class CollectorEnvironmentController : EnvironmentControllerBase {
             UpdateAgentNearTargetFitness(AgentsPredefinedBehaviour);
             NextAgentNearTargetFitnessUpdate += AgentNearTargetUpdateInterval;
         }
+
+        // Time penalty
+        AddTimePenaltyToAgents(Agents);
+        AddTimePenaltyToAgents(AgentsPredefinedBehaviour);
     }
 
     void UpdateAgentsWithBTs(AgentComponent[] agents) {
@@ -187,9 +198,16 @@ public class CollectorEnvironmentController : EnvironmentControllerBase {
     }
 
     public void TargetAquired(TargetComponent target, AgentComponent agent) {
+        // Update agent fitness
         agent.AgentFitness.Fitness.UpdateFitness(CollectorFitness.FitnessValues[CollectorFitness.FitnessKeys.AgentPickedTarget.ToString()], CollectorFitness.FitnessKeys.AgentPickedTarget.ToString());
         agent.GetComponent<CollectorAgentComponent>().TargetsAquired++;
-        SpawnTarget();
+
+        if(GameMode == CollectorGameMode.SingleTargetPickup) {
+            FinishGame(); // Finish game when target is aquired
+        }
+        else if (GameMode == CollectorGameMode.InfiniteTargetPickup) {
+            SpawnTarget();
+        }
     }
 
     void UpdateAgentMoveFitness(AgentComponent[] agents) {
@@ -224,7 +242,7 @@ public class CollectorEnvironmentController : EnvironmentControllerBase {
 
                 Collider[] colliders = Physics.OverlapBox(agent.transform.position, Vector3.one * AgentNearWallExtends, agent.transform.rotation, LayerMask.GetMask(LayerMask.LayerToName(agent.gameObject.layer)) + DefaultLayer);
                 foreach (Collider col in colliders) {
-                    if (col.gameObject.tag.Contains("Wall") ){//|| col.gameObject.tag.Contains("Obstacle")) {
+                    if (col.gameObject.tag.Contains("Wall") || col.gameObject.tag.Contains("Obstacle")) {
                         agent.AgentFitness.Fitness.UpdateFitness(CollectorFitness.FitnessValues[CollectorFitness.FitnessKeys.AgentNearWall.ToString()], CollectorFitness.FitnessKeys.AgentNearWall.ToString());
                     }
                 }
@@ -244,6 +262,12 @@ public class CollectorEnvironmentController : EnvironmentControllerBase {
                     }
                 }
             }
+        }
+    }
+
+    void AddTimePenaltyToAgents(AgentComponent[] agents) {
+        foreach (CollectorAgentComponent agent in agents) {
+            agent.AgentFitness.Fitness.UpdateFitness(CollectorFitness.FitnessValues[CollectorFitness.FitnessKeys.TimePassedPenalty.ToString()], CollectorFitness.FitnessKeys.TimePassedPenalty.ToString());
         }
     }
 

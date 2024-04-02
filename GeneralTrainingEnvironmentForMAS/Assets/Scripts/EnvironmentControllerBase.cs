@@ -9,6 +9,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     public static event EventHandler<OnGameFinishedEventargs> OnGameFinished;
 
     [Header("Base Configuration")]
+    [SerializeField] public float SimulationSteps = 10000;
     [SerializeField] public float SimulationTime = 10f;
     [SerializeField] public int IndividualId;
     [SerializeField] public bool Debug = false;
@@ -33,6 +34,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     protected BehaviourTree[] AgentBehaviourTrees;
     protected AgentComponent[] Agents;
     protected AgentComponent[] AgentsPredefinedBehaviour;
+    protected int CurrentSimulationSteps;
     protected float CurrentSimulationTime;
     protected GameState GameState;
     protected Util Util;
@@ -46,6 +48,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
         public int LayerId;
         public GridCell GridCell;
         public string ScenarioName; // GameSceneName + AgentSceneName
+        public int SimulationSteps;
     }
 
     protected virtual void Awake() {
@@ -94,10 +97,18 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
 
     private void FixedUpdate() {
         CurrentSimulationTime += Time.fixedDeltaTime;
+        CurrentSimulationSteps += 1;
 
         // Check game termination criteria
-        if (CurrentSimulationTime >= SimulationTime) {
-            FinishGame();
+        if (SimulationTime > 0) {
+            if (CurrentSimulationTime >= SimulationTime) {
+                FinishGame();
+            }
+        }
+        else if(SimulationSteps > 0) {
+            if (CurrentSimulationSteps >= SimulationSteps) {
+                FinishGame();
+            }
         }
 
         if (GameState == GameState.RUNNING) {
@@ -211,6 +222,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     void SetInitialData() {
         GameState = GameState.RUNNING;
         CurrentSimulationTime = 0f;
+        CurrentSimulationSteps = 0;
         if (Communicator.Instance == null) {
             UnityEngine.Debug.LogError("Communicator instance not found");
             return;
@@ -308,7 +320,8 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
                 FitnessIndividuals = GetAgentFitnesses(),
                 LayerId = gameObject.layer,
                 GridCell = GridCell,
-                ScenarioName = SceneLoadMode == SceneLoadMode.LayerMode ? LayerBTIndex.GameSceneName + "_" + LayerBTIndex.AgentSceneName + "_" + guid : GridCell.GameSceneName + "_" + GridCell.AgentSceneName + "_" + guid
+                ScenarioName = SceneLoadMode == SceneLoadMode.LayerMode ? LayerBTIndex.GameSceneName + "_" + LayerBTIndex.AgentSceneName + "_" + guid : GridCell.GameSceneName + "_" + GridCell.AgentSceneName + "_" + guid,
+                SimulationSteps = CurrentSimulationSteps
             });
 
             if (Debug) {
