@@ -13,7 +13,11 @@ public enum TargetGameObject2D {
     Bomb,
     Explosion,
     PowerUp,
-    Empty
+    Empty,
+    Food,
+    Pheromone,
+    Hive
+
 }
 
 public class GridCellContainsObject : ConditionNode {
@@ -64,6 +68,21 @@ public class GridCellContainsObject : ConditionNode {
                         break;
                     case TargetGameObject2D.Explosion:
                         if (obj.name.Contains("Explosion")) {
+                            gridContainsTarget = true;
+                        }
+                        break;
+                    case TargetGameObject2D.Food:
+                        if (obj.name.Contains("Food")){
+                            gridContainsTarget = true;
+                        }
+                        break;
+                    case TargetGameObject2D.Pheromone:
+                        if (obj.name.Contains("Pheromone")){
+                            gridContainsTarget = true;
+                        }
+                        break;
+                    case TargetGameObject2D.Hive:
+                        if (obj.name.Contains("Hive")){
                             gridContainsTarget = true;
                         }
                         break;

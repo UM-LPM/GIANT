@@ -61,19 +61,6 @@ public class AntEnvironmentController : EnvironmentControllerBase
         //Todo:
     }
 
-    public void IfCarryingFood(AntAgentComponent ant)
-    {
-        if (ant.hasFood && Vector3.Distance(ant.transform.position, HivePrefab.transform.position) < 1.0f)
-        {
-            ant.hasFood = false;
-            //update fitness with AgentBringFood- it should be more then 1.
-            //MoveRandomly
-        }
-        else
-        {
-           //moveToHve
-        }
-    }
     void MoveAntAgent(AntAgentComponent agent, ActionBuffer actionBuffer)
     {
         var dirToGo = Vector3.zero;
@@ -132,19 +119,9 @@ public class AntEnvironmentController : EnvironmentControllerBase
                             agent.BehaviourTree.UpdateTree(actionBuffer);
                          
                             MoveAntAgent(agent, actionBuffer);
-
-                        if (actionBuffer.DiscreteActions[3] == 1)
-                            {
-                                DropPheromone(agent);
-                            }
-                            if (actionBuffer.DiscreteActions[4] == 1)
-                            {
-                                MoveToHive(agent);
-                            }
-                            if (actionBuffer.DiscreteActions[5] == 1)
-                            {
-                                PickUpFood(agent);
-                            }
+                            DropPheromone(agent,actionBuffer);
+                            MoveToHive(agent);
+                            PickUpFood(agent);
 
                         }
                     }
@@ -152,20 +129,7 @@ public class AntEnvironmentController : EnvironmentControllerBase
                 }
 
   
-    public void MoveToAdjacentPheromoneElse(AntAgentComponent ant)
-    {
-            
-    }
-    public void MoveToAdjacentFood(AntAgentComponent ant)
-    {
-        //TODO: if the ant sees the food with sesnor, moveForward, otherwise ??
-
-    }
-    public void IfFoodHere(AntAgentComponent ant)
-    {
-        //TODO: if the ant is on the location where the food is, pick up, otherwise move ??
-
-    }
+    
     void PickUpFood(AntAgentComponent agent)
     {
         AntAgentComponent antComponent = agent.GetComponent<AntAgentComponent>();
@@ -200,11 +164,16 @@ public class AntEnvironmentController : EnvironmentControllerBase
         agent.Rigidbody.MovePosition(agent.Rigidbody.position + moveDirection);
     }
 
-    void DropPheromone(AntAgentComponent agent)
+    void DropPheromone(AntAgentComponent agent, ActionBuffer actionBuffer)
     {
-        Vector3 agentPosition = agent.transform.position;
+        if (actionBuffer.DiscreteActions[3] == 1 && (agent as AntAgentComponent).pheromoneTrailComponent != null)
+        {
+            Vector3 agentPosition = agent.transform.position;
+            PheromoneNodeComponent newPheromoneNode = new PheromoneNodeComponent(100,agentPosition,null,null);
+            (agent as AntAgentComponent).pheromoneTrailComponent.AddPheromone(newPheromoneNode.position);
+            Instantiate(PheromonePrefab, agentPosition, Quaternion.identity);
+        }
 
-        Instantiate(PheromonePrefab, agentPosition, Quaternion.identity);
     }
 
     void SpawnFood()

@@ -9,6 +9,8 @@ public class AntAgentComponent : AgentComponent
     public float Health { get; set; }
     public bool hasFood { get; set; }
 
+    public PheromoneNodeComponent currentPheromoneNode { get; set; }
+    public PheromoneTrailComponent pheromoneTrailComponent { get; set; }
     protected override void DefineAdditionalDataOnAwake()
     {
         Rigidbody = GetComponent<Rigidbody>();
