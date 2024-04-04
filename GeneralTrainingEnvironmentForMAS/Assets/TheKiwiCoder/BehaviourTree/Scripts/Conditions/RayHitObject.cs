@@ -37,6 +37,7 @@ public class RayHitObject : ConditionNode {
 
     public TargetGameObject targetGameObject;
     public AgentSideAdvanced side;
+    public int rayIndex;
 
     protected override void OnStart() {
     }
@@ -56,7 +57,10 @@ public class RayHitObject : ConditionNode {
 
         bool targetHit = false;
 
-        if (side == AgentSideAdvanced.Center) {
+        if (sensorPerceiveOutputs[rayIndex].HasHit && sensorPerceiveOutputs[rayIndex].HitGameObjects[0].name.Contains(TargetGameObjectsToString(targetGameObject)))
+            targetHit = true;
+
+        /*if (side == AgentSideAdvanced.Center) {
             if (sensorPerceiveOutputs[0].HasHit && sensorPerceiveOutputs[0].HitGameObjects[0].name.Contains(TargetGameObjectsToString(targetGameObject)))
                 targetHit = true;
             else
@@ -73,7 +77,7 @@ public class RayHitObject : ConditionNode {
                 if (sensorPerceiveOutputs[i].HasHit && sensorPerceiveOutputs[i].HitGameObjects[0].name.Contains(TargetGameObjectsToString(targetGameObject)))
                     targetHit = true;
             }
-        }
+        }*/
 
         return targetHit;
     }

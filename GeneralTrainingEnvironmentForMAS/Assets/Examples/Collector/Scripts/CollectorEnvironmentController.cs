@@ -74,11 +74,11 @@ public class CollectorEnvironmentController : EnvironmentControllerBase {
         }
 
         // Update agent near wall fitness
-        if (CurrentSimulationTime >= NextAgentNearWallFitnessUpdate) {
+        /*if (CurrentSimulationTime >= NextAgentNearWallFitnessUpdate) {
             UpdateAgentNearWallFitness(Agents);
             UpdateAgentNearWallFitness(AgentsPredefinedBehaviour);
             NextAgentNearWallFitnessUpdate += AgentNearWallUpdateInterval;
-        }
+        }*/
 
 
         // Update agent near wall fitness
@@ -235,7 +235,7 @@ public class CollectorEnvironmentController : EnvironmentControllerBase {
         return true;
     }
 
-    void UpdateAgentNearWallFitness(AgentComponent[] agents) {
+    /*void UpdateAgentNearWallFitness(AgentComponent[] agents) {
         foreach (CollectorAgentComponent agent in agents) {
             if (agent.gameObject.activeSelf) {
                 Collider agentCol = agent.GetComponent<Collider>();
@@ -243,12 +243,12 @@ public class CollectorEnvironmentController : EnvironmentControllerBase {
                 Collider[] colliders = Physics.OverlapBox(agent.transform.position, Vector3.one * AgentNearWallExtends, agent.transform.rotation, LayerMask.GetMask(LayerMask.LayerToName(agent.gameObject.layer)) + DefaultLayer);
                 foreach (Collider col in colliders) {
                     if (col.gameObject.tag.Contains("Wall") || col.gameObject.tag.Contains("Obstacle")) {
-                        agent.AgentFitness.Fitness.UpdateFitness(CollectorFitness.FitnessValues[CollectorFitness.FitnessKeys.AgentNearWall.ToString()], CollectorFitness.FitnessKeys.AgentNearWall.ToString());
+                        agent.AgentFitness.Fitness.UpdateFitness(CollectorFitness.FitnessValues[CollectorFitness.FitnessKeys.AgentTouchedStaticObject.ToString()], CollectorFitness.FitnessKeys.AgentTouchedStaticObject.ToString());
                     }
                 }
             }
         }
-    }
+    }*/
 
     void UpdateAgentNearTargetFitness(AgentComponent[] agents) {
         foreach (CollectorAgentComponent agent in agents) {
@@ -258,7 +258,7 @@ public class CollectorEnvironmentController : EnvironmentControllerBase {
                 Collider[] colliders = Physics.OverlapBox(agent.transform.position, Vector3.one * AgentNearTargetExtends, agent.transform.rotation, LayerMask.GetMask(LayerMask.LayerToName(agent.gameObject.layer)) + DefaultLayer);
                 foreach (Collider col in colliders) {
                     if (col.gameObject.tag.Contains("Object1")) {
-                        agent.AgentFitness.Fitness.UpdateFitness(CollectorFitness.FitnessValues[CollectorFitness.FitnessKeys.AgentNearWall.ToString()], CollectorFitness.FitnessKeys.AgentNearWall.ToString());
+                        agent.AgentFitness.Fitness.UpdateFitness(CollectorFitness.FitnessValues[CollectorFitness.FitnessKeys.AgentNearTarget.ToString()], CollectorFitness.FitnessKeys.AgentNearTarget.ToString());
                     }
                 }
             }

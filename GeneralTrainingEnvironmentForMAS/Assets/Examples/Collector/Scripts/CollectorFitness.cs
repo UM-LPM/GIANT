@@ -6,7 +6,7 @@ public class CollectorFitness : Fitness {
     public static Dictionary<string, float> FitnessValues = new Dictionary<string, float> {
         { "AgentPickedTarget", -5f },
         { "AgentMovedBonus", -0.005f },
-        { "AgentNearWall", 0f }, //0.005f },
+        { "AgentTouchedStaticObject", 0 },//1f },
         { "AgentNearTarget", 0f }, //-1 },
         { "TimePassedPenalty", 0f }, //0.001f },
     };
@@ -16,7 +16,7 @@ public class CollectorFitness : Fitness {
     public enum FitnessKeys {
         AgentPickedTarget,
         AgentMovedBonus,
-        AgentNearWall,
+        AgentTouchedStaticObject,
         AgentNearTarget,
         TimePassedPenalty
     }
