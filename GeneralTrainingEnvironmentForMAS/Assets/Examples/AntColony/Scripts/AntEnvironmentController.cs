@@ -108,7 +108,7 @@ public class AntEnvironmentController : EnvironmentControllerBase
 
     }
         void UpdateAgentsWithBTs(AgentComponent[] agents)
-                {
+        {
                     ActionBuffer actionBuffer;
                     foreach (AntAgentComponent agent in agents)
                     {
@@ -126,7 +126,7 @@ public class AntEnvironmentController : EnvironmentControllerBase
                         }
                     }
 
-                }
+        }
 
   
     
@@ -152,13 +152,16 @@ public class AntEnvironmentController : EnvironmentControllerBase
 
     void MoveToHive(AntAgentComponent agent)
     {
-
         Vector3 agentPosition = agent.transform.position;
         Vector3 hivePosition = HiveItems[0].transform.position;
+        if (agentPosition == hivePosition)
+        {
+            agent.AgentFitness.Fitness.UpdateFitness(AntColonyFitness.FitnessValues[AntColonyFitness.FitnessKeys.AgentBringFood.ToString()], AntColonyFitness.FitnessKeys.AgentBringFood.ToString());
 
+        }
         Vector3 directionToHive = (hivePosition - agentPosition).normalized;
         Quaternion targetRotation = Quaternion.LookRotation(directionToHive);
-        agent.transform.rotation = Quaternion.RotateTowards(agent.transform.rotation, targetRotation, Time.deltaTime * AntRotationSpeed);
+        agent.transform.rotation = Quaternion.RotateTowards(agent.transform.rotation, targetRotation, Time.fixedDeltaTime * AntRotationSpeed);
 
         Vector3 moveDirection = agent.transform.forward * AntMoveSpeed * Time.fixedDeltaTime;
         agent.Rigidbody.MovePosition(agent.Rigidbody.position + moveDirection);
@@ -212,12 +215,11 @@ public class AntEnvironmentController : EnvironmentControllerBase
 
     Vector3 GetRandomSpawnPoint()
     {
-        return new Vector3
-        {
-            x = Util.NextFloat(-(ArenaSize.x / 2) + ArenaOffset, (ArenaSize.x / 2) - ArenaOffset),
-            y = Util.NextFloat(-(ArenaSize.x / 2) + ArenaOffset, (ArenaSize.x / 2) - ArenaOffset),
-            z = 0,
-        };
+        Vector3 spawnPoint= new Vector3();
+        spawnPoint.x = this.Util.NextFloat(-(this.ArenaSize.x / 2) + this.ArenaOffset, (this.ArenaSize.x / 2) - this.ArenaOffset);
+        spawnPoint.y = this.Util.NextFloat(-(this.ArenaSize.x / 2) + this.ArenaOffset, (this.ArenaSize.x / 2) -  this.ArenaOffset);
+        spawnPoint.z = 0;
+        return spawnPoint;
     }
 
 }
