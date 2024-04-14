@@ -20,8 +20,12 @@ public class AntEnvironmentController : EnvironmentControllerBase
     [SerializeField] int numHives = 5;
     [SerializeField]  public GameObject PheromonePrefab;
     [SerializeField] int AgentStartHealth = 400;
+    Util Util;
 
-
+   /* private void Awake()
+    {
+        Util = GetComponent<Util>();
+    } */
     protected override void DefineAdditionalDataOnStart()
     {
         SpawnHives();
@@ -60,7 +64,62 @@ public class AntEnvironmentController : EnvironmentControllerBase
 
         //Todo:
     }
+    void OnGameInput(AgentComponent[] agents)
+    {
+        foreach (AntAgentComponent agent in agents)
+        {
+            if (agent.gameObject.activeSelf && agent.enabled)
+            {
 
+                if (Input.GetKey(agent.InputUp))
+                {
+                    agent.SetDirection(Vector2.up);
+                }
+                else if (Input.GetKey(agent.InputDown))
+                {
+                    agent.SetDirection(Vector2.down);
+                }
+                else if (Input.GetKey(agent.InputLeft))
+                {
+                    agent.SetDirection(Vector2.left);
+                }
+                else if (Input.GetKey(agent.InputRight))
+                {
+                    agent.SetDirection(Vector2.right);
+                }
+                else if (agent.hasFood == true && Input.GetKeyDown(agent.dropPickUpKey))
+                {
+                    agent.hasFood = false;
+                    Vector3 agentPosition = agent.transform.position;
+                    var foodItem = Instantiate(FoodPrefab, agentPosition, Quaternion.identity);
+                    FoodItems.Add(foodItem);
+
+                }
+                else if (agent.hasFood == false && Input.GetKeyDown(agent.dropPickUpKey))
+                {
+                    Vector3 agentPosition = agent.transform.position;
+
+                    foreach (GameObject food in FoodItems)
+                    {
+                        if (Vector3.Distance(agentPosition, food.transform.position) < 1.0f)
+                        {
+                            if (!agent.hasFood)
+                            {
+                                agent.hasFood = true;
+                                Destroy(food);
+                                break;
+                            }
+                        }
+                    }
+
+                }
+                else
+                {
+                    agent.SetDirection(Vector2.zero);
+                }
+            }
+        }
+    }
     void MoveAntAgent(AntAgentComponent agent, ActionBuffer actionBuffer)
     {
         var dirToGo = Vector3.zero;
@@ -216,8 +275,8 @@ public class AntEnvironmentController : EnvironmentControllerBase
     Vector3 GetRandomSpawnPoint()
     {
         Vector3 spawnPoint= new Vector3();
-        spawnPoint.x = this.Util.NextFloat(-(this.ArenaSize.x / 2) + this.ArenaOffset, (this.ArenaSize.x / 2) - this.ArenaOffset);
-        spawnPoint.y = this.Util.NextFloat(-(this.ArenaSize.x / 2) + this.ArenaOffset, (this.ArenaSize.x / 2) -  this.ArenaOffset);
+        spawnPoint.x =Util.NextFloat(-(this.ArenaSize.x / 2) + this.ArenaOffset, (this.ArenaSize.x / 2) - this.ArenaOffset);
+        spawnPoint.y = Util.NextFloat(-(this.ArenaSize.x / 2) + this.ArenaOffset, (this.ArenaSize.x / 2) -  this.ArenaOffset);
         spawnPoint.z = 0;
         return spawnPoint;
     }
