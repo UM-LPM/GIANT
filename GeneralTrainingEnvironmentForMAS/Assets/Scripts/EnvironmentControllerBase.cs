@@ -31,6 +31,11 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     [SerializeField] public bool ManualAgentControl = false;
     [SerializeField] public bool ManualAgentPredefinedBehaviourControl = false;
 
+    [Header("Decision Requests")]
+    [Range(1, 100)]
+    [Tooltip("Update agents BT every X steps (fixedUpdate() method call)")]
+    [SerializeField] public int DecisionRequestInterval = 1;
+
     protected BehaviourTree[] AgentBehaviourTrees;
     protected AgentComponent[] Agents;
     protected AgentComponent[] AgentsPredefinedBehaviour;
@@ -42,6 +47,8 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     protected LayerData LayerBTIndex;
     protected GridCell GridCell;
     protected SceneLoadMode SceneLoadMode;
+
+    protected int currentDecisionRequestStep;
 
     public class OnGameFinishedEventargs : EventArgs {
         public FitnessIndividual[] FitnessIndividuals;
@@ -67,6 +74,8 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
             transform.position = GridCell.GridCellPosition; // Check if this must go to Awake method
             Environment.SetActive(true);
         }
+
+        currentDecisionRequestStep = 0;
 
         DefineAdditionalDataOnAwake();
     }
@@ -112,7 +121,14 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
         }
 
         if (GameState == GameState.RUNNING) {
-            UpdateAgents();
+            if(currentDecisionRequestStep % DecisionRequestInterval == 0) {
+                UpdateAgents(true);
+            }
+            else {
+                UpdateAgents(false);
+            }
+
+            currentDecisionRequestStep++;
         }
 
         OnFixedUpdate();
@@ -392,7 +408,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
         }
     }
 
-    public abstract void UpdateAgents();
+    public abstract void UpdateAgents(bool updateBTs);
 }
 
 public enum GameState {

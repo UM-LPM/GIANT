@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Text.Json.Serialization;
 using WebAPI.Models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace WebAPI.Controllers {
     [Route("api/[controller]")]
@@ -8,12 +11,20 @@ namespace WebAPI.Controllers {
 
         // POST api/<JsonToSoParserController>
         [HttpPost]
-        public async Task<IActionResult> ParseJson([FromBody] TreeModel[] treeModels) {
+        public async Task<IActionResult> ParseJson(/*[FromBody] TreeModel[] treeModels*/) {
             try {
-                //string filePath = @"C:\Users\marko\UnityProjects\GeneralTrainingEnvironmentForMAS\GeneralTrainingEnvironmentForMAS\Assets\Resources\RobocodeBts\";
-                string filePath = @"C:\Users\marko\UnityProjects\GeneralTrainingEnvironmentForMAS\GeneralTrainingEnvironmentForMAS\Assets\Resources\CollectorBts\";
+                string sourceFilePath = @"C:\Users\marko\UnityProjects\GeneralTrainingEnvironmentForMAS\WebAPI\RequestData\jsonBody.json";
 
-                ClearFolder(filePath);
+                //string destinationFilePath = @"C:\Users\marko\UnityProjects\GeneralTrainingEnvironmentForMAS\GeneralTrainingEnvironmentForMAS\Assets\Resources\RobocodeBts\";
+                string destinationFilePath = @"C:\Users\marko\UnityProjects\GeneralTrainingEnvironmentForMAS\GeneralTrainingEnvironmentForMAS\Assets\Resources\CollectorBts\";
+
+                string jsonString = System.IO.File.ReadAllText(sourceFilePath);
+
+                // Deserialize the JSON string to a dynamic object or a custom class
+
+                TreeModel[] treeModels = JsonConvert.DeserializeObject<TreeModel[]>(jsonString);
+
+                ClearFolder(destinationFilePath);
 
                 if (treeModels.Length == 0) {
                     return BadRequest(new { Status = "Error", Message = "Failed to parse JSON.", Error = "No behaviour trees sent in request" });
@@ -35,7 +46,7 @@ namespace WebAPI.Controllers {
 
                     string behaviourTreeString = ConvertTreeToSO(treeModel, currentIndex++);
 
-                    saveBehaviourTreeToFile(behaviourTreeString, filePath + treeModel.Name + ".asset");
+                    saveBehaviourTreeToFile(behaviourTreeString, destinationFilePath + treeModel.Name + ".asset");
 
                     //Console.WriteLine(behaviourTreeString);
                 }

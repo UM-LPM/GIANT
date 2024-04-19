@@ -40,6 +40,10 @@ public class Communicator : MonoBehaviour {
     [Header("Response Configuration")]
     [SerializeField] FitnessStatisticType FitnessStatisticType = FitnessStatisticType.Mean;
 
+    [Header("Initial Seed Configuration")]
+    [SerializeField] public int InitialSeed = 316227711;
+    [SerializeField] bool RandomSeed = false;
+
     [HideInInspector] public static Communicator Instance;
 
     private int CurrentIndividualID = 0;
@@ -129,6 +133,10 @@ public class Communicator : MonoBehaviour {
 #if UNITY_EDITOR
         UnityEditor.AssetDatabase.Refresh();
 #endif
+        // Configure the random seed
+        if (RandomSeed)
+            InitialSeed = new System.Random().Next();
+
         // Reset SimulationStepsCombined
         SimulationStepsCombined = 0;
 

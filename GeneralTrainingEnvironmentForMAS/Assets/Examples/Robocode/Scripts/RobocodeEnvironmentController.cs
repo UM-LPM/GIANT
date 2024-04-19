@@ -73,7 +73,7 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
             TurretMoveDir = 0f;
     }
 
-    public override void UpdateAgents() {
+    public override void UpdateAgents(bool updateBTs) {
         //MoveAgentsWithController1(Agents);
 
         if (ManualAgentControl) {
@@ -245,7 +245,7 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
         
         foreach (RobocodeAgentComponent agent in agents) {
             if (agent.gameObject.activeSelf) {
-                if (Util.rnd.NextDouble() > 0.5f && agent.NextShootTime <= CurrentSimulationTime) {
+                if (Util.Rnd.NextDouble() > 0.5f && agent.NextShootTime <= CurrentSimulationTime) {
                     Vector3 spawnPosition = agent.MissileSpawnPoint.transform.position;
                     Quaternion spawnRotation = agent.Turret.transform.rotation;
 
@@ -361,13 +361,13 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
         foreach(RobocodeAgentComponent agent in agents) {
             // Only update agents that are active
             if (agent.gameObject.activeSelf) {
-                if (agent.LastKnownPosition != Vector3.zero) {
-                    float distance = Vector3.Distance(agent.LastKnownPosition, agent.transform.position);
-                    if (distance >= AgentMoveFitnessMinDistance) {
+                if (agent.LastKnownPositions != null && agent.LastKnownPositions.Count == 0) {
+                    float distance = Vector3.Distance(agent.LastKnownPositions[0], agent.transform.position);
+                    if (distance <= AgentMoveFitnessMinDistance) {
                         agent.AgentFitness.Fitness.UpdateFitness(RobocodeFitness.FitnessValues[RobocodeFitness.FitnessKeys.AgentMovedBonus.ToString()], RobocodeFitness.FitnessKeys.AgentMovedBonus.ToString());
                     }
                 }
-                agent.LastKnownPosition = agent.transform.position;
+                agent.LastKnownPositions[0] = agent.transform.position;
             }
         }
 

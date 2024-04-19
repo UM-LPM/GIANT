@@ -14,12 +14,14 @@ public abstract class AgentComponent : MonoBehaviour {
     public BehaviourTree BehaviourTree { get; set; }
     public FitnessIndividual AgentFitness { get; set; }
     public Vector3 StartOffset { get; set; }
-    public Vector3 LastKnownPosition { get; set; }
+    public List<Vector3> LastKnownPositions { get; set; }
+    public ActionBuffer ActionBuffer { get; set; }
 
     private void Awake() {
         AgentFitness = new FitnessIndividual();
         StartOffset = transform.parent.position;
-        LastKnownPosition = transform.position;
+        LastKnownPositions = new List<Vector3>();
+        LastKnownPositions.Add(transform.position);
 
         DefineAdditionalDataOnAwake();
     }

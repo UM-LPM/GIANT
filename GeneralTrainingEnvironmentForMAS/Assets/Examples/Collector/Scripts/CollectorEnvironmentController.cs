@@ -13,12 +13,17 @@ public class CollectorEnvironmentController : EnvironmentControllerBase {
     [SerializeField] GameObject TargetPrefab;
     [SerializeField] float TargetMinDistanceFromAgents = 3f;
     [SerializeField] float TargetExtends = 0.245f;
+    [Range(1,30)]
+    [SerializeField] int StartNumberOfTargets = 1;
+    [Range(1f, 30f)]
+    [SerializeField] float TargetToTargetDistance = 1f;
 
     [Header("Collector configuration Movement")]
     [SerializeField] float AgentMoveSpeed = 5f;
     [SerializeField] float AgentRotationSpeed = 80f;
 
     [Header("Collector configuration Agent Move Fitness")]
+    [SerializeField] bool CheckOnlyLastKnownPosition = true;
     [SerializeField] float AgentMoveFitnessUpdateInterval = 4f;
     [SerializeField] float AgentMoveFitnessMinDistance = 3f;
 
@@ -48,38 +53,38 @@ public class CollectorEnvironmentController : EnvironmentControllerBase {
         }
 
         // Spawn target
-        SpawnTarget();
+        SpawnTargets();
     }
 
-    public override void UpdateAgents() {
+    public override void UpdateAgents(bool updateBTs) {
         if (ManualAgentControl) {
             MoveAgentsWithController2(Agents);
         }
         else {
-            UpdateAgentsWithBTs(Agents);
+            UpdateAgentsWithBTs(Agents, updateBTs);
         }
 
         if (ManualAgentPredefinedBehaviourControl) {
             MoveAgentsWithController2(AgentsPredefinedBehaviour);
         }
         else {
-            UpdateAgentsWithBTs(AgentsPredefinedBehaviour);
+            UpdateAgentsWithBTs(AgentsPredefinedBehaviour, updateBTs);
         }
 
         // Update agent move fitness
         if (CurrentSimulationTime >= NextAgentMoveFitnessUpdate) {
-            UpdateAgentMoveFitness(Agents);
-            UpdateAgentMoveFitness(AgentsPredefinedBehaviour);
+            if(CheckOnlyLastKnownPosition) {
+                UpdateAgentMoveFitness(Agents);
+                UpdateAgentMoveFitness(AgentsPredefinedBehaviour);
+            }
+            else {
+                CheckAgentGloboalMovement(Agents);
+                CheckAgentGloboalMovement(AgentsPredefinedBehaviour);
+
+            }
+
             NextAgentMoveFitnessUpdate += AgentMoveFitnessUpdateInterval;
         }
-
-        // Update agent near wall fitness
-        /*if (CurrentSimulationTime >= NextAgentNearWallFitnessUpdate) {
-            UpdateAgentNearWallFitness(Agents);
-            UpdateAgentNearWallFitness(AgentsPredefinedBehaviour);
-            NextAgentNearWallFitnessUpdate += AgentNearWallUpdateInterval;
-        }*/
-
 
         // Update agent near wall fitness
         if (CurrentSimulationTime >= NextAgentNearTargetFitnessUpdate) {
@@ -93,13 +98,19 @@ public class CollectorEnvironmentController : EnvironmentControllerBase {
         AddTimePenaltyToAgents(AgentsPredefinedBehaviour);
     }
 
-    void UpdateAgentsWithBTs(AgentComponent[] agents) {
-        ActionBuffer actionBuffer;
+    void UpdateAgentsWithBTs(AgentComponent[] agents, bool updateBTs) {
         foreach (CollectorAgentComponent agent in agents) {
+            ActionBuffer actionBuffer;
             if (agent.gameObject.activeSelf) {
-                actionBuffer = new ActionBuffer(null, new int[] { 0, 0, 0}); // Forward, Side, Rotate
+                if (updateBTs) {
+                    actionBuffer = new ActionBuffer(null, new int[] { 0, 0, 0 }); // Forward, Side, Rotate
 
-                agent.BehaviourTree.UpdateTree(actionBuffer);
+                    agent.BehaviourTree.UpdateTree(actionBuffer);
+                    agent.ActionBuffer = actionBuffer;
+                }
+                else {
+                    actionBuffer = agent.ActionBuffer;
+                }
                 MoveAgent(agent, actionBuffer);
             }
         }
@@ -158,6 +169,12 @@ public class CollectorEnvironmentController : EnvironmentControllerBase {
         }
     }
 
+    void SpawnTargets() {
+        for (int i = 0; i < StartNumberOfTargets; i++) {
+            SpawnTarget();
+        }
+    }
+
     void SpawnTarget() {
         Vector3 spawnPos;
         Quaternion rotation;
@@ -189,6 +206,15 @@ public class CollectorEnvironmentController : EnvironmentControllerBase {
                     break;
                 }
             }
+
+            // Check if current spawn point is far enough from other targets
+            foreach( TargetComponent target in GetComponentsInChildren<TargetComponent>()) {
+                if(Vector3.Distance(target.transform.position, spawnPos) < TargetToTargetDistance) {
+                    isFarEnough = false;
+                    break;
+                }
+            }
+
         } while (!isFarEnough);
 
 
@@ -214,13 +240,13 @@ public class CollectorEnvironmentController : EnvironmentControllerBase {
         foreach (CollectorAgentComponent agent in agents) {
             // Only update agents that are active
             if (agent.gameObject.activeSelf) {
-                if (agent.LastKnownPosition != Vector3.zero) {
-                    float distance = Vector3.Distance(agent.LastKnownPosition, agent.transform.position);
-                    if (distance >= AgentMoveFitnessMinDistance) {
-                        agent.AgentFitness.Fitness.UpdateFitness(CollectorFitness.FitnessValues[CollectorFitness.FitnessKeys.AgentMovedBonus.ToString()], CollectorFitness.FitnessKeys.AgentMovedBonus.ToString());
+                if (agent.LastKnownPositions != null && agent.LastKnownPositions.Count == 0) {
+                    float distance = Vector3.Distance(agent.LastKnownPositions[0], agent.transform.position);
+                    if (distance <= AgentMoveFitnessMinDistance) {
+                        agent.AgentFitness.Fitness.UpdateFitness(CollectorFitness.FitnessValues[CollectorFitness.FitnessKeys.AgentNotMoved.ToString()], CollectorFitness.FitnessKeys.AgentNotMoved.ToString());
                     }
                 }
-                agent.LastKnownPosition = agent.transform.position;
+                agent.LastKnownPositions[0] = agent.transform.position;
             }
         }
 
@@ -268,6 +294,18 @@ public class CollectorEnvironmentController : EnvironmentControllerBase {
     void AddTimePenaltyToAgents(AgentComponent[] agents) {
         foreach (CollectorAgentComponent agent in agents) {
             agent.AgentFitness.Fitness.UpdateFitness(CollectorFitness.FitnessValues[CollectorFitness.FitnessKeys.TimePassedPenalty.ToString()], CollectorFitness.FitnessKeys.TimePassedPenalty.ToString());
+        }
+    }
+
+    public void CheckAgentGloboalMovement(AgentComponent[] agents) {
+        foreach (CollectorAgentComponent agent in agents) {
+            foreach (Vector3 pos in agent.LastKnownPositions) {
+                if (Vector3.Distance(pos, agent.transform.position) <= AgentMoveFitnessMinDistance) {
+                    agent.AgentFitness.Fitness.UpdateFitness(CollectorFitness.FitnessValues[CollectorFitness.FitnessKeys.AgentNotMoved.ToString()], CollectorFitness.FitnessKeys.AgentNotMoved.ToString());
+                    break;
+                }
+            }
+            agent.LastKnownPositions.Add(agent.transform.position);
         }
     }
 

@@ -4538,7 +4538,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15bb3adc4cd92df4e81d708709442da1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SimulationSteps: 10000
+  SimulationSteps: 6000
   SimulationTime: 0
   IndividualId: 0
   Debug: 0
@@ -4557,12 +4557,16 @@ MonoBehaviour:
   AgentColliderExtendsMultiplier: 0.495
   ManualAgentControl: 0
   ManualAgentPredefinedBehaviourControl: 0
+  DecisionRequestInterval: 3
   TargetPrefab: {fileID: 4168404354911558206, guid: d51bc28b75244eb47bb560c21f088eb0, type: 3}
-  TargetMinDistanceFromAgents: 3
+  TargetMinDistanceFromAgents: 5
   TargetExtends: 0.245
+  StartNumberOfTargets: 2
+  TargetToTargetDistance: 10
   AgentMoveSpeed: 8
   AgentRotationSpeed: 90
-  AgentMoveFitnessUpdateInterval: 10
+  CheckOnlyLastKnownPosition: 0
+  AgentMoveFitnessUpdateInterval: 2
   AgentMoveFitnessMinDistance: 3
   AgentNearWallUpdateInterval: 4
   AgentNearWallExtends: 0.6
@@ -4581,8 +4585,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f26b563772158044b6ecbe4df7f558e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initialSeed: 316227711
-  randomSeed: 1
+  SeedFromCommunicator: 1
+  InitialSeed: 316227712
+  RandomSeed: 1
 --- !u!1 &421747766
 GameObject:
   m_ObjectHideFlags: 0

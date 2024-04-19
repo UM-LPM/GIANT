@@ -19,8 +19,8 @@ public class DestructibleComponent : MonoBehaviour {
 
     private void OnDestroy() {
         // Spawn an item
-        if (SpawnableItems.Length > 0 && Util.rnd.NextDouble() < ItemSpawnChance) {
-            int index = Util.rnd.Next(0, SpawnableItems.Length);
+        if (SpawnableItems.Length > 0 && Util.Rnd.NextDouble() < ItemSpawnChance) {
+            int index = Util.Rnd.Next(0, SpawnableItems.Length);
             GameObject item = Instantiate(SpawnableItems[index], transform.position, Quaternion.identity, transform.parent);
             EnvironmentControllerBase.SetLayerRecursively(item, gameObject.layer);
         }

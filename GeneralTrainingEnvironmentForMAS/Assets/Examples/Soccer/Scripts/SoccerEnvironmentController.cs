@@ -39,7 +39,7 @@ public class SoccerEnvironmentController : EnvironmentControllerBase {
         OnGameInput();
     }
 
-    public override void UpdateAgents() {
+    public override void UpdateAgents(bool updateBTs) {
         if (ManualAgentControl) {
             MoveAgentsManualInput(Agents);
         }

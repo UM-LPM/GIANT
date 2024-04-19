@@ -31,7 +31,7 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
         SetAgentDefaultParams(AgentsPredefinedBehaviour);
     }
 
-    public override void UpdateAgents() {
+    public override void UpdateAgents(bool updateBTs) {
         // Update Agents that are being evaluated
         if(ManualAgentControl)
             MoveAgents(Agents);
