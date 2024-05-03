@@ -20,7 +20,6 @@ public class AntEnvironmentController : EnvironmentControllerBase
     [SerializeField] int numHives = 5;
     [SerializeField]  public GameObject PheromonePrefab;
     [SerializeField] int AgentStartHealth = 400;
-    Util Util;
 
    /* private void Awake()
     {
@@ -231,8 +230,8 @@ public class AntEnvironmentController : EnvironmentControllerBase
         if (actionBuffer.DiscreteActions[3] == 1 && (agent as AntAgentComponent).pheromoneTrailComponent != null)
         {
             Vector3 agentPosition = agent.transform.position;
-            PheromoneNodeComponent newPheromoneNode = new PheromoneNodeComponent(100,agentPosition,null,null);
-            (agent as AntAgentComponent).pheromoneTrailComponent.AddPheromone(newPheromoneNode.position);
+           // PheromoneNodeComponent newPheromoneNode = new PheromoneNodeComponent(100,agentPosition,null,null);
+          //  (agent as AntAgentComponent).pheromoneTrailComponent.AddPheromone(newPheromoneNode.position);
             Instantiate(PheromonePrefab, agentPosition, Quaternion.identity);
         }
 

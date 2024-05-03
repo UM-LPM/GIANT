@@ -10,7 +10,7 @@ public class AntAgentComponent : AgentComponent
     public bool hasFood { get; set; }
     [Header("Controlls")]
     [SerializeField] public KeyCode dropPickUpKey = KeyCode.Space;
-    [SerializeField] public KeyCode dropPheromoneKey = KeyCode.Return;
+    [SerializeField] public KeyCode dropPheromoneKey = KeyCode.LeftShift;
     [SerializeField] public KeyCode InputUp = KeyCode.W;
     [SerializeField] public KeyCode InputDown = KeyCode.S;
     [SerializeField] public KeyCode InputLeft = KeyCode.A;
@@ -23,8 +23,8 @@ public class AntAgentComponent : AgentComponent
     public PheromoneTrailComponent pheromoneTrailComponent { get; set; }
     protected override void DefineAdditionalDataOnAwake()
     {
-        Rigidbody = GetComponent<Rigidbody>();
-      
+        Rigidbody = GetComponent<Rigidbody>(); 
+
     }
     public void SetDirection(Vector2 newDirection)
     {

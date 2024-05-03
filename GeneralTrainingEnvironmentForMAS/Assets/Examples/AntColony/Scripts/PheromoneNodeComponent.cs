@@ -7,7 +7,7 @@ public class PheromoneNodeComponent : MonoBehaviour
     public PheromoneNodeComponent next { get; set; }
     public PheromoneNodeComponent previous { get; set; }
 
-    public  PheromoneNodeComponent(float intensity, Vector3 position,PheromoneNodeComponent next,PheromoneNodeComponent previous)
+    public void Initialize(float intensity, Vector3 position, PheromoneNodeComponent next, PheromoneNodeComponent previous)
     {
         this.intensity = intensity;
         this.position = position;
@@ -15,5 +15,5 @@ public class PheromoneNodeComponent : MonoBehaviour
         this.previous = previous;
     }
 
-  
+
 }

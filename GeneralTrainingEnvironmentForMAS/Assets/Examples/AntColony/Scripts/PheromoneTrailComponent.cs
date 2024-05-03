@@ -4,15 +4,16 @@ public class PheromoneTrailComponent:MonoBehaviour
 {
     public PheromoneNodeComponent firstNode { get; set; }
     public PheromoneNodeComponent lastNode { get; set; }
-    public PheromoneTrailComponent()
+  
+    private void Awake()
     {
-        this.firstNode = null;
-        this.lastNode = null;
+        firstNode = null;
+        lastNode = null;
     }
     public void AddPheromone(Vector3 position)
     {
-        PheromoneNodeComponent newNode = new PheromoneNodeComponent(100,position,null,null);
-
+        PheromoneNodeComponent newNode = gameObject.AddComponent<PheromoneNodeComponent>();
+        newNode.Initialize(100, position, null, null);
         if (firstNode == null)
         {
             firstNode = newNode;
