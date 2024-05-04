@@ -10,23 +10,17 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
     [SerializeField] float AntMoveSpeed = 2.0f;
     [SerializeField] public float AntRotationSpeed = 90.0f;
     [Header("Ant configuration General")]
-    [SerializeField] GameObject FoodPrefab;
-    [SerializeField] GameObject HivePrefab;
     [SerializeField] public float AgentUpdateinterval = 0.1f;
 
-    private List<GameObject> foodItems = new List<GameObject>();
-    public List<GameObject> FoodItems => foodItems;
+    [SerializeField]  public  List<GameObject> foodItems = new List<GameObject>();
 
-    private List<GameObject> hiveItems = new List<GameObject>();
-    public List<GameObject> HiveItems => hiveItems;
-    [SerializeField] int numFoodItems = 10;
-    [SerializeField] int numHives = 1;
+    public List<GameObject> hiveItems = new List<GameObject>();
+
     [SerializeField] public GameObject PheromonePrefab;
     [SerializeField] int AgentStartHealth = 400;
     protected override void DefineAdditionalDataOnStart()
     {
-        SpawnHives();
-        SpawnFood();
+       
 
         foreach (AntAgentComponent agent in Agents)
         {
@@ -43,28 +37,8 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
 
         }
     }
-    void SpawnFood()
-    {
-        float minDistance = 5.0f;
+    
 
-        float minAngle = 30.0f;
-        for (int i = 0; i < numFoodItems; i++)
-        {
-            Vector2 spawnPos = this.GetRandomSpawnPointFood(minDistance);
-            float angle;
-            GameObject foodItem = Instantiate(FoodPrefab, spawnPos, Quaternion.identity);
-            foodItems.Add(foodItem);
-        }
-    }
-
-    void SpawnHives()
-    {
-       
-            Vector2 spawnPos = GetRandomSpawnPoint();
-            GameObject hiveItem = Instantiate(HivePrefab, spawnPos, Quaternion.identity);
-            hiveItems.Add(hiveItem);
-       
-    }
     public Vector2 GetRandomSpawnPoint()
     {
      if (ArenaSize != null && ArenaSize != Vector3.zero)
@@ -152,17 +126,18 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
                 }
                 else if (agent.hasFood == true && Input.GetKeyDown(agent.dropPickUpKey))
                 {
-                    agent.hasFood = false;
-                    Vector2 agentPosition = agent.transform.position;
-                    var foodItem=Instantiate(FoodPrefab, agentPosition, Quaternion.identity);
-                    FoodItems.Add(foodItem);
+                   
+                    if(Vector2.Distance(agent.transform.position, hiveItems[0].transform.position) < 3.0f){
+                        agent.hasFood = false;
+                        //TODO: Increase fitness 
+                    }
 
                 }
                 else if (agent.hasFood == false && Input.GetKeyDown(agent.dropPickUpKey) )
                 {
                     Vector2 agentPosition = agent.transform.position;
 
-                    foreach (GameObject food in FoodItems)
+                    foreach (GameObject food in foodItems)
                     {
                         if (Vector2.Distance(agentPosition, food.transform.position) < 2.0f)
                         {
