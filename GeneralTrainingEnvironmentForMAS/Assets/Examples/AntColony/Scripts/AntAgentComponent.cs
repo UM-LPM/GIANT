@@ -21,11 +21,7 @@ public class AntAgentComponent : AgentComponent
 
     public PheromoneNodeComponent currentPheromoneNode { get; set; }
     public PheromoneTrailComponent pheromoneTrailComponent { get; set; }
-    protected override void DefineAdditionalDataOnAwake()
-    {
-        Rigidbody = GetComponent<Rigidbody>(); 
-
-    }
+ 
     public void SetDirection(Vector2 newDirection)
     {
         MoveDirection = newDirection;

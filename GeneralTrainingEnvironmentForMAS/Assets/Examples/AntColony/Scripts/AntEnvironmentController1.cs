@@ -7,7 +7,7 @@ using UnityEngine.UIElements;
 public class AntEnvironmentController1 : EnvironmentControllerBase
 {
     [Header("Ant Configuration")]
-    [SerializeField] float AntMoveSpeed = 1.0f;
+    [SerializeField] float AntMoveSpeed = 2.0f;
     [SerializeField] public float AntRotationSpeed = 90.0f;
     [Header("Ant configuration General")]
     [SerializeField] GameObject FoodPrefab;
@@ -26,9 +26,13 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
     protected override void DefineAdditionalDataOnStart()
     {
         SpawnHives();
+        SpawnFood();
+
         foreach (AntAgentComponent agent in Agents)
         {
-            agent.Rigidbody = agent.GetComponent<Rigidbody>();
+             agent.Rigidbody = agent.GetComponent<Rigidbody>();
+            agent.transform.position = hiveItems[0].transform.position;
+            agent.Health = AgentStartHealth;
            // Instantiate(agent.gameObject, hiveItems[0].transform);
         }
 
@@ -38,7 +42,6 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
             Instantiate(agent.gameObject, hiveItems[0].transform);
 
         }
-        SpawnFood(); 
     }
     void SpawnFood()
     {
@@ -194,6 +197,7 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
     }
     public void MoveAgents(AgentComponent[] agents)
     {
+
         foreach (AntAgentComponent agent in agents)
         {
             if (agent.gameObject.activeSelf && agent.enabled)
@@ -205,9 +209,10 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
                     Rigidbody2D rb = agent.GetComponent<Rigidbody2D>();
                     if (rb != null)
                     {
-                        Vector2 movement = agent.MoveDirection.normalized *AntMoveSpeed * Time.deltaTime;
+                        Vector2 movement = agent.MoveDirection.normalized * AntMoveSpeed * Time.deltaTime;
 
                         rb.MovePosition(rb.position + movement);
+                        agent.Health--;
                     }
                     
                     agent.NextAgentUpdateTime = CurrentSimulationTime + AgentUpdateinterval;
