@@ -1,4 +1,5 @@
-﻿using TheKiwiCoder;
+﻿using System.Collections.Generic;
+using TheKiwiCoder;
 
 public class Shoot : ActionNode {
 
@@ -14,5 +15,16 @@ public class Shoot : ActionNode {
         discreteActionsOut[4] = shoot;
 
         return State.Success;
+    }
+
+    public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviourTree tree) {
+        // Create node
+        Shoot shootNode = new Shoot();
+
+        // Set node properties
+        shootNode.shoot = int.Parse(behaviourTreeNodeDef.node_properties["shoot"]);
+
+        tree.nodes.Add(shootNode);
+        return shootNode;
     }
 }

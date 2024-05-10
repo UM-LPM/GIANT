@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -34,6 +35,22 @@ namespace TheKiwiCoder {
                     }
             }
             return State.Running;
+        }
+
+        public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviourTree tree) {
+            // Create node
+            Repeat repeatNode = new Repeat();
+
+            // Find the child node
+            BehaviourTreeNodeDef childNodeDef = behaviourTreeNodeDefs.Find(def => def.m_fileID == behaviourTreeNodeDef.child.fileID);
+
+            // Set node properties
+            repeatNode.child = Node.CreateNodeTreeFromBehaviourTreeNodeDef(childNodeDef, behaviourTreeNodeDefs, tree);
+            repeatNode.restartOnSuccess = behaviourTreeNodeDef.node_properties["restartOnSuccess"] == "1";
+            repeatNode.restartOnFailure = behaviourTreeNodeDef.node_properties["restartOnFailure"] == "1";
+
+            tree.nodes.Add(repeatNode);
+            return repeatNode;
         }
     }
 

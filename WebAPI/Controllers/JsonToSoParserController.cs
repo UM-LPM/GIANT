@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using WebAPI.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Text;
 
 namespace WebAPI.Controllers {
     [Route("api/[controller]")]
@@ -11,12 +12,12 @@ namespace WebAPI.Controllers {
 
         // POST api/<JsonToSoParserController>
         [HttpPost]
-        public async Task<IActionResult> ParseJson(/*[FromBody] TreeModel[] treeModels*/) {
+        public async Task<IActionResult> ParseJson([FromBody] string[] evalEnvInstances/*[FromBody] TreeModel[] treeModels*/) {
             try {
-                string sourceFilePath = @"C:\Users\marko\UnityProjects\GeneralTrainingEnvironmentForMAS\WebAPI\RequestData\jsonBody.json";
+                string sourceFilePath = @".\RequestData\jsonBody.json";
 
-                //string destinationFilePath = @"C:\Users\marko\UnityProjects\GeneralTrainingEnvironmentForMAS\GeneralTrainingEnvironmentForMAS\Assets\Resources\RobocodeBts\";
-                string destinationFilePath = @"C:\Users\marko\UnityProjects\GeneralTrainingEnvironmentForMAS\GeneralTrainingEnvironmentForMAS\Assets\Resources\CollectorBts\";
+                //string destinationFilePath = @".\..\GeneralTrainingEnvironmentForMAS\Assets\Resources\RobocodeBts\";
+                string destinationFilePath = @".\..\GeneralTrainingEnvironmentForMAS\Assets\Resources\CollectorBts\"; 
 
                 string jsonString = System.IO.File.ReadAllText(sourceFilePath);
 
@@ -53,10 +54,53 @@ namespace WebAPI.Controllers {
 
                 // Create a request to localhost:4444
                 try {
+                    int numOfIndividuals = treeModels.Length;
+                    int numOfInstances = evalEnvInstances.Length;
+
+                    int numOfIndividualsPerInstance = numOfIndividuals / numOfInstances;
+                    int remainder = numOfIndividuals % numOfInstances;
+
+                    // Create a single HttpClient instance
                     using (HttpClient client = new HttpClient()) {
                         client.Timeout = TimeSpan.FromMinutes(100);
 
-                        HttpResponseMessage response = await client.GetAsync("http://localhost:4444");
+                        Task<HttpResponseMessage>[] tasks = new Task<HttpResponseMessage>[numOfInstances];
+                        for (int i = 0; i < numOfInstances; i++) {
+                            // Assuming UnityEvalRequestData is defined elsewhere
+                            tasks[i] = client.PostAsync(evalEnvInstances[i], new StringContent(JsonConvert.SerializeObject(new UnityEvalRequestData() { evalRangeStart = i * numOfIndividualsPerInstance, evalRangeEnd = i * numOfIndividualsPerInstance + numOfIndividualsPerInstance + (i == numOfInstances - 1 ? remainder : 0) }), Encoding.UTF8, "application/json"));
+                        }
+
+                        // Wait for all tasks to complete
+                        await Task.WhenAll(tasks);
+
+                        FitnessIndividual[] FinalPopFitnesses = new FitnessIndividual[numOfIndividuals];
+                        foreach (Task<HttpResponseMessage> task in tasks) {
+                            HttpResponseMessage response = await task;
+                            if (response.IsSuccessStatusCode) {
+                                string result = await response.Content.ReadAsStringAsync();
+                                UnityHttpServerResponse responseObject = JsonConvert.DeserializeObject<UnityHttpServerResponse>(result);
+                                if (responseObject == null) {
+                                    return BadRequest(new { Status = "Error", Message = "Failed to parse JSON.", Error = "Response object is null" });
+                                }
+
+                                for (int i = responseObject.EvalRequestData.evalRangeStart; i < responseObject.EvalRequestData.evalRangeEnd; i++) {
+                                    FinalPopFitnesses[i] = responseObject.PopFitness[i - responseObject.EvalRequestData.evalRangeStart];
+                                }
+                            }
+                            else {
+                                return BadRequest(new { Status = "Error", Message = $"Request failed with status code: {response.StatusCode}" });
+                            }
+                        }
+
+                        return Ok(new { Status = "Success", Message = "JSON parsing was successful.", Object = new HttpServerResponse() { PopFitness = FinalPopFitnesses } });
+                    }
+                    /*using (HttpClient client = new HttpClient()) {
+                        client.Timeout = TimeSpan.FromMinutes(100);
+                        //client.PostAsync("http://localhost:4444", new StringContent(""));
+                        //Task< HttpResponseMessage> response =  client.GetAsync("http://localhost:4444");
+                        //response.Wait();
+
+                        HttpResponseMessage response = await client.GetAsync(evalEnvInstances[0]);
                         if (response.IsSuccessStatusCode) {
                             string result = await response.Content.ReadAsStringAsync();
 
@@ -65,7 +109,7 @@ namespace WebAPI.Controllers {
                         else {
                             return BadRequest(new { Status = "Error", Message = $"Request failed with status code: {response.StatusCode}" });
                         }
-                    }
+                    }*/
                 }
                 catch (Exception ex) {
                     return BadRequest(new { Status = "Error", Message = "Failed to make request to localhost:4444.", Error = ex.Message });
@@ -177,4 +221,31 @@ namespace WebAPI.Controllers {
         }
 
     }
+}
+
+public class HttpServerResponse {
+    public FitnessIndividual[] PopFitness { get; set; }
+}
+
+public class UnityHttpServerResponse {
+    public FitnessIndividual[] PopFitness { get; set; }
+    public UnityEvalRequestData EvalRequestData { get; set; }
+}
+
+public class UnityEvalRequestData {
+    public int evalRangeStart { get; set; }
+    public int evalRangeEnd { get; set; }
+}
+
+
+public class FitnessIndividual {
+    public float FinalFitness { get; set; } // Used to store final fitness (sum of all fitnesses from different game scenarios)
+    public float FinalFitnessStats { get; set; } // Used to store final fitness calculated statistic (mean, std deviation, min, max,...)
+    public Dictionary<string, Fitness> Fitnesses { get; set; } // Used to store fitnesses from different game scenarios
+
+}
+
+public class Fitness {
+    public float Value { get; set; }
+    public Dictionary<string, float> IndividualValues { get; set; }
 }

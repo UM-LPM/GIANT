@@ -1,0 +1,84 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+
+public enum ProblemDomains {
+    Collector,
+    Robococe,
+    Soccer,
+    Bomberman,
+    DodgeBall
+}
+
+public class MenuManager : MonoBehaviour
+{
+    public static MenuManager Instance;
+
+    [SerializeField] TMP_Dropdown ProblemDropdown;
+    [SerializeField] TMP_InputField URIInputField;
+
+    [SerializeField] ProblemDomains[] ProblemDomains;
+    [SerializeField] string baseURI = "http://localhost:4444/";
+
+    public string URI { get; private set; }
+
+    private void Awake() {
+        Application.targetFrameRate = 60;
+        if (Instance != null) {
+            Destroy(this);
+        }
+        else {
+            Instance = this;
+            DontDestroyOnLoad(this);
+        }
+
+        // Populate the dropdown with the problem domains and set default URL
+        ProblemDropdown.ClearOptions();
+        ProblemDropdown.AddOptions(new List<string>(System.Enum.GetNames(typeof(ProblemDomains))));
+
+        URIInputField.text = baseURI;
+    }
+
+    public void Play() {
+        string problemDomain = ProblemDropdown.options[ProblemDropdown.value].text;
+        URI = URIInputField.text;
+        if (string.IsNullOrEmpty(problemDomain)) {
+            Debug.LogError("Problem domain is empty");
+            return;
+        }
+
+        if (string.IsNullOrEmpty(URI)) {
+            Debug.LogError("URL is empty");
+            return;
+        }
+
+        // Load the selected problem domain
+        switch (problemDomain) {
+            case "Collector":
+                UnityEngine.SceneManagement.SceneManager.LoadScene("CollectorBaseScene");
+                break;
+            case "Robococe":
+                UnityEngine.SceneManagement.SceneManager.LoadScene("RobococeBaseScene");
+                break;
+            case "Soccer":
+                UnityEngine.SceneManagement.SceneManager.LoadScene("SoccerBaseScene");
+                break;
+            case "Bomberman":
+                UnityEngine.SceneManagement.SceneManager.LoadScene("BombermanBaseScene");
+                break;
+            case "DodgeBall":
+                UnityEngine.SceneManagement.SceneManager.LoadScene("DodgeBallBaseScene");
+                break;
+            default:
+                Debug.LogError("Problem domain not found");
+                break;
+        }
+    }
+
+    public void Quit() {
+        Application.Quit();
+    }
+
+}

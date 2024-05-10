@@ -1,7 +1,4 @@
-﻿using UnityEditorInternal;
-using UnityEngine;
-using UnityEngine.Rendering;
-using UnityEngine.Timeline;
+﻿using UnityEngine;
 
 public class CameraSensor : Sensor<Texture> {
 

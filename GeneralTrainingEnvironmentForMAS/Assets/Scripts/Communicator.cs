@@ -42,7 +42,7 @@ public class Communicator : MonoBehaviour {
 
     [Header("Initial Seed Configuration")]
     [SerializeField] public int InitialSeed = 316227711;
-    [SerializeField] bool RandomSeed = false;
+    [SerializeField] public RandomSeedMode RandomSeedMode = RandomSeedMode.Fixed;
 
     [HideInInspector] public static Communicator Instance;
 
@@ -64,17 +64,21 @@ public class Communicator : MonoBehaviour {
 
 
     private void Awake() {
+        if (Instance != null) {
+            Destroy(this.gameObject);
+        }
+        else {
+            Instance = this;
+            DontDestroyOnLoad(this);
+        }
+
         Layer = new Layer(MinLayerId, MaxLayerId, BatchSize);
         Grid = new Grid(GridSize, GridSpacing);
     }
 
     void Start() {
-        if (Instance != null) {
-            Destroy(this);
-        }
-        else {
-            Instance = this;
-            DontDestroyOnLoad(this);
+        if (MenuManager.Instance != null) {
+            uri = MenuManager.Instance.URI;
         }
 
         Listener = new HttpListener();
@@ -128,21 +132,48 @@ public class Communicator : MonoBehaviour {
     }
 
     IEnumerator PerformEvaluation(HttpListenerContext context) {
+        // Read body from the request
+        if (!context.Request.HasEntityBody) {
+            throw new Exception("No client data was sent with the request.");
+        }
+        System.IO.Stream body = context.Request.InputStream;
+        System.Text.Encoding encoding = context.Request.ContentEncoding;
+        System.IO.StreamReader reader = new System.IO.StreamReader(body, encoding);
+
+        // Convert the data to a string and display it on the console.
+        string s = reader.ReadToEnd();
+        EvalRequestData evalRequestData = JsonConvert.DeserializeObject<EvalRequestData>(s);
+        Debug.Log("PerformEvaluation " + evalRequestData.evalRangeStart + " " + evalRequestData.evalRangeEnd);
 
         // Refresh the Asset Database
 #if UNITY_EDITOR
         UnityEditor.AssetDatabase.Refresh();
 #endif
         // Configure the random seed
-        if (RandomSeed)
+        if (RandomSeedMode == RandomSeedMode.RandomAll)
             InitialSeed = new System.Random().Next();
 
         // Reset SimulationStepsCombined
         SimulationStepsCombined = 0;
 
-        // Load coresponding behaviour trees and order them by name 
+        // Load coresponding behaviour trees and order them by name
+        if(UIController.Instance != null && UIController.Instance.BTSourceInputField != null && UIController.Instance.BTSourceInputField.text.Length > 0)
+            BtSource = UIController.Instance.BTSourceInputField.text;
+
+        if (UIController.Instance != null && UIController.Instance.TimeScaleInputField != null && UIController.Instance.TimeScaleInputField.text.Length > 0)
+            Time.timeScale = int.Parse(UIController.Instance.TimeScaleInputField.text);
+
+#if UNITY_EDITOR
         PopBTs = Resources.LoadAll<BehaviourTree>(BtSource);
         PopBTs = PopBTs.OrderBy(bt => bt.id).ToArray();
+
+        // Based on the evalRequestData set the range of individuals to be evaluated
+        PopBTs = PopBTs.Skip(evalRequestData.evalRangeStart).Take(evalRequestData.evalRangeEnd - evalRequestData.evalRangeStart).ToArray();
+#else
+        // No need to order them by name as they are already ordered by Filename (ID)
+        PopBTs = UnityAssetParser.ParseBehaviourTreesFromFolder(BtSource, evalRequestData.evalRangeStart, evalRequestData.evalRangeEnd);
+#endif
+        Debug.Log("PopBTs length: " + PopBTs.Length);
 
         // Reset variables
         PopFitness = new PopFitness(PopBTs.Length);
@@ -243,7 +274,7 @@ public class Communicator : MonoBehaviour {
         // Based on FitnessStatisticType calculate fitness statistics
         CalculateFitnessStatistics();
 
-        HttpServerResponse response = new HttpServerResponse() { PopFitness = PopFitness.FitnessIndividuals };
+        HttpServerResponse response = new HttpServerResponse() { PopFitness = PopFitness.FitnessIndividuals, EvalRequestData = evalRequestData };
         //string responseJson = JsonUtility.ToJson(response);
         string responseJson = JsonConvert.SerializeObject(response);
 
@@ -344,10 +375,27 @@ public class Communicator : MonoBehaviour {
     public GridCell GetReservedGridCell() {
         return Grid.GetReservedGridCell();
     }
+
+    public void StopListener() {
+        Listener.Stop();
+        Listener.Close();
+        ListenerThread.Join();
+        ListenerThread.Abort();
+
+        EnvironmentControllerBase.OnGameFinished -= EnvironmentController_OnGameFinished;
+
+        Destroy(this.gameObject);
+    }
 }
 
 public class HttpServerResponse {
     public FitnessIndividual[] PopFitness { get; set; }
+    public EvalRequestData EvalRequestData { get; set; }
+}
+
+public class EvalRequestData {
+    public int evalRangeStart { get; set; }
+    public int evalRangeEnd { get; set; }
 }
 
 public enum FitnessStatisticType {
@@ -360,4 +408,10 @@ public enum FitnessStatisticType {
 public enum SceneLoadMode {
     LayerMode,
     GridMode
+}
+
+public enum RandomSeedMode {
+    Fixed,
+    RandomAll,
+    RandomPerIndividual
 }

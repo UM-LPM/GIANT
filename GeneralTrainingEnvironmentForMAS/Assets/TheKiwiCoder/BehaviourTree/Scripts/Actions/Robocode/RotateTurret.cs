@@ -22,5 +22,16 @@ public class RotateTurret : ActionNode {
 
         return State.Success;
     }
+
+    public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviourTree tree) {
+        // Create node
+        RotateTurret rotateTurretNode = new RotateTurret();
+
+        // Set node properties
+        rotateTurretNode.rotateDirection = (RotateDirection)int.Parse(behaviourTreeNodeDef.node_properties["rotateDirection"]);
+
+        tree.nodes.Add(rotateTurretNode);
+        return rotateTurretNode;
+    }
 }
 
