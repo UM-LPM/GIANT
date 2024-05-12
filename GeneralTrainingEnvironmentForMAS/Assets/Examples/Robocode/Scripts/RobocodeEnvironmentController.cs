@@ -45,7 +45,7 @@ public class RobocodeEnvironmentController : EnvironmentControllerBase {
     float NextAgentMoveFitnessUpdate = 0;
     float NextAgentAimFitnessUpdate = 0;
 
-    protected override void DefineAdditionalDataOnStart() {
+    protected override void DefineAdditionalDataOnPostStart() {
         foreach (RobocodeAgentComponent agent in Agents) {
             agent.Health =  AgentStartHealth;
             agent.Rigidbody = agent.GetComponent<Rigidbody>();

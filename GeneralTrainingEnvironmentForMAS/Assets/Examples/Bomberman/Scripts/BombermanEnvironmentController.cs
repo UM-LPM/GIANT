@@ -26,7 +26,7 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
         BombExplosionController = GetComponent<BombExplosionController>();
     }
 
-    protected override void DefineAdditionalDataOnStart() {
+    protected override void DefineAdditionalDataOnPostStart() {
         SetAgentDefaultParams(Agents);
         SetAgentDefaultParams(AgentsPredefinedBehaviour);
     }

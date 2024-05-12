@@ -4,7 +4,6 @@ using static UnityEditor.Timeline.TimelinePlaybackControls;
 
 public class MoveToHive : ActionNode
 {
-    private AntEnvironmentController environmentController;
 
     protected override void OnStart()
     {

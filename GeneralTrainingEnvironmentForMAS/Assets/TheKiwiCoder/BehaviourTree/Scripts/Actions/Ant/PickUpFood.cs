@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class PickUpFood : ActionNode
 {
-    private AntEnvironmentController environmentController;
 
     protected override void OnStart()
     {

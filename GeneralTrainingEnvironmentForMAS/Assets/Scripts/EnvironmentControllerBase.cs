@@ -71,6 +71,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     }
 
     protected virtual void Start() {
+        DefineAdditionalDataOnPreStart();
 
         GetAgentBehaviourTrees(SceneLoadMode == SceneLoadMode.LayerMode? LayerBTIndex.BTIndex : GridCell.BTIndex);
 
@@ -86,7 +87,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
 
         InitializeFitness(SceneLoadMode == SceneLoadMode.LayerMode ? LayerBTIndex.BTIndex : GridCell.BTIndex);
 
-        DefineAdditionalDataOnStart();
+        DefineAdditionalDataOnPostStart();
 
     }
 
@@ -272,7 +273,8 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
         }
     }
 
-    protected virtual void DefineAdditionalDataOnStart() { }
+    protected virtual void DefineAdditionalDataOnPreStart() { }
+    protected virtual void DefineAdditionalDataOnPostStart() { }
     protected virtual void DefineAdditionalDataOnAwake() { }
     protected virtual void OnUpdate() { }
     protected virtual void OnFixedUpdate() { }

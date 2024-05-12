@@ -23,25 +23,32 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
     [SerializeField] int numHives = 1;
     [SerializeField] public GameObject PheromonePrefab;
     [SerializeField] int AgentStartHealth = 400;
-    protected override void DefineAdditionalDataOnStart()
+    protected override void DefineAdditionalDataOnPreStart()
     {
         SpawnHives();
         SpawnFood();
 
+        int numOfAnts = 10;
+        //AgentComponent[] newAgents = new AgentComponent[numOfAnts];
+        for (int i = 0; i < numOfAnts; i++)
+        {
+            GameObject agent = Instantiate(AgentPrefab, hiveItems[0].transform.position, Quaternion.identity, this.gameObject.transform);
+
+        }
+    }
+    protected override void DefineAdditionalDataOnPostStart() {
         foreach (AntAgentComponent agent in Agents)
-        {
-             agent.Rigidbody = agent.GetComponent<Rigidbody>();
-            agent.transform.position = hiveItems[0].transform.position;
-            agent.Health = AgentStartHealth;
-           // Instantiate(agent.gameObject, hiveItems[0].transform);
-        }
+      {
+           agent.Rigidbody = agent.GetComponent<Rigidbody>();
+           agent.Health = AgentStartHealth;
+      }
 
-        foreach (AntAgentComponent agent in AgentsPredefinedBehaviour)
-        {
-            agent.Rigidbody = agent.GetComponent<Rigidbody>();
-            Instantiate(agent.gameObject, hiveItems[0].transform);
+      foreach (AntAgentComponent agent in AgentsPredefinedBehaviour)
+      {
+          agent.Rigidbody = agent.GetComponent<Rigidbody>();
+          Instantiate(agent.gameObject, hiveItems[0].transform, this.gameObject.transform);
 
-        }
+      }
     }
     void SpawnFood()
     {
@@ -52,7 +59,7 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
         {
             Vector2 spawnPos = this.GetRandomSpawnPointFood(minDistance);
             float angle;
-            GameObject foodItem = Instantiate(FoodPrefab, spawnPos, Quaternion.identity);
+            GameObject foodItem = Instantiate(FoodPrefab, spawnPos, Quaternion.identity, this.gameObject.transform);
             foodItems.Add(foodItem);
         }
     }
@@ -61,7 +68,7 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
     {
        
             Vector2 spawnPos = GetRandomSpawnPoint();
-            GameObject hiveItem = Instantiate(HivePrefab, spawnPos, Quaternion.identity);
+            GameObject hiveItem = Instantiate(HivePrefab, spawnPos, Quaternion.identity, this.gameObject.transform);
             hiveItems.Add(hiveItem);
        
     }
@@ -177,7 +184,7 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
 
                 }else if(Input.GetKey(agent.dropPheromoneKey)){
                     Vector2 agentPosition = agent.transform.position;
-                    var pheromone = Instantiate(PheromonePrefab, agentPosition, Quaternion.identity);
+                    var pheromone = Instantiate(PheromonePrefab, agentPosition, Quaternion.identity, this.gameObject.transform);
                     if(agent.pheromoneTrailComponent != null)
                     {
                         agent.pheromoneTrailComponent.AddPheromone(agentPosition);
