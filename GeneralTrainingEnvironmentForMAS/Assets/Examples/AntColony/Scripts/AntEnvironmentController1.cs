@@ -21,6 +21,8 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
     public List<GameObject> HiveItems => hiveItems;
     [SerializeField] int numFoodItems = 10;
     [SerializeField] int numHives = 1;
+    [SerializeField] int numOfAnts = 10;
+
     [SerializeField] public GameObject PheromonePrefab;
     [SerializeField] int AgentStartHealth = 400;
     protected override void DefineAdditionalDataOnPreStart()
@@ -28,8 +30,6 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
         SpawnHives();
         SpawnFood();
 
-        int numOfAnts = 10;
-        //AgentComponent[] newAgents = new AgentComponent[numOfAnts];
         for (int i = 0; i < numOfAnts; i++)
         {
             GameObject agent = Instantiate(AgentPrefab, hiveItems[0].transform.position, Quaternion.identity, this.gameObject.transform);
@@ -191,7 +191,9 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
                     }
                     else
                     {
-                        agent.pheromoneTrailComponent = new PheromoneTrailComponent();
+                        GameObject pheromoneTrailObject = new GameObject("PheromoneTrail");
+                        PheromoneTrailComponent pheromoneTrailComponent = pheromoneTrailObject.AddComponent<PheromoneTrailComponent>();
+                        agent.pheromoneTrailComponent = pheromoneTrailComponent;
                         agent.pheromoneTrailComponent.AddPheromone(agentPosition);
                     }
                 }
