@@ -93,6 +93,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
 
     private void Update() {
         OnUpdate();
+        
     }
 
     private void FixedUpdate() {

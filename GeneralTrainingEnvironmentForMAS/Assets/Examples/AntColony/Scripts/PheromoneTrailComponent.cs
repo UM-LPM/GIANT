@@ -10,10 +10,10 @@ public class PheromoneTrailComponent:MonoBehaviour
         firstNode = null;
         lastNode = null;
     }
-    public void AddPheromone(Vector3 position)
+    public void AddPheromone(Vector3 position, float intensity, float evaporationRate)
     {
         PheromoneNodeComponent newNode = gameObject.AddComponent<PheromoneNodeComponent>();
-        newNode.Initialize(100, position, null, null);
+        newNode.Initialize(100, position, evaporationRate, null, null);
         if (firstNode == null)
         {
             firstNode = newNode;
@@ -25,6 +25,42 @@ public class PheromoneTrailComponent:MonoBehaviour
             newNode.previous = lastNode;
             lastNode = newNode;
         }
+    }
+    public void UpdatePheromones()
+    {
+        PheromoneNodeComponent currentNode = firstNode;
+        while (currentNode != null)
+        {
+            currentNode.Evaporate();
+            if (currentNode.IsEvaporated())
+            {
+                RemovePheromone(currentNode);
+            }
+            currentNode = currentNode.next;
+        }
+    }
+
+    private void RemovePheromone(PheromoneNodeComponent node)
+    {
+        if (node.previous != null)
+        {
+            node.previous.next = node.next;
+        }
+        else
+        {
+            firstNode = node.next;
+        }
+
+        if (node.next != null)
+        {
+            node.next.previous = node.previous;
+        }
+        else
+        {
+            lastNode = node.previous;
+        }
+
+        Destroy(node);
     }
 
 }

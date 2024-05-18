@@ -22,7 +22,7 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
     [SerializeField] int numFoodItems = 10;
     [SerializeField] int numHives = 1;
     [SerializeField] int numOfAnts = 10;
-
+    [SerializeField] public float pheromoneEvaporationRate = 1.0f;
     [SerializeField] public GameObject PheromonePrefab;
     [SerializeField] int AgentStartHealth = 400;
     protected override void DefineAdditionalDataOnPreStart()
@@ -36,11 +36,13 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
 
         }
     }
+ 
     protected override void DefineAdditionalDataOnPostStart() {
         foreach (AntAgentComponent agent in Agents)
       {
            agent.Rigidbody = agent.GetComponent<Rigidbody>();
            agent.Health = AgentStartHealth;
+            agent.pheromoneEvaporationRate = pheromoneEvaporationRate;
       }
 
       foreach (AntAgentComponent agent in AgentsPredefinedBehaviour)
@@ -118,7 +120,6 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
     }
     public override void UpdateAgents()
     {
-        // Update Agents that are being evaluated
         if (ManualAgentControl)
             MoveAgents(Agents);
         
@@ -132,6 +133,15 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
         if (ManualAgentPredefinedBehaviourControl)
         {
             OnGameInput(AgentsPredefinedBehaviour);
+        }
+        UpdatePheromoneTrails();
+    }
+    private void UpdatePheromoneTrails()
+    {
+       var pheromoneTrails = FindObjectsOfType<PheromoneTrailComponent>();
+        foreach(var pheromoneTrail in pheromoneTrails)
+        {
+            pheromoneTrail.UpdatePheromones();
         }
     }
     void OnGameInput(AgentComponent[] agents)
@@ -187,14 +197,14 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
                     var pheromone = Instantiate(PheromonePrefab, agentPosition, Quaternion.identity, this.gameObject.transform);
                     if(agent.pheromoneTrailComponent != null)
                     {
-                        agent.pheromoneTrailComponent.AddPheromone(agentPosition);
+                        agent.pheromoneTrailComponent.AddPheromone(agentPosition,100, agent.pheromoneEvaporationRate);
                     }
                     else
                     {
                         GameObject pheromoneTrailObject = new GameObject("PheromoneTrail");
                         PheromoneTrailComponent pheromoneTrailComponent = pheromoneTrailObject.AddComponent<PheromoneTrailComponent>();
                         agent.pheromoneTrailComponent = pheromoneTrailComponent;
-                        agent.pheromoneTrailComponent.AddPheromone(agentPosition);
+                        agent.pheromoneTrailComponent.AddPheromone(agentPosition,100, agent.pheromoneEvaporationRate);
                     }
                 }
                 else
