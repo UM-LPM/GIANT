@@ -35,7 +35,7 @@ public class Communicator : MonoBehaviour {
 
     [Header("Execution Configuration")]
     [SerializeField] private float TimeScale = 1f;
-    [SerializeField] private int RerunTimes = 1;
+    [SerializeField] public int RerunTimes = 1;
 
     [Header("Response Configuration")]
     [SerializeField] FitnessStatisticType FitnessStatisticType = FitnessStatisticType.Mean;
@@ -149,9 +149,6 @@ public class Communicator : MonoBehaviour {
 #if UNITY_EDITOR
         UnityEditor.AssetDatabase.Refresh();
 #endif
-        // Configure the random seed
-        if (RandomSeedMode == RandomSeedMode.RandomAll)
-            InitialSeed = new System.Random().Next();
 
         // Reset SimulationStepsCombined
         SimulationStepsCombined = 0;
@@ -180,8 +177,16 @@ public class Communicator : MonoBehaviour {
 
         CurrentIndividualID = 0;
 
+        //if (RandomSeedMode == RandomSeedMode.RandomAll)
+        //    InitialSeed = new System.Random().Next();
+
         /////////////////////////////////////////////////////////////////
         for (int i = 0; i < RerunTimes; i++) {
+            // Configure the random seed for each individual run
+            if (RandomSeedMode == RandomSeedMode.RandomAll)
+                InitialSeed = InitialSeed + i;
+                //InitialSeed = new System.Random().Next();
+
             if (SceneLoadMode == SceneLoadMode.LayerMode) {
                 foreach (GameScenario gameScenario in GameScenarios) {
                     SceneManager.LoadScene(gameScenario.GameSceneName);

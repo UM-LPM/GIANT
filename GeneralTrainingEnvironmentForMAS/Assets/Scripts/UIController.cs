@@ -12,6 +12,7 @@ public class UIController: MonoBehaviour {
     public static UIController Instance;
 
     [SerializeField] public TMP_InputField TimeScaleInputField;
+    [SerializeField] public TMP_InputField RerunTimesInputField;
     [SerializeField] public TMP_Text FpsText;
     [SerializeField] public TMP_InputField BTSourceInputField;
     [SerializeField] public TMP_Dropdown RndSeedModeDropdown;
@@ -30,8 +31,19 @@ public class UIController: MonoBehaviour {
     }
 
     private void Start() {
-        if(Communicator.Instance != null)
-            RndSeedModeDropdown.value = (int)Communicator.Instance.RandomSeedMode;
+        if(Communicator.Instance != null) {
+            if (RndSeedModeDropdown != null)
+                RndSeedModeDropdown.value = (int)Communicator.Instance.RandomSeedMode;
+
+            if (RndSeedInputField != null)
+                RndSeedInputField.text = Communicator.Instance.InitialSeed.ToString();
+
+            if (RerunTimesInputField != null)
+                RerunTimesInputField.text = Communicator.Instance.RerunTimes.ToString();
+        }
+
+        if (TimeScaleInputField != null)
+            TimeScaleInputField.text = Time.timeScale.ToString();
     }
 
     private void Update() {
@@ -99,5 +111,10 @@ public class UIController: MonoBehaviour {
     public void OnRndSeedInputFieldValueChange() {
         if (RndSeedInputField != null && RndSeedInputField.text.Length > 0)
             Communicator.Instance.InitialSeed = int.Parse(RndSeedInputField.text);
+    }
+
+    public void OnRerunTimesInputFieldValueChange() {
+        if (RerunTimesInputField != null && RerunTimesInputField.text.Length > 0)
+            Communicator.Instance.RerunTimes = int.Parse(RerunTimesInputField.text);
     }
 }
