@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using UnityEngine.Serialization;
 using UnityEngine;
 using UnityEngine.Windows;
+using Unity.Collections;
+using Unity.Jobs;
 
 public abstract class RaySensorBase : Sensor<SensorPerceiveOutput[]> {
 
@@ -33,14 +35,103 @@ public abstract class RaySensorBase : Sensor<SensorPerceiveOutput[]> {
 
     public override SensorPerceiveOutput[] Perceive() {
         RayPerceptionInput input = GetRayPerceptionInput();
-        //RayPerceptionOutput output = new RayPerceptionOutput();
-        //output.RayOutputs = new RayPerceptionOutput.RayOutput[input.Angles.Count];
 
         SensorPerceiveOutput[] rayOutputs = new SensorPerceiveOutput[input.Angles.Count];
 
+        // Option 1: Perceive all rays in a single thread
         for (var rayIndex = 0; rayIndex < input.Angles.Count; rayIndex++) {
             rayOutputs[rayIndex] = PerceiveSingleRay(input, rayIndex);
         }
+
+        // Option 2: Perceive all rays in a batch job
+        /*var results = new NativeArray<RaycastHit>(input.Angles.Count, Allocator.TempJob);
+        var commands = new NativeArray<SpherecastCommand>(input.Angles.Count, Allocator.TempJob);
+
+        for (var rayIndex = 0; rayIndex < input.Angles.Count; rayIndex++)
+        {
+            var unscaledRayLength = input.RayLength;
+            var unscaledCastRadius = input.CastRadius;
+
+            var extents = input.RayExtents(rayIndex);
+            var startPositionWorld = extents.StartPositionWorld;
+            var endPositionWorld = extents.EndPositionWorld;
+
+            var rayDirection = endPositionWorld - startPositionWorld;
+            var scaledRayLength = rayDirection.magnitude;
+            // Avoid 0/0 if unscaledRayLength is 0
+            var scaledCastRadius = unscaledRayLength > 0 ?
+                unscaledCastRadius * scaledRayLength / unscaledRayLength :
+                unscaledCastRadius;
+
+            QueryParameters queryParameters = new QueryParameters
+            {
+                layerMask = input.LayerMask,
+                hitTriggers = QueryTriggerInteraction.Ignore,
+            };
+
+            commands[rayIndex] = new SpherecastCommand(startPositionWorld, scaledCastRadius, rayDirection, queryParameters, scaledRayLength);
+        }
+
+        // Execute batch 
+        JobHandle jobHandle = SpherecastCommand.ScheduleBatch(commands, results, 1, 1, default(JobHandle));
+        
+        // Wait for the batch to complete
+        jobHandle.Complete();
+
+        // Process the results
+        for (var rayIndex = 0; rayIndex < input.Angles.Count; rayIndex++)
+        {
+            var rayHit = results[rayIndex];
+            var castHit = rayHit.collider != null;
+            var hitFraction = castHit ? (rayHit.distance / input.RayLength) : 1.0f;
+            var hitObject = castHit ? rayHit.collider.gameObject : null;
+
+            SensorPerceiveOutput rayOutput = new SensorPerceiveOutput
+            {
+                HasHit = castHit,
+                HitFraction = hitFraction,
+                HasHitTaggedObject = false,
+                HitTagIndex = -1,
+                HitGameObjects = new GameObject[] { hitObject },
+                StartPositionWorld = commands[rayIndex].origin,
+                EndPositionWorld = commands[rayIndex].origin + commands[rayIndex].direction * hitFraction * input.RayLength,
+                //ScaledCastRadius = scaledCastRadius
+            };
+
+            if (castHit)
+            {
+                // Find the index of the tag of the object that was hit.
+                var numTags = input.DetectableTags?.Count ?? 0;
+                for (var i = 0; i < numTags; i++)
+                {
+                    var tagsEqual = false;
+                    try
+                    {
+                        var tag = input.DetectableTags[i];
+                        if (!string.IsNullOrEmpty(tag))
+                        {
+                            tagsEqual = hitObject.CompareTag(tag);
+                        }
+                    }
+                    catch (UnityException)
+                    {
+                        // If the tag is null, empty, or not a valid tag, just ignore it.
+                    }
+
+                    if (tagsEqual)
+                    {
+                        rayOutput.HasHitTaggedObject = true;
+                        rayOutput.HitTagIndex = i;
+                        break;
+                    }
+                }
+            }
+
+            rayOutputs[rayIndex] = rayOutput;
+        }  
+        
+        results.Dispose();
+        commands.Dispose();*/
 
         return rayOutputs;
     }

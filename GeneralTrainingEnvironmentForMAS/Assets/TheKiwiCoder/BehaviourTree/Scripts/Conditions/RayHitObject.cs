@@ -4,6 +4,8 @@ using UnityEngine;
 using TheKiwiCoder;
 using Unity.VisualScripting;
 using System.Linq;
+using static EnvironmentControllerBase;
+using System;
 
 public enum AgentSideBasic {
     Center = 0,
@@ -35,6 +37,8 @@ public enum TargetGameObject {
 
 public class RayHitObject : ConditionNode {
 
+    public static event EventHandler<OnTargetHitEventargs> OnTargetHit;
+
     public TargetGameObject targetGameObject;
     public AgentSideAdvanced side;
     public int rayIndex;
@@ -53,12 +57,16 @@ public class RayHitObject : ConditionNode {
         RaySensorBase raySensor = context.gameObject.GetComponentInChildren<RaySensorBase>();
         raySensor.LayerMask = (1 << context.gameObject.layer) + 1; // base layer + default
 
-        SensorPerceiveOutput[] sensorPerceiveOutputs = raySensor.Perceive();
-
         bool targetHit = false;
 
+        SensorPerceiveOutput[] sensorPerceiveOutputs = raySensor.Perceive();
         if (sensorPerceiveOutputs[rayIndex].HasHit && sensorPerceiveOutputs[rayIndex].HitGameObjects[0].name.Contains(TargetGameObjectsToString(targetGameObject)))
+        {
             targetHit = true;
+
+            // Trigger the event
+            OnTargetHit?.Invoke(this, new OnTargetHitEventargs { TargetGameObject = sensorPerceiveOutputs[rayIndex].HitGameObjects[0], Agent = context.gameObject.GetComponent<AgentComponent>() });
+        }
 
         /*if (side == AgentSideAdvanced.Center) {
             if (sensorPerceiveOutputs[0].HasHit && sensorPerceiveOutputs[0].HitGameObjects[0].name.Contains(TargetGameObjectsToString(targetGameObject)))
@@ -147,4 +155,9 @@ public class RayHitObject : ConditionNode {
         return rayHitObjectNode;
     }
 
+}
+public class OnTargetHitEventargs : EventArgs
+{
+    public GameObject TargetGameObject { get; set; }
+    public AgentComponent Agent { get; set; }
 }

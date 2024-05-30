@@ -12,6 +12,7 @@ public class UIController: MonoBehaviour {
     public static UIController Instance;
 
     [SerializeField] public TMP_InputField TimeScaleInputField;
+    [SerializeField] public TMP_InputField FixedTimeStepInputField;
     [SerializeField] public TMP_InputField RerunTimesInputField;
     [SerializeField] public TMP_Text FpsText;
     [SerializeField] public TMP_InputField BTSourceInputField;
@@ -20,6 +21,9 @@ public class UIController: MonoBehaviour {
 
     [SerializeField] public Toggle RenderToggle;
     [SerializeField] public GameObject[] RenderToggleGameObjectList;
+    [SerializeField] public TMP_Text UriText;
+
+    private bool isProgrammaticChange = true;
 
     void Awake() {
         if (Instance == null) {
@@ -31,23 +35,42 @@ public class UIController: MonoBehaviour {
     }
 
     private void Start() {
-        if(Communicator.Instance != null) {
-            if (RndSeedModeDropdown != null)
-                RndSeedModeDropdown.value = (int)Communicator.Instance.RandomSeedMode;
-
-            if (RndSeedInputField != null)
-                RndSeedInputField.text = Communicator.Instance.InitialSeed.ToString();
-
-            if (RerunTimesInputField != null)
-                RerunTimesInputField.text = Communicator.Instance.RerunTimes.ToString();
-        }
-
-        if (TimeScaleInputField != null)
-            TimeScaleInputField.text = Time.timeScale.ToString();
+        InitializeUI();
     }
 
     private void Update() {
         DisplayFPS();
+        DisplayUri();
+    }
+
+    void InitializeUI()
+    {
+        if (Communicator.Instance != null)
+        {
+            if (RndSeedModeDropdown != null)
+            {
+                RndSeedModeDropdown.value = (int)Communicator.Instance.RandomSeedMode;
+                isProgrammaticChange = false;
+            }
+
+            if (BTSourceInputField != null)
+                BTSourceInputField.text = Communicator.Instance.BtSource;
+            if (RndSeedInputField != null)
+                RndSeedInputField.text = Communicator.Instance.InitialSeed.ToString();
+            if (RerunTimesInputField != null)
+                RerunTimesInputField.text = Communicator.Instance.RerunTimes.ToString();
+            if (TimeScaleInputField != null)
+                TimeScaleInputField.text = Communicator.Instance.TimeScale.ToString();
+            if (FixedTimeStepInputField != null)
+                FixedTimeStepInputField.text = Communicator.Instance.FixedTimeStep.ToString();
+        }
+        if (MenuManager.Instance != null && MenuManager.Instance.MainConfiguration != null)
+        {
+            if (MenuManager.Instance.MainConfiguration.Render)
+                RenderToggle.isOn = true;
+            else
+                RenderToggle.isOn = false;
+        }
     }
 
     public void StopListener() {
@@ -71,9 +94,29 @@ public class UIController: MonoBehaviour {
             FpsText.text = "FPS: " + (1.0f / Time.unscaledDeltaTime).ToString("F0");
     }
 
+    public void DisplayUri()
+    {
+        if (UriText != null && Communicator.Instance != null)
+            UriText.text = Communicator.Instance.uri;
+    }
+
     public void UpdateTimeScale() {
         if (TimeScaleInputField != null && TimeScaleInputField.text.Length > 0)
+        {
             Time.timeScale = int.Parse(TimeScaleInputField.text);
+            if (Communicator.Instance != null)
+                Communicator.Instance.TimeScale = int.Parse(TimeScaleInputField.text);
+        }
+    }
+
+    public void UpdateFixedTimeStep()
+    {
+        if (FixedTimeStepInputField != null && FixedTimeStepInputField.text.Length > 0)
+        {
+            Time.fixedDeltaTime = float.Parse(FixedTimeStepInputField.text);
+            if(Communicator.Instance != null)
+                Communicator.Instance.FixedTimeStep = float.Parse(FixedTimeStepInputField.text);
+        }
     }
 
     public void UpdateRender() {
@@ -102,10 +145,22 @@ public class UIController: MonoBehaviour {
         UpdateTimeScale();
     }
 
+    public void OnFixedTimeStepInputEditValueChange()
+    {
+        UpdateFixedTimeStep();
+    }
+
     public void RndSeedModeDropdownChange() {
-        Communicator.Instance.RandomSeedMode = (RandomSeedMode) RndSeedModeDropdown.value;
-        if(Communicator.Instance.RandomSeedMode == RandomSeedMode.RandomAll)
-            Communicator.Instance.InitialSeed = new System.Random().Next();
+        if(!isProgrammaticChange)
+        {
+            Communicator.Instance.RandomSeedMode = (RandomSeedMode)RndSeedModeDropdown.value;
+            if (Communicator.Instance.RandomSeedMode == RandomSeedMode.RandomAll)
+            {
+                Communicator.Instance.InitialSeed = new System.Random().Next();
+                if(RndSeedInputField != null)
+                    RndSeedInputField.text = Communicator.Instance.InitialSeed.ToString();
+            }
+        }
     }
 
     public void OnRndSeedInputFieldValueChange() {

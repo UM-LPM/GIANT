@@ -77,6 +77,8 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
 
         currentDecisionRequestStep = 0;
 
+        ReadParamsFromMainConfiguration();
+
         DefineAdditionalDataOnAwake();
     }
 
@@ -132,6 +134,25 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
         }
 
         OnFixedUpdate();
+    }
+
+
+    void ReadParamsFromMainConfiguration()
+    {
+        if(MenuManager.Instance != null && MenuManager.Instance.MainConfiguration != null)
+        {
+            MainConfiguration conf = MenuManager.Instance.MainConfiguration;
+            if (conf.SimulationSteps > 0)
+            {
+                SimulationSteps = MenuManager.Instance.MainConfiguration.SimulationSteps;
+                SimulationTime = 0;
+            }
+            else if (conf.SimulationTime > 0)
+            {
+                SimulationTime = MenuManager.Instance.MainConfiguration.SimulationTime;
+                SimulationSteps = 0;
+            }
+        }
     }
 
     void GetAgentBehaviourTrees(int BTIndex) {
@@ -320,6 +341,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     protected virtual void DefineAdditionalDataOnAwake() { }
     protected virtual void OnUpdate() { }
     protected virtual void OnFixedUpdate() { }
+    protected virtual void OnPreFinishGame() { }
 
     public static void SetLayerRecursively(GameObject obj, int newLayer) {
         obj.layer = newLayer;
@@ -330,6 +352,8 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
 
     public void FinishGame() {
         if (GameState == GameState.RUNNING) {
+            OnPreFinishGame();
+
             string guid = Guid.NewGuid().ToString();
             // Send event about finished game
             OnGameFinished?.Invoke(this, new OnGameFinishedEventargs() {

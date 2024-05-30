@@ -14,7 +14,7 @@ using Newtonsoft.Json;
 public class Communicator : MonoBehaviour {
 
     [Header("HTTP Server Configuration")]
-    [SerializeField] private string uri = "http://localhost:4444/";
+    [SerializeField] public string uri = "http://localhost:4444/";
 
     [Header("Scene Loading Configuration")]
     [SerializeField] public SceneLoadMode SceneLoadMode = SceneLoadMode.LayerMode;
@@ -29,12 +29,13 @@ public class Communicator : MonoBehaviour {
     [SerializeField] Vector3Int GridSpacing = new Vector3Int(50, 0, 50);
 
     [Header("Scenes Configuration")]
-    [SerializeField] private string BtSource;
+    [SerializeField] public string BtSource;
     [SerializeField] GameScenario[] GameScenarios;
     [SerializeField] AgentScenario[] AgentScenarios;
 
     [Header("Execution Configuration")]
-    [SerializeField] private float TimeScale = 1f;
+    [SerializeField] public float TimeScale = 1f;
+    [SerializeField] public float FixedTimeStep = 0.02f;
     [SerializeField] public int RerunTimes = 1;
 
     [Header("Response Configuration")]
@@ -64,6 +65,7 @@ public class Communicator : MonoBehaviour {
 
 
     private void Awake() {
+        // Singleton pattern
         if (Instance != null) {
             Destroy(this.gameObject);
         }
@@ -72,25 +74,71 @@ public class Communicator : MonoBehaviour {
             DontDestroyOnLoad(this);
         }
 
+        // Initialize Layer and Grid
         Layer = new Layer(MinLayerId, MaxLayerId, BatchSize);
         Grid = new Grid(GridSize, GridSpacing);
+
+        ReadDataFromConfig();
+
+        InitializeHttpListener();
     }
 
     void Start() {
-        if (MenuManager.Instance != null) {
-            uri = MenuManager.Instance.URI;
-        }
-
-        Listener = new HttpListener();
-        Listener.Prefixes.Add(uri);
-        Listener.Start();
-
         ListenerThread = new Thread(StartListener);
         ListenerThread.Start();
 
         EnvironmentControllerBase.OnGameFinished += EnvironmentController_OnGameFinished;
 
         Time.timeScale = TimeScale;
+        Time.fixedDeltaTime = FixedTimeStep;
+    }
+
+    void ReadDataFromConfig()
+    {
+        if (MenuManager.Instance != null)
+        {
+            if (MenuManager.Instance.MainConfiguration != null)
+            {
+                uri = MenuManager.Instance.MainConfiguration.StartURI;
+                BtSource = MenuManager.Instance.MainConfiguration.BtSource;
+                TimeScale = MenuManager.Instance.MainConfiguration.TimeScale;
+                FixedTimeStep = MenuManager.Instance.MainConfiguration.FixedTimeStep;
+                RerunTimes = MenuManager.Instance.MainConfiguration.RerunTimes;
+                InitialSeed = MenuManager.Instance.MainConfiguration.InitialSeed;
+                RandomSeedMode = MenuManager.Instance.MainConfiguration.RandomSeedMode;
+                if(GameScenarios != null && GameScenarios.Length > 0)
+                    GameScenarios = MenuManager.Instance.MainConfiguration.GameScenarios;
+                if(AgentScenarios != null && AgentScenarios.Length > 0)
+                    AgentScenarios = MenuManager.Instance.MainConfiguration.AgentScenarios;
+            }
+            else
+            {
+                uri = MenuManager.Instance.URI;
+            }
+        }
+    }
+
+    void InitializeHttpListener()
+    {
+        string[] uriParts;
+        while (true)
+        {
+            try
+            {
+                Listener = new HttpListener();
+                Listener.Prefixes.Add(uri);
+                Listener.Start();
+
+                break;
+            }
+            catch (Exception e)
+            {
+                uriParts = uri.Split(':');
+                uriParts[2] = uriParts[2].Split('/')[0];
+                uriParts[2] = int.Parse(uriParts[2]) + 1 + "";
+                uri = uriParts[0] + ":" + uriParts[1] + ":" + uriParts[2] + "/";
+            }
+        }
     }
 
     private void EnvironmentController_OnGameFinished(object sender, EnvironmentControllerBase.OnGameFinishedEventargs e) {
@@ -160,6 +208,8 @@ public class Communicator : MonoBehaviour {
         if (UIController.Instance != null && UIController.Instance.TimeScaleInputField != null && UIController.Instance.TimeScaleInputField.text.Length > 0)
             Time.timeScale = int.Parse(UIController.Instance.TimeScaleInputField.text);
 
+
+
 #if UNITY_EDITOR
         PopBTs = Resources.LoadAll<BehaviourTree>(BtSource);
         PopBTs = PopBTs.OrderBy(bt => bt.id).ToArray();
@@ -177,17 +227,10 @@ public class Communicator : MonoBehaviour {
 
         CurrentIndividualID = 0;
 
-        //if (RandomSeedMode == RandomSeedMode.RandomAll)
-        //    InitialSeed = new System.Random().Next();
-
         /////////////////////////////////////////////////////////////////
         for (int i = 0; i < RerunTimes; i++) {
-            // Configure the random seed for each individual run
-            if (RandomSeedMode == RandomSeedMode.RandomAll)
-                InitialSeed = InitialSeed + i;
-                //InitialSeed = new System.Random().Next();
-
             if (SceneLoadMode == SceneLoadMode.LayerMode) {
+                ////////////////////// LAYER MODE /////////////////////////////////
                 foreach (GameScenario gameScenario in GameScenarios) {
                     SceneManager.LoadScene(gameScenario.GameSceneName);
 
@@ -235,6 +278,7 @@ public class Communicator : MonoBehaviour {
                 }
             }
             else if (SceneLoadMode == SceneLoadMode.GridMode) {
+                ////////////////////// GRID MODE /////////////////////////////////
                 SceneManager.LoadScene(GameScenarios[0].GameSceneName); // Dummy scene for deterministic execution
                                                                         // In GridMode we don't load gameScenes as they are supposed to be inside of every scene
                 foreach (AgentScenario scenario in AgentScenarios) {
@@ -270,7 +314,14 @@ public class Communicator : MonoBehaviour {
                 }
                 SceneManager.UnloadSceneAsync(GameScenarios[0].GameSceneName);
             }
+
+            // Configure the random seed for each individual run
+            if (RandomSeedMode == RandomSeedMode.RandomAll)
+                InitialSeed = InitialSeed + 1;
         }
+
+        if (RandomSeedMode == RandomSeedMode.RandomAll)
+            InitialSeed = InitialSeed - RerunTimes;
 
         /////////////////////////////////////////////////////////////////
 

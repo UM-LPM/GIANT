@@ -2,21 +2,30 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TargetComponent : MonoBehaviour
+
+namespace Collector
 {
-    public CollectorEnvironmentController CollectorEnvironmentController { get; set; }
+    /// <summary>
+    /// Tag Component for Target
+    /// </summary>
+    public class TargetComponent : MonoBehaviour
+    {
+        public CollectorEnvironmentController CollectorEnvironmentController { get; set; }
 
-    private void OnTriggerEnter(Collider other) {
-        if (other.gameObject.layer != this.gameObject.layer)
-            return;
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.gameObject.layer != this.gameObject.layer)
+                return;
 
-        AgentComponent otherAgent;
-        other.gameObject.TryGetComponent<AgentComponent>(out otherAgent);
+            AgentComponent otherAgent;
+            other.gameObject.TryGetComponent<AgentComponent>(out otherAgent);
 
-        if (otherAgent != null) {
-            CollectorEnvironmentController.TargetAquired(this, otherAgent);
-            Destroy(this.gameObject);
+            if (otherAgent != null)
+            {
+                Destroy(this.gameObject);
+                CollectorEnvironmentController.TargetAquired(otherAgent);
+            }
+
         }
-
     }
 }

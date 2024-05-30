@@ -23,9 +23,13 @@ public class MenuManager : MonoBehaviour
     [SerializeField] string baseURI = "http://localhost:4444/";
 
     public string URI { get; private set; }
+    public MainConfiguration MainConfiguration { get; set; }
 
     private void Awake() {
+        // Set the target frame rate to 60fps
         Application.targetFrameRate = 60;
+
+        // Singleton pattern
         if (Instance != null) {
             Destroy(this);
         }
@@ -39,6 +43,20 @@ public class MenuManager : MonoBehaviour
         ProblemDropdown.AddOptions(new List<string>(System.Enum.GetNames(typeof(ProblemDomains))));
 
         URIInputField.text = baseURI;
+
+        ReadConfigurationFromFile();
+    }
+
+    private void ReadConfigurationFromFile()
+    {
+        // Read configuration file
+        string path = Application.dataPath + "/conf.json";
+        MainConfiguration = ReadConfigurationFromFile(path);
+
+        if (MainConfiguration != null && MainConfiguration.AutoStart)
+        {
+            Play();
+        }
     }
 
     public void Play() {
@@ -79,6 +97,16 @@ public class MenuManager : MonoBehaviour
 
     public void Quit() {
         Application.Quit();
+    }
+
+    public MainConfiguration ReadConfigurationFromFile(string path)
+    {
+        return MainConfiguration.Deserialize(path);
+    }
+
+    public void SaveConfigurationToFile(string path)
+    {
+        MainConfiguration.Serialize(MainConfiguration, path);
     }
 
 }

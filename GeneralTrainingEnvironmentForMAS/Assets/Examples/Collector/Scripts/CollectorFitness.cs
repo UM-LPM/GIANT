@@ -1,24 +1,42 @@
 using System.Collections.Generic;
 using System.Linq;
 
-public class CollectorFitness : Fitness {
+namespace Collector
+{
+    /// <summary>
+    /// Fitness definition for the Collector problem
+    /// </summary>
+    public class CollectorFitness : Fitness
+    {
+        public static Dictionary<string, float> FitnessValues = new Dictionary<string, float> {
+        { "AgentPickedTarget", -5f }, // Implemented
+        { "AgentExploredSector", -0.03f }, // Implemented
+        { "AgentNearTarget", -0.2f }, // Implemented
+        { "AgentSpottedTarget", -0.02f }, // Implemented
+        { "AgentsBtContainsMainObject", -0.2f }, // Implemented
+        { "AgentTouchedStaticObject", 0.1f }, // Implemented
 
-    public static Dictionary<string, float> FitnessValues = new Dictionary<string, float> {
-        { "AgentPickedTarget", -5f },
-        { "AgentNotMoved", 0.5f },
-        { "AgentTouchedStaticObject", 0.05f },
-        { "AgentNearTarget", 0f }, //-1 },
+
+        { "AgentNotMoved", 0f }, //0.5f },
+        //{ "AgentTouchedStaticObject", 0f }, //0.05f },
+        //{ "AgentNearTarget", 0f }, //-1 },
         { "TimePassedPenalty", 0f }, //0.001f },
     };
 
-    public static string[] Keys = FitnessValues.Keys.ToArray();
+        public static string[] Keys = FitnessValues.Keys.ToArray();
 
-    public enum FitnessKeys {
-        AgentPickedTarget,
-        AgentNotMoved,
-        AgentTouchedStaticObject,
-        AgentNearTarget,
-        TimePassedPenalty
+        public enum FitnessKeys
+        {
+            AgentPickedTarget,
+            AgentExploredSector,
+            AgentNearTarget,
+            AgentSpottedTarget,
+            AgentsBtContainsMainObject,
+            AgentTouchedStaticObject,
+
+            AgentNotMoved,
+            //AgentNearTarget,
+            TimePassedPenalty
+        }
     }
 }
-
