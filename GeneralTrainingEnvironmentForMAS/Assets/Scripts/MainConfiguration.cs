@@ -8,7 +8,7 @@ using UnityEngine;
 using Newtonsoft.Json;
 
 /// <summary>
-/// Main configuration class for the experiment
+/// Main configuration class
 /// </summary>
 [Serializable]
 public class MainConfiguration {

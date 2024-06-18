@@ -2282,6 +2282,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58f90ea7598dbe54787e354e2b1af7a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SimulationSteps: 10000
   SimulationTime: 180
   IndividualId: 0
   Debug: 0
@@ -2292,13 +2293,15 @@ MonoBehaviour:
   Environment: {fileID: 165789540}
   RandomAgentInitialization: 1
   AgentPrefab: {fileID: 8451660173961605848, guid: 2209a81103cdf824c9741aaf167623e4, type: 3}
-  ArenaSize: {x: 100, y: 0.5, z: 80}
+  ArenaSize: {x: 39, y: 0.5, z: 39}
   ArenaRadius: 0
   ArenaCenterPoint: {x: 0, y: 0, z: 0}
   ArenaOffset: 2
   MinPlayerDistance: 3
+  AgentColliderExtendsMultiplier: 0.495
   ManualAgentControl: 0
   ManualAgentPredefinedBehaviourControl: 1
+  DecisionRequestInterval: 1
   DestroyMissileAfter: 1
   MissileShootCooldown: 1
   MissleLaunchSpeed: 15
@@ -2326,8 +2329,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f26b563772158044b6ecbe4df7f558e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initialSeed: 316227711
-  randomSeed: 1
+  InitialSeed: 316227711
 --- !u!114 &1952752465
 MonoBehaviour:
   m_ObjectHideFlags: 0

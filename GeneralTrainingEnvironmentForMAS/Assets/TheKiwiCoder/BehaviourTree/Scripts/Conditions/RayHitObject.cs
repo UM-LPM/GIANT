@@ -60,6 +60,8 @@ public class RayHitObject : ConditionNode {
         bool targetHit = false;
 
         SensorPerceiveOutput[] sensorPerceiveOutputs = raySensor.Perceive();
+
+        // Option 1 : Check if the target game object is hit by the single ray based on RayIndex
         if (sensorPerceiveOutputs[rayIndex].HasHit && sensorPerceiveOutputs[rayIndex].HitGameObjects[0].name.Contains(TargetGameObjectsToString(targetGameObject)))
         {
             targetHit = true;
@@ -68,23 +70,38 @@ public class RayHitObject : ConditionNode {
             OnTargetHit?.Invoke(this, new OnTargetHitEventargs { TargetGameObject = sensorPerceiveOutputs[rayIndex].HitGameObjects[0], Agent = context.gameObject.GetComponent<AgentComponent>() });
         }
 
-        /*if (side == AgentSideAdvanced.Center) {
+        // Option 2 : Check if the target game object is hit by any of the rays based on Side
+        /*int hitIndex = -1;
+        if (side == AgentSideAdvanced.Center) {
             if (sensorPerceiveOutputs[0].HasHit && sensorPerceiveOutputs[0].HitGameObjects[0].name.Contains(TargetGameObjectsToString(targetGameObject)))
+            {
                 targetHit = true;
-            else
-                targetHit = false;
+                hitIndex = 0;
+            }
         }
         else if (side == AgentSideAdvanced.Left) {
             for (int i = 2; i < sensorPerceiveOutputs.Length; i += 2) {
                 if (sensorPerceiveOutputs[i].HasHit && sensorPerceiveOutputs[i].HitGameObjects[0].name.Contains(TargetGameObjectsToString(targetGameObject)))
+                {
                     targetHit = true;
+                    hitIndex = i;
+                }
             }
         }
         else if (side == AgentSideAdvanced.Right) {
             for (int i = 1; i < sensorPerceiveOutputs.Length; i += 2) {
                 if (sensorPerceiveOutputs[i].HasHit && sensorPerceiveOutputs[i].HitGameObjects[0].name.Contains(TargetGameObjectsToString(targetGameObject)))
+                {
                     targetHit = true;
+                    hitIndex = i;
+                }
             }
+        }
+
+        if (targetHit)
+        {
+            // Trigger the event
+            OnTargetHit?.Invoke(this, new OnTargetHitEventargs { TargetGameObject = sensorPerceiveOutputs[hitIndex].HitGameObjects[0], Agent = context.gameObject.GetComponent<AgentComponent>() });
         }*/
 
         return targetHit;

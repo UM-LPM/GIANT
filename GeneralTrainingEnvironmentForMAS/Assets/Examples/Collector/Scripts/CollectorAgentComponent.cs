@@ -39,6 +39,7 @@ namespace Collector
         private void OnTriggerEnter(Collider other)
         {
             SectorComponent sectorComponent = other.gameObject.GetComponent<SectorComponent>();
+            // New Sector Explored
             if (sectorComponent != null && AgentExploredNewSector(sectorComponent))
             {
                 //Debug.Log("New Sector Explored"); // TODO Remove
@@ -50,6 +51,14 @@ namespace Collector
                 // Add explored sector to the list of explored sectors
                 LastKnownPositions.Add(sectorComponent.transform.position);
                 return;
+            }
+            // Re-explored Sector
+            else if (sectorComponent != null && !AgentExploredNewSector(sectorComponent))
+            {
+                if (CollectorFitness.FitnessValues[CollectorFitness.Keys[(int)CollectorFitness.FitnessKeys.AgentReExploredSector]] != 0)
+                {
+                    AgentFitness.Fitness.UpdateFitness((CollectorFitness.FitnessValues[CollectorFitness.Keys[(int)CollectorFitness.FitnessKeys.AgentReExploredSector]]), CollectorFitness.FitnessKeys.AgentReExploredSector.ToString());
+                }
             }
 
             TargetComponent targetComponent = other.gameObject.GetComponentInParent<TargetComponent>();
@@ -63,16 +72,6 @@ namespace Collector
                 }
                 // Disable collider to prevent multiple triggers
                 other.gameObject.GetComponent<SphereCollider>().enabled = false;
-            }
-        }
-
-        private void OnTriggerExit(Collider other)
-        {
-            TargetComponent targetComponent = other.gameObject.GetComponentInParent<TargetComponent>();
-            if (targetComponent != null)
-            {
-                //Debug.Log("Near Target Exit"); // TODO Remove
-                NearTarget = false;
             }
         }
 

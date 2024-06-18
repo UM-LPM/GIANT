@@ -378,7 +378,7 @@ namespace Collector
             }
         }*/
 
-        void UpdateAgentNearTargetFitness(AgentComponent[] agents)
+        /*void UpdateAgentNearTargetFitness(AgentComponent[] agents)
         {
             foreach (CollectorAgentComponent agent in agents)
             {
@@ -396,7 +396,7 @@ namespace Collector
                     }
                 }
             }
-        }
+        }*/
 
         void AddTimePenaltyToAgents(AgentComponent[] agents)
         {
@@ -439,6 +439,8 @@ namespace Collector
 
         protected override void OnPreFinishGame()
         {
+            UpdateAgentFitnessBTNodePenalty(Agents);
+            UpdateAgentFitnessBTNodePenalty(AgentsPredefinedBehaviour);
             UpdateAgentFitnessRayHitObject1(Agents);
             UpdateAgentFitnessRayHitObject1(AgentsPredefinedBehaviour);
         }
@@ -463,6 +465,15 @@ namespace Collector
                         }
                     }
                 }
+            }
+        }
+
+        private void UpdateAgentFitnessBTNodePenalty(AgentComponent[] agents)
+        {
+            foreach (CollectorAgentComponent agent in agents)
+            {
+                float fitnessPenalty = agent.BehaviourTree.nodes.Count * CollectorFitness.FitnessValues[CollectorFitness.FitnessKeys.AgentBTNodePenalty.ToString()];
+                agent.AgentFitness.Fitness.UpdateFitness(fitnessPenalty, CollectorFitness.FitnessKeys.AgentBTNodePenalty.ToString());
             }
         }
     }

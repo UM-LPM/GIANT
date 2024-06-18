@@ -242,7 +242,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     }
 
     public virtual bool SpawnPointSuitable(Vector3 newSpawnPos, Quaternion newRotation, List<Vector3> usedSpawnPoints) {
-        Collider[] colliders = Physics.OverlapBox(newSpawnPos, Vector3.one * 0.495f, newRotation, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)) + DefaultLayer);
+        Collider[] colliders = Physics.OverlapBox(newSpawnPos, Vector3.one * AgentColliderExtendsMultiplier, newRotation, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)) + DefaultLayer);
         if(colliders.Length > 0) {
             return false;
         }
