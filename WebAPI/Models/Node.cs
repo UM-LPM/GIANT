@@ -120,6 +120,12 @@ namespace WebAPI.Models {
                     return "dfab410791810f74995e77be14f491cb";
                 case NodeType.GridCellContainsObject:
                     return "5c69b16a0f5bc7e43adf37e9a2a453dc";
+                case NodeType.HealthLevelBellow:
+                    return "e7005ef9ca3dafc4b86928393e168f40";
+                case NodeType.ShieldLevelBellow:
+                    return "a380d7f9274338e4485e03ec126c5859";
+                case NodeType.AmmoLevelBellow:
+                    return "3541a6a84d600d443a32c4b10ae322a3";
             }
             return "";
         }
@@ -155,6 +161,12 @@ namespace WebAPI.Models {
                     return NodeType.PlaceBomb;
                 case "GridCellContainsObject":
                     return NodeType.GridCellContainsObject;
+                case "HealthLevelBellow":
+                    return NodeType.HealthLevelBellow;
+                case "ShieldLevelBellow":
+                    return NodeType.ShieldLevelBellow;
+                case "AmmoLevelBellow":
+                    return NodeType.AmmoLevelBellow;
             }
 
             throw new Exception("Invalid NodeTypeString");
@@ -179,6 +191,12 @@ namespace WebAPI.Models {
                     return "Rotate";
                 case NodeType.RayHitObject:
                     return "RayHitObject";
+                case NodeType.HealthLevelBellow:
+                    return "HealthLevelBellow";
+                case NodeType.ShieldLevelBellow:
+                    return "ShieldLevelBellow";
+                case NodeType.AmmoLevelBellow:
+                    return "AmmoLevelBellow";
             }
             throw new Exception("Invalid NodeType");
         }

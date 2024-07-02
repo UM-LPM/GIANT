@@ -6,7 +6,7 @@ using TMPro;
 
 public enum ProblemDomains {
     Collector,
-    Robococe,
+    Robostrike,
     Soccer,
     Bomberman,
     DodgeBall
@@ -61,6 +61,11 @@ public class MenuManager : MonoBehaviour
 
     public void Play() {
         string problemDomain = ProblemDropdown.options[ProblemDropdown.value].text;
+        if(MainConfiguration != null)
+        {
+            problemDomain = MainConfiguration.ProblemDomain;
+        }
+
         URI = URIInputField.text;
         if (string.IsNullOrEmpty(problemDomain)) {
             Debug.LogError("Problem domain is empty");
@@ -77,8 +82,8 @@ public class MenuManager : MonoBehaviour
             case "Collector":
                 UnityEngine.SceneManagement.SceneManager.LoadScene("CollectorBaseScene");
                 break;
-            case "Robococe":
-                UnityEngine.SceneManagement.SceneManager.LoadScene("RobococeBaseScene");
+            case "Robostrike":
+                UnityEngine.SceneManagement.SceneManager.LoadScene("RobostrikeBaseScene");
                 break;
             case "Soccer":
                 UnityEngine.SceneManagement.SceneManager.LoadScene("SoccerBaseScene");

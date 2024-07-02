@@ -42,6 +42,10 @@ public class RayHitObject : ConditionNode {
     public TargetGameObject targetGameObject;
     public AgentSideAdvanced side;
     public int rayIndex;
+    public RaySensorBase raySensor;
+    
+    private SensorPerceiveOutput[] sensorPerceiveOutputs;
+    private bool targetHit;
 
     protected override void OnStart() {
     }
@@ -49,17 +53,17 @@ public class RayHitObject : ConditionNode {
     protected override void OnStop() {
     }
 
-    public bool Check() {
-        return CheckConditions();
-    }
-
     protected override bool CheckConditions() {
-        RaySensorBase raySensor = context.gameObject.GetComponentInChildren<RaySensorBase>();
-        raySensor.LayerMask = (1 << context.gameObject.layer) + 1; // base layer + default
+        if(raySensor == null)
+        {
+            raySensor = context.gameObject.GetComponentInChildren<RaySensorBase>();
+            raySensor.LayerMask = (1 << context.gameObject.layer) + 1; // base layer + default
+        }
 
-        bool targetHit = false;
+        targetHit = false;
 
-        SensorPerceiveOutput[] sensorPerceiveOutputs = raySensor.Perceive();
+        sensorPerceiveOutputs = raySensor.PerceiveSingle(xPos: rayIndex);
+        //sensorPerceiveOutputs = raySensor.PerceiveAll();
 
         // Option 1 : Check if the target game object is hit by the single ray based on RayIndex
         if (sensorPerceiveOutputs[rayIndex].HasHit && sensorPerceiveOutputs[rayIndex].HitGameObjects[0].name.Contains(TargetGameObjectsToString(targetGameObject)))

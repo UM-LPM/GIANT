@@ -46,12 +46,12 @@ namespace Collector
         float NextAgentNearWallFitnessUpdate = 0;
         float NextAgentNearTargetFitnessUpdate = 0;
 
-        protected override void DefineAdditionalDataOnAwake()
+        protected override void DefineAdditionalDataOnPostAwake()
         {
             ReadParamsFromMainConfiguration();
         }
 
-        protected override void DefineAdditionalDataOnStart()
+        protected override void DefineAdditionalDataOnPostStart()
         {
             foreach (CollectorAgentComponent agent in Agents)
             {
@@ -126,9 +126,13 @@ namespace Collector
             if (MenuManager.Instance != null && MenuManager.Instance.MainConfiguration != null)
             {
                 MainConfiguration conf = MenuManager.Instance.MainConfiguration;
-                GameMode = (CollectorGameMode)conf.GameMode;
 
                 CollectorFitness.FitnessValues = conf.FitnessValues;
+
+                if(conf.ProblemConfiguration.ContainsKey("GameMode"))
+                {
+                    GameMode = (CollectorGameMode)int.Parse(conf.ProblemConfiguration["GameMode"]);
+                }   
 
                 if (conf.ProblemConfiguration.ContainsKey("AgentMoveSpeed"))
                 {
@@ -266,7 +270,7 @@ namespace Collector
                 if (SceneLoadMode == SceneLoadMode.GridMode)
                     spawnPos += GridCell.GridCellPosition;
 
-                rotation = GetAgentRandomRotation();
+                rotation = GetRandomRotation();
 
                 if (!TargetSpawnPointSuitable(spawnPos, rotation))
                 {

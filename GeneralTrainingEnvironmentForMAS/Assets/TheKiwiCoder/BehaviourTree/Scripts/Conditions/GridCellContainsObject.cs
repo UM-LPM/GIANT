@@ -35,7 +35,7 @@ public class GridCellContainsObject : ConditionNode {
     protected override bool CheckConditions() {
         GridSensor2D gridSensor2D = context.gameObject.GetComponent<GridSensor2D>();
         gridSensor2D.LayerMask = (1 << context.gameObject.layer) + 1;
-        SensorPerceiveOutput[,] sensorOutputs = gridSensor2D.Perceive();
+        SensorPerceiveOutput[,] sensorOutputs = gridSensor2D.PerceiveAll();
 
         bool gridContainsTarget = false;
 

@@ -22,11 +22,11 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
 
     private BombExplosionController BombExplosionController { get; set; }
 
-    protected override void DefineAdditionalDataOnAwake() {
+    protected override void DefineAdditionalDataOnPostAwake() {
         BombExplosionController = GetComponent<BombExplosionController>();
     }
 
-    protected override void DefineAdditionalDataOnStart() {
+    protected override void DefineAdditionalDataOnPostStart() {
         SetAgentDefaultParams(Agents);
         SetAgentDefaultParams(AgentsPredefinedBehaviour);
     }

@@ -180,6 +180,19 @@ public class UnityAssetParser {
                 else if (lineArray[0].Contains("gridPositionY")) {
                     behaviourTreeNodeDef.node_properties.Add("gridPositionY", lineArray[1].Trim());
                 }
+                // HealthLevel, ShieldLevel, AmmoLevel
+                else if (lineArray[0].Contains("healthLevel"))
+                {
+                    behaviourTreeNodeDef.node_properties.Add("healthLevel", lineArray[1].Trim());
+                }
+                else if (lineArray[0].Contains("shieldLevel"))
+                {
+                    behaviourTreeNodeDef.node_properties.Add("shieldLevel", lineArray[1].Trim());
+                }
+                else if (lineArray[0].Contains("ammoLevel"))
+                {
+                    behaviourTreeNodeDef.node_properties.Add("ammoLevel", lineArray[1].Trim());
+                }
                 // TODO Add other node properties here
                 /////// Node properties END
 

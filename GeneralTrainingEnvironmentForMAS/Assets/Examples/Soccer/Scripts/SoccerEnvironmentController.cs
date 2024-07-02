@@ -22,7 +22,7 @@ public class SoccerEnvironmentController : EnvironmentControllerBase {
     GoalComponent GoalPurple;
     GoalComponent GoalBlue;
 
-    protected override void DefineAdditionalDataOnAwake() {
+    protected override void DefineAdditionalDataOnPostAwake() {
         SoccerBall = GetComponentInChildren<SoccerBallComponent>();
 
         if (SceneLoadMode == SceneLoadMode.LayerMode) {

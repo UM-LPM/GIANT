@@ -125,6 +125,15 @@ namespace TheKiwiCoder {
                 case "5c69b16a0f5bc7e43adf37e9a2a453dc":
                     node = GridCellContainsObject.CreateNodeFromBehaviourTreeNodeDef(currentBehaviourTreeNodeDef, behaviourTreeNodeDefs, tree);
                     break;
+                case "e7005ef9ca3dafc4b86928393e168f40":
+                    node = HealthLevelBellow.CreateNodeFromBehaviourTreeNodeDef(currentBehaviourTreeNodeDef, behaviourTreeNodeDefs, tree);
+                    break;
+                case "a380d7f9274338e4485e03ec126c5859":
+                    node = ShieldLevelBellow.CreateNodeFromBehaviourTreeNodeDef(currentBehaviourTreeNodeDef, behaviourTreeNodeDefs, tree);
+                    break;
+                case "3541a6a84d600d443a32c4b10ae322a3":
+                    node = AmmoLevelBellow.CreateNodeFromBehaviourTreeNodeDef(currentBehaviourTreeNodeDef, behaviourTreeNodeDefs, tree);
+                    break;
             }
             return node;
         }

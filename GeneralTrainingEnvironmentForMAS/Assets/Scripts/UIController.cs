@@ -23,6 +23,9 @@ public class UIController: MonoBehaviour {
     [SerializeField] public GameObject[] RenderToggleGameObjectList;
     [SerializeField] public TMP_Text UriText;
 
+    [SerializeField] public Toggle RenderUI;
+    [SerializeField] public GameObject ToggleElements;
+
     private bool isProgrammaticChange = true;
 
     void Awake() {
@@ -121,20 +124,39 @@ public class UIController: MonoBehaviour {
 
     public void UpdateRender() {
         if (RenderToggle != null) {
-            // FInd all objects with renderer and update their visibility
+            // Find all objects with renderer and update their visibility
             Renderer[] renderers = GameObject.FindObjectsOfType<Renderer>();
             foreach (var renderer in renderers)
             {
                 renderer.enabled = RenderToggle.isOn;
             }
 
+            // Find all objects with canvas and update their visibility
+            CanvasComponent[] canvasComponents = GameObject.FindObjectsOfType<CanvasComponent>();
+            foreach (var canvasComponent in canvasComponents)
+            {
+                canvasComponent.gameObject.GetComponent<Canvas>().enabled = RenderToggle.isOn;
+            }
+
             // Update all prefab gameObjects
             foreach (GameObject go in RenderToggleGameObjectList) {
                 renderers = go.GetComponentsInChildren<Renderer>();
                 renderers.ToList().ForEach(r => r.enabled = RenderToggle.isOn);
-                go.GetComponent<Renderer>().enabled = RenderToggle.isOn;
+
+                // Update all canvas renderers
+                Canvas[] canvases = go.GetComponentsInChildren<Canvas>();
+                canvases.ToList().ForEach(r => r.enabled = RenderToggle.isOn);
+
+                Renderer goRenderer = go.GetComponent<Renderer>();
+                if (goRenderer != null)
+                    go.GetComponent<Renderer>().enabled = RenderToggle.isOn;
             }
         }
+    }
+
+    public void OnUpdateRenderUIToggle()
+    {
+        ToggleElements.SetActive(RenderUI.isOn);
     }
 
     public void OnRenderToggleValueChanged() {

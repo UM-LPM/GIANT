@@ -31,12 +31,14 @@ public abstract class RaySensorBase : Sensor<SensorPerceiveOutput[]> {
     [Tooltip("Length of the rays to cast.")]
     [SerializeField] float RayLength;
 
+    RayPerceptionInput input;
+    SensorPerceiveOutput[] rayOutputs;
+
     public RaySensorBase(string name) : base(name) { }
 
-    public override SensorPerceiveOutput[] Perceive() {
-        RayPerceptionInput input = GetRayPerceptionInput();
-
-        SensorPerceiveOutput[] rayOutputs = new SensorPerceiveOutput[input.Angles.Count];
+    public override SensorPerceiveOutput[] PerceiveAll()
+    {
+        ResetRayOutputs();
 
         // Option 1: Perceive all rays in a single thread
         for (var rayIndex = 0; rayIndex < input.Angles.Count; rayIndex++) {
@@ -136,6 +138,35 @@ public abstract class RaySensorBase : Sensor<SensorPerceiveOutput[]> {
         return rayOutputs;
     }
 
+    public override SensorPerceiveOutput[] PerceiveSingle(int xPos = -1, int yPos = -1, int zPos = -1)
+    {
+        ResetRayOutputs();
+
+        if (xPos == -1)
+            throw new ArgumentException("RaySensorBase.Perceive(): xPos must be set to a valid value");
+
+        rayOutputs[xPos] = PerceiveSingleRay(input, xPos);
+
+        return rayOutputs;
+    }
+
+    public override SensorPerceiveOutput[] PerceiveRange(int startIndex = -1, int endIndex = -1)
+    {
+        ResetRayOutputs();
+
+        if (startIndex == -1 || endIndex == -1 || endIndex > input.Angles.Count) {
+            throw new ArgumentException("RaySensorBase.Perceive(): startIndex and endIndex must be set to valid values");
+        }
+
+        // Option 1: Perceive all rays in a single thread
+        for (var rayIndex = 0; rayIndex < endIndex; rayIndex++)
+        {
+            rayOutputs[rayIndex] = PerceiveSingleRay(input, rayIndex);
+        }
+
+        return rayOutputs;
+    }
+
     public virtual SensorPerceiveOutput PerceiveSingleRay(RayPerceptionInput input, int rayIndex) {
         var unscaledRayLength = input.RayLength;
         var unscaledCastRadius = input.CastRadius;
@@ -198,7 +229,6 @@ public abstract class RaySensorBase : Sensor<SensorPerceiveOutput[]> {
             HitGameObjects = new GameObject[] { hitObject },
             StartPositionWorld = startPositionWorld,
             EndPositionWorld = endPositionWorld,
-            //ScaledCastRadius = scaledCastRadius
         };
 
         if (castHit) {
@@ -227,6 +257,22 @@ public abstract class RaySensorBase : Sensor<SensorPerceiveOutput[]> {
 
         return rayOutput;
     }
+
+    public override void Init()
+    {
+        input = GetRayPerceptionInput();
+        rayOutputs = new SensorPerceiveOutput[input.Angles.Count];
+    }
+
+    public void ResetRayOutputs()
+    {
+        for (int i = 0; i < rayOutputs.Length; i++)
+        {
+            rayOutputs[i] = null;
+        }
+    }
+
+
 
     public RayPerceptionInput GetRayPerceptionInput() {
         var rayAngles = GetRayAngles(RaysPerDirection, MaxRayDegrees);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using TheKiwiCoder;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -24,8 +25,8 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     [SerializeField] public float ArenaRadius; // For circular arena
     [SerializeField] public Vector3 ArenaCenterPoint; // For circular arena
     [SerializeField] public float ArenaOffset = 3f;
-    [SerializeField] public float MinPlayerDistance = 3f;
-    [SerializeField] public float AgentColliderExtendsMultiplier = 0.495f;
+    [SerializeField] public float MinAgentDistance = 3f;
+    [SerializeField] public Vector3 AgentColliderExtendsMultiplier = new Vector3(0.505f, 0.495f, 0.505f);
 
     [Header("Agent Control Configuration")]
     [SerializeField] public bool ManualAgentControl = false;
@@ -59,6 +60,8 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     }
 
     protected virtual void Awake() {
+        DefineAdditionalDataOnPreAwake();
+
         GameState = GameState.IDLE;
         Util = GetComponent<Util>();
 
@@ -79,12 +82,16 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
 
         ReadParamsFromMainConfiguration();
 
-        DefineAdditionalDataOnAwake();
+        DefineAdditionalDataOnPostAwake();
     }
 
     protected virtual void Start() {
+        DefineAdditionalDataOnPreStart();
+
 
         GetAgentBehaviourTrees(SceneLoadMode == SceneLoadMode.LayerMode? LayerBTIndex.BTIndex : GridCell.BTIndex);
+
+        SetLayerRecursively(this.gameObject, SceneLoadMode == SceneLoadMode.LayerMode ? LayerBTIndex.LayerId : GridCell.Layer);
 
         if (RandomAgentInitialization) {
             InitializeRandomAgents();
@@ -98,7 +105,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
 
         InitializeFitness(SceneLoadMode == SceneLoadMode.LayerMode ? LayerBTIndex.BTIndex : GridCell.BTIndex);
 
-        DefineAdditionalDataOnStart();
+        DefineAdditionalDataOnPostStart();
 
     }
 
@@ -107,6 +114,8 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     }
 
     private void FixedUpdate() {
+        OnPreFixedUpdate();
+
         CurrentSimulationTime += Time.fixedDeltaTime;
         CurrentSimulationSteps += 1;
 
@@ -133,7 +142,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
             currentDecisionRequestStep++;
         }
 
-        OnFixedUpdate();
+        OnPostFixedUpdate();
     }
 
 
@@ -175,13 +184,13 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
 
         int counter = 0;
         while (counter < AgentBehaviourTrees.Length) {
-            spawnPos = GetAgentRandomSpawnPoint();
+            spawnPos = GetRandomSpawnPoint();
             if(SceneLoadMode == SceneLoadMode.GridMode)
                 spawnPos += GridCell.GridCellPosition;
 
-            rotation = GetAgentRandomRotation();
+            rotation = GetRandomRotation();
 
-            if (!SpawnPointSuitable(spawnPos, rotation, usedSpawnPoints)) {
+            if (!SpawnPointSuitable(spawnPos, rotation, usedSpawnPoints, AgentColliderExtendsMultiplier, MinAgentDistance)) {
                 continue;
             }
 
@@ -193,12 +202,12 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
         }
     }
 
-    public Vector3 GetAgentRandomSpawnPoint() {
+    public Vector3 GetRandomSpawnPoint() {
         if(ArenaSize != Vector3.zero) {
             return new Vector3 {
-                x = Util.NextFloat(-(ArenaSize.x / 2) + ArenaOffset, (ArenaSize.x / 2) - ArenaOffset),
+                x = Util.NextFloat((-(ArenaSize.x / 2)) + ArenaOffset, (ArenaSize.x / 2) - ArenaOffset),
                 y = ArenaSize.y,
-                z = Util.NextFloat(-(ArenaSize.z / 2) + ArenaOffset, (ArenaSize.z / 2) - ArenaOffset),
+                z = Util.NextFloat((-(ArenaSize.z / 2)) + ArenaOffset, (ArenaSize.z / 2) - ArenaOffset),
             };
         }
         else {
@@ -223,33 +232,39 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
         return randomLocation;
     }
 
-    public Quaternion GetAgentRandomRotation() {
+    public Quaternion GetRandomRotation() {
         return Quaternion.AngleAxis(Util.NextFloat(0, 360), new Vector3(0, 1, 0));
     }
 
-    public bool RespawnPointSuitable(Vector3 newRespawnPos, Quaternion newRotation) {
-        Collider[] colliders = Physics.OverlapBox(newRespawnPos, Vector3.one * AgentColliderExtendsMultiplier, newRotation, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)) + DefaultLayer);
+    public bool RespawnPointSuitable(Vector3 newRespawnPos, Quaternion newRotation, Vector3 halfExtends, float minObjectDistance) {
+        Collider[] colliders = Physics.OverlapBox(newRespawnPos, halfExtends, newRotation, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)) + DefaultLayer);
         if (colliders.Length > 0) {
             return false;
         }
 
         foreach (var agent in Agents) {
-            if (Vector3.Distance(newRespawnPos, agent.transform.position) < MinPlayerDistance) {
+            if (Vector3.Distance(newRespawnPos, agent.transform.position) < minObjectDistance) {
                 return false;
             }
         }
         return true;
     }
 
-    public virtual bool SpawnPointSuitable(Vector3 newSpawnPos, Quaternion newRotation, List<Vector3> usedSpawnPoints) {
-        Collider[] colliders = Physics.OverlapBox(newSpawnPos, Vector3.one * AgentColliderExtendsMultiplier, newRotation, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)) + DefaultLayer);
+    public virtual bool SpawnPointSuitable(Vector3 newSpawnPos, Quaternion newRotation, List<Vector3> usedSpawnPoints, Vector3 halfExtends, float minObjectDistance) {
+        Collider[] colliders = Physics.OverlapBox(newSpawnPos, halfExtends, newRotation, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)) + DefaultLayer);
         if(colliders.Length > 0) {
+            colliders = colliders.Where(col => col.gameObject.CompareTag("Obstacle")).ToArray();
             return false;
         }
 
-        foreach (var usedSpawnPoint in usedSpawnPoints) {
-            if (Vector3.Distance(newSpawnPos, usedSpawnPoint) < MinPlayerDistance) {
-                return false;
+        if(usedSpawnPoints != null && usedSpawnPoints.Count > 0)
+        {
+            foreach (var usedSpawnPoint in usedSpawnPoints)
+            {
+                if (Vector3.Distance(newSpawnPos, usedSpawnPoint) < minObjectDistance)
+                {
+                    return false;
+                }
             }
         }
 
@@ -337,10 +352,15 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
         }
     }
 
-    protected virtual void DefineAdditionalDataOnStart() { }
-    protected virtual void DefineAdditionalDataOnAwake() { }
+    protected virtual void DefineAdditionalDataOnPreStart() { }
+    protected virtual void DefineAdditionalDataOnPostStart() { }
+    protected virtual void DefineAdditionalDataOnPreAwake() { }
+    protected virtual void DefineAdditionalDataOnPostAwake() { }
+
     protected virtual void OnUpdate() { }
-    protected virtual void OnFixedUpdate() { }
+
+    protected virtual void OnPreFixedUpdate() { }
+    protected virtual void OnPostFixedUpdate() { }
     protected virtual void OnPreFinishGame() { }
 
     public static void SetLayerRecursively(GameObject obj, int newLayer) {

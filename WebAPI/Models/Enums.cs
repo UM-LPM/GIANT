@@ -12,6 +12,10 @@
         Shoot,
         PlaceBomb,
         RayHitObject,
-        GridCellContainsObject
+        GridCellContainsObject,
+        HealthLevelBellow,
+        ShieldLevelBellow,
+        AmmoLevelBellow,
+
     }
 }
