@@ -16,9 +16,9 @@ public class PickUpFood : ActionNode
     protected override State OnUpdate()
     {
           
-                    var discreteActionsOut = blackboard.actionsOut.DiscreteActions;
-                    discreteActionsOut[5] = 1;
-                    return State.Success;
+    var discreteActionsOut = blackboard.actionsOut.DiscreteActions;
+    discreteActionsOut[3] = 1;
+    return State.Success;
           
     }
 }

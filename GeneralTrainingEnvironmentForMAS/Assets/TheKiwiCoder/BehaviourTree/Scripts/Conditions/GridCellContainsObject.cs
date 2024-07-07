@@ -15,7 +15,11 @@ public enum TargetGameObject2D {
     PowerUp,
     Empty,
     Food,
-    Pheromone,
+    Water,
+    FoodPheromone,
+    WaterPheromone,
+    BoundaryPheromone,
+    ThreatPheromone,
     Hive
 
 }
@@ -76,8 +80,32 @@ public class GridCellContainsObject : ConditionNode {
                             gridContainsTarget = true;
                         }
                         break;
-                    case TargetGameObject2D.Pheromone:
-                        if (obj.name.Contains("Pheromone")){
+                    case TargetGameObject2D.Water:
+                        if (obj.name.Contains("Water"))
+                        {
+                            gridContainsTarget = true;
+                        }
+                        break;
+                    case TargetGameObject2D.WaterPheromone:
+                        if (obj.name.Contains("WaterPheromone")){
+                            gridContainsTarget = true;
+                        }
+                        break;
+                    case TargetGameObject2D.FoodPheromone:
+                        if (obj.name.Contains("FoodPheromone"))
+                        {
+                            gridContainsTarget = true;
+                        }
+                        break;
+                    case TargetGameObject2D.BoundaryPheromone:
+                        if (obj.name.Contains("BoundaryPheromone"))
+                        {
+                            gridContainsTarget = true;
+                        }
+                        break;
+                    case TargetGameObject2D.ThreatPheromone:
+                        if (obj.name.Contains("ThreatPheromone"))
+                        {
                             gridContainsTarget = true;
                         }
                         break;
@@ -86,6 +114,7 @@ public class GridCellContainsObject : ConditionNode {
                             gridContainsTarget = true;
                         }
                         break;
+                    
                 }
             }
         }

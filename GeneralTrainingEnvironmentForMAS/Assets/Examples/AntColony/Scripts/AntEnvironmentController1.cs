@@ -24,7 +24,11 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
     [SerializeField] int numOfAnts = 10;
     [SerializeField] public float pheromoneEvaporationRate = 1.0f;
     [SerializeField] public GameObject PheromonePrefab;
-    [SerializeField] int AgentStartHealth = 400;
+    [SerializeField] int agentStartStamina = 400;
+    [SerializeField]  public float recoveryRate = 10f;
+    [SerializeField] public float boundaryTreshold = 10f;
+
+
     protected override void DefineAdditionalDataOnPreStart()
     {
         SpawnHives();
@@ -33,7 +37,6 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
         for (int i = 0; i < numOfAnts; i++)
         {
             GameObject agent = Instantiate(AgentPrefab, hiveItems[0].transform.position, Quaternion.identity, this.gameObject.transform);
-
         }
     }
  
@@ -41,8 +44,9 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
         foreach (AntAgentComponent agent in Agents)
       {
            agent.Rigidbody = agent.GetComponent<Rigidbody>();
-           agent.Health = AgentStartHealth;
+           agent.stamina = agentStartStamina;
             agent.pheromoneEvaporationRate = pheromoneEvaporationRate;
+            agent.hive = HiveItems[0].GetComponent<Hive>();
       }
 
       foreach (AntAgentComponent agent in AgentsPredefinedBehaviour)
@@ -121,8 +125,41 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
     public override void UpdateAgents()
     {
         if (ManualAgentControl)
+        {
             MoveAgents(Agents);
+        }
+        else
+        {
+         UpdateAgentsWithBTs(Agents);
+            
+        }
         
+    }
+    void UpdateAgentsWithBTs(AgentComponent[] agents)
+    {
+        ActionBuffer actionBuffer;
+        foreach (AntAgentComponent agent in agents)
+        {
+            if (agent.gameObject.activeSelf)
+            {
+                actionBuffer = new ActionBuffer(null, new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }); // 
+
+                agent.BehaviourTree.UpdateTree(actionBuffer);
+                if (actionBuffer.DiscreteActions[7] == 1)
+                {
+                    Attack(agent, actionBuffer);
+                }
+                if (actionBuffer.DiscreteActions[13] == 1)
+                {
+                    MoveToNextPheromone(agent);
+                }
+                if (actionBuffer.DiscreteActions[5] == 1)
+                {
+                    MaintainHive(agent);
+                };
+            }
+        }
+
     }
     protected override void OnUpdate()
     {
@@ -144,7 +181,119 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
             pheromoneTrail.UpdatePheromones();
         }
     }
-    void OnGameInput(AgentComponent[] agents)
+    public bool DetectPheromone(Vector3 position, PheromoneType type, float detectionRadius)
+    {
+        RaySensor2D raySensor = GetComponent<RaySensor2D>();
+
+        if (raySensor != null)
+        {
+            RayPerceptionInput perceptionInput = new RayPerceptionInput
+            {
+                RayLength = detectionRadius,
+                DetectableTags = new List<string> { type.ToString() },
+                Angles = new List<float> { 0 }, 
+                CastRadius = 0.5f,
+                Transform = transform,
+                CastType = RayPerceptionCastType.Cast2D,
+                LayerMask = LayerMask.GetMask("Pheromones")
+            };
+
+            SensorPerceiveOutput[] perceptionOutputs = raySensor.Perceive();
+
+            foreach (var output in perceptionOutputs)
+            {
+                if (output.HasHit && output.HitGameObjects != null)
+                {
+                    foreach (var hitObject in output.HitGameObjects)
+                    {
+                        if (hitObject != null && hitObject.CompareTag(type.ToString()))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public void ReleasePheromone(AntAgentComponent ant, Vector3 position, PheromoneType type, float strength, float evaporationRate)
+    {
+        PheromoneTrailComponent currentPheromoneTrail;
+        if(type==PheromoneType.Water)
+        {
+            currentPheromoneTrail = ant.waterPheromoneTrailComponent;
+
+        }else if(type == PheromoneType.Food)
+        {
+            currentPheromoneTrail = ant.foodPheromoneTrailComponent;
+
+        }
+        else if (type == PheromoneType.Threat)
+        {
+            currentPheromoneTrail = ant.threatPheromoneTrailComponent;
+
+        }else
+        {
+            currentPheromoneTrail = ant.boundaryPheromoneTrailComponent;
+
+        }
+        if (currentPheromoneTrail != null)
+        {
+            currentPheromoneTrail.AddPheromone(position, strength, evaporationRate);
+        } 
+    }
+    void RestAndRecover(AntAgentComponent antAgent)
+    {
+        antAgent.stamina += Time.deltaTime * recoveryRate;
+        if (antAgent.stamina > antAgent.maxStamina)
+        {
+            antAgent.stamina = antAgent.maxStamina;
+        }
+    }
+    public void Attack(AntAgentComponent agent, ActionBuffer actionBuffer)
+    {
+        int layer = LayerMask.NameToLayer("Threat") ;
+
+        RaycastHit2D hit = Physics2D.Raycast(agent.transform.position, agent.transform.right, agent.attackRange, layer);
+        if (hit.collider != null)
+        {
+            Threat threat = hit.collider.GetComponent<Threat>();
+            if (threat != null)
+            {
+                threat.health -= 10;
+            }
+        }
+    }
+
+    public void MoveToNextPheromone(AntAgentComponent agent)
+    {
+        PheromoneTrailComponent trailComponent = agent.activePheromoneTrail;
+      
+        if (trailComponent != null)
+        {
+            PheromoneNodeComponent currentNode = agent.currentActiveNodePheromone;
+
+            if (currentNode != null && currentNode.next != null)
+            {
+                agent.transform.position = Vector3.MoveTowards(agent.transform.position, currentNode.next.position, AntMoveSpeed * Time.deltaTime);
+                if (Vector3.Distance(agent.transform.position, currentNode.next.position) < 0.1f)
+                {
+                    agent.currentActiveNodePheromone = currentNode.next;
+                }
+            }
+        }
+    }
+
+    public void MaintainHive(AntAgentComponent agent)
+    {
+        if (agent.hive != null)
+        {
+            agent.hive.Repair(10);
+        }
+    }
+void OnGameInput(AgentComponent[] agents)
     {
         foreach (AntAgentComponent agent in agents)
         {
@@ -195,16 +344,16 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
                 }else if(Input.GetKey(agent.dropPheromoneKey)){
                     Vector2 agentPosition = agent.transform.position;
                     var pheromone = Instantiate(PheromonePrefab, agentPosition, Quaternion.identity, this.gameObject.transform);
-                    if(agent.pheromoneTrailComponent != null)
+                    if(agent.foodPheromoneTrailComponent != null)
                     {
-                        agent.pheromoneTrailComponent.AddPheromone(agentPosition,100, agent.pheromoneEvaporationRate);
+                        agent.foodPheromoneTrailComponent.AddPheromone(agentPosition,100, agent.pheromoneEvaporationRate);
                     }
                     else
                     {
                         GameObject pheromoneTrailObject = new GameObject("PheromoneTrail");
                         PheromoneTrailComponent pheromoneTrailComponent = pheromoneTrailObject.AddComponent<PheromoneTrailComponent>();
-                        agent.pheromoneTrailComponent = pheromoneTrailComponent;
-                        agent.pheromoneTrailComponent.AddPheromone(agentPosition,100, agent.pheromoneEvaporationRate);
+                        agent.foodPheromoneTrailComponent = pheromoneTrailComponent;
+                        agent.foodPheromoneTrailComponent.AddPheromone(agentPosition,100, agent.pheromoneEvaporationRate);
                     }
                 }
                 else
@@ -214,6 +363,8 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
             }
         }
     }
+   
+
     public void MoveAgents(AgentComponent[] agents)
     {
 
@@ -231,7 +382,7 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
                         Vector2 movement = agent.MoveDirection.normalized * AntMoveSpeed * Time.deltaTime;
 
                         rb.MovePosition(rb.position + movement);
-                        agent.Health--;
+                       // agent.stamina--;
                     }
                     
                     agent.NextAgentUpdateTime = CurrentSimulationTime + AgentUpdateinterval;
