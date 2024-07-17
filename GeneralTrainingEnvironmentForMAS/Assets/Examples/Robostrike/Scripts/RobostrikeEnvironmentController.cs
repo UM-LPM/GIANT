@@ -341,7 +341,7 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
         }
 
         // Update agent move fitness
-        /*if(CurrentSimulationTime >= NextAgentMoveFitnessUpdate) {
+        if(CurrentSimulationTime >= NextAgentMoveFitnessUpdate) {
             UpdateAgentMoveFitness(Agents);
             UpdateAgentMoveFitness(AgentsPredefinedBehaviour);
             NextAgentMoveFitnessUpdate += AgentMoveFitnessUpdateInterval;
@@ -359,7 +359,7 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
             UpdateAgentNearWallFitness(Agents);
             UpdateAgentNearWallFitness(AgentsPredefinedBehaviour);
             NextAgentNearWallFitnessUpdate += AgentNearWallUpdateInterval;
-        }*/
+        }
     }
 
     void UpdateAgentsWithBTs(AgentComponent[] agents, bool updateBTs) {

@@ -16,8 +16,8 @@ namespace WebAPI.Controllers {
             try {
                 string sourceFilePath = @".\RequestData\jsonBody.json";
 
-                //string destinationFilePath = @".\..\GeneralTrainingEnvironmentForMAS\Assets\Resources\RobocodeBts\";
-                string destinationFilePath = @".\..\GeneralTrainingEnvironmentForMAS\Assets\Resources\CollectorBts\"; 
+                string destinationFilePath = @".\..\GeneralTrainingEnvironmentForMAS\Assets\Resources\RobostrikeBts\";
+                //string destinationFilePath = @".\..\GeneralTrainingEnvironmentForMAS\Assets\Resources\CollectorBts\"; 
 
                 string jsonString = System.IO.File.ReadAllText(sourceFilePath);
 
