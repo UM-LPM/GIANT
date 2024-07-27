@@ -74,6 +74,7 @@ namespace WebAPI.Controllers {
                         await Task.WhenAll(tasks);
 
                         FitnessIndividual[] FinalPopFitnesses = new FitnessIndividual[numOfIndividuals];
+                        int[][] FinalBtsNodeCallFrequencies = new int[numOfIndividuals][];
                         foreach (Task<HttpResponseMessage> task in tasks) {
                             HttpResponseMessage response = await task;
                             if (response.IsSuccessStatusCode) {
@@ -85,6 +86,7 @@ namespace WebAPI.Controllers {
 
                                 for (int i = responseObject.EvalRequestData.evalRangeStart; i < responseObject.EvalRequestData.evalRangeEnd; i++) {
                                     FinalPopFitnesses[i] = responseObject.PopFitness[i - responseObject.EvalRequestData.evalRangeStart];
+                                    FinalBtsNodeCallFrequencies[i] = responseObject.BtsNodeCallFrequencies[i - responseObject.EvalRequestData.evalRangeStart];
                                 }
                             }
                             else {
@@ -92,7 +94,9 @@ namespace WebAPI.Controllers {
                             }
                         }
 
-                        return Ok(new { Status = "Success", Message = "JSON parsing was successful.", Object = new HttpServerResponse() { PopFitness = FinalPopFitnesses } });
+                        return Ok(new { Status = "Success", Message = "JSON parsing was successful.", Object = new HttpServerResponse() { PopFitness = FinalPopFitnesses, 
+                        BtsNodeCallFrequencies = FinalBtsNodeCallFrequencies
+                        } });
                     }
                     /*using (HttpClient client = new HttpClient()) {
                         client.Timeout = TimeSpan.FromMinutes(100);
@@ -225,10 +229,12 @@ namespace WebAPI.Controllers {
 
 public class HttpServerResponse {
     public FitnessIndividual[] PopFitness { get; set; }
+    public int[][] BtsNodeCallFrequencies { get; set; }
 }
 
 public class UnityHttpServerResponse {
     public FitnessIndividual[] PopFitness { get; set; }
+    public int[][] BtsNodeCallFrequencies { get; set; }
     public UnityEvalRequestData EvalRequestData { get; set; }
 }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Collector;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.ConstrainedExecution;
@@ -39,6 +40,37 @@ public class RobostrikeAgentComponent : AgentComponent {
     protected override void DefineAdditionalDataOnStart()
     {
         UpdatetStatBars();
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        SectorComponent sectorComponent = other.gameObject.GetComponent<SectorComponent>();
+        // New Sector Explored
+        if (sectorComponent != null && AgentExploredNewSector(sectorComponent))
+        {
+            //Debug.Log("New Sector Explored"); // TODO Remove
+            if (RobostrikeFitness.FitnessValues[RobostrikeFitness.Keys[(int)RobostrikeFitness.FitnessKeys.AgentExploredSector]] != 0)
+            {
+                AgentFitness.Fitness.UpdateFitness((RobostrikeFitness.FitnessValues[RobostrikeFitness.Keys[(int)RobostrikeFitness.FitnessKeys.AgentExploredSector]]), RobostrikeFitness.FitnessKeys.AgentExploredSector.ToString());
+            }
+
+            // Add explored sector to the list of explored sectors
+            LastKnownPositions.Add(sectorComponent.transform.position);
+            return;
+        }
+        // Re-explored Sector
+        else if (sectorComponent != null && !AgentExploredNewSector(sectorComponent))
+        {
+            if (RobostrikeFitness.FitnessValues[RobostrikeFitness.Keys[(int)RobostrikeFitness.FitnessKeys.AgentReExploredSector]] != 0)
+            {
+                AgentFitness.Fitness.UpdateFitness((RobostrikeFitness.FitnessValues[RobostrikeFitness.Keys[(int)RobostrikeFitness.FitnessKeys.AgentReExploredSector]]), RobostrikeFitness.FitnessKeys.AgentReExploredSector.ToString());
+            }
+        }
+    }
+
+    private bool AgentExploredNewSector(SectorComponent sectorComponent)
+    {
+        return !LastKnownPositions.Contains(sectorComponent.transform.position);
     }
 
     public bool SetHealth(int value)

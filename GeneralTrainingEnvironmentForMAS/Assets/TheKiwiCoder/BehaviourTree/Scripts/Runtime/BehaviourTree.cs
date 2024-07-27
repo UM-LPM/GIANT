@@ -81,6 +81,28 @@ namespace TheKiwiCoder {
             Update();
         }
 
+        public void InitNodeCallFrequencyCounter()
+        {
+            Traverse(rootNode, (node) =>
+            {
+                node.CallFrequencyCount = 0;
+            });
+        }
+
+        public int[] GetNodeCallFrequencies()
+        {
+            List<int> callFrequencies = new List<int>();
+            Traverse(rootNode, (node) =>
+            {
+                callFrequencies.Add(node.CallFrequencyCount);
+            });
+
+            // Remove first two elements (root and first child (Repeat))
+            callFrequencies.RemoveRange(0, 2);
+
+            return callFrequencies.ToArray();
+        }
+
         #region Editor Compatibility
 #if UNITY_EDITOR
 

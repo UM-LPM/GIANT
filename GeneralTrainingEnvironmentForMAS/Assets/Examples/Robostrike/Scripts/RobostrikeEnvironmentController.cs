@@ -131,11 +131,16 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
 
         foreach (RobostrikeAgentComponent agent in AgentsPredefinedBehaviour) {
             agent.HealthComponent.Health = AgentStartHealth;
+            agent.ShieldComponent.Shield = AgentStartShield;
+            agent.AmmoComponent.Ammo = AgentStartAmmo;
             agent.Rigidbody = agent.GetComponent<Rigidbody>();
         }
 
         // Spawn powerUps
         SpawnPowerUps();
+
+        // Register event for Ray sensor
+        RayHitObject.OnTargetHit += RayHitObject_OnTargetHit;
     }
 
     protected override void OnUpdate() {
@@ -341,7 +346,7 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
         }
 
         // Update agent move fitness
-        if(CurrentSimulationTime >= NextAgentMoveFitnessUpdate) {
+        /*if(CurrentSimulationTime >= NextAgentMoveFitnessUpdate) {
             UpdateAgentMoveFitness(Agents);
             UpdateAgentMoveFitness(AgentsPredefinedBehaviour);
             NextAgentMoveFitnessUpdate += AgentMoveFitnessUpdateInterval;
@@ -359,12 +364,12 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
             UpdateAgentNearWallFitness(Agents);
             UpdateAgentNearWallFitness(AgentsPredefinedBehaviour);
             NextAgentNearWallFitnessUpdate += AgentNearWallUpdateInterval;
-        }
+        }*/
     }
 
     void UpdateAgentsWithBTs(AgentComponent[] agents, bool updateBTs) {
         foreach (RobostrikeAgentComponent agent in agents) {
-            if (agent.gameObject.activeSelf) {
+            if (agent.gameObject.activeSelf && agent.BehaviourTree != null) {
                 //actionBuffer = new ActionBuffer(null, new int[] { 0, 0, 0, 0, 0 }); // Forward, Side, Rotate, TurrentRotation, Shoot
                 actionBuffer.ResetDiscreteActions();
 
@@ -487,7 +492,7 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
         }
     }
 
-    void AgentsShoot(AgentComponent[] agents) {
+    public void AgentsShoot(AgentComponent[] agents) {
         GameObject obj;
         Rigidbody rb;
         MissileComponent mc;
@@ -577,6 +582,7 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
                 case RobostrikeGameScenarioType.Deathmatch:
                     missile.Parent.AgentFitness.Fitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.AgentDestroyedBonus.ToString()], RobostrikeFitness.FitnessKeys.AgentDestroyedBonus.ToString());
                     hitAgent.AgentFitness.Fitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.DeathPenalty.ToString()], RobostrikeFitness.FitnessKeys.DeathPenalty.ToString());
+                    //hitAgent.LastKnownPositions.Clear(); // TODO: Check if this is needed
                     RespawnAgent(hitAgent);
                     break;
             }
@@ -616,7 +622,7 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
             UnityEngine.Debug.Log("Agent respawned!");
     }
 
-    void UpdateAgentMoveFitness(AgentComponent[] agents) {
+    /*void UpdateAgentMoveFitness(AgentComponent[] agents) {
         foreach(RobostrikeAgentComponent agent in agents) {
             // Only update agents that are active
             if (agent.gameObject.activeSelf) {
@@ -632,24 +638,6 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
 
     }
 
-    void UpdateAgentAimFitness(AgentComponent[] agents) {
-        foreach (RobostrikeAgentComponent agent in agents) {
-            if (agent.gameObject.activeSelf) {
-                RaySensorBase raySensor = agent.gameObject.GetComponentInChildren<RaySensorBase>();
-                raySensor.LayerMask = (1 << gameObject.layer) + 1; // base layer + default
-
-                SensorPerceiveOutput[] sensorPerceiveOutputs = raySensor.PerceiveAll();
-
-                if (sensorPerceiveOutputs[0].HasHit) {
-                    AgentComponent otherAgent = sensorPerceiveOutputs[0].HitGameObjects[0].GetComponent<AgentComponent>();
-                    if(otherAgent != null) {
-                        agent.AgentFitness.Fitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.AgentAimingOpponent.ToString()], RobostrikeFitness.FitnessKeys.AgentAimingOpponent.ToString());
-                    }
-                }
-            }
-        }
-    }
-
     void UpdateAgentNearWallFitness(AgentComponent[] agents) {
         foreach (RobostrikeAgentComponent agent in agents) {
             if (agent.gameObject.activeSelf) {
@@ -663,7 +651,7 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
                 }
             }
         }
-    }
+    }*/
 
     public bool PowerUpPickedUp(PowerUpType powerUpType, AgentComponent agent)
     {
@@ -808,7 +796,7 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
                 spawnRotation = robostrikeGameConfig.AgentStartSpawnPosition.rotation;
             }
 
-            GameObject obj = Instantiate(AgentPrefab, spawnPos, spawnRotation, this.transform);
+            GameObject obj = Instantiate(robostrikeGameConfig.AgentPrefab, spawnPos, spawnRotation, this.transform);
             obj.layer = gameObject.layer;
 
             if (robostrikeGameConfig.BehaviourTree != null)
@@ -830,11 +818,30 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
                     renderer.material = robostrikeGameConfig.AgentMaterial;
                 }
             }
+
+            // Set control script
+            if (robostrikeGameConfig.CustomControlScript)
+            {
+                MonoBehaviour controlScript = obj.AddComponent<RobostrikeAgentEnemyContoller>();
+                controlScript.enabled = true;
+
+                AgentComponent agent = obj.GetComponent<AgentComponent>();
+                agent.HasPredefinedBehaviour = true;
+            }
         }
         else
         {
             throw new Exception("Agent prefab is null");
         }
+    }
+
+    private void RayHitObject_OnTargetHit(object sender, OnTargetHitEventargs e)
+    {
+        /*// TODO: How to handle only aimimg at opponent??? -> Add Teams concept
+        if (e.TargetGameObject.GetComponent<AgentComponent>() != null)
+        {
+            e.Agent.AgentFitness.Fitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.AgentAimingOpponent.ToString()], RobostrikeFitness.FitnessKeys.AgentAimingOpponent.ToString());
+        }*/
     }
 }
 

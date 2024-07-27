@@ -57,7 +57,7 @@ public class RayHitObject : ConditionNode {
         if(raySensor == null)
         {
             raySensor = context.gameObject.GetComponentInChildren<RaySensorBase>();
-            raySensor.LayerMask = (1 << context.gameObject.layer) + 1; // base layer + default
+            raySensor.SetLayerMask((1 << context.gameObject.layer) + 1); // base layer + default
         }
 
         targetHit = false;

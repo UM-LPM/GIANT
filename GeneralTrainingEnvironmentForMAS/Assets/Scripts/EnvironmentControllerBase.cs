@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using TheKiwiCoder;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -43,7 +45,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     protected int CurrentSimulationSteps;
     protected float CurrentSimulationTime;
     protected GameState GameState;
-    protected Util Util;
+    public Util Util;
 
     protected LayerData LayerBTIndex;
     protected GridCell GridCell;
@@ -57,6 +59,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
         public GridCell GridCell;
         public string ScenarioName; // GameSceneName + AgentSceneName
         public int SimulationSteps;
+        public List<int[]> BtNodeFrequencyCalls;
     }
 
     protected virtual void Awake() {
@@ -106,7 +109,6 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
         InitializeFitness(SceneLoadMode == SceneLoadMode.LayerMode ? LayerBTIndex.BTIndex : GridCell.BTIndex);
 
         DefineAdditionalDataOnPostStart();
-
     }
 
     private void Update() {
@@ -335,6 +337,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
                 bt = AgentBehaviourTrees[i];
             Agents[i].BehaviourTree = bt.Clone();
             Agents[i].BehaviourTree.Bind(BehaviourTree.CreateBehaviourTreeContext(Agents[i].gameObject));
+            Agents[i].BehaviourTree.InitNodeCallFrequencyCounter();
 
         }
 
@@ -342,11 +345,12 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
         for (int i = 0; i < AgentsPredefinedBehaviour.Length; i++) {
             if(!ManualAgentPredefinedBehaviourControl) {
                 if(AgentsPredefinedBehaviour[i].BehaviourTree == null) {
-                    UnityEngine.Debug.LogError("Behaviour tree for agent with predefined behaviour not set");
+                    UnityEngine.Debug.LogWarning("Behaviour tree for agent with predefined behaviour not set");
                 }
                 else {
                     AgentsPredefinedBehaviour[i].BehaviourTree = AgentsPredefinedBehaviour[i].BehaviourTree.Clone();
                     AgentsPredefinedBehaviour[i].BehaviourTree.Bind(BehaviourTree.CreateBehaviourTreeContext(AgentsPredefinedBehaviour[i].gameObject));
+                    AgentsPredefinedBehaviour[i].BehaviourTree.InitNodeCallFrequencyCounter();
                 }
             }
         }
@@ -373,15 +377,17 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     public void FinishGame() {
         if (GameState == GameState.RUNNING) {
             OnPreFinishGame();
-
+            
             string guid = Guid.NewGuid().ToString();
             // Send event about finished game
             OnGameFinished?.Invoke(this, new OnGameFinishedEventargs() {
                 FitnessIndividuals = GetAgentFitnesses(),
                 LayerId = gameObject.layer,
                 GridCell = GridCell,
-                ScenarioName = SceneLoadMode == SceneLoadMode.LayerMode ? LayerBTIndex.GameSceneName + "_" + LayerBTIndex.AgentSceneName + "_" + guid : GridCell.GameSceneName + "_" + GridCell.AgentSceneName + "_" + guid,
-                SimulationSteps = CurrentSimulationSteps
+                //ScenarioName = SceneLoadMode == SceneLoadMode.LayerMode ? LayerBTIndex.GameSceneName + "_" + LayerBTIndex.AgentSceneName + "_" + guid : GridCell.GameSceneName + "_" + GridCell.AgentSceneName + "_" + guid, // TODO Uncomment
+                ScenarioName = SceneLoadMode == SceneLoadMode.LayerMode ? LayerBTIndex.GameSceneName + "_" + LayerBTIndex.AgentSceneName + "_" : GridCell.GameSceneName + "_" + GridCell.AgentSceneName + "_",
+                SimulationSteps = CurrentSimulationSteps,
+                BtNodeFrequencyCalls = GetAgentBehaviourTreesNodeCallFrequencyCall()
             });
 
             if (Debug) {
@@ -428,6 +434,38 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
         }
 
         return fitnessIndividuals;
+    }
+
+    List<int[]> GetAgentBehaviourTreesNodeCallFrequencyCall()
+    {
+        List<int[]> nodeCallFrequencies = new List<int[]>();
+
+        // Based on BtLoadMode set fitness
+        // BTLoadMode.Full -> Each agent corresponds to only one Individual
+        // BTLoadMode.Single -> All agents correspond to the same Inidivdual
+        if (BTLoadMode == BTLoadMode.Full)
+        {
+            for (int i = 0; i < Agents.Length; i++)
+            {
+                nodeCallFrequencies.Add(Agents[i].BehaviourTree.GetNodeCallFrequencies());
+            }
+        }
+        else if (BTLoadMode == BTLoadMode.Single)
+        {
+            nodeCallFrequencies.Add(Agents[0].BehaviourTree.GetNodeCallFrequencies());
+
+            int[] nodeCallFrequency;
+            for (int i = 1; i < Agents.Length; i++)
+            {
+                nodeCallFrequency = Agents[i].BehaviourTree.GetNodeCallFrequencies();
+                for (int j = 0; i < nodeCallFrequency.Length; j++)
+                {
+                    nodeCallFrequencies[0][j] = nodeCallFrequencies[0][j] + nodeCallFrequency[j];
+                }
+            }
+        }
+
+        return nodeCallFrequencies;
     }
 
     public int GetNumOfActiveAgents() {

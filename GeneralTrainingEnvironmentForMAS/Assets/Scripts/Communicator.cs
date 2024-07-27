@@ -59,6 +59,8 @@ public class Communicator : MonoBehaviour {
 
     private PopFitness PopFitness;
 
+    private int[][] BtsNodeCallFrequencies;
+
     private BehaviourTree[] PopBTs;
 
     private int SimulationStepsCombined;
@@ -142,10 +144,13 @@ public class Communicator : MonoBehaviour {
     }
 
     private void EnvironmentController_OnGameFinished(object sender, EnvironmentControllerBase.OnGameFinishedEventargs e) {
+        int counter = 0;
         foreach (FitnessIndividual fitnessIndividual in e.FitnessIndividuals) {
             if (fitnessIndividual.IndividualId < 0)
                 Debug.LogError("IndividualID is -1");
             PopFitness.FitnessIndividuals[fitnessIndividual.IndividualId].Fitnesses.Add(e.ScenarioName, fitnessIndividual.Fitness);
+            BtsNodeCallFrequencies[fitnessIndividual.IndividualId] = e.BtNodeFrequencyCalls[counter];
+            counter++;
         }
 
         if (SceneLoadMode == SceneLoadMode.LayerMode)
@@ -224,6 +229,7 @@ public class Communicator : MonoBehaviour {
 
         // Reset variables
         PopFitness = new PopFitness(PopBTs.Length);
+        BtsNodeCallFrequencies = new int[PopBTs.Length][];
 
         CurrentIndividualID = 0;
 
@@ -330,7 +336,7 @@ public class Communicator : MonoBehaviour {
         // Based on FitnessStatisticType calculate fitness statistics
         CalculateFitnessStatistics();
 
-        HttpServerResponse response = new HttpServerResponse() { PopFitness = PopFitness.FitnessIndividuals, EvalRequestData = evalRequestData };
+        HttpServerResponse response = new HttpServerResponse() { PopFitness = PopFitness.FitnessIndividuals, EvalRequestData = evalRequestData, BtsNodeCallFrequencies = BtsNodeCallFrequencies };
         //string responseJson = JsonUtility.ToJson(response);
         string responseJson = JsonConvert.SerializeObject(response);
 
@@ -446,6 +452,7 @@ public class Communicator : MonoBehaviour {
 
 public class HttpServerResponse {
     public FitnessIndividual[] PopFitness { get; set; }
+    public int[][] BtsNodeCallFrequencies { get; set; }
     public EvalRequestData EvalRequestData { get; set; }
 }
 

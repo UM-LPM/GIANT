@@ -17,6 +17,7 @@ namespace TheKiwiCoder {
         [HideInInspector] public Vector2 position;
         [HideInInspector] public Context context;
         [HideInInspector] public Blackboard blackboard;
+        public int CallFrequencyCount;
         [TextArea] public string description;
         public bool drawGizmos = false;
 
@@ -33,6 +34,9 @@ namespace TheKiwiCoder {
                 OnStop();
                 started = false;
             }
+
+            // Node is being called so we increase the call frequency count
+            CallFrequencyCount++;
 
             return state;
         }
@@ -54,6 +58,7 @@ namespace TheKiwiCoder {
         protected abstract void OnStart();
         protected abstract void OnStop();
         protected abstract State OnUpdate();
+
         //public abstract List<Node> GetChildren(); 
 
         public static string NodeStateToString(State state) {

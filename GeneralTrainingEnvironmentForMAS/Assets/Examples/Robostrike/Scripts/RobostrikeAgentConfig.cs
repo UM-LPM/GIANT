@@ -9,4 +9,5 @@ public class RobostrikeAgentConfig
     public Transform AgentStartSpawnPosition;
     public BehaviourTree BehaviourTree;
     public Material AgentMaterial;
+    public bool CustomControlScript;
 }

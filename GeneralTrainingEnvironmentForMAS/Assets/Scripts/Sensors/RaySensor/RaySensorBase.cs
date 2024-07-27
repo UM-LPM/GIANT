@@ -36,6 +36,12 @@ public abstract class RaySensorBase : Sensor<SensorPerceiveOutput[]> {
 
     public RaySensorBase(string name) : base(name) { }
 
+    public void SetLayerMask(int layerMask)
+    {
+        LayerMask = layerMask;
+        input.LayerMask = LayerMask;
+    }
+
     public override SensorPerceiveOutput[] PerceiveAll()
     {
         ResetRayOutputs();
