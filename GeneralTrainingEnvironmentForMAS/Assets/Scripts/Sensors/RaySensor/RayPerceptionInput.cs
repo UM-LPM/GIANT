@@ -38,8 +38,8 @@ public struct RayPerceptionInput {
         }
         else {
             // Vector2s here get converted to Vector3s (and back to Vector2s for casting)
-            startPositionLocal = new Vector2();
-            endPositionLocal = PolarToCartesian2D(RayLength, angle);
+            startPositionLocal = new Vector2() + (Vector2.up * StartOffset);
+            endPositionLocal = PolarToCartesian2D(RayLength, angle) + (Vector2.up * StartOffset);
         }
 
         var startPositionWorld = Transform.TransformPoint(startPositionLocal);

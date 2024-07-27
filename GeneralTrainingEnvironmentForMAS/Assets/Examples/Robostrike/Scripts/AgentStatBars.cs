@@ -11,6 +11,7 @@ using UnityEngine.UI;
 public class AgentStatBars : MonoBehaviour
 {
     [SerializeField] Canvas StatBarsCanvas;
+    [SerializeField] float StatBarsCanvasBaseRotattion = -90f;
     [SerializeField] Image HealthBar;
     [SerializeField] Image ShieldBar;
     [SerializeField] Image AmmoBar;
@@ -22,7 +23,7 @@ public class AgentStatBars : MonoBehaviour
 
     private void Update()
     {
-        StatBarsCanvas.transform.rotation = Quaternion.Euler(-90, transform.rotation.y * -1, transform.rotation.z);
+        StatBarsCanvas.transform.rotation = Quaternion.Euler(StatBarsCanvasBaseRotattion, transform.rotation.y * -1, transform.rotation.z);
 
     }
 

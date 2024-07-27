@@ -12,6 +12,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     public static event EventHandler<OnGameFinishedEventargs> OnGameFinished;
 
     [Header("Base Configuration")]
+    [SerializeField] public GameType GameType = GameType._3D;
     [SerializeField] public float SimulationSteps = 10000;
     [SerializeField] public float SimulationTime = 10f;
     [SerializeField] public int IndividualId;
@@ -116,6 +117,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     }
 
     private void FixedUpdate() {
+        return; // TODO: Remove and fix movement
         OnPreFixedUpdate();
 
         CurrentSimulationTime += Time.fixedDeltaTime;
@@ -206,11 +208,24 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
 
     public Vector3 GetRandomSpawnPoint() {
         if(ArenaSize != Vector3.zero) {
-            return new Vector3 {
-                x = Util.NextFloat((-(ArenaSize.x / 2)) + ArenaOffset, (ArenaSize.x / 2) - ArenaOffset),
-                y = ArenaSize.y,
-                z = Util.NextFloat((-(ArenaSize.z / 2)) + ArenaOffset, (ArenaSize.z / 2) - ArenaOffset),
-            };
+            if (GameType == GameType._3D)
+            {
+                return new Vector3
+                {
+                    x = Util.NextFloat((-(ArenaSize.x / 2)) + ArenaOffset, (ArenaSize.x / 2) - ArenaOffset),
+                    y = ArenaSize.y,
+                    z = Util.NextFloat((-(ArenaSize.z / 2)) + ArenaOffset, (ArenaSize.z / 2) - ArenaOffset),
+                };
+            }
+            else
+            {
+                return new Vector3
+                {
+                    x = Util.NextFloat((-(ArenaSize.x / 2)) + ArenaOffset, (ArenaSize.x / 2) - ArenaOffset),
+                    y = Util.NextFloat((-(ArenaSize.z / 2)) + ArenaOffset, (ArenaSize.z / 2) - ArenaOffset),
+                    z = ArenaSize.y,
+                };
+            }
         }
         else {
             return GetRandomSpawnPointInRadius(ArenaRadius, ArenaOffset);
@@ -235,7 +250,10 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     }
 
     public Quaternion GetRandomRotation() {
-        return Quaternion.AngleAxis(Util.NextFloat(0, 360), new Vector3(0, 1, 0));
+        if(GameType == GameType._3D)
+            return Quaternion.AngleAxis(Util.NextFloat(0, 360), new Vector3(0, 1, 0));
+        else
+            return Quaternion.Euler(0, 0, Util.NextFloat(0, 360));
     }
 
     public bool RespawnPointSuitable(Vector3 newRespawnPos, Quaternion newRotation, Vector3 halfExtends, float minObjectDistance) {
@@ -253,10 +271,24 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     }
 
     public virtual bool SpawnPointSuitable(Vector3 newSpawnPos, Quaternion newRotation, List<Vector3> usedSpawnPoints, Vector3 halfExtends, float minObjectDistance) {
-        Collider[] colliders = Physics.OverlapBox(newSpawnPos, halfExtends, newRotation, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)) + DefaultLayer);
-        if(colliders.Length > 0) {
-            colliders = colliders.Where(col => col.gameObject.CompareTag("Obstacle")).ToArray();
-            return false;
+        
+        if(GameType == GameType._3D)
+        {
+            Collider[] colliders = Physics.OverlapBox(newSpawnPos, halfExtends, newRotation, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)) + DefaultLayer);
+            if (colliders.Length > 0)
+            {
+                colliders = colliders.Where(col => col.gameObject.CompareTag("Obstacle")).ToArray();
+                return false;
+            }
+        }
+        else
+        {
+            Collider[] colliders = Physics.OverlapBox(newSpawnPos, halfExtends, newRotation, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)) + DefaultLayer);
+            if (colliders.Length > 0)
+            {
+                colliders = colliders.Where(col => col.gameObject.CompareTag("Obstacle")).ToArray();
+                return false;
+            }
         }
 
         if(usedSpawnPoints != null && usedSpawnPoints.Count > 0)
@@ -497,4 +529,9 @@ public enum GameState {
     IDLE,
     RUNNING,
     FINISHED
+}
+public enum GameType
+{
+    _2D,
+    _3D
 }
