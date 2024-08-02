@@ -11,6 +11,7 @@ using UnityEngine.UI;
 public class RobostrikeAgentComponent : AgentComponent {
 
     public Rigidbody Rigidbody { get; set; }
+    public Rigidbody2D Rigidbody2D { get; set; }
     public TurretComponent Turret { get; set; }
     public MissileSpawnPointComponent MissileSpawnPoint { get; set; }
     public float NextShootTime { get; set; }
@@ -27,6 +28,7 @@ public class RobostrikeAgentComponent : AgentComponent {
 
     protected override void DefineAdditionalDataOnAwake() {
         Rigidbody = GetComponent<Rigidbody>();
+        Rigidbody2D = GetComponent<Rigidbody2D>();
         this.MissileSpawnPoint = GetComponentInChildren<MissileSpawnPointComponent>();
         this.Turret = GetComponentInChildren<TurretComponent>();
 

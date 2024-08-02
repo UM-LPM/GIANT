@@ -10,7 +10,9 @@ public class MissileComponent : MonoBehaviour {
     public AgentComponent Parent { get; set; }
     public RobostrikeEnvironmentController RobostrikeEnvironmentController{ get; set; }
 
-    private bool MissileHitTarget { get; set; }
+    public Vector3 MissileVelocity { get; set; }
+
+    public bool MissileHitTarget { get; set; }
 
     private void Start() {
         MissileHitTarget = false;
