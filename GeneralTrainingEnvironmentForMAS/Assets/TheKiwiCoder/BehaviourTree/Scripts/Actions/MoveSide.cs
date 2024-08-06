@@ -17,7 +17,7 @@ public class MoveSide : ActionNode {
 
     private Util Util;
     protected override void OnStart() {
-        Util = this.context.gameObject.GetComponentInParent<Util>();
+        Util = context.gameObject.GetComponentInParent<Util>();
     }
 
     protected override void OnStop() {
@@ -25,7 +25,7 @@ public class MoveSide : ActionNode {
 
     protected override State OnUpdate() {
         var discreteActionsOut = blackboard.actionsOut.DiscreteActions;
-        discreteActionsOut[1] = moveSideDirection == MoveSideDirection.Random ? this.Util.Rnd.Next(3) : (int)moveSideDirection;
+        discreteActionsOut[1] = moveSideDirection == MoveSideDirection.Random ? Util.NextIntBt(3) : (int)moveSideDirection;
 
         return State.Success;
     }
