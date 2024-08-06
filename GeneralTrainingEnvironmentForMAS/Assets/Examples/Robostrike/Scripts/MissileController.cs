@@ -12,48 +12,38 @@ public class MissileController : MonoBehaviour {
 
     [SerializeField] Vector3 MissileSizeHalf = new Vector3(0.1f, 0.1f, 0.1f);
     [SerializeField] float MissileRadius = 0.225f;
-    private MissileComponent[] Missiles;
+    private List<MissileComponent> Missiles;
     private RobostrikeEnvironmentController RobostrikeEnvironmentController;
 
     private Collider2D[] MissileCollisions;
 
     void Start () {
-        RobostrikeEnvironmentController = GetComponentInParent<RobostrikeEnvironmentController>();
+        RobostrikeEnvironmentController = gameObject.GetComponent<RobostrikeEnvironmentController>();
+        Missiles = new List<MissileComponent>();
     }
 
 
     void FixedUpdate () {
-       FindAllMissiles();
        UpdateMissilePositions();
        //CheckMissileCollisions();
    }
 
-    void FindAllMissiles() {
-        Missiles = FindObjectsOfType<MissileComponent>();
-        List<MissileComponent> missilesInLayer = new List<MissileComponent>();
-
-        for (int i = 0; i < Missiles.Length; i++) {
-            if (Missiles[i].gameObject.layer == gameObject.layer) {
-                missilesInLayer.Add(Missiles[i]);
-            }
-        }
-        Missiles = missilesInLayer.ToArray();
-    }
-
     void UpdateMissilePositions()
     {
-        for (int i = 0; i < Missiles.Length; i++)
+        for (int i = 0; i < Missiles.Count; i++)
         {
             // Update missile position and check if it's colliding with anything
             //Vector3 missileNewPos = Missiles[i].transform.position += Missiles[i].MissileVelocity * Time.fixedDeltaTime;
-            Missiles[i].transform.position += Missiles[i].MissileVelocity * Time.fixedDeltaTime;
+            //Missiles[i].transform.position += Missiles[i].MissileVelocity * Time.fixedDeltaTime;
+            Missiles[i].transform.position = UnityUtils.RoundToDecimals(Missiles[i].transform.position + Missiles[i].MissileVelocity * Time.fixedDeltaTime,2);
+
             CheckMissileCollision(Missiles[i]);
         }
     }
 
     void CheckMissileCollision(MissileComponent missileComponent)
     {
-        MissileCollisions = Physics2D.OverlapCircleAll(missileComponent.transform.position, MissileRadius, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer), LayerMask.LayerToName(0)));
+        MissileCollisions = Physics2D.OverlapCircleAll(missileComponent.transform.position, MissileRadius, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)) + RobostrikeEnvironmentController.DefaultLayer);
         if (MissileCollisions.Length > 0)
         {
             foreach (Collider2D collision in MissileCollisions)
@@ -74,32 +64,20 @@ public class MissileController : MonoBehaviour {
                 }
 
                 missileComponent.MissileHitTarget = true;
+                RemoveMissile(missileComponent);
                 Destroy(missileComponent.gameObject);
             }
         }   
     }
 
-    /*void CheckMissileCollisions() {
-        RaycastHit[] hits;
-        AgentComponent agent;
-        for (int i = 0; i < Missiles.Length; i++) {
-            hits = Physics.BoxCastAll(Missiles[i].transform.position, MissileSizeHalf, Missiles[i].transform.forward, Missiles[i].transform.rotation, 0f, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer), LayerMask.LayerToName(0)));
-            if (hits.Length > 0) {
-                foreach (RaycastHit hit in hits) {
-                    if (hit.transform.gameObject == Missiles[i].Parent.gameObject)
-                        continue;
+    public void AddMissile(MissileComponent missile)
+    {
+        Missiles.Add(missile);
+    }
 
-                    hit.transform.gameObject.TryGetComponent<AgentComponent>(out agent);
-                    if (agent != null) {
-                        // Tank was hit
-                        //Debug.Log("Tank was hit: " + hit.transform.gameObject.name);
+    public void RemoveMissile(MissileComponent missile)
+    {
+        Missiles.Remove(missile);
+    }
 
-                        agent.Score -= 1;
-                    }
-                    //Debug.Log(hit.collider.gameObject.name);
-                    Destroy(Missiles[i].gameObject);
-                }
-            }
-        }
-    }*/
 }

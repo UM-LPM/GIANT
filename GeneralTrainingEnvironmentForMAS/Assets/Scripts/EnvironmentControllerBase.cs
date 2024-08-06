@@ -29,7 +29,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     [SerializeField] public Vector3 ArenaCenterPoint; // For circular arena
     [SerializeField] public float ArenaOffset = 3f;
     [SerializeField] public float MinAgentDistance = 3f;
-    [SerializeField] public Vector3 AgentColliderExtendsMultiplier = new Vector3(0.505f, 0.495f, 0.505f);
+    [SerializeField] public Vector3 AgentColliderExtendsMultiplier = new Vector3(0.50f, 0.495f, 0.505f);
 
     [Header("Agent Control Configuration")]
     [SerializeField] public bool ManualAgentControl = false;
@@ -67,7 +67,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
         DefineAdditionalDataOnPreAwake();
 
         GameState = GameState.IDLE;
-        Util = GetComponent<Util>();
+        Util = gameObject.GetComponent<Util>();
 
         SceneLoadMode = Communicator.Instance.SceneLoadMode;
 
@@ -117,7 +117,6 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     }
 
     private void FixedUpdate() {
-        return; // TODO: Remove and fix movement
         OnPreFixedUpdate();
 
         CurrentSimulationTime += Time.fixedDeltaTime;
@@ -222,8 +221,8 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
                 return new Vector3
                 {
                     x = Util.NextFloat((-(ArenaSize.x / 2)) + ArenaOffset, (ArenaSize.x / 2) - ArenaOffset),
-                    y = Util.NextFloat((-(ArenaSize.z / 2)) + ArenaOffset, (ArenaSize.z / 2) - ArenaOffset),
-                    z = ArenaSize.y,
+                    y = Util.NextFloat((-(ArenaSize.y / 2)) + ArenaOffset, (ArenaSize.y / 2) - ArenaOffset),
+                    z = ArenaSize.z,
                 };
             }
         }
@@ -257,8 +256,8 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     }
 
     public bool RespawnPointSuitable(Vector3 newRespawnPos, Quaternion newRotation, Vector3 halfExtends, float minObjectDistance) {
-        Collider[] colliders = Physics.OverlapBox(newRespawnPos, halfExtends, newRotation, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)) + DefaultLayer);
-        if (colliders.Length > 0) {
+        if(PhysicsOverlapBox(null, newRespawnPos, newRotation, halfExtends, false))
+        {
             return false;
         }
 
@@ -269,6 +268,91 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
         }
         return true;
     }
+    public bool PhysicsOverlapBox(GameObject caller, Vector3 position, Quaternion newRotation, Vector3 halfExtends, bool ignoreTriggerGameObjs)
+    {
+        if (GameType == GameType._3D)
+        {
+            Collider[] colliders = Physics.OverlapBox(position, halfExtends, newRotation, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)) + DefaultLayer);
+            if (ignoreTriggerGameObjs)
+                colliders = colliders.Where(col => !col.isTrigger).ToArray();
+
+            if (colliders.Length > 1 || (colliders.Length == 1 && caller != colliders[0].gameObject))
+            {
+                return true;
+            }
+        }
+        else
+        {
+            Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(position, halfExtends, newRotation.eulerAngles.z, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)) + DefaultLayer);
+            if (ignoreTriggerGameObjs)
+                collider2Ds = collider2Ds.Where(col => !col.isTrigger).ToArray();
+
+            if (collider2Ds.Length > 1 || (collider2Ds.Length == 1 && caller != collider2Ds[0].gameObject))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /*public PhysicsOverlapResult PhysicsOverlapBox(GameObject caller, Vector3 position, Quaternion newRotation, Vector3 halfExtends, bool ignoreTriggerGameObjs)
+    {
+        if (GameType == GameType._3D)
+        {
+            Collider[] colliders = Physics.OverlapBox(position, halfExtends, newRotation, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)) + DefaultLayer);
+            if(ignoreTriggerGameObjs)
+                colliders = colliders.Where(col => !col.isTrigger).ToArray();
+
+            if (colliders.Length > 1 || (colliders.Length == 1 && caller != colliders[0].gameObject))
+            {
+                return new PhysicsOverlapResult3D() { HasHit = true, HitColliders3D = colliders};
+            }
+        }
+        else
+        {
+            Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(position, halfExtends, newRotation.eulerAngles.z, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)) + DefaultLayer);
+            if (ignoreTriggerGameObjs)
+                collider2Ds = collider2Ds.Where(col => !col.isTrigger).ToArray();
+
+            if (collider2Ds.Length > 1 || (collider2Ds.Length == 1 && caller != collider2Ds[0].gameObject))
+            {
+                return new PhysicsOverlapResult2D() { HasHit = true, HitColliders2D = collider2Ds };
+            }
+        }
+
+        return new PhysicsOverlapResult() { HasHit = false };
+    }*/
+
+    public bool PhysicsOverlapSphere(GameObject caller, Vector3 position, float radius, bool ignoreTriggerGameObjs)
+    {
+        if (GameType == GameType._3D)
+        {
+            Collider[] colliders = Physics.OverlapSphere(position, radius, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)) + DefaultLayer);
+            if (ignoreTriggerGameObjs)
+                colliders = colliders.Where(col => !col.isTrigger).ToArray();
+
+            if (colliders.Length > 1 || (colliders.Length == 1 && caller != colliders[0].gameObject))
+            {
+                return true;
+            }
+        }
+        else
+        {
+            Collider2D[] collider2Ds = Physics2D.OverlapCircleAll(position, radius, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)) + DefaultLayer);
+
+            if (ignoreTriggerGameObjs)
+                collider2Ds = collider2Ds.Where(col => !col.isTrigger).ToArray();
+
+            if (collider2Ds.Length > 1 || (collider2Ds.Length == 1 && caller != collider2Ds[0].gameObject))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 
     public virtual bool SpawnPointSuitable(Vector3 newSpawnPos, Quaternion newRotation, List<Vector3> usedSpawnPoints, Vector3 halfExtends, float minObjectDistance) {
         
@@ -283,10 +367,10 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
         }
         else
         {
-            Collider[] colliders = Physics.OverlapBox(newSpawnPos, halfExtends, newRotation, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)) + DefaultLayer);
-            if (colliders.Length > 0)
+            Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(newSpawnPos, halfExtends, newRotation.eulerAngles.z, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)) + DefaultLayer);
+            if (collider2Ds.Length > 0)
             {
-                colliders = colliders.Where(col => col.gameObject.CompareTag("Obstacle")).ToArray();
+                collider2Ds = collider2Ds.Where(col => col.gameObject.CompareTag("Obstacle")).ToArray();
                 return false;
             }
         }
@@ -416,8 +500,8 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
                 FitnessIndividuals = GetAgentFitnesses(),
                 LayerId = gameObject.layer,
                 GridCell = GridCell,
-                //ScenarioName = SceneLoadMode == SceneLoadMode.LayerMode ? LayerBTIndex.GameSceneName + "_" + LayerBTIndex.AgentSceneName + "_" + guid : GridCell.GameSceneName + "_" + GridCell.AgentSceneName + "_" + guid, // TODO Uncomment
-                ScenarioName = SceneLoadMode == SceneLoadMode.LayerMode ? LayerBTIndex.GameSceneName + "_" + LayerBTIndex.AgentSceneName + "_" : GridCell.GameSceneName + "_" + GridCell.AgentSceneName + "_",
+                ScenarioName = SceneLoadMode == SceneLoadMode.LayerMode ? LayerBTIndex.GameSceneName + "_" + LayerBTIndex.AgentSceneName + "_" + guid : GridCell.GameSceneName + "_" + GridCell.AgentSceneName + "_" + guid, // TODO Remove comments
+                //ScenarioName = SceneLoadMode == SceneLoadMode.LayerMode ? LayerBTIndex.GameSceneName + "_" + LayerBTIndex.AgentSceneName + "_" : GridCell.GameSceneName + "_" + GridCell.AgentSceneName + "_",
                 SimulationSteps = CurrentSimulationSteps,
                 BtNodeFrequencyCalls = GetAgentBehaviourTreesNodeCallFrequencyCall()
             });

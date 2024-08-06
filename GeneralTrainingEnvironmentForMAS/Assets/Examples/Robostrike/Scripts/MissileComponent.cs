@@ -45,6 +45,7 @@ public class MissileComponent : MonoBehaviour {
     private void OnDestroy() {
         if(!MissileHitTarget) {
             RobostrikeEnvironmentController.ObstacleMissedAgent(this);
+            RobostrikeEnvironmentController.getMissileController().RemoveMissile(this);
         }
     }
 }

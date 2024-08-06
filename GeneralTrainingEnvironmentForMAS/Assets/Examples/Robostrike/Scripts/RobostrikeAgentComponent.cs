@@ -15,6 +15,8 @@ public class RobostrikeAgentComponent : AgentComponent {
     public TurretComponent Turret { get; set; }
     public MissileSpawnPointComponent MissileSpawnPoint { get; set; }
     public float NextShootTime { get; set; }
+
+    public Vector3 LastSectorPosition { get; set; }
     
     /*public float Health { get; set; }
     public float Shield { get; set; }
@@ -70,7 +72,7 @@ public class RobostrikeAgentComponent : AgentComponent {
         }
     }
 
-    private bool AgentExploredNewSector(SectorComponent sectorComponent)
+    public bool AgentExploredNewSector(SectorComponent sectorComponent)
     {
         return !LastKnownPositions.Contains(sectorComponent.transform.position);
     }

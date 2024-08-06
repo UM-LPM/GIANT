@@ -8,7 +8,8 @@ using TheKiwiCoder;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class RobostrikeEnvironmentController : EnvironmentControllerBase {
+public class RobostrikeEnvironmentController : EnvironmentControllerBase
+{
 
     [Header("Robostrike configuration Movement")]
     [SerializeField] float AgentMoveSpeed = 5f;
@@ -31,7 +32,6 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
 
     [Header("Robostrike configuration General")]
     [SerializeField] GameObject MissilePrefab;
-    [SerializeField] MissileController MissileController;
     [SerializeField] int AgentStartHealth = 10;
     [SerializeField] int AgentStartShield = 0;
     [SerializeField] int AgentStartAmmo = 0;
@@ -68,6 +68,7 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
     [Header("1 vs 1 Agent Configuration")]
     [SerializeField] RobostrikeAgentConfig[] RobostrikeAgentConfigs;
 
+    private MissileController MissileController;
 
     float ForwardSpeed = 1f;
 
@@ -99,12 +100,19 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
     Vector3 localXDir;
     Vector3 velocity;
 
+    // Sectors
+    SectorComponent[] sectors;
+
     protected override void DefineAdditionalDataOnPostAwake()
     {
         // Read params from configuration if it exists
         ReadParamsFromMainConfiguration();
 
         actionBuffer = new ActionBuffer(null, new int[] { 0, 0, 0, 0, 0 }); // Forward, Side, Rotate, TurrentRotation, Shoot
+
+        MissileController = gameObject.GetComponent<MissileController>();
+
+        sectors = FindObjectsOfType<SectorComponent>();
     }
 
     protected override void DefineAdditionalDataOnPreStart()
@@ -121,15 +129,18 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
         }
     }
 
-    protected override void DefineAdditionalDataOnPostStart() {
-        foreach (RobostrikeAgentComponent agent in Agents) {
-            agent.HealthComponent.Health =  AgentStartHealth;
+    protected override void DefineAdditionalDataOnPostStart()
+    {
+        foreach (RobostrikeAgentComponent agent in Agents)
+        {
+            agent.HealthComponent.Health = AgentStartHealth;
             agent.ShieldComponent.Shield = AgentStartShield;
             agent.AmmoComponent.Ammo = AgentStartAmmo;
             agent.Rigidbody = agent.GetComponent<Rigidbody>();
         }
 
-        foreach (RobostrikeAgentComponent agent in AgentsPredefinedBehaviour) {
+        foreach (RobostrikeAgentComponent agent in AgentsPredefinedBehaviour)
+        {
             agent.HealthComponent.Health = AgentStartHealth;
             agent.ShieldComponent.Shield = AgentStartShield;
             agent.AmmoComponent.Ammo = AgentStartAmmo;
@@ -143,8 +154,9 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
         RayHitObject.OnTargetHit += RayHitObject_OnTargetHit;
     }
 
-    protected override void OnUpdate() {
-        if(Input.GetKey(ShootKey))
+    protected override void OnUpdate()
+    {
+        if (Input.GetKey(ShootKey))
             IsPressingShoot = true;
         else
             IsPressingShoot = false;
@@ -237,7 +249,7 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
 
             if (conf.ProblemConfiguration.ContainsKey("GameScenarioType"))
             {
-                GameScenarioType = (RobostrikeGameScenarioType) int.Parse(conf.ProblemConfiguration["GameScenarioType"]);
+                GameScenarioType = (RobostrikeGameScenarioType)int.Parse(conf.ProblemConfiguration["GameScenarioType"]);
             }
 
             if (conf.ProblemConfiguration.ContainsKey("AgentRespawnType"))
@@ -322,10 +334,12 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
     {
     }
 
-    public override void UpdateAgents(bool updateBTs) {
+    public override void UpdateAgents(bool updateBTs)
+    {
         //MoveAgentsWithController1(Agents);
 
-        if (ManualAgentControl) {
+        if (ManualAgentControl)
+        {
             /*MoveAgentsWithController2(Agents);
             if (IsPressingShoot)
                 AgentsShoot(Agents);
@@ -334,20 +348,31 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
             }*/
             MoveAgentsWithController3(Agents);
         }
-        else {
+        else
+        {
             UpdateAgentsWithBTs(Agents, updateBTs);
         }
 
-        if (ManualAgentPredefinedBehaviourControl) {
-            MoveAgentsWithController2(AgentsPredefinedBehaviour);
+        if (ManualAgentPredefinedBehaviourControl)
+        {
+            /*MoveAgentsWithController2(AgentsPredefinedBehaviour);
             if (IsPressingShoot)
                 AgentsShoot(AgentsPredefinedBehaviour);
-            if (TurretMoveDir != 0) {
+            if (TurretMoveDir != 0)
+            {
                 AgentsMoveTurret(AgentsPredefinedBehaviour);
-            }
+            }*/
+            MoveAgentsWithController3(AgentsPredefinedBehaviour);
         }
-        else {
+        else
+        {
             UpdateAgentsWithBTs(AgentsPredefinedBehaviour, updateBTs);
+        }
+
+        if (GameType == GameType._2D)
+        {
+            CheckAgentsExploration(Agents);
+            //CheckAgentsExploration(AgentsPredefinedBehaviour); // TODO uncomment
         }
 
         // Update agent move fitness
@@ -372,9 +397,12 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
         }*/
     }
 
-    void UpdateAgentsWithBTs(AgentComponent[] agents, bool updateBTs) {
-        foreach (RobostrikeAgentComponent agent in agents) {
-            if (agent.gameObject.activeSelf && agent.BehaviourTree != null) {
+    void UpdateAgentsWithBTs(AgentComponent[] agents, bool updateBTs)
+    {
+        foreach (RobostrikeAgentComponent agent in agents)
+        {
+            if (agent.gameObject.activeSelf && agent.BehaviourTree != null)
+            {
                 //actionBuffer = new ActionBuffer(null, new int[] { 0, 0, 0, 0, 0 }); // Forward, Side, Rotate, TurrentRotation, Shoot
                 actionBuffer.ResetDiscreteActions();
 
@@ -383,7 +411,7 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
                     agent.BehaviourTree.UpdateTree(actionBuffer);
                 }
                 MoveAgent(agent, actionBuffer);
-                ShootMissile(agent, actionBuffer); // TODO Remove and fix
+                ShootMissile(agent, actionBuffer);
             }
         }
 
@@ -391,7 +419,7 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
 
     public void MoveAgent(RobostrikeAgentComponent agent, ActionBuffer actionBuffer)
     {
-        if(GameType == GameType._3D)
+        if (GameType == GameType._3D)
         {
             MoveAgent3D(agent, actionBuffer);
         }
@@ -401,7 +429,8 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
         }
     }
 
-    void MoveAgent3D(RobostrikeAgentComponent agent, ActionBuffer actionBuffer) {
+    void MoveAgent3D(RobostrikeAgentComponent agent, ActionBuffer actionBuffer)
+    {
         dirToGo = Vector3.zero;
         rotateDir = Vector3.zero;
         rotateTurrentDir = Vector3.zero;
@@ -411,7 +440,8 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
         rotateAxis = actionBuffer.DiscreteActions[2];
         rotateTurrentAxis = actionBuffer.DiscreteActions[3];
 
-        switch (forwardAxis) {
+        switch (forwardAxis)
+        {
             case 1:
                 dirToGo = agent.transform.forward * ForwardSpeed;
                 break;
@@ -420,7 +450,8 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
                 break;
         }
 
-        switch (rotateAxis) {
+        switch (rotateAxis)
+        {
             case 1:
                 rotateDir = agent.transform.up * -1f;
                 break;
@@ -429,7 +460,8 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
                 break;
         }
 
-        switch (rotateTurrentAxis) {
+        switch (rotateTurrentAxis)
+        {
             case 1:
                 rotateTurrentDir = agent.transform.up * -1f;
                 break;
@@ -476,43 +508,49 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
         switch (rotateAxis)
         {
             case 1:
-                rotateDir = new Vector3(0, 0, -1f);
+                rotateDir = new Vector3(0, 0, 1f);
                 break;
             case 2:
-                rotateDir = new Vector3(0, 0, 1f);
+                rotateDir = new Vector3(0, 0, -1f);
                 break;
         }
 
         switch (rotateTurrentAxis)
         {
             case 1:
-                rotateTurrentDir = new Vector3(0, 0, -1f);
+                rotateTurrentDir = new Vector3(0, 0, 1f);
                 break;
             case 2:
-                rotateTurrentDir = new Vector3(0, 0, 1f);
+                rotateTurrentDir = new Vector3(0, 0, -1f);
                 break;
         }
 
         // Agent movement and rotation
         // Check if agent can be moved and rotated without colliding to other objects
-        if (!PhysicsOverlapSphere(agent.gameObject, agent.transform.position + dirToGo * Time.fixedDeltaTime * AgentMoveSpeed, AgentColliderExtendsMultiplier.x, true))
+        if (!PhysicsOverlapSphere(agent.gameObject, agent.transform.position + (dirToGo * Time.fixedDeltaTime * AgentMoveSpeed), AgentColliderExtendsMultiplier.x, true))
         {
-            agent.transform.Translate(dirToGo * Time.fixedDeltaTime * AgentMoveSpeed, Space.World);
-            agent.transform.Rotate(rotateDir, Time.fixedDeltaTime * AgentRotationSpeed);
+            //agent.transform.Translate(dirToGo * Time.fixedDeltaTime * AgentMoveSpeed, Space.World);
+            //agent.transform.position += dirToGo * Time.fixedDeltaTime * AgentMoveSpeed;
+            agent.transform.position += UnityUtils.RoundToDecimals(dirToGo * Time.fixedDeltaTime * AgentMoveSpeed, 2);
+
+            //agent.transform.Rotate(rotateDir, Time.fixedDeltaTime * AgentRotationSpeed);
+            agent.transform.rotation = Quaternion.Euler(0, 0, agent.transform.rotation.eulerAngles.z + UnityUtils.RoundToDecimals(rotateDir.z * Time.fixedDeltaTime * AgentRotationSpeed, 2));
 
             //Check if agent picked up a power up
             CheckAgentPickedPowerUp(agent);
         }
 
         // Agent turret rotation
-        agent.Turret.transform.Rotate(rotateTurrentDir, Time.fixedDeltaTime * AgentTurrentRotationSpeed);
+        //agent.Turret.transform.Rotate(rotateTurrentDir, Time.fixedDeltaTime * AgentTurrentRotationSpeed);
+        agent.Turret.transform.rotation = Quaternion.Euler(0, 0, agent.Turret.transform.rotation.eulerAngles.z + UnityUtils.RoundToDecimals(rotateTurrentDir.z * Time.fixedDeltaTime * AgentTurrentRotationSpeed, 2));
     }
-    void ShootMissile(AgentComponent agent, ActionBuffer actionBuffer) {
+    void ShootMissile(AgentComponent agent, ActionBuffer actionBuffer)
+    {
         obj = null;
         rb = null;
         mc = null;
-       
-        if(GameType == GameType._3D)
+
+        if (GameType == GameType._3D)
         {
             ShootMissile3D(agent, actionBuffer);
         }
@@ -572,6 +610,9 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
 
             // Update fitness
             agent.AgentFitness.Fitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.AgentFiredMissile.ToString()], RobostrikeFitness.FitnessKeys.AgentFiredMissile.ToString());
+
+            // Add missile to missile controller
+            MissileController.AddMissile(mc);
         }
     }
 
@@ -594,24 +635,30 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
     }
 
 
-    void MoveAgentsWithController1(AgentComponent[] agents) {
+    void MoveAgentsWithController1(AgentComponent[] agents)
+    {
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
 
-        foreach (RobostrikeAgentComponent agent in agents) {
-            if (agent.gameObject.activeSelf) {
+        foreach (RobostrikeAgentComponent agent in agents)
+        {
+            if (agent.gameObject.activeSelf)
+            {
                 agent.transform.Translate(Vector3.forward * Time.fixedDeltaTime * verticalInput * AgentMoveSpeed);
                 agent.transform.Rotate(Vector3.up, horizontalInput * Time.fixedDeltaTime * AgentRotationSpeed);
             }
         }
     }
 
-    void MoveAgentsWithController2(AgentComponent[] agents) {
+    void MoveAgentsWithController2(AgentComponent[] agents)
+    {
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
 
-        foreach(RobostrikeAgentComponent agent in agents) {
-            if (agent.gameObject.activeSelf) {
+        foreach (RobostrikeAgentComponent agent in agents)
+        {
+            if (agent.gameObject.activeSelf)
+            {
                 Vector3 moveDirection = agent.transform.forward * verticalInput * AgentMoveSpeed * Time.fixedDeltaTime;
                 agent.Rigidbody.MovePosition(agent.Rigidbody.position + moveDirection);
 
@@ -625,20 +672,20 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
     void MoveAgentsWithController3(AgentComponent[] agents)
     {
         actionBuffer = new ActionBuffer(null, new int[] { 0, 0, 0, 0, 0 }); // Forward, Side, Rotate, TurrentRotation, Shoot
-        if(Input.GetKey(KeyCode.W))
+        if (Input.GetKey(KeyCode.W))
             actionBuffer.DiscreteActions[0] = 1;
-        else if(Input.GetKey(KeyCode.S))
+        else if (Input.GetKey(KeyCode.S))
             actionBuffer.DiscreteActions[0] = 2;
 
         if (Input.GetKey(KeyCode.D))
-            actionBuffer.DiscreteActions[2] = 1;
-        else if (Input.GetKey(KeyCode.A))
             actionBuffer.DiscreteActions[2] = 2;
+        else if (Input.GetKey(KeyCode.A))
+            actionBuffer.DiscreteActions[2] = 1;
 
         if (Input.GetKey(KeyCode.Q))
-            actionBuffer.DiscreteActions[3] = 1;
-        else if (Input.GetKey(KeyCode.E))
             actionBuffer.DiscreteActions[3] = 2;
+        else if (Input.GetKey(KeyCode.E))
+            actionBuffer.DiscreteActions[3] = 1;
 
         if (Input.GetKey(KeyCode.Space))
             actionBuffer.DiscreteActions[4] = 1;
@@ -650,14 +697,18 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
         }
     }
 
-    public void AgentsShoot(AgentComponent[] agents) {
+    public void AgentsShoot(AgentComponent[] agents)
+    {
         GameObject obj;
         Rigidbody rb;
         MissileComponent mc;
-        
-        foreach (RobostrikeAgentComponent agent in agents) {
-            if (agent.gameObject.activeSelf) {
-                if (agent.NextShootTime <= CurrentSimulationTime && agent.AmmoComponent.Ammo > 0) {
+
+        foreach (RobostrikeAgentComponent agent in agents)
+        {
+            if (agent.gameObject.activeSelf)
+            {
+                if (agent.NextShootTime <= CurrentSimulationTime && agent.AmmoComponent.Ammo > 0)
+                {
                     Vector3 spawnPosition = agent.MissileSpawnPoint.transform.position;
                     Quaternion spawnRotation = agent.Turret.transform.rotation;
 
@@ -682,24 +733,31 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
         }
     }
 
-    void AgentsMoveTurret(AgentComponent[] agents) {
-        foreach(RobostrikeAgentComponent agent in agents) {
-            if (agent.gameObject.activeSelf) {
+    void AgentsMoveTurret(AgentComponent[] agents)
+    {
+        foreach (RobostrikeAgentComponent agent in agents)
+        {
+            if (agent.gameObject.activeSelf)
+            {
                 Vector3 rotateTurrentDir = agent.transform.up * TurretMoveDir;
                 agent.Turret.transform.Rotate(rotateTurrentDir, Time.fixedDeltaTime * AgentTurrentRotationSpeed);
             }
         }
     }
 
-    public void AddSurvivalFitnessBonus(AgentComponent[] agents) {
-        bool lastSurvival = GetNumOfActiveAgents() > 1? false: true;
+    public void AddSurvivalFitnessBonus(AgentComponent[] agents)
+    {
+        bool lastSurvival = GetNumOfActiveAgents() > 1 ? false : true;
         // Survival bonus
-        foreach (RobostrikeAgentComponent agent in agents) {
-            if (agent.gameObject.activeSelf) {
+        foreach (RobostrikeAgentComponent agent in agents)
+        {
+            if (agent.gameObject.activeSelf)
+            {
                 agent.AgentFitness.Fitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.SurvivalBonus.ToString()], RobostrikeFitness.FitnessKeys.SurvivalBonus.ToString());
 
                 // Last survival bonus
-                if (lastSurvival) {
+                if (lastSurvival)
+                {
                     agent.AgentFitness.Fitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.LastSurvivalBonus.ToString()], RobostrikeFitness.FitnessKeys.LastSurvivalBonus.ToString());
                 }
             }
@@ -707,17 +765,20 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
 
     }
 
-    public void TankHit(MissileComponent missile, AgentComponent hitAgent) {
+    public void TankHit(MissileComponent missile, AgentComponent hitAgent)
+    {
         UpdateFitnesses(missile, hitAgent);
         UpdateAgentHealth(missile, hitAgent as RobostrikeAgentComponent);
     }
 
-    public void ObstacleMissedAgent(MissileComponent missile) {
+    public void ObstacleMissedAgent(MissileComponent missile)
+    {
         missile.Parent.AgentFitness.Fitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.MissileMissedAgent.ToString()], RobostrikeFitness.FitnessKeys.MissileMissedAgent.ToString());
     }
 
 
-    void UpdateFitnesses(MissileComponent missile, AgentComponent hitAgent) {
+    void UpdateFitnesses(MissileComponent missile, AgentComponent hitAgent)
+    {
         // Update Agent whose missile hit the other tank
         missile.Parent.AgentFitness.Fitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.MissileHitAgent.ToString()], RobostrikeFitness.FitnessKeys.MissileHitAgent.ToString());
 
@@ -725,12 +786,15 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
         hitAgent.AgentFitness.Fitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.AgentHitByRocket.ToString()], RobostrikeFitness.FitnessKeys.AgentHitByRocket.ToString());
     }
 
-    void UpdateAgentHealth(MissileComponent missile, RobostrikeAgentComponent hitAgent) {
+    void UpdateAgentHealth(MissileComponent missile, RobostrikeAgentComponent hitAgent)
+    {
         RobostrikeAgentComponent rba = hitAgent as RobostrikeAgentComponent;
         rba.TakeDamage(MissileDamage);
 
-        if (rba.HealthComponent.Health <= 0) {
-            switch (GameScenarioType) {
+        if (rba.HealthComponent.Health <= 0)
+        {
+            switch (GameScenarioType)
+            {
                 case RobostrikeGameScenarioType.Normal:
                     hitAgent.gameObject.SetActive(false);
                     AddSurvivalFitnessBonus(Agents);
@@ -740,7 +804,13 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
                 case RobostrikeGameScenarioType.Deathmatch:
                     missile.Parent.AgentFitness.Fitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.AgentDestroyedBonus.ToString()], RobostrikeFitness.FitnessKeys.AgentDestroyedBonus.ToString());
                     hitAgent.AgentFitness.Fitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.DeathPenalty.ToString()], RobostrikeFitness.FitnessKeys.DeathPenalty.ToString());
-                    //hitAgent.LastKnownPositions.Clear(); // TODO: Check if this is needed
+                    
+                    // TODO Test this!!!!
+                    /*hitAgent.LastKnownPositions.Clear(); 
+                    hitAgent.LastSectorPosition = Vector3.zero;
+                    missile.Parent.LastKnownPositions.Clear();
+                    (missile.Parent as RobostrikeAgentComponent).LastSectorPosition = Vector3.zero;*/
+
                     RespawnAgent(hitAgent);
                     break;
             }
@@ -748,7 +818,8 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
 
     }
 
-    void RespawnAgent(RobostrikeAgentComponent agent) {
+    void RespawnAgent(RobostrikeAgentComponent agent)
+    {
         // Restore health
         agent.HealthComponent.Health = AgentStartHealth;
         // Update Healthbar
@@ -835,7 +906,7 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
             agent.AgentFitness.Fitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.AgentPickedUpHealthBoxPowerUp.ToString()], RobostrikeFitness.FitnessKeys.AgentPickedUpHealthBoxPowerUp.ToString());
 
             // Spawn new health box
-            if(HealthBoxPrefab != null)
+            if (HealthBoxPrefab != null)
             {
                 SpawnPowerUp(HealthBoxPrefab);
             }
@@ -906,7 +977,7 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
         {
             List<Vector3> powerUpPositions = this.gameObject.GetComponentsInChildren<PowerUpComponent>().Select(x => x.transform.position).ToList();
             Vector3 spawnPos = GetRandomSpawnPoint();
-            while (!SpawnPointSuitable(spawnPos, Quaternion.identity, powerUpPositions != null && powerUpPositions.Count > 0? powerUpPositions : null, PowerUpColliderExtendsMultiplier, MinPowerUpDistance))
+            while (!SpawnPointSuitable(spawnPos, Quaternion.identity, powerUpPositions != null && powerUpPositions.Count > 0 ? powerUpPositions : null, PowerUpColliderExtendsMultiplier, MinPowerUpDistance))
             {
                 spawnPos = GetRandomSpawnPoint();
             }
@@ -918,9 +989,9 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
 
     private void SpawnAgentsForOneVsOne()
     {
-        if(RobostrikeAgentConfigs.Length < 2)
+        if (RobostrikeAgentConfigs.Length < 2)
         {
-               throw new Exception("Game config not specified");
+            throw new Exception("Game config not specified");
         }
         else
         {
@@ -936,7 +1007,7 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
             Vector3 spawnPos = Vector3.zero;
             Quaternion spawnRotation = Quaternion.identity;
 
-            if (robostrikeGameConfig.AgentStartSpawnPosition== null)
+            if (robostrikeGameConfig.AgentStartSpawnPosition == null)
             {
                 List<Vector3> agentPositions = this.gameObject.GetComponentsInChildren<AgentComponent>().Select(x => x.transform.position).ToList();
                 spawnPos = GetRandomSpawnPoint();
@@ -1000,6 +1071,87 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase {
         {
             e.Agent.AgentFitness.Fitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.AgentAimingOpponent.ToString()], RobostrikeFitness.FitnessKeys.AgentAimingOpponent.ToString());
         }*/
+    }
+
+    public MissileController getMissileController()
+    {
+        return MissileController;
+    }
+
+    private void CheckAgentsExploration(AgentComponent[] agents)
+    {
+        // Exploration bonus
+        foreach (RobostrikeAgentComponent agent in agents)
+        {
+            if (agent.gameObject.activeSelf)
+            {
+                foreach(SectorComponent sector in sectors)
+                {
+                    Vector3 sectorPosition = sector.transform.position;
+                    if (IsAgentInSector(agent.transform.position, sector.gameObject.GetComponent<Collider2D>()))
+                    {
+                        if (agent.LastSectorPosition == Vector3.zero)
+                        {
+                            // Agent explored new sector
+                            if (Debug)
+                                UnityEngine.Debug.Log("Agent explored new sector");
+                            if (RobostrikeFitness.FitnessValues[RobostrikeFitness.Keys[(int)RobostrikeFitness.FitnessKeys.AgentExploredSector]] != 0)
+                            {
+                                agent.AgentFitness.Fitness.UpdateFitness((RobostrikeFitness.FitnessValues[RobostrikeFitness.Keys[(int)RobostrikeFitness.FitnessKeys.AgentExploredSector]]), RobostrikeFitness.FitnessKeys.AgentExploredSector.ToString());
+                            }
+
+                            agent.LastKnownPositions.Add(sectorPosition);
+                            agent.LastSectorPosition = sector.transform.position;
+                        }
+                        else
+                        {
+                            if (agent.LastSectorPosition != sectorPosition)
+                            {
+                                if (!agent.LastKnownPositions.Contains(sectorPosition))
+                                {
+                                    // Agent explored new sector
+                                    if(Debug)
+                                        UnityEngine.Debug.Log("Agent explored new sector");
+
+                                    if (RobostrikeFitness.FitnessValues[RobostrikeFitness.Keys[(int)RobostrikeFitness.FitnessKeys.AgentExploredSector]] != 0)
+                                    {
+                                        agent.AgentFitness.Fitness.UpdateFitness((RobostrikeFitness.FitnessValues[RobostrikeFitness.Keys[(int)RobostrikeFitness.FitnessKeys.AgentExploredSector]]), RobostrikeFitness.FitnessKeys.AgentExploredSector.ToString());
+                                    }
+
+                                    agent.LastKnownPositions.Add(sectorPosition);
+                                }
+                                else
+                                {
+                                    // Agent reexplored sector
+                                    if (Debug)
+                                        UnityEngine.Debug.Log("Agent reexplored sector");
+
+                                    if (RobostrikeFitness.FitnessValues[RobostrikeFitness.Keys[(int)RobostrikeFitness.FitnessKeys.AgentReExploredSector]] != 0)
+                                    {
+                                        agent.AgentFitness.Fitness.UpdateFitness((RobostrikeFitness.FitnessValues[RobostrikeFitness.Keys[(int)RobostrikeFitness.FitnessKeys.AgentReExploredSector]]), RobostrikeFitness.FitnessKeys.AgentReExploredSector.ToString());
+                                    }
+                                }
+
+                                agent.LastSectorPosition = sector.transform.position;
+                            }
+                        }
+
+                        // Agent can only be in one sector at once
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    private bool IsAgentInSector(Vector3 agentPosition, Collider2D colliderComponent)
+    {
+        if (colliderComponent.bounds.Contains(agentPosition)) 
+        { 
+            return true; 
+        }
+
+        return false;
     }
 }
 
