@@ -9,7 +9,7 @@ public class DetectsThreat : ConditionNode
 
     protected override void OnStart()
     {
-        agent = context.gameObject.GetComponent<AntAgentComponent>();
+        agent = context.gameObject.GetComponentInParent<AntAgentComponent>();
     }
 
     protected override bool CheckConditions()

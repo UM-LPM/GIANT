@@ -1,5 +1,24 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8918987300863592914
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
+  m_Name: Rotate
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 8b7ba735c5174bd4a94ed71215f23c29
+  position: {x: 2936, y: 471.00006}
+  description: 
+  drawGizmos: 0
+  rotateDirection: 1
 --- !u!114 &-8830314555013438043
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -44,6 +63,25 @@ MonoBehaviour:
   waterLayer:
     serializedVersion: 2
     m_Bits: 0
+--- !u!114 &-8564853460372000260
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d729628c7b80efc45bcaba3f183bf880, type: 3}
+  m_Name: ReachedColonyBoundary
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: aa9cbd3eeeee2ad46904cd85ab6c51ed
+  position: {x: 2558, y: 471.00006}
+  description: 
+  drawGizmos: 0
+  antAgent: {fileID: 0}
 --- !u!114 &-8224865101751163449
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -373,33 +411,6 @@ MonoBehaviour:
   children:
   - {fileID: -5467663485045002348}
   - {fileID: 6056151892523922519}
---- !u!114 &-1682321955447014071
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
-  m_Name: Sequencer
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: c0538bba6379e9741ad367995799f3d0
-  position: {x: 2965, y: 287}
-  description: 
-  drawGizmos: 0
-  children:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 1564798253569819012}
-  - {fileID: 6136823458720580793}
-  - {fileID: 0}
-  - {fileID: 0}
 --- !u!114 &-1338761528921150500
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -657,11 +668,12 @@ MonoBehaviour:
   - {fileID: -5467663485045002348}
   - {fileID: 6056151892523922519}
   - {fileID: 8013576688674710756}
-  - {fileID: -1682321955447014071}
-  - {fileID: 1564798253569819012}
-  - {fileID: 6136823458720580793}
   - {fileID: 4635933278944643794}
   - {fileID: -8224865101751163449}
+  - {fileID: 2547451168232105249}
+  - {fileID: -8564853460372000260}
+  - {fileID: 2744420203662281672}
+  - {fileID: -8918987300863592914}
   bTNodes: []
 --- !u!114 &151704379902810450
 MonoBehaviour:
@@ -720,24 +732,6 @@ MonoBehaviour:
   position: {x: 939, y: 912}
   description: 
   drawGizmos: 0
---- !u!114 &1564798253569819012
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f8ade29b26d33b640b23ad5a6e96591c, type: 3}
-  m_Name: DetectBoundaryPheromone
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 78893c3c0a2bfa44780d694751ee65c3
-  position: {x: 2512, y: 471}
-  description: 
-  drawGizmos: 0
 --- !u!114 &1676952849803916308
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -775,6 +769,28 @@ MonoBehaviour:
   description: 
   drawGizmos: 0
   moveForwardDirection: 3
+--- !u!114 &2547451168232105249
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
+  m_Name: Sequencer
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 871666902e1eb064e914aa531bf1bb80
+  position: {x: 2965, y: 326}
+  description: 
+  drawGizmos: 0
+  children:
+  - {fileID: -8564853460372000260}
+  - {fileID: 2744420203662281672}
+  - {fileID: -8918987300863592914}
 --- !u!114 &2611795232315117771
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -793,6 +809,25 @@ MonoBehaviour:
   position: {x: 2037, y: 800}
   description: 
   drawGizmos: 0
+--- !u!114 &2744420203662281672
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
+  m_Name: Rotate
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 067013c4498b4ef41aa4eee8c78c1cec
+  position: {x: 2786, y: 471.00006}
+  description: 
+  drawGizmos: 0
+  rotateDirection: 1
 --- !u!114 &3048229429329614348
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1035,25 +1070,6 @@ MonoBehaviour:
   children:
   - {fileID: 9144616435764456101}
   - {fileID: 4341515552389028533}
---- !u!114 &6136823458720580793
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
-  m_Name: Rotate
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: d8ba482ccb0e8cf46a0e61a37ef3e613
-  position: {x: 2742, y: 471}
-  description: 
-  drawGizmos: 0
-  rotateDirection: 3
 --- !u!114 &6269944176442580323
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1116,7 +1132,7 @@ MonoBehaviour:
 
 '
   drawGizmos: 0
-  moveForwardDirection: 3
+  moveForwardDirection: 1
 --- !u!114 &7733297278982753998
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1158,7 +1174,7 @@ MonoBehaviour:
   description: Move condition by boundary pheromone
   drawGizmos: 0
   children:
-  - {fileID: -1682321955447014071}
+  - {fileID: 2547451168232105249}
   - {fileID: 3201368041459705833}
 --- !u!114 &8261562802870010661
 MonoBehaviour:

@@ -17,7 +17,7 @@ public class HiveNeedsMaintanance : ConditionNode
 
     protected override bool CheckConditions()
     {
-        antAgent = context.gameObject.GetComponent<AntAgentComponent>();
+        antAgent = context.gameObject.GetComponentInParent<AntAgentComponent>();
         return antAgent.hive.needsMaintenance;
 
     }

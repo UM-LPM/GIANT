@@ -14,7 +14,7 @@ public class DetectWaterPheromone : ConditionNode
     }
     protected override bool CheckConditions()
     {
-        return DetectPheromone(context.transform.position, PheromoneType.Water, context.gameObject.GetComponent<AntAgentComponent>().detectionRadius);
+        return DetectPheromone(context.transform.position, PheromoneType.Water, context.gameObject.GetComponentInParent<AntAgentComponent>().detectionRadius);
     }
 
     private bool DetectPheromone(Vector3 position, PheromoneType type, float detectionRadius)

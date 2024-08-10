@@ -16,7 +16,7 @@ public class IsOnPheromoneTrail : ConditionNode
 
     protected override bool CheckConditions()
     {
-        antAgent = context.gameObject.GetComponent<AntAgentComponent>();
+        antAgent = context.gameObject.GetComponentInParent<AntAgentComponent>();
         return antAgent != null && (antAgent.foodPheromoneTrailComponent || antAgent.threatPheromoneTrailComponent|| antAgent.waterPheromoneTrailComponent|| antAgent.boundaryPheromoneTrailComponent);
     }
 }

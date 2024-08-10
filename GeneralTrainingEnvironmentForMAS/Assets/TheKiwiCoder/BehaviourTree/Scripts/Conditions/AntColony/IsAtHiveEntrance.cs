@@ -17,7 +17,7 @@ public class IsAtHiveEntrance : ConditionNode
 
     protected override bool CheckConditions()
     {
-        antAgent = context.gameObject.GetComponent<AntAgentComponent>();
+        antAgent = context.gameObject.GetComponentInParent<AntAgentComponent>();
         Vector2 positionHive = antAgent.hive.gameObject.transform.position;
         Vector2 positionAgent = antAgent.transform.position;
         return Vector3.Distance(positionHive, positionAgent) < 3.0 && Vector3.Distance(positionHive, positionAgent) > 0.5;

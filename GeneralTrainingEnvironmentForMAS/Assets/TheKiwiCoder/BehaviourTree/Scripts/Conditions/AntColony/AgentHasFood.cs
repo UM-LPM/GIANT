@@ -8,7 +8,7 @@ public class AgentHasFood : ConditionNode
     protected override void OnStart()
     {
         //Get the current agent
-        agent = context.gameObject.GetComponent<AntAgentComponent>();
+        agent = context.gameObject.GetComponentInParent<AntAgentComponent>();
     }
 
     protected override void OnStop()
