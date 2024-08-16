@@ -11,7 +11,7 @@ namespace Collector
         public static Dictionary<string, float> FitnessValues = new Dictionary<string, float> {
         { "AgentPickedTarget", -5f }, // Implemented
         { "AgentExploredSector", -0.03f }, // Implemented
-        { "AgentReExploredSector", 0.002f }, // Implemented
+        { "AgentReExploredSector", -0.002f }, // Implemented
         { "AgentNearTarget", -0.2f }, // Implemented
         { "AgentSpottedTarget", -0.02f }, // Implemented
         { "AgentsBtContainsMainObject", -0.2f }, // Implemented

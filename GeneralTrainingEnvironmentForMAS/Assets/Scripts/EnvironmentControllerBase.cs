@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using TheKiwiCoder;
 using Unity.VisualScripting;
@@ -63,7 +64,9 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
         public List<int[]> BtNodeFrequencyCalls;
     }
 
-    protected virtual void Awake() {
+    protected virtual void Awake()
+    {
+
         DefineAdditionalDataOnPreAwake();
 
         GameState = GameState.IDLE;
@@ -71,12 +74,14 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
 
         SceneLoadMode = Communicator.Instance.SceneLoadMode;
 
-        if (SceneLoadMode == SceneLoadMode.LayerMode) {
+        if (SceneLoadMode == SceneLoadMode.LayerMode)
+        {
             LayerBTIndex = Communicator.Instance.GetReservedLayer();
-            if(Environment != null)
+            if (Environment != null)
                 Environment.SetActive(false);
         }
-        else {
+        else
+        {
             GridCell = Communicator.Instance.GetReservedGridCell();
             transform.position = GridCell.GridCellPosition; // Check if this must go to Awake method
             Environment.SetActive(true);
@@ -87,17 +92,21 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
         ReadParamsFromMainConfiguration();
 
         DefineAdditionalDataOnPostAwake();
+
     }
 
-    protected virtual void Start() {
+    protected virtual void Start()
+    {
+
         DefineAdditionalDataOnPreStart();
 
 
-        GetAgentBehaviourTrees(SceneLoadMode == SceneLoadMode.LayerMode? LayerBTIndex.BTIndex : GridCell.BTIndex);
+        GetAgentBehaviourTrees(SceneLoadMode == SceneLoadMode.LayerMode ? LayerBTIndex.BTIndex : GridCell.BTIndex);
 
         SetLayerRecursively(this.gameObject, SceneLoadMode == SceneLoadMode.LayerMode ? LayerBTIndex.LayerId : GridCell.Layer);
 
-        if (RandomAgentInitialization) {
+        if (RandomAgentInitialization)
+        {
             InitializeRandomAgents();
         }
 

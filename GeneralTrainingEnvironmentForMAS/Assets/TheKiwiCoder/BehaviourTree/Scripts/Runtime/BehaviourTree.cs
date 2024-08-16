@@ -85,7 +85,7 @@ namespace TheKiwiCoder {
         {
             Traverse(rootNode, (node) =>
             {
-                node.CallFrequencyCount = 0;
+                node.callFrequencyCount = 0;
             });
         }
 
@@ -94,7 +94,7 @@ namespace TheKiwiCoder {
             List<int> callFrequencies = new List<int>();
             Traverse(rootNode, (node) =>
             {
-                callFrequencies.Add(node.CallFrequencyCount);
+                callFrequencies.Add(node.callFrequencyCount);
             });
 
             // Remove first two elements (root and first child (Repeat))

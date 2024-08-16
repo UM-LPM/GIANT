@@ -158,6 +158,10 @@ public class UnityAssetParser {
                 else if (lineArray[0].Contains("treeState")) {
                     behaviourTreeNodeDef.bt_properties.Add("treeState", lineArray[1].Trim());
                 }
+                else if (lineArray[0].Contains("callFrequencyCount"))
+                {
+                    behaviourTreeNodeDef.bt_properties.Add("callFrequencyCount", lineArray[1].Trim());
+                }
                 /////// Behaviour tree properties END
                 /////// Node properties START
                 else if (lineArray[0].Trim().Equals("child")) {
@@ -302,8 +306,8 @@ public class BehaviourTreeNodeDef{
 }
 
 public class Position {
-    public int x { get; set; }
-    public int y { get; set; }
+    public float x { get; set; }
+    public float y { get; set; }
 }
 
 public class Child {

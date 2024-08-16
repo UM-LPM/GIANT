@@ -136,7 +136,9 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase
             agent.HealthComponent.Health = AgentStartHealth;
             agent.ShieldComponent.Shield = AgentStartShield;
             agent.AmmoComponent.Ammo = AgentStartAmmo;
-            agent.Rigidbody = agent.GetComponent<Rigidbody>();
+
+            if(GameType == GameType._3D)
+                agent.Rigidbody = agent.GetComponent<Rigidbody>();
         }
 
         foreach (RobostrikeAgentComponent agent in AgentsPredefinedBehaviour)
@@ -144,7 +146,9 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase
             agent.HealthComponent.Health = AgentStartHealth;
             agent.ShieldComponent.Shield = AgentStartShield;
             agent.AmmoComponent.Ammo = AgentStartAmmo;
-            agent.Rigidbody = agent.GetComponent<Rigidbody>();
+
+            if (GameType == GameType._3D)
+                agent.Rigidbody = agent.GetComponent<Rigidbody>();
         }
 
         // Spawn powerUps

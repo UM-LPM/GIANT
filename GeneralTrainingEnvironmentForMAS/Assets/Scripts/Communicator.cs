@@ -213,18 +213,17 @@ public class Communicator : MonoBehaviour {
         if (UIController.Instance != null && UIController.Instance.TimeScaleInputField != null && UIController.Instance.TimeScaleInputField.text.Length > 0)
             Time.timeScale = int.Parse(UIController.Instance.TimeScaleInputField.text);
 
+        #if UNITY_EDITOR
+                PopBTs = Resources.LoadAll<BehaviourTree>(BtSource);
+                PopBTs = PopBTs.OrderBy(bt => bt.id).ToArray();
 
+                // Based on the evalRequestData set the range of individuals to be evaluated
+                PopBTs = PopBTs.Skip(evalRequestData.evalRangeStart).Take(evalRequestData.evalRangeEnd - evalRequestData.evalRangeStart).ToArray();
+        #else
+                // No need to order them by name as they are already ordered by Filename (ID)
+                PopBTs = UnityAssetParser.ParseBehaviourTreesFromFolder(BtSource, evalRequestData.evalRangeStart, evalRequestData.evalRangeEnd);
+        #endif
 
-#if UNITY_EDITOR
-        PopBTs = Resources.LoadAll<BehaviourTree>(BtSource);
-        PopBTs = PopBTs.OrderBy(bt => bt.id).ToArray();
-
-        // Based on the evalRequestData set the range of individuals to be evaluated
-        PopBTs = PopBTs.Skip(evalRequestData.evalRangeStart).Take(evalRequestData.evalRangeEnd - evalRequestData.evalRangeStart).ToArray();
-#else
-        // No need to order them by name as they are already ordered by Filename (ID)
-        PopBTs = UnityAssetParser.ParseBehaviourTreesFromFolder(BtSource, evalRequestData.evalRangeStart, evalRequestData.evalRangeEnd);
-#endif
         Debug.Log("PopBTs length: " + PopBTs.Length);
 
         // Reset variables

@@ -17,7 +17,7 @@ namespace TheKiwiCoder {
         [HideInInspector] public Vector2 position;
         [HideInInspector] public Context context;
         [HideInInspector] public Blackboard blackboard;
-        public int CallFrequencyCount;
+        public int callFrequencyCount;
         [TextArea] public string description;
         public bool drawGizmos = false;
 
@@ -36,7 +36,7 @@ namespace TheKiwiCoder {
             }
 
             // Node is being called so we increase the call frequency count
-            CallFrequencyCount++;
+            callFrequencyCount++;
 
             return state;
         }
@@ -105,6 +105,9 @@ namespace TheKiwiCoder {
                     break;
                 case "e658b1bd308bc5c429f5a9b404a04943":
                     node = Inverter.CreateNodeFromBehaviourTreeNodeDef(currentBehaviourTreeNodeDef, behaviourTreeNodeDefs, tree);
+                    break;
+                case "88210b6ae4b65bc4f975f7a750c75612":
+                    node = Encapsulator.CreateNodeFromBehaviourTreeNodeDef(currentBehaviourTreeNodeDef, behaviourTreeNodeDefs, tree);
                     break;
                 case "1fd1e85f30abba2499f6834e124b1450":
                     node = MoveForward.CreateNodeFromBehaviourTreeNodeDef(currentBehaviourTreeNodeDef, behaviourTreeNodeDefs, tree);
