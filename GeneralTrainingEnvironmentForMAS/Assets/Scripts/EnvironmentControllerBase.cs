@@ -21,6 +21,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     [SerializeField] public BTLoadMode BTLoadMode;
     [SerializeField] public LayerMask DefaultLayer = 0;
     [SerializeField] GameObject Environment;
+    [SerializeField] public bool IncludeEncapsulatedNodesToFreqCount = false;
 
     [Header("Random Agent Initializaion Configuration")]
     [SerializeField] public bool RandomAgentInitialization = false;
@@ -173,6 +174,8 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
                 SimulationTime = MenuManager.Instance.MainConfiguration.SimulationTime;
                 SimulationSteps = 0;
             }
+
+            IncludeEncapsulatedNodesToFreqCount = conf.IncludeEncapsulatedNodesToFreqCount;
         }
     }
 
@@ -572,17 +575,17 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
         {
             for (int i = 0; i < Agents.Length; i++)
             {
-                nodeCallFrequencies.Add(Agents[i].BehaviourTree.GetNodeCallFrequencies());
+                nodeCallFrequencies.Add(Agents[i].BehaviourTree.GetNodeCallFrequencies(IncludeEncapsulatedNodesToFreqCount));
             }
         }
         else if (BTLoadMode == BTLoadMode.Single)
         {
-            nodeCallFrequencies.Add(Agents[0].BehaviourTree.GetNodeCallFrequencies());
+            nodeCallFrequencies.Add(Agents[0].BehaviourTree.GetNodeCallFrequencies(IncludeEncapsulatedNodesToFreqCount));
 
             int[] nodeCallFrequency;
             for (int i = 1; i < Agents.Length; i++)
             {
-                nodeCallFrequency = Agents[i].BehaviourTree.GetNodeCallFrequencies();
+                nodeCallFrequency = Agents[i].BehaviourTree.GetNodeCallFrequencies(IncludeEncapsulatedNodesToFreqCount);
                 for (int j = 0; i < nodeCallFrequency.Length; j++)
                 {
                     nodeCallFrequencies[0][j] = nodeCallFrequencies[0][j] + nodeCallFrequency[j];

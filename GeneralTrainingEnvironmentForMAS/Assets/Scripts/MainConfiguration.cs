@@ -31,7 +31,8 @@ public class MainConfiguration {
     // Environment configuration
     public int SimulationSteps { get; set; }
     public int SimulationTime { get; set; }
-    
+    public bool IncludeEncapsulatedNodesToFreqCount { get; set; }
+
     // Problem Specific Configuration
     public Dictionary<string, string> ProblemConfiguration { get; set; }
 
