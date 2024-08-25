@@ -24,8 +24,8 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
     public List<GameObject> gatheredFoodItems = new List<GameObject>();
     public List<GameObject> gatheredWaterItems = new List<GameObject>();
 
-    private List<GameObject> hiveItems = new List<GameObject>();
-    public List<GameObject> HiveItems => hiveItems;
+    private List<Hive> hiveItems = new List<Hive>();
+    public List<Hive> HiveItems => hiveItems;
     [SerializeField] int numFoodItems = 10;
     [SerializeField] int numWaterItems = 1;
     [SerializeField] int numHives = 1;
@@ -34,14 +34,14 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
     [SerializeField] public GameObject PheromonePrefab;
     [SerializeField] int agentStartStamina = 400;
     [SerializeField]  public float recoveryRate = 10f;
-    [SerializeField] public float boundaryTreshold = 10f;
+    [SerializeField] public float boundaryTreshold = 30f;
 
 
     protected override void DefineAdditionalDataOnPreStart()
     {
-        SpawnHives();
-        SpawnFood();
-        SpawnWaterSource();
+      //  SpawnHives();
+       // SpawnFood();
+       // SpawnWaterSource();
 
         for (int i = 0; i < numOfAnts; i++)
         {
@@ -50,21 +50,29 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
     }
  
     protected override void DefineAdditionalDataOnPostStart() {
+        foreach(Hive hive in this.GetComponentsInChildren<Hive>())
+        { hiveItems.Add(hive); }
         foreach (AntAgentComponent agent in Agents)
       {
-           agent.Rigidbody = agent.GetComponent<Rigidbody>();
+           agent.Rigidbody = agent.GetComponent<Rigidbody2D>();
            agent.stamina = agentStartStamina;
             agent.pheromoneEvaporationRate = pheromoneEvaporationRate;
             agent.hive = HiveItems[0].GetComponent<Hive>();
       }
+        foreach (AntAgentComponent agent in AgentsPredefinedBehaviour)
+        {
+            agent.stamina = agentStartStamina;
+            agent.pheromoneEvaporationRate = pheromoneEvaporationRate;
+            agent.hive = this.GetComponentsInChildren<Hive>()[0];
+            agent.Rigidbody = agent.GetComponent<Rigidbody2D>();
+        }
+            /*   foreach (AntAgentComponent agent in AgentsPredefinedBehaviour)
+               {
+                   agent.Rigidbody = agent.GetComponent<Rigidbody>();
+                   Instantiate(agent.gameObject, hiveItems[0].transform, this.gameObject.transform);
 
-      foreach (AntAgentComponent agent in AgentsPredefinedBehaviour)
-      {
-          agent.Rigidbody = agent.GetComponent<Rigidbody>();
-          Instantiate(agent.gameObject, hiveItems[0].transform, this.gameObject.transform);
-
-      }
-    }
+               } */
+        }
     void SpawnFood()
     {
         float minDistance = 5.0f;
@@ -94,7 +102,7 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
        
             Vector2 spawnPos = GetRandomSpawnPoint();
             GameObject hiveItem = Instantiate(HivePrefab, spawnPos, Quaternion.identity, this.gameObject.transform);
-            hiveItems.Add(hiveItem);
+            //hiveItems.Add(hiveItem);
        
     }
     public Vector2 GetRandomSpawnPoint()
@@ -152,8 +160,50 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
          UpdateAgentsWithBTs(Agents);
             
         }
-        
+        if (ManualAgentPredefinedBehaviourControl)
+            MoveAgents(AgentsPredefinedBehaviour);
+        else
+            UpdateAgentsWithBTs(AgentsPredefinedBehaviour);
     }
+    void MoveAgent(AntAgentComponent agent, ActionBuffer actionBuffer)
+    {
+        var dirToGo = Vector2.zero;
+        float rotateAngle = 0f;
+   
+
+        var forwardAxis = actionBuffer.DiscreteActions[0];
+        var rightAxis = actionBuffer.DiscreteActions[1];
+        var rotateAxis = actionBuffer.DiscreteActions[2];
+
+        switch (forwardAxis)
+        {
+            case 1:
+                dirToGo = agent.transform.up * AntMoveSpeed; // For 2D, use transform.up
+                break;
+            case 2:
+                dirToGo = -agent.transform.up * AntMoveSpeed; // Move backward
+                break;
+        }
+
+        switch (rotateAxis)
+        {
+            case 1:
+                rotateAngle = -AntRotationSpeed * Time.fixedDeltaTime;
+                break;
+            case 2:
+                rotateAngle = AntRotationSpeed * Time.fixedDeltaTime;
+                break;
+        }
+
+        // Movement Version 2
+        agent.Rigidbody.MovePosition(agent.Rigidbody.position + (dirToGo * AntMoveSpeed * Time.fixedDeltaTime));
+        float newRotation = agent.Rigidbody.rotation + rotateAngle;
+        agent.Rigidbody.MoveRotation(newRotation);
+
+
+
+    }
+
     void UpdateAgentsWithBTs(AgentComponent[] agents)
     {
         ActionBuffer actionBuffer;
@@ -164,6 +214,10 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
                 actionBuffer = new ActionBuffer(null, new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0 });  
 
                 agent.BehaviourTree.UpdateTree(actionBuffer);
+
+
+                MoveAgent(agent, actionBuffer);
+
                 if (actionBuffer.DiscreteActions[3] == 1)
                 {
                     PickUpCarriableItem(agent, CarriableItemType.Food);

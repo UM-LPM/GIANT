@@ -20,7 +20,7 @@ public class IsInHive : ConditionNode
         antAgent = context.gameObject.GetComponentInParent<AntAgentComponent>();
         Vector2 positionHive= antAgent.hive.gameObject.transform.position;
         Vector2 positionAgent=  antAgent.transform.position;
-        return  Vector3.Distance(positionHive, positionAgent) < 1.0;
+        return  Vector3.Distance(positionHive, positionAgent) < 2.0;
 
     }
 }

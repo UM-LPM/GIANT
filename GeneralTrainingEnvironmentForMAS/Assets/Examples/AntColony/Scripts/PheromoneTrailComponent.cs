@@ -37,12 +37,13 @@ public abstract  class PheromoneTrailComponent:MonoBehaviour
     public void AddPheromone(Vector3 position, float strength, float evaporationRate)
     {
         PheromoneNodeComponent newNode = gameObject.AddComponent<PheromoneNodeComponent>();
-        newNode.Initialize(100, position, evaporationRate, null, null);
+        newNode.Initialize(100, position, evaporationRate, this.pheromoneType, null, null);
         if (firstNode == null)
         {
             firstNode = newNode;
             lastNode = newNode;
-        }
+
+}
         else
         {
             lastNode.next = newNode;

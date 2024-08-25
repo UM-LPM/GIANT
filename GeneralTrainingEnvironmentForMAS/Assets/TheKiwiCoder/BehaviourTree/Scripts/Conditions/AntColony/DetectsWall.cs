@@ -1,9 +1,9 @@
 using TheKiwiCoder;
 using UnityEngine;
 
-public class DetectsWater : ConditionNode
+public class DetectsWall : ConditionNode
 {
-    public LayerMask waterLayer;
+    public LayerMask foodLayer;
     private AntAgentComponent agent;
 
     protected override void OnStart()
@@ -13,12 +13,12 @@ public class DetectsWater : ConditionNode
 
     protected override bool CheckConditions()
     {
-        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(agent.transform.position, 2f);
+        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(agent.transform.position, 1f);
 
         foreach (Collider2D collider in hitColliders)
         {
-            WaterComponent waterComponent = collider.GetComponent<WaterComponent>();
-            if (waterComponent != null)
+            WallComponent wallComponent = collider.GetComponent<WallComponent>();
+            if (wallComponent != null)
             {
                 return true;
             }

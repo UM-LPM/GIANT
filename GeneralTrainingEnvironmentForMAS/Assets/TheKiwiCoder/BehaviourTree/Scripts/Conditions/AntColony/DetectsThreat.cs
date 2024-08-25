@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class DetectsThreat : ConditionNode
 {
-    public float detectionRange = 10f;
     public LayerMask threatLayer;
     private AntAgentComponent agent;
 
@@ -14,9 +13,19 @@ public class DetectsThreat : ConditionNode
 
     protected override bool CheckConditions()
     {
-        threatLayer = LayerMask.GetMask("ThreatLayer");
-        RaycastHit2D hit = Physics2D.CircleCast(agent.transform.position, detectionRange, Vector2.zero, 0f, threatLayer);
-        return hit.collider != null;
+        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(agent.transform.position, 5f);
+
+        foreach (Collider2D collider in hitColliders)
+        {
+            Threat threatComponent = collider.GetComponent<Threat>();
+            if (threatComponent != null)
+            {
+                return true;
+            }
+        }
+
+        return false; 
+    
     }
 
     protected override void OnStop()

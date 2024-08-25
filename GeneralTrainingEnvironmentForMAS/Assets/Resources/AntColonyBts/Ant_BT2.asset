@@ -17,7 +17,7 @@ MonoBehaviour:
   guid: 58b8555bbd5d2d84b813239360d1184b
   position: {x: 1012.9028, y: 466.90863}
   description: 
-  drawGizmos: 0
+  drawGizmos: 1
   rotateDirection: 3
 --- !u!114 &-7913458097828331399
 MonoBehaviour:
@@ -38,6 +38,25 @@ MonoBehaviour:
   description: 
   drawGizmos: 0
   child: {fileID: -1204316638594292340}
+--- !u!114 &-7611961583173362513
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fd1e85f30abba2499f6834e124b1450, type: 3}
+  m_Name: MoveForward
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 72f3368c1f05d884c99c10fbf0f3b906
+  position: {x: -107, y: 510}
+  description: 
+  drawGizmos: 1
+  moveForwardDirection: 1
 --- !u!114 &-7574906363265629324
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -76,7 +95,26 @@ MonoBehaviour:
   guid: 51a1724ec9c1ef640821cd2f41d0a4ee
   position: {x: 1831.6002, y: 435.0001}
   description: 
-  drawGizmos: 0
+  drawGizmos: 1
+--- !u!114 &-6321897849465255357
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
+  m_Name: Rotate
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 76597789317ee104fb19653763cc22af
+  position: {x: -471, y: 510}
+  description: 
+  drawGizmos: 1
+  rotateDirection: 1
 --- !u!114 &-5188137718993737033
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -92,7 +130,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: fe259cf46ee67534582ac023d43120c1
-  position: {x: -655.67505, y: 276.255}
+  position: {x: -1060.5527, y: 231.89464}
   description: 'Detects threat
 
 '
@@ -140,6 +178,7 @@ MonoBehaviour:
   drawGizmos: 0
   children:
   - {fileID: -5188137718993737033}
+  - {fileID: -3283319895018081013}
   - {fileID: 197939573402459875}
   - {fileID: 5673642550660121012}
   - {fileID: 2610976312253945212}
@@ -161,6 +200,29 @@ MonoBehaviour:
   position: {x: 565.99994, y: 758}
   description: 
   drawGizmos: 0
+--- !u!114 &-3283319895018081013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
+  m_Name: Sequencer
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: d8757322e05aa334787c0c2a0ee15bd3
+  position: {x: -459.10535, y: 304.85287}
+  description: 
+  drawGizmos: 0
+  children:
+  - {fileID: 9017161779775549296}
+  - {fileID: -6321897849465255357}
+  - {fileID: 9429243366753226}
+  - {fileID: -7611961583173362513}
 --- !u!114 &-2811941803692671096
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -178,7 +240,7 @@ MonoBehaviour:
   guid: 2227707782b71d94282f76204e2ae039
   position: {x: 2085.3105, y: 435}
   description: 
-  drawGizmos: 0
+  drawGizmos: 1
   rotateDirection: 3
 --- !u!114 &-2575125406100621982
 MonoBehaviour:
@@ -233,9 +295,9 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 24d094f3db87bd1459575645b9ed4fb6
-  position: {x: 2336.9958, y: 445}
+  position: {x: 2334.9878, y: 444.9999}
   description: 
-  drawGizmos: 0
+  drawGizmos: 1
   moveForwardDirection: 1
 --- !u!114 &-34851049744642167
 MonoBehaviour:
@@ -298,7 +360,31 @@ MonoBehaviour:
   - {fileID: -6377308250306621376}
   - {fileID: -2811941803692671096}
   - {fileID: -270482220478386499}
+  - {fileID: -3283319895018081013}
+  - {fileID: 9017161779775549296}
+  - {fileID: -6321897849465255357}
+  - {fileID: -7611961583173362513}
+  - {fileID: 9429243366753226}
   bTNodes: []
+--- !u!114 &9429243366753226
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
+  m_Name: Rotate
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 3ca88693afc6bd44da1a340869bb0c97
+  position: {x: -309, y: 522}
+  description: 
+  drawGizmos: 1
+  rotateDirection: 1
 --- !u!114 &197939573402459875
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -335,9 +421,9 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 7e893d11b8ca7444fb6b14f967b7b2ff
-  position: {x: -429.64, y: 554.4775}
+  position: {x: -834.55273, y: 509.89465}
   description: 
-  drawGizmos: 0
+  drawGizmos: 1
   moveForwardDirection: 1
 --- !u!114 &2610976312253945212
 MonoBehaviour:
@@ -424,7 +510,7 @@ MonoBehaviour:
   guid: a41f8d0670c9d1649821d004ac4ed111
   position: {x: 1235.3541, y: 467}
   description: 
-  drawGizmos: 0
+  drawGizmos: 1
   moveForwardDirection: 1
 --- !u!114 &5978803302196614459
 MonoBehaviour:
@@ -460,9 +546,9 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: e17d47a9a7fd7de49addac9973ddc7cf
-  position: {x: -689.64, y: 554.4775}
+  position: {x: -1094.5527, y: 509.89465}
   description: 
-  drawGizmos: 0
+  drawGizmos: 1
   rotateDirection: 3
 --- !u!114 &7313734555620797126
 MonoBehaviour:
@@ -479,7 +565,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: ad2b7f75c55d6f542ad4a4a9bcc8c0dd
-  position: {x: -920.64, y: 554.4775}
+  position: {x: -1325.5527, y: 509.89465}
   description: 
   drawGizmos: 0
 --- !u!114 &7419077448557005437
@@ -515,6 +601,27 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: a910360cd2600574b9330e0b2599c6c9
-  position: {x: 364.00003, y: 981}
+  position: {x: 357.99976, y: 988.0001}
+  description: 
+  drawGizmos: 1
+--- !u!114 &9017161779775549296
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93cc0af1376e84449a5b65d4a31da024, type: 3}
+  m_Name: DetectsWall
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 2e74852541669934280c9258b294c5a8
+  position: {x: -666.16, y: 514}
   description: 
   drawGizmos: 0
+  foodLayer:
+    serializedVersion: 2
+    m_Bits: 0

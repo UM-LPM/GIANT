@@ -1,53 +1,34 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TheKiwiCoder;
 
 public class DetectBoundaryPheromone : ConditionNode
 {
+    private AntAgentComponent agent;
+
     protected override void OnStart()
     {
+        agent = context.gameObject.GetComponentInParent<AntAgentComponent>();
+    }
+
+    protected override bool CheckConditions()
+    {
+        return DetectPheromone(agent.transform.position, agent.detectionRadius);
     }
 
     protected override void OnStop()
     {
     }
-    protected override bool CheckConditions()
-    {
-        return DetectPheromone(context.transform.position, PheromoneType.Boundary, context.gameObject.GetComponentInParent<AntAgentComponent>().detectionRadius);
-    }
 
-    private bool DetectPheromone(Vector3 position, PheromoneType type, float detectionRadius)
+    private bool DetectPheromone(Vector3 position, float detectionRadius)
     {
-        RaySensor2D raySensor = context.gameObject.GetComponent<RaySensor2D>();
-
-        if (raySensor != null)
+        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(position, detectionRadius);
+        foreach (Collider2D collider in hitColliders)
         {
-            RayPerceptionInput perceptionInput = new RayPerceptionInput
+            PheromoneNodeComponent pheromoneNode = collider.GetComponent<PheromoneNodeComponent>();
+            if (pheromoneNode != null && pheromoneNode.type == PheromoneType.Boundary)
             {
-                RayLength = detectionRadius,
-                DetectableTags = new List<string> { type.ToString() },
-                Angles = new List<float> { 0 },
-                CastRadius = 0.5f,
-                Transform = context.transform,
-                CastType = RayPerceptionCastType.Cast2D,
-                LayerMask = LayerMask.GetMask("Pheromones")
-            };
-
-            SensorPerceiveOutput[] perceptionOutputs = raySensor.Perceive();
-
-            foreach (var output in perceptionOutputs)
-            {
-                if (output.HasHit && output.HitGameObjects != null)
-                {
-                    foreach (var hitObject in output.HitGameObjects)
-                    {
-                        if (hitObject != null && hitObject.CompareTag(type.ToString()))
-                        {
-                            return true;
-                        }
-                    }
-                }
+                return true;
             }
         }
 

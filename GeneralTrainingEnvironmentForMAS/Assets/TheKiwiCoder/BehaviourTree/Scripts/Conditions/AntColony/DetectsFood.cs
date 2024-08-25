@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class DetectsFood : ConditionNode
 {
-    public float detectionRange = 10f;
     public LayerMask foodLayer;
     private AntAgentComponent agent;
 
@@ -14,9 +13,18 @@ public class DetectsFood : ConditionNode
 
     protected override bool CheckConditions()
     {
-        foodLayer = LayerMask.GetMask("Food");
-        RaycastHit2D hit = Physics2D.CircleCast(agent.transform.position, detectionRange, Vector2.zero, 0f, foodLayer);
-        return hit.collider != null;
+        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(agent.transform.position, 2f);
+
+        foreach (Collider2D collider in hitColliders)
+        {
+            FoodComponent foodComponent = collider.GetComponent<FoodComponent>();
+            if (foodComponent != null)
+            {
+                return true; 
+            }
+        }
+
+        return false; 
     }
 
     protected override void OnStop()

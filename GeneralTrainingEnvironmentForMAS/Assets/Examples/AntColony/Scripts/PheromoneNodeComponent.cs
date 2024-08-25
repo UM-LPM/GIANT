@@ -6,10 +6,11 @@ public class PheromoneNodeComponent : MonoBehaviour
     public Vector3 position;
     public float creationTime; 
     public float evaporationRate;
+    public PheromoneType type;
     public PheromoneNodeComponent next { get; set; }
     public PheromoneNodeComponent previous { get; set; }
 
-    public void Initialize(float intensity, Vector3 position,float evaporationRate, PheromoneNodeComponent next, PheromoneNodeComponent previous)
+    public void Initialize(float intensity, Vector3 position,float evaporationRate, PheromoneType pheromoneType, PheromoneNodeComponent next, PheromoneNodeComponent previous)
     {
         this.intensity = intensity;
         this.position = position;
@@ -17,6 +18,7 @@ public class PheromoneNodeComponent : MonoBehaviour
         this.creationTime = Time.time; 
         this.next = next;
         this.previous = previous;
+        type = pheromoneType;
     }
     public void Evaporate()
     {

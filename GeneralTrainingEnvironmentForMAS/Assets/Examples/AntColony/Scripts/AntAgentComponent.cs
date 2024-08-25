@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class AntAgentComponent : AgentComponent
 {
-    public float detectionRadius=10;
+    public float detectionRadius=3f;
     
-    public Rigidbody Rigidbody { get; set; }
+    public Rigidbody2D Rigidbody { get; set; }
     public float pheromoneEvaporationRate { get; set; }
     public bool hasFood { get; set; }
     public bool hasWater { get; set; }
