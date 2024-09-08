@@ -17,6 +17,6 @@ public class AgentHasFood : ConditionNode
 
     protected override bool CheckConditions()
     {
-        return agent.hasFood;
+        return agent.carriedItemObject!=null&& agent.carriedItemObject.GetComponent<FoodComponent>() != null;
     }
 }

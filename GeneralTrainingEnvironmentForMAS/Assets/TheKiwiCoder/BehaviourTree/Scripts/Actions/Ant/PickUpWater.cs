@@ -17,7 +17,7 @@ public class PickUpWater : ActionNode
     {
 
         var discreteActionsOut = blackboard.actionsOut.DiscreteActions;
-        discreteActionsOut[13] = 1;
+        discreteActionsOut[20] = 1;
         return State.Success;
 
     }

@@ -20,12 +20,13 @@ public class DetectsFood : ConditionNode
             FoodComponent foodComponent = collider.GetComponent<FoodComponent>();
             if (foodComponent != null)
             {
+                agent.detectCarriableItem = collider.gameObject;
                 return true; 
             }
         }
 
         return false; 
-    }
+        }
 
     protected override void OnStop()
     {

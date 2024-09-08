@@ -17,6 +17,6 @@ public class AgentHasWater : ConditionNode
 
     protected override bool CheckConditions()
     {
-        return agent.hasWater;
+        return agent.carriedItemObject != null && agent.carriedItemObject.GetComponent<WaterComponent>() != null;
     }
 }

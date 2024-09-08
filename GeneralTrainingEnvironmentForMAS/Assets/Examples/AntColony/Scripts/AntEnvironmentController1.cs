@@ -286,7 +286,10 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
                 {
                     DropCarriableItem(agent, CarriableItemType.Water);
                 }
-
+                if (actionBuffer.DiscreteActions[20] == 1)
+                {
+                    PickUpCarriableItem(agent, CarriableItemType.Food);
+                }
                 ;
             }
         }
@@ -355,19 +358,45 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
         if(type==PheromoneType.Water)
         {
             currentPheromoneTrail = ant.waterPheromoneTrailComponent;
+            if (currentPheromoneTrail == null)
+            {
+                currentPheromoneTrail = ant.gameObject.AddComponent<PheromoneTrailComponent>();
+                currentPheromoneTrail.pheromoneType = PheromoneType.Water;
+                ant.waterPheromoneTrailComponent = currentPheromoneTrail;
+            }
 
-        }else if(type == PheromoneType.Food)
+        }
+        else if(type == PheromoneType.Food)
         {
             currentPheromoneTrail = ant.foodPheromoneTrailComponent;
+            if (currentPheromoneTrail == null)
+            {
+                currentPheromoneTrail = ant.gameObject.AddComponent<PheromoneTrailComponent>();
+                currentPheromoneTrail.pheromoneType = PheromoneType.Food;
+                ant.waterPheromoneTrailComponent = currentPheromoneTrail;
+            }
 
         }
         else if (type == PheromoneType.Threat)
         {
             currentPheromoneTrail = ant.threatPheromoneTrailComponent;
+            if (currentPheromoneTrail == null)
+            {
+                currentPheromoneTrail = ant.gameObject.AddComponent<PheromoneTrailComponent>();
+                currentPheromoneTrail.pheromoneType = PheromoneType.Threat;
+                ant.waterPheromoneTrailComponent = currentPheromoneTrail;
+            }
 
-        }else
+        }
+        else
         {
             currentPheromoneTrail = ant.boundaryPheromoneTrailComponent;
+            if (currentPheromoneTrail == null)
+            {
+                currentPheromoneTrail = ant.gameObject.AddComponent<PheromoneTrailComponent>();
+                currentPheromoneTrail.pheromoneType = PheromoneType.Boundary;
+                ant.waterPheromoneTrailComponent = currentPheromoneTrail;
+            }
 
         }
         if (currentPheromoneTrail != null)
@@ -377,30 +406,37 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
     }
     void PickUpCarriableItem(AntAgentComponent antAgent,CarriableItemType itemType)
     {
-        if (itemType == CarriableItemType.Water)
+        if (antAgent.detectCarriableItem != null && itemType == CarriableItemType.Water)
         {
-            Vector2 agentPosition = antAgent.transform.position;
+            Vector2 targetPosition = antAgent.detectCarriableItem.transform.position;
+            Vector2 direction = (targetPosition - (Vector2)antAgent.transform.position).normalized;
+            antAgent.transform.position = Vector2.MoveTowards(antAgent.transform.position, targetPosition, AntMoveSpeed * Time.deltaTime);
 
-            foreach (GameObject water in WaterItems)
-            {
-                        antAgent.hasWater = true;
-                        break;
-                  
-               
+            if (Vector2.Distance(antAgent.transform.position, targetPosition) < 0.1f)
+            { 
+                var pickedUpItemRepresentation= Instantiate(WaterPrefab, antAgent.transform);
+                antAgent.carriedItemObject  = pickedUpItemRepresentation;
+                antAgent.detectCarriableItem.SetActive(false);    
             }
         }
-        else if(itemType == CarriableItemType.Food)
-        {
-            Vector2 agentPosition = antAgent.transform.position;
-
-            foreach (GameObject food in FoodItems)
+        else if (antAgent.detectCarriableItem != null && itemType == CarriableItemType.Food)
             {
-                        antAgent.hasFood = true;
-                        Destroy(food);
-                        break;  
+                Vector2 targetPosition = antAgent.detectCarriableItem.transform.position;
+                Vector2 direction = (targetPosition - (Vector2)antAgent.transform.position).normalized;
+
+                // Move the ant towards the food
+                antAgent.transform.position = Vector2.MoveTowards(antAgent.transform.position, targetPosition, AntMoveSpeed * Time.deltaTime);
+
+                // Check if the ant is close enough to the food
+                if (Vector2.Distance(antAgent.transform.position, targetPosition) < 0.1f)
+                {
+                var pickedUpItemRepresentation = Instantiate(FoodPrefab, antAgent.transform);
+                antAgent.carriedItemObject  = pickedUpItemRepresentation;
+                antAgent.detectCarriableItem.SetActive(false);
+                }
             }
-        }
     }
+    
     void MoveToHive(AntAgentComponent antAgent)
     {
         Vector2 hivePosition = antAgent.hive.transform.position;
@@ -425,21 +461,22 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
     }
     void DropCarriableItem(AntAgentComponent antAgent, CarriableItemType itemType)
     {
-        if (itemType == CarriableItemType.Water)
+        if (itemType == CarriableItemType.Water&& antAgent.carriedItemObject !=null)
         {
             Vector2 agentPosition = antAgent.transform.position;
-            var waterItem = Instantiate(FoodPrefab, agentPosition, Quaternion.identity);
-            gatheredWaterItems.Add(waterItem);
-            antAgent.hasWater = false;
+            gatheredWaterItems.Add(antAgent.carriedItemObject );
+            Destroy(antAgent.carriedItemObject );  
+            antAgent.carriedItemObject  = null;    
+
 
 
         }
-        else if (itemType == CarriableItemType.Food)
+        else if (itemType == CarriableItemType.Food&& antAgent.carriedItemObject !=null)
         {
             Vector2 agentPosition = antAgent.transform.position;
-            var foodItem = Instantiate(FoodPrefab, agentPosition, Quaternion.identity);
-            gatheredFoodItems.Add(foodItem);
-            antAgent.hasFood = false;
+            gatheredFoodItems.Add(antAgent.carriedItemObject );
+            Destroy(antAgent.carriedItemObject );  
+            antAgent.carriedItemObject  = null;    
 
 
         }
@@ -538,15 +575,15 @@ void OnGameInput(AgentComponent[] agents)
                 {
                     agent.SetDirection(Vector2.right);
                 }
-                else if (agent.hasFood == true && Input.GetKeyDown(agent.dropPickUpKey))
+                else if (agent.carriedItemObject  !=null && Input.GetKeyDown(agent.dropPickUpKey))
                 {
-                    agent.hasFood = false;
+                    agent.carriedItemObject  = null;
                     Vector2 agentPosition = agent.transform.position;
                     var foodItem=Instantiate(FoodPrefab, agentPosition, Quaternion.identity);
                     FoodItems.Add(foodItem);
 
                 }
-                else if (agent.hasFood == false && Input.GetKeyDown(agent.dropPickUpKey) )
+                else if (agent.carriedItemObject  != null && Input.GetKeyDown(agent.dropPickUpKey) )
                 {
                     Vector2 agentPosition = agent.transform.position;
 
@@ -554,9 +591,9 @@ void OnGameInput(AgentComponent[] agents)
                     {
                         if (Vector2.Distance(agentPosition, food.transform.position) < 2.0f)
                         {
-                            if (!agent.hasFood)
+                            if (agent.carriedItemObject  == null)
                             {
-                                agent.hasFood = true;
+                                agent.carriedItemObject  = food;
                                 Destroy(food);
                                 break;
                             }

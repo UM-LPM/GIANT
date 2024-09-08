@@ -20,6 +20,7 @@ public class DetectsWater : ConditionNode
             WaterComponent waterComponent = collider.GetComponent<WaterComponent>();
             if (waterComponent != null)
             {
+                agent.detectCarriableItem = collider.gameObject;
                 return true;
             }
         }

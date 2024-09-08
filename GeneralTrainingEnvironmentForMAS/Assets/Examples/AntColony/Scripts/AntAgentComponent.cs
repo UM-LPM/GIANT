@@ -8,8 +8,9 @@ public class AntAgentComponent : AgentComponent
     
     public Rigidbody2D Rigidbody { get; set; }
     public float pheromoneEvaporationRate { get; set; }
-    public bool hasFood { get; set; }
-    public bool hasWater { get; set; }
+
+    public GameObject detectCarriableItem { get; set; }
+    public GameObject carriedItemObject { get; set; }
 
     [Header("Controlls")]
     [SerializeField] public KeyCode dropPickUpKey = KeyCode.Space;
