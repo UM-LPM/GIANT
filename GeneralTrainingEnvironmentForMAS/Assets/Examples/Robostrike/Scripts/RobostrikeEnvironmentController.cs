@@ -152,7 +152,7 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase
         }
 
         // Spawn powerUps
-        SpawnPowerUps();
+        SpawnPowerUps(null);
 
         // Register event for Ray sensor
         RayHitObject.OnTargetHit += RayHitObject_OnTargetHit;
@@ -632,8 +632,10 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase
             if (powerUpComponent != null)
             {
                 // Pick up power up
-                if (PowerUpPickedUp(powerUpComponent.PowerUpType, agent))
-                    Destroy(powerUpComponent.gameObject);
+                //Destroy(powerUpComponent.gameObject);
+                //PowerUpPickedUp(powerUpComponent.PowerUpType, agent);
+                if (PowerUpPickedUp(powerUpComponent, powerUpComponent.PowerUpType, agent))
+                   Destroy(powerUpComponent.gameObject);
             }
         }
     }
@@ -886,22 +888,22 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase
         }
     }*/
 
-    public bool PowerUpPickedUp(PowerUpType powerUpType, AgentComponent agent)
+    public bool PowerUpPickedUp(PowerUpComponent replacedPowerUpComponent, PowerUpType powerUpType, AgentComponent agent)
     {
         switch (powerUpType)
         {
             case PowerUpType.Health:
-                return HealthBoxPickedUp(agent);
+                return HealthBoxPickedUp(replacedPowerUpComponent, agent);
             case PowerUpType.Shield:
-                return ShieldBoxPickedUp(agent);
+                return ShieldBoxPickedUp(replacedPowerUpComponent, agent);
             case PowerUpType.Ammo:
-                return AmmoBoxPickedUp(agent);
+                return AmmoBoxPickedUp(replacedPowerUpComponent, agent);
         }
 
         return false;
     }
 
-    public bool HealthBoxPickedUp(AgentComponent agent)
+    public bool HealthBoxPickedUp(PowerUpComponent replacedPowerUpComponent, AgentComponent agent)
     {
         bool operationSuccess = ((RobostrikeAgentComponent)agent).SetHealth(HealthPowerUpValue);
         if (operationSuccess)
@@ -912,14 +914,14 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase
             // Spawn new health box
             if (HealthBoxPrefab != null)
             {
-                SpawnPowerUp(HealthBoxPrefab);
+                SpawnPowerUp(replacedPowerUpComponent, HealthBoxPrefab);
             }
             (agent as RobostrikeAgentComponent).UpdatetStatBars();
         }
         return operationSuccess;
     }
 
-    public bool ShieldBoxPickedUp(AgentComponent agent)
+    public bool ShieldBoxPickedUp(PowerUpComponent replacedPowerUpComponent, AgentComponent agent)
     {
         bool operationSuccess = ((RobostrikeAgentComponent)agent).SetShield(ShieldPowerUpValue);
         if (operationSuccess)
@@ -930,7 +932,7 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase
             // Spawn new shield box
             if (ShieldBoxPrefab != null)
             {
-                SpawnPowerUp(ShieldBoxPrefab);
+                SpawnPowerUp(replacedPowerUpComponent, ShieldBoxPrefab);
             }
             (agent as RobostrikeAgentComponent).UpdatetStatBars();
         }
@@ -938,7 +940,7 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase
         return operationSuccess;
     }
 
-    public bool AmmoBoxPickedUp(AgentComponent agent)
+    public bool AmmoBoxPickedUp(PowerUpComponent replacedPowerUpComponent, AgentComponent agent)
     {
         bool operationSuccess = ((RobostrikeAgentComponent)agent).SetAmmo(AmmoPowerUpValue);
         if (operationSuccess)
@@ -949,7 +951,7 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase
             // Spawn new ammo box
             if (AmmoBoxPrefab != null)
             {
-                SpawnPowerUp(AmmoBoxPrefab);
+                SpawnPowerUp(replacedPowerUpComponent, AmmoBoxPrefab);
             }
             (agent as RobostrikeAgentComponent).UpdatetStatBars();
         }
@@ -957,33 +959,42 @@ public class RobostrikeEnvironmentController : EnvironmentControllerBase
         return operationSuccess;
     }
 
-    private void SpawnPowerUps()
+    private void SpawnPowerUps(PowerUpComponent replacedPowerUpComponent)
     {
         for (int i = 0; i < HealthBoxSpawnAmount; i++)
         {
-            SpawnPowerUp(HealthBoxPrefab);
+            SpawnPowerUp(replacedPowerUpComponent, HealthBoxPrefab);
         }
 
         for (int i = 0; i < ShieldBoxSpawnAmount; i++)
         {
-            SpawnPowerUp(ShieldBoxPrefab);
+            SpawnPowerUp(replacedPowerUpComponent, ShieldBoxPrefab);
         }
 
         for (int i = 0; i < AmmoBoxSpawnAmount; i++)
         {
-            SpawnPowerUp(AmmoBoxPrefab);
+            SpawnPowerUp(replacedPowerUpComponent, AmmoBoxPrefab);
         }
     }
 
-    private void SpawnPowerUp(GameObject powerUpPrefab)
+    private void SpawnPowerUp(PowerUpComponent replacedPowerUpComponent, GameObject powerUpPrefab)
     {
         if (powerUpPrefab != null)
         {
             List<Vector3> powerUpPositions = this.gameObject.GetComponentsInChildren<PowerUpComponent>().Select(x => x.transform.position).ToList();
+            // Remove replacedPowerUpComponent position from powerUpPositions
+            if (replacedPowerUpComponent != null)
+            {
+                powerUpPositions.Remove(replacedPowerUpComponent.transform.position);
+            }
+
             Vector3 spawnPos = GetRandomSpawnPoint();
-            while (!SpawnPointSuitable(spawnPos, Quaternion.identity, powerUpPositions != null && powerUpPositions.Count > 0 ? powerUpPositions : null, PowerUpColliderExtendsMultiplier, MinPowerUpDistance))
+            int counter = 0;
+            int maxSpawnPoints = 100;
+            while (counter < maxSpawnPoints && !SpawnPointSuitable(spawnPos, Quaternion.identity, powerUpPositions != null && powerUpPositions.Count > 0 ? powerUpPositions : null, PowerUpColliderExtendsMultiplier, MinPowerUpDistance))
             {
                 spawnPos = GetRandomSpawnPoint();
+                counter++;
             }
 
             GameObject obj = Instantiate(powerUpPrefab, spawnPos, Quaternion.identity, this.transform);

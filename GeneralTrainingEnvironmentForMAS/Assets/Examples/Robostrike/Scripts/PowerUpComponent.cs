@@ -23,7 +23,7 @@ public class PowerUpComponent : MonoBehaviour
 
         if (otherAgent != null)
         {
-            if (RobocodeEnvironmentController.PowerUpPickedUp(PowerUpType, otherAgent))
+            if (RobocodeEnvironmentController.PowerUpPickedUp(this, PowerUpType, otherAgent))
                 Destroy(this.gameObject);
         }
 

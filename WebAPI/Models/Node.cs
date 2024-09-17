@@ -104,6 +104,8 @@ namespace WebAPI.Models {
                     return "61431bba79d7d7843b82bf1de71703f5";
                 case NodeType.Inverter:
                     return "e658b1bd308bc5c429f5a9b404a04943";
+                case NodeType.Encapsulator:
+                    return "88210b6ae4b65bc4f975f7a750c75612";
                 case NodeType.MoveForward:
                     return "1fd1e85f30abba2499f6834e124b1450";
                 case NodeType.MoveSide:
@@ -145,6 +147,8 @@ namespace WebAPI.Models {
                     return NodeType.Sequencer;
                 case "Inverter":
                     return NodeType.Inverter;
+                case "Encapsulator":
+                    return NodeType.Encapsulator;
                 case "MoveForward":
                     return NodeType.MoveForward;
                 case "MoveSide":
@@ -183,6 +187,8 @@ namespace WebAPI.Models {
                     return "Sequencer";
                 case NodeType.Inverter:
                     return "Inverter";
+                case NodeType.Encapsulator:
+                    return "Encapsulator";
                 case NodeType.MoveForward:
                     return "MoveForward";
                 case NodeType.MoveSide:

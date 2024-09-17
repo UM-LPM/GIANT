@@ -5,6 +5,7 @@
         Selector,
         Sequencer,
         Inverter,
+        Encapsulator,
         MoveForward,
         MoveSide,
         Rotate,
