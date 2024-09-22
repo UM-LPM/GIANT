@@ -206,12 +206,13 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
 
     void UpdateAgentsWithBTs(AgentComponent[] agents)
     {
+        UpdatePheromoneTrails();
         ActionBuffer actionBuffer;
         foreach (AntAgentComponent agent in agents)
         {
             if (agent.gameObject.activeSelf)
             {
-                actionBuffer = new ActionBuffer(null, new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0 });  
+                actionBuffer = new ActionBuffer(null, new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0 });  
 
                 agent.BehaviourTree.UpdateTree(actionBuffer);
 
@@ -288,7 +289,7 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
                 }
                 if (actionBuffer.DiscreteActions[20] == 1)
                 {
-                    PickUpCarriableItem(agent, CarriableItemType.Food);
+                    PickUpCarriableItem(agent, CarriableItemType.Water);
                 }
                 ;
             }
@@ -402,6 +403,7 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
         if (currentPheromoneTrail != null)
         {
             currentPheromoneTrail.AddPheromone(position, strength, evaporationRate);
+            ant.currentActiveNodePheromone = currentPheromoneTrail.lastNode;
         } 
     }
     void PickUpCarriableItem(AntAgentComponent antAgent,CarriableItemType itemType)
@@ -447,7 +449,7 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         antAgent.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
 
-        antAgent.transform.position = Vector2.MoveTowards(antPosition, hivePosition, AntMoveSpeed * Time.deltaTime);
+        antAgent.transform.position = Vector2.MoveTowards(antPosition, hivePosition, AntMoveSpeed * Time.fixedDeltaTime);
       /*  Rigidbody2D rb = agent.GetComponent<Rigidbody2D>();
         if (rb != null)
         {

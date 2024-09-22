@@ -1,5 +1,24 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8846528902125309218
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7b12809f2f5cf94aa10488b410c1324, type: 3}
+  m_Name: IsPheromoneTrailEstablished
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 05485e95eacce9144960ebdb51d9cd32
+  position: {x: 431, y: -248.99998}
+  description: 
+  drawGizmos: 0
+  antAgent: {fileID: 0}
 --- !u!114 &-8830314555013438043
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -57,10 +76,10 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: d04746af939a23b4c83dee1b58e90bad
-  position: {x: 2712, y: 267}
+  position: {x: 2841, y: 343.99997}
   description: 
   drawGizmos: 1
---- !u!114 &-8104058714820977743
+--- !u!114 &-7859747705043607034
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -69,15 +88,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b1c1d8eed0958a1469dde72c40714f6d, type: 3}
-  m_Name: ReinforceFoodPheromone
+  m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
+  m_Name: Inverter
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: 0e6ce8635a91ece42883dda97f7e6f46
-  position: {x: 750, y: 912}
+  guid: 0d2f4bbcce465ac478f9ac119534fa36
+  position: {x: 1992, y: 1300}
   description: 
-  drawGizmos: 1
+  drawGizmos: 0
+  child: {fileID: -7603110791973243202}
+--- !u!114 &-7603110791973243202
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7b12809f2f5cf94aa10488b410c1324, type: 3}
+  m_Name: IsPheromoneTrailEstablished
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: cf5a89f3815ae274ca05af584511f1af
+  position: {x: 1952, y: 1474}
+  description: 
+  drawGizmos: 0
+  antAgent: {fileID: 0}
 --- !u!114 &-6496235240982680068
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -93,11 +132,11 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 75eaaff81bb580942b23f00a080cb56b
-  position: {x: 1515, y: 646}
+  position: {x: 1085.1287, y: 969}
   description: 
   drawGizmos: 1
   antAgent: {fileID: 0}
---- !u!114 &-6010548904718264814
+--- !u!114 &-6239821656576947194
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -106,16 +145,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2e71f30de97e02e4fb9db296ebd74cb7, type: 3}
-  m_Name: IsOnPheromoneTrail
+  m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
+  m_Name: Inverter
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: 77089f57c35fd5541a9540bcd6245c59
-  position: {x: 578, y: 920}
+  guid: 33c3a3b96984523468dda2376a20f8aa
+  position: {x: 475, y: 1233}
   description: 
-  drawGizmos: 1
-  antAgent: {fileID: 0}
+  drawGizmos: 0
+  child: {fileID: 8922371350758915525}
 --- !u!114 &-5781110461485054589
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -131,9 +170,28 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 9beb24656ae7e644bb7653992d40a62b
-  position: {x: 478, y: 344}
+  position: {x: -384.33307, y: 741}
   description: 
   drawGizmos: 1
+--- !u!114 &-5760553298048119028
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c08683d537bf166478933a8a07bc86a4, type: 3}
+  m_Name: IsInHive
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: a5e8905ebae89cf43a35073070eb487b
+  position: {x: 281.00003, y: -247.99995}
+  description: 
+  drawGizmos: 0
+  antAgent: {fileID: 0}
 --- !u!114 &-5631168931789462310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -149,7 +207,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: f43bc60b40576924a9ae7fb87f2ecb1b
-  position: {x: 557, y: 796}
+  position: {x: -305.3331, y: 1193}
   description: 
   drawGizmos: 1
 --- !u!114 &-5467663485045002348
@@ -167,7 +225,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 2fc4040ab65956349a15885527422d84
-  position: {x: -466.93182, y: -181}
+  position: {x: -1504.408, y: -196.9601}
   description: 
   drawGizmos: 1
   antAgent: {fileID: 0}
@@ -186,7 +244,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 27027874c62c2ac4e88a3ffc7b090ab4
-  position: {x: 553, y: 121}
+  position: {x: -309.3331, y: 518}
   description: Agent has food
   drawGizmos: 1
   children:
@@ -207,12 +265,31 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 77820bc496cd2cd4d8160c741f52201a
-  position: {x: 1560, y: 465}
+  position: {x: 1130.1287, y: 788}
   description: 
   drawGizmos: 0
   children:
   - {fileID: -6496235240982680068}
   - {fileID: 421349231533092277}
+--- !u!114 &-4751752307149401747
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7b12809f2f5cf94aa10488b410c1324, type: 3}
+  m_Name: IsPheromoneTrailEstablished
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 5603556402492104e99719268aa26584
+  position: {x: -282, y: 1324}
+  description: 
+  drawGizmos: 0
+  antAgent: {fileID: 0}
 --- !u!114 &-4446618645871219273
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -247,11 +324,11 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 14cd4c1efc48e814f9c43d0b6fa7e2d7
-  position: {x: 971, y: 559}
+  position: {x: 311.66705, y: 961.00006}
   description: 
   drawGizmos: 1
   children:
-  - {fileID: -996883422074185796}
+  - {fileID: 6842889772594184866}
   - {fileID: -1338761528921150500}
 --- !u!114 &-4236526659773203946
 MonoBehaviour:
@@ -268,7 +345,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: cb8ecbf83d3746f4f85d1a11d659393d
-  position: {x: 1725, y: 279}
+  position: {x: 1295.1287, y: 602}
   description: 
   drawGizmos: 0
   children:
@@ -289,7 +366,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: ae67221afbc3d114ab0fcb8900480e1c
-  position: {x: 292, y: -179}
+  position: {x: -745.40814, y: -194.96008}
   description: 
   drawGizmos: 1
   rotateDirection: 1
@@ -308,7 +385,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 6b943ebbda67e08419a4626293d83c59
-  position: {x: 386, y: 798}
+  position: {x: -476.333, y: 1195}
   description: 
   drawGizmos: 1
   antAgent: {fileID: 0}
@@ -327,10 +404,29 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: e171e5d0269ee7f4cadcecaafc0fa584
-  position: {x: 463, y: -180}
+  position: {x: -574.408, y: -195.96007}
   description: 
   drawGizmos: 1
   rotateDirection: 1
+--- !u!114 &-2743352623708897754
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7b12809f2f5cf94aa10488b410c1324, type: 3}
+  m_Name: IsPheromoneTrailEstablished
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: c2c08b1268ebd7e4d983231eb5a41cb6
+  position: {x: 1143, y: 1299}
+  description: 
+  drawGizmos: 0
+  antAgent: {fileID: 0}
 --- !u!114 &-2585443681699355374
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -382,10 +478,31 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: e163ce4582d6da54bbd3ebef625c4277
-  position: {x: -1108.3629, y: -164.99998}
+  position: {x: -2145.4082, y: -180.96008}
   description: 
   drawGizmos: 1
   rotateDirection: 3
+--- !u!114 &-2228519967548958064
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
+  m_Name: Inverter
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 0313cff9926abc04797e665d58c66cc4
+  position: {x: -62.021885, y: -234.00006}
+  description: '
+
+'
+  drawGizmos: 0
+  child: {fileID: 8930497607671726991}
 --- !u!114 &-1815893815986775630
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -401,7 +518,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 67c12a535ab8c2c45b78d7739b8b2175
-  position: {x: -336.93192, y: -357}
+  position: {x: -1374.4081, y: -372.9601}
   description: 'Maintanance
 
 '
@@ -424,10 +541,11 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: fe406ed87a2d3e74ebf58060a0d95e54
-  position: {x: 1248, y: 740}
+  position: {x: 504, y: 1105}
   description: 
   drawGizmos: 0
   children:
+  - {fileID: -6239821656576947194}
   - {fileID: 1676952849803916308}
   - {fileID: 4995859147835234408}
 --- !u!114 &-1153189806389546302
@@ -473,31 +591,9 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 98c120bce30fd094880d246f58b8799a
-  position: {x: 2500, y: 280}
+  position: {x: 2629, y: 357}
   description: 
   drawGizmos: 1
---- !u!114 &-996883422074185796
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
-  m_Name: Sequencer
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: bdc5d17dbf30f7f458acf38548e4aef3
-  position: {x: 789, y: 784}
-  description: 
-  drawGizmos: 1
-  children:
-  - {fileID: -6010548904718264814}
-  - {fileID: -8104058714820977743}
-  - {fileID: 896629304502521442}
 --- !u!114 &-930654457038589897
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -534,12 +630,13 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 29a543e6124193345926060bb8a37540
-  position: {x: 2621, y: 121}
+  position: {x: 2714, y: 147}
   description: 'Detect water pheromone- move to previous node
 
 '
   drawGizmos: 0
   children:
+  - {fileID: 5618549746693118132}
   - {fileID: -1067746381850803468}
   - {fileID: -8224865101751163449}
 --- !u!114 &-440246745300112859
@@ -557,7 +654,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: c5548d3cc4c5d464c9f5e7eb88837015
-  position: {x: -1331.3628, y: -164.99998}
+  position: {x: -2368.4082, y: -180.96008}
   description: 
   drawGizmos: 1
 --- !u!114 &-111860092558257593
@@ -594,7 +691,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 87d1ded521a90a64baf5388cf50ea83b
-  position: {x: 1213, y: 332}
+  position: {x: 970.1286, y: 602}
   description: 
   drawGizmos: 0
 --- !u!114 &11400000
@@ -639,11 +736,7 @@ MonoBehaviour:
   - {fileID: 6994376940745487230}
   - {fileID: -1338761528921150500}
   - {fileID: 1676952849803916308}
-  - {fileID: -996883422074185796}
-  - {fileID: -6010548904718264814}
-  - {fileID: 896629304502521442}
   - {fileID: -4422381189507414152}
-  - {fileID: -8104058714820977743}
   - {fileID: -8664993260552195743}
   - {fileID: -930654457038589897}
   - {fileID: -8830314555013438043}
@@ -655,11 +748,7 @@ MonoBehaviour:
   - {fileID: -6496235240982680068}
   - {fileID: 421349231533092277}
   - {fileID: 3048229429329614348}
-  - {fileID: 7733297278982753998}
   - {fileID: 6099012204396303878}
-  - {fileID: 8261562802870010661}
-  - {fileID: 2611795232315117771}
-  - {fileID: 3431478836970160061}
   - {fileID: 9144616435764456101}
   - {fileID: 4341515552389028533}
   - {fileID: -1815893815986775630}
@@ -672,6 +761,30 @@ MonoBehaviour:
   - {fileID: -3668289030686264167}
   - {fileID: 1848266506025527338}
   - {fileID: -3125487868044152103}
+  - {fileID: -6239821656576947194}
+  - {fileID: 6221770873129580777}
+  - {fileID: 3998429798716255553}
+  - {fileID: 5618549746693118132}
+  - {fileID: 7863767929244440747}
+  - {fileID: -7859747705043607034}
+  - {fileID: 6842889772594184866}
+  - {fileID: -4751752307149401747}
+  - {fileID: 337879598559682993}
+  - {fileID: 5241866591984219234}
+  - {fileID: 8099558178501817337}
+  - {fileID: -2743352623708897754}
+  - {fileID: 4009589593596036733}
+  - {fileID: 4539247605769010040}
+  - {fileID: 8922371350758915525}
+  - {fileID: -7603110791973243202}
+  - {fileID: -2228519967548958064}
+  - {fileID: 8930497607671726991}
+  - {fileID: -5760553298048119028}
+  - {fileID: -8846528902125309218}
+  - {fileID: 4723329839282357253}
+  - {fileID: 4975064672849950963}
+  - {fileID: 4271260125890471868}
+  - {fileID: 2226733925583198989}
   bTNodes: []
 --- !u!114 &151704379902810450
 MonoBehaviour:
@@ -694,6 +807,24 @@ MonoBehaviour:
   child: {fileID: 5080345857457856378}
   restartOnSuccess: 1
   restartOnFailure: 0
+--- !u!114 &337879598559682993
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1c1d8eed0958a1469dde72c40714f6d, type: 3}
+  m_Name: ReinforceFoodPheromone
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: fd837b30bf1431e48946410bf7678dac
+  position: {x: -60, y: 1324}
+  description: 
+  drawGizmos: 0
 --- !u!114 &421349231533092277
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -709,25 +840,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 93887651f992db34b849b809e909abf7
-  position: {x: 1725, y: 646}
-  description: 
-  drawGizmos: 1
---- !u!114 &896629304502521442
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 338a64a1f1f334b4eb0ed2494bb219e0, type: 3}
-  m_Name: MoveToNextPheromoneOnTrail
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 4ba2c07705dcf05449209dafe685c1c1
-  position: {x: 939, y: 912}
+  position: {x: 1295.1287, y: 969}
   description: 
   drawGizmos: 1
 --- !u!114 &1676952849803916308
@@ -745,7 +858,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: ac79e772c989d30448f1115e23b444d8
-  position: {x: 1221, y: 892}
+  position: {x: 641, y: 1257}
   description: 
   drawGizmos: 1
 --- !u!114 &1848266506025527338
@@ -763,7 +876,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 407cfada2c0b0a943b669d504b3155d9
-  position: {x: 654, y: -179}
+  position: {x: -383.40808, y: -194.96008}
   description: 
   drawGizmos: 1
   moveForwardDirection: 1
@@ -786,7 +899,7 @@ MonoBehaviour:
   description: 
   drawGizmos: 1
   moveForwardDirection: 1
---- !u!114 &2611795232315117771
+--- !u!114 &2226733925583198989
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -795,15 +908,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ea177e8c5d3e0e14891f9b9a2720a48b, type: 3}
-  m_Name: ReinforceWaterPheromone
+  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
+  m_Name: Sequencer
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: c23f70a94b82e934f8d5b453ea335818
-  position: {x: 2037, y: 800}
-  description: 
-  drawGizmos: 1
+  guid: de5058ea26fcdb144b2b7db6fe721a21
+  position: {x: 281.00003, y: -395.7501}
+  description: Agent returned food/water to the hive.
+  drawGizmos: 0
+  children:
+  - {fileID: -2228519967548958064}
+  - {fileID: 4723329839282357253}
+  - {fileID: -5760553298048119028}
+  - {fileID: -8846528902125309218}
+  - {fileID: 4271260125890471868}
 --- !u!114 &3048229429329614348
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -819,11 +938,11 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 7e58a4685cc5a7644b2f5df792f18610
-  position: {x: 2037, y: 471}
+  position: {x: 1767, y: 925}
   description: 
   drawGizmos: 0
   children:
-  - {fileID: 7733297278982753998}
+  - {fileID: 8099558178501817337}
   - {fileID: 6099012204396303878}
 --- !u!114 &3201368041459705833
 MonoBehaviour:
@@ -848,7 +967,7 @@ MonoBehaviour:
   children:
   - {fileID: -111860092558257593}
   - {fileID: 1916121390293090297}
---- !u!114 &3431478836970160061
+--- !u!114 &3998429798716255553
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -857,15 +976,34 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 338a64a1f1f334b4eb0ed2494bb219e0, type: 3}
-  m_Name: MoveToNextPheromoneOnTrail
+  m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
+  m_Name: Inverter
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: 4e33c92ccd1fc1740854dfc996540036
-  position: {x: 2274, y: 792}
+  guid: c4d3ec5739a4f9e4ea0fa2339ce5de05
+  position: {x: 1917, y: 279}
   description: 
-  drawGizmos: 1
+  drawGizmos: 0
+  child: {fileID: 6221770873129580777}
+--- !u!114 &4009589593596036733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea177e8c5d3e0e14891f9b9a2720a48b, type: 3}
+  m_Name: ReinforceWaterPheromone
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 6615dfedd407d79478838d6efe445f3f
+  position: {x: 1353, y: 1299}
+  description: 
+  drawGizmos: 0
 --- !u!114 &4125714699989651011
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -881,7 +1019,25 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 43646328aee133f4289026c76cb8c2fe
-  position: {x: 2037, y: 280}
+  position: {x: 2078.0002, y: 281}
+  description: 
+  drawGizmos: 0
+--- !u!114 &4271260125890471868
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cb79c173597a0a41a4dffb460be7372, type: 3}
+  m_Name: MoveToPreviousPheromoneOnTrail
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 79f91b9e94520814ab1753cb41309e2f
+  position: {x: 654.65, y: -248.99995}
   description: 
   drawGizmos: 0
 --- !u!114 &4341515552389028533
@@ -899,7 +1055,25 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 1ff9213e04b749547b6b0c327e47dc42
-  position: {x: 2918, y: 796}
+  position: {x: 2481, y: 1267}
+  description: 
+  drawGizmos: 0
+--- !u!114 &4539247605769010040
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 338a64a1f1f334b4eb0ed2494bb219e0, type: 3}
+  m_Name: MoveToNextPheromoneOnTrail
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 60f2b99e3bd19e540bad0122de5ab5af
+  position: {x: 1558, y: 1297}
   description: 
   drawGizmos: 0
 --- !u!114 &4635933278944643794
@@ -917,7 +1091,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: be91eca901e1c734ea59a30c7b5ea061
-  position: {x: 2206, y: 279}
+  position: {x: 2247.0005, y: 280}
   description: 
   drawGizmos: 1
 --- !u!114 &4655183594022075856
@@ -943,6 +1117,43 @@ MonoBehaviour:
   children:
   - {fileID: -8664993260552195743}
   - {fileID: -2512001496756730032}
+--- !u!114 &4723329839282357253
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
+  m_Name: Inverter
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: d8eec8c50e033714b916a5b3896cb834
+  position: {x: 116.97816, y: -249.00003}
+  description: 
+  drawGizmos: 0
+  child: {fileID: 4975064672849950963}
+--- !u!114 &4975064672849950963
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d73bc7eef58d5154085aeaad2de012f5, type: 3}
+  m_Name: AgentHasWater
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 2d998699e0d336b4da846f5a54efa3eb
+  position: {x: 116.97816, y: -89.00008}
+  description: 
+  drawGizmos: 0
 --- !u!114 &4995859147835234408
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -958,7 +1169,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 3b934cc499504fe4e8e3b1ef3c457871
-  position: {x: 1473, y: 892}
+  position: {x: 848, y: 1257}
   description: 
   drawGizmos: 1
 --- !u!114 &5080345857457856378
@@ -983,7 +1194,45 @@ MonoBehaviour:
   - {fileID: 6063603694876241772}
   - {fileID: -1815893815986775630}
   - {fileID: 8592452261894218338}
+  - {fileID: 2226733925583198989}
   - {fileID: -1153189806389546302}
+--- !u!114 &5241866591984219234
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 338a64a1f1f334b4eb0ed2494bb219e0, type: 3}
+  m_Name: MoveToNextPheromoneOnTrail
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: b01840f464acbb04db7093e4882f31a3
+  position: {x: 179, y: 1300}
+  description: 
+  drawGizmos: 0
+--- !u!114 &5618549746693118132
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
+  m_Name: Inverter
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: a91b30d29c368364781cb769972925bd
+  position: {x: 2457.7, y: 364}
+  description: 
+  drawGizmos: 0
+  child: {fileID: 7863767929244440747}
 --- !u!114 &6056151892523922519
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -999,7 +1248,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: fcac56860d4952946bbb27545749d767
-  position: {x: -187.20001, y: -181.6}
+  position: {x: -1224.4081, y: -197.96008}
   description: 
   drawGizmos: 1
 --- !u!114 &6063603694876241772
@@ -1017,7 +1266,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 622fa0eb826ff21458b4f1b5341b4875
-  position: {x: -1136.3629, y: -357}
+  position: {x: -2173.4082, y: -372.9601}
   description: 'Threat management
 
 '
@@ -1041,12 +1290,31 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 54d0a2e1c05692246b83b7c5a04b74b4
-  position: {x: 2667, y: 652}
+  position: {x: 1992, y: 1088}
   description: 
   drawGizmos: 0
   children:
+  - {fileID: -7859747705043607034}
   - {fileID: 9144616435764456101}
   - {fileID: 4341515552389028533}
+--- !u!114 &6221770873129580777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7aa22aea0ee6cdd43bfb91651569b734, type: 3}
+  m_Name: AgentHasFood
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 7f77c29c5bd29274ead51fc7f4d74213
+  position: {x: 1917.0001, y: 408}
+  description: 
+  drawGizmos: 0
 --- !u!114 &6269944176442580323
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1062,12 +1330,34 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: a4d85c15fec580b4e809c56cd6f8f826
-  position: {x: 729, y: 332}
+  position: {x: -133.33307, y: 729}
   description: 
   drawGizmos: 1
   children:
   - {fileID: 6994376940745487230}
   - {fileID: -4422381189507414152}
+--- !u!114 &6842889772594184866
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
+  m_Name: Sequencer
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: db3fc1cfdf454fe44a8302fbba31dd98
+  position: {x: 108, y: 1105}
+  description: 
+  drawGizmos: 0
+  children:
+  - {fileID: -4751752307149401747}
+  - {fileID: 337879598559682993}
+  - {fileID: 5241866591984219234}
 --- !u!114 &6994376940745487230
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1083,7 +1373,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 1fad865f6b0e9e546a92fb8be008f6d9
-  position: {x: 423, y: 603}
+  position: {x: -439.33307, y: 1000.00006}
   description: 
   drawGizmos: 1
   children:
@@ -1104,13 +1394,13 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 8158b48030d5b134f866e344ff32317b
-  position: {x: -914.36285, y: -164.99998}
+  position: {x: -1951.4081, y: -180.96008}
   description: '
 
 '
   drawGizmos: 1
   moveForwardDirection: 1
---- !u!114 &7733297278982753998
+--- !u!114 &7863767929244440747
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1119,19 +1409,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
-  m_Name: Sequencer
+  m_Script: {fileID: 11500000, guid: d73bc7eef58d5154085aeaad2de012f5, type: 3}
+  m_Name: AgentHasWater
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: 927d04c48928160458586bc5e39667fe
-  position: {x: 1993, y: 628}
+  guid: e5ec9ca75c38d0c4d973574412c0afaa
+  position: {x: 2457.7, y: 491}
   description: 
   drawGizmos: 0
-  children:
-  - {fileID: 8261562802870010661}
-  - {fileID: 2611795232315117771}
-  - {fileID: 3431478836970160061}
 --- !u!114 &7877575983780279267
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1147,13 +1433,13 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 47b61eca3cbfe214596fce111dc6155e
-  position: {x: 107.64282, y: -179.9125}
+  position: {x: -929.408, y: -195.96007}
   description: 
   drawGizmos: 0
   foodLayer:
     serializedVersion: 2
     m_Bits: 0
---- !u!114 &8261562802870010661
+--- !u!114 &8099558178501817337
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1162,16 +1448,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2e71f30de97e02e4fb9db296ebd74cb7, type: 3}
-  m_Name: IsOnPheromoneTrail
+  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
+  m_Name: Sequencer
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: 9c379fb33424a3e45b67126205c00025
-  position: {x: 1887, y: 800}
+  guid: 5b836fc0eeced7d4eba55ee223ab5158
+  position: {x: 1617, y: 1088}
   description: 
-  drawGizmos: 1
-  antAgent: {fileID: 0}
+  drawGizmos: 0
+  children:
+  - {fileID: -2743352623708897754}
+  - {fileID: 4009589593596036733}
+  - {fileID: 4539247605769010040}
 --- !u!114 &8592452261894218338
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1187,7 +1476,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 579b7f76cfa986d4391ddbd7a62b6ff6
-  position: {x: 216.79565, y: -357}
+  position: {x: -820.40796, y: -372.9601}
   description: Wall
   drawGizmos: 0
   children:
@@ -1210,12 +1499,49 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: b3a51882fde5f4843b173aefc3057685
-  position: {x: 1238, y: 133}
+  position: {x: 995.1287, y: 403.00003}
   description: aAgent has water
   drawGizmos: 0
   children:
   - {fileID: -20847221415601512}
   - {fileID: -4236526659773203946}
+--- !u!114 &8922371350758915525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7b12809f2f5cf94aa10488b410c1324, type: 3}
+  m_Name: IsPheromoneTrailEstablished
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 60b2cdae3d1336c40b222e76ab4604c0
+  position: {x: 444, y: 1402}
+  description: 
+  drawGizmos: 0
+  antAgent: {fileID: 0}
+--- !u!114 &8930497607671726991
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7aa22aea0ee6cdd43bfb91651569b734, type: 3}
+  m_Name: AgentHasFood
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 85c025f54ce51ca4893e58932600a577
+  position: {x: -62.021885, y: -89.00008}
+  description: 
+  drawGizmos: 0
 --- !u!114 &9111370732654448132
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1235,6 +1561,7 @@ MonoBehaviour:
   description: Detect food pheromone-move to previous node
   drawGizmos: 0
   children:
+  - {fileID: 3998429798716255553}
   - {fileID: 4125714699989651011}
   - {fileID: 4635933278944643794}
 --- !u!114 &9144616435764456101
@@ -1252,6 +1579,6 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: bda2dc9ef75efca498ac8404cb53c98f
-  position: {x: 2608, y: 802}
+  position: {x: 2213, y: 1268}
   description: 
   drawGizmos: 0

@@ -23,8 +23,17 @@ public class PheromoneNodeComponent : MonoBehaviour
     public void Evaporate()
     {
         float elapsedTime = Time.time - creationTime;
-        intensity -= evaporationRate * elapsedTime;
-        creationTime = Time.time; 
+
+        if (elapsedTime >= 30.0f)
+        {
+            intensity -= evaporationRate * (elapsedTime - 30.0f);
+        }
+
+        if (intensity < 0)
+        {
+            intensity = 0;
+        }
+
     }
 
     public bool IsEvaporated()

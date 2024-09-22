@@ -1,12 +1,16 @@
+using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
-public abstract  class PheromoneTrailComponent:MonoBehaviour
+public   class PheromoneTrailComponent:MonoBehaviour
 {
     public float weakTrailTreshold=40;
     public PheromoneNodeComponent firstNode { get; set; }
     public PheromoneNodeComponent lastNode { get; set; }
 
      public PheromoneType pheromoneType;
+
+    private Dictionary<PheromoneType, GameObject> pheromonePrefabs;
 
     public float CalculateTotalIntensity()
     {
@@ -24,7 +28,15 @@ public abstract  class PheromoneTrailComponent:MonoBehaviour
 
         return (totalIntensity% length);
     }
-
+    // Function to load prefabs using AssetDatabase
+    private GameObject LoadPrefab(string path)
+    {
+            #if UNITY_EDITOR
+                    return (GameObject)AssetDatabase.LoadAssetAtPath(path, typeof(GameObject));
+            #else
+                    return null;  
+            #endif
+                }
     public bool IsTrailWeak()
     {
         return CalculateTotalIntensity() < weakTrailTreshold;
@@ -33,10 +45,19 @@ public abstract  class PheromoneTrailComponent:MonoBehaviour
     {
         firstNode = null;
         lastNode = null;
+        pheromonePrefabs = new Dictionary<PheromoneType, GameObject>
+        {
+            { PheromoneType.Food, LoadPrefab("Assets/Examples/AntColony/Prefabs/foodPheromonePrefab.prefab") },
+            { PheromoneType.Water, LoadPrefab("Assets/Examples/AntColony/Prefabs/waterPheromonePrefab.prefab") },
+            { PheromoneType.Threat,  LoadPrefab("Assets/Examples/AntColony/Prefabs/dangerPheromonePrefab.prefab") }
+        };
     }
     public void AddPheromone(Vector3 position, float strength, float evaporationRate)
     {
-        PheromoneNodeComponent newNode = gameObject.AddComponent<PheromoneNodeComponent>();
+        GameObject selectedPrefab = pheromonePrefabs[pheromoneType];
+
+        GameObject newPheromoneObject = Instantiate(selectedPrefab, position, Quaternion.identity);
+        PheromoneNodeComponent newNode = newPheromoneObject.AddComponent<PheromoneNodeComponent>();
         newNode.Initialize(100, position, evaporationRate, this.pheromoneType, null, null);
         if (firstNode == null)
         {
