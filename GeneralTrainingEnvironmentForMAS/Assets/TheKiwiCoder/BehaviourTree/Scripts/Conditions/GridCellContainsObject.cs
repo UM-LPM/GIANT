@@ -1,24 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using TheKiwiCoder;
 using UnityEngine;
 
-public enum TargetGameObject2D {
-    Agent,
-    Indestructible,
-    Destructible,
-    Bomb,
-    Explosion,
-    PowerUp,
-    Empty
-}
-
 public class GridCellContainsObject : ConditionNode {
 
-    public TargetGameObject2D targetGameObject;
+    public TargetGameObject targetGameObject;
     public int gridPositionX;
     public int gridPositionY;
 
@@ -35,46 +21,38 @@ public class GridCellContainsObject : ConditionNode {
     protected override bool CheckConditions() {
         GridSensor2D gridSensor2D = context.gameObject.GetComponent<GridSensor2D>();
         gridSensor2D.LayerMask = (1 << context.gameObject.layer) + 1;
-        SensorPerceiveOutput[,] sensorOutputs = gridSensor2D.Perceive();
+        SensorPerceiveOutput[,] sensorOutputs = gridSensor2D.PerceiveAll();
 
         bool gridContainsTarget = false;
 
-        if (sensorOutputs[gridPositionX, gridPositionY] != null && sensorOutputs[gridPositionX, gridPositionY].HasHit) {
-            foreach (GameObject obj in sensorOutputs[gridPositionX, gridPositionY].HitGameObjects) {
-                switch (targetGameObject) {
-                    case TargetGameObject2D.Agent:
-                        if (obj.GetComponent<BombermanAgentComponent>() != null) {
-                            gridContainsTarget = true;
-                        }
-                        break;
-                    case TargetGameObject2D.Indestructible:
-                        if (obj.name.Contains("Indestructable")) {
-                            gridContainsTarget = true;
-                        }
-                        break;
-                    case TargetGameObject2D.Destructible:
-                        if (obj.name.Contains("Destructable")) {
-                            gridContainsTarget = true;
-                        }
-                        break;
-                    case TargetGameObject2D.Bomb:
-                        if (obj.name.Contains("Bomb")) {
-                            gridContainsTarget = true;
-                        }
-                        break;
-                    case TargetGameObject2D.Explosion:
-                        if (obj.name.Contains("Explosion")) {
-                            gridContainsTarget = true;
-                        }
-                        break;
+        if (sensorOutputs[gridPositionX, gridPositionY] != null && sensorOutputs[gridPositionX, gridPositionY].HasHit)
+        {
+            foreach (GameObject obj in sensorOutputs[gridPositionX, gridPositionY].HitGameObjects)
+            {
+                if (obj.tag.Contains(RayHitObject.TargetGameObjectsToString(targetGameObject))){
+                    gridContainsTarget = true;
                 }
             }
         }
-        else if (targetGameObject == TargetGameObject2D.Empty) {
+        else if (targetGameObject == TargetGameObject.Empty)
+        {
             gridContainsTarget = true;
         }
 
         return gridContainsTarget;
 
+    }
+
+    public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviourTree tree) {
+        // Create node
+        GridCellContainsObject gridCellContainsObjectNode = new GridCellContainsObject();
+
+        // Set node properties
+        gridCellContainsObjectNode.targetGameObject = (TargetGameObject)int.Parse(behaviourTreeNodeDef.node_properties["targetGameObject"]);
+        gridCellContainsObjectNode.gridPositionX = int.Parse(behaviourTreeNodeDef.node_properties["gridPositionX"]);
+        gridCellContainsObjectNode.gridPositionY = int.Parse(behaviourTreeNodeDef.node_properties["gridPositionY"]);
+
+        tree.nodes.Add(gridCellContainsObjectNode);
+        return gridCellContainsObjectNode;
     }
 }

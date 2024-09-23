@@ -21,4 +21,15 @@ public class PlaceBomb : ActionNode {
 
         return State.Success;
     }
+
+    public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviourTree tree) {
+        // Create node
+        PlaceBomb placeBombNode = new PlaceBomb();
+
+        // Set node properties
+        placeBombNode.placeBomb = int.Parse(behaviourTreeNodeDef.node_properties["placeBomb"]);
+
+        tree.nodes.Add(placeBombNode);
+        return placeBombNode;
+    }
 }

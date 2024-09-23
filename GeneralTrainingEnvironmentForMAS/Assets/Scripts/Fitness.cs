@@ -36,12 +36,14 @@ public class Fitness {
     public virtual void UpdateFitness(float value, string keyValue) {
         this.Value += value;
 
-        // Update individual values
-        if (IndividualValues.ContainsKey(keyValue)) {
-            IndividualValues[keyValue] += value;
-        }
-        else {
-            IndividualValues.Add(keyValue, value);
+        if (value != 0) {
+            // Update individual values
+            if (IndividualValues.ContainsKey(keyValue)) {
+                IndividualValues[keyValue] += value;
+            }
+            else {
+                IndividualValues.Add(keyValue, value);
+            }
         }
     }
 }

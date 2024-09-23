@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DodgeballEnvironmentController : EnvironmentControllerBase {
 
-    public override void UpdateAgents() {
+    public override void UpdateAgents(bool updateBTs) {
         
     }
 }

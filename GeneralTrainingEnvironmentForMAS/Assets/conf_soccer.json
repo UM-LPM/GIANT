@@ -1,0 +1,51 @@
+{
+				"AutoStart": true,
+				"ProblemDomain": "Soccer",
+				"StartURI": "http://localhost:4444/",
+				"BtSource": "SoccerBts",
+				"TimeScale": 5,
+				"FixedTimeStep": 0.02,
+				"RerunTimes": 1,
+				"InitialSeed": 963852,
+				"Render": true,
+				"RandomSeedMode": 1,
+				"SimulationSteps": 10000,
+				"SimulationTime": 0,
+				"IncludeEncapsulatedNodesToFreqCount": false,
+				"GameScenarios": [
+					{"GameSceneName": "SoccerGameScene"}
+					
+				],
+				"AgentScenarios": [
+					{
+						"AgentSceneName": "SoccerAgentScene1", 
+						"BTLoadMode": 0,
+						"GameScenarios": [
+							{"GameSceneName": "SoccerGameScene"}
+						]
+					}
+				],
+				"ProblemConfiguration": {
+					"DecisionRequestInterval": 2,
+					"AgentRunSpeed": 2,
+					"AgentRotationSpeed": 100,
+					"KickPower": 1500,
+					"GameScenarioType": 1,
+					"PassTolerance": 0.4
+				},
+				"FitnessValues": 
+				{ 
+					"GoalScored": -100,
+					"GoalReceived": 100,
+					"AutoGoal": 150,
+					"PassToOponentGoal": -5,
+					"PassToOwnGoal": -1,
+					"Pass": -2,
+					"TouchOtherAgent": 5,
+					"PositionCloseToBall": 1,
+					"WallTouch": 1,
+					"GoalTouch": 1,
+					"Move": -1,
+					"LookBall": -1
+				}
+			}

@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using UnityEngine.Serialization;
 using UnityEngine;
 using UnityEngine.Windows;
+using Unity.Collections;
+using Unity.Jobs;
 
 public abstract class RaySensorBase : Sensor<SensorPerceiveOutput[]> {
 
@@ -29,16 +31,142 @@ public abstract class RaySensorBase : Sensor<SensorPerceiveOutput[]> {
     [Tooltip("Length of the rays to cast.")]
     [SerializeField] float RayLength;
 
+    RayPerceptionInput input;
+    SensorPerceiveOutput[] rayOutputs;
+
     public RaySensorBase(string name) : base(name) { }
 
-    public override SensorPerceiveOutput[] Perceive() {
-        RayPerceptionInput input = GetRayPerceptionInput();
-        //RayPerceptionOutput output = new RayPerceptionOutput();
-        //output.RayOutputs = new RayPerceptionOutput.RayOutput[input.Angles.Count];
+    public void SetLayerMask(int layerMask)
+    {
+        LayerMask = layerMask;
+        input.LayerMask = LayerMask;
+    }
 
-        SensorPerceiveOutput[] rayOutputs = new SensorPerceiveOutput[input.Angles.Count];
+    public override SensorPerceiveOutput[] PerceiveAll()
+    {
+        ResetRayOutputs();
 
+        // Option 1: Perceive all rays in a single thread
         for (var rayIndex = 0; rayIndex < input.Angles.Count; rayIndex++) {
+            rayOutputs[rayIndex] = PerceiveSingleRay(input, rayIndex);
+        }
+
+        // Option 2: Perceive all rays in a batch job
+        /*var results = new NativeArray<RaycastHit>(input.Angles.Count, Allocator.TempJob);
+        var commands = new NativeArray<SpherecastCommand>(input.Angles.Count, Allocator.TempJob);
+
+        for (var rayIndex = 0; rayIndex < input.Angles.Count; rayIndex++)
+        {
+            var unscaledRayLength = input.RayLength;
+            var unscaledCastRadius = input.CastRadius;
+
+            var extents = input.RayExtents(rayIndex);
+            var startPositionWorld = extents.StartPositionWorld;
+            var endPositionWorld = extents.EndPositionWorld;
+
+            var rayDirection = endPositionWorld - startPositionWorld;
+            var scaledRayLength = rayDirection.magnitude;
+            // Avoid 0/0 if unscaledRayLength is 0
+            var scaledCastRadius = unscaledRayLength > 0 ?
+                unscaledCastRadius * scaledRayLength / unscaledRayLength :
+                unscaledCastRadius;
+
+            QueryParameters queryParameters = new QueryParameters
+            {
+                layerMask = input.LayerMask,
+                hitTriggers = QueryTriggerInteraction.Ignore,
+            };
+
+            commands[rayIndex] = new SpherecastCommand(startPositionWorld, scaledCastRadius, rayDirection, queryParameters, scaledRayLength);
+        }
+
+        // Execute batch 
+        JobHandle jobHandle = SpherecastCommand.ScheduleBatch(commands, results, 1, 1, default(JobHandle));
+        
+        // Wait for the batch to complete
+        jobHandle.Complete();
+
+        // Process the results
+        for (var rayIndex = 0; rayIndex < input.Angles.Count; rayIndex++)
+        {
+            var rayHit = results[rayIndex];
+            var castHit = rayHit.collider != null;
+            var hitFraction = castHit ? (rayHit.distance / input.RayLength) : 1.0f;
+            var hitObject = castHit ? rayHit.collider.gameObject : null;
+
+            SensorPerceiveOutput rayOutput = new SensorPerceiveOutput
+            {
+                HasHit = castHit,
+                HitFraction = hitFraction,
+                HasHitTaggedObject = false,
+                HitTagIndex = -1,
+                HitGameObjects = new GameObject[] { hitObject },
+                StartPositionWorld = commands[rayIndex].origin,
+                EndPositionWorld = commands[rayIndex].origin + commands[rayIndex].direction * hitFraction * input.RayLength,
+                //ScaledCastRadius = scaledCastRadius
+            };
+
+            if (castHit)
+            {
+                // Find the index of the tag of the object that was hit.
+                var numTags = input.DetectableTags?.Count ?? 0;
+                for (var i = 0; i < numTags; i++)
+                {
+                    var tagsEqual = false;
+                    try
+                    {
+                        var tag = input.DetectableTags[i];
+                        if (!string.IsNullOrEmpty(tag))
+                        {
+                            tagsEqual = hitObject.CompareTag(tag);
+                        }
+                    }
+                    catch (UnityException)
+                    {
+                        // If the tag is null, empty, or not a valid tag, just ignore it.
+                    }
+
+                    if (tagsEqual)
+                    {
+                        rayOutput.HasHitTaggedObject = true;
+                        rayOutput.HitTagIndex = i;
+                        break;
+                    }
+                }
+            }
+
+            rayOutputs[rayIndex] = rayOutput;
+        }  
+        
+        results.Dispose();
+        commands.Dispose();*/
+
+        return rayOutputs;
+    }
+
+    public override SensorPerceiveOutput[] PerceiveSingle(int xPos = -1, int yPos = -1, int zPos = -1)
+    {
+        ResetRayOutputs();
+
+        if (xPos == -1)
+            throw new ArgumentException("RaySensorBase.Perceive(): xPos must be set to a valid value");
+
+        rayOutputs[xPos] = PerceiveSingleRay(input, xPos);
+
+        return rayOutputs;
+    }
+
+    public override SensorPerceiveOutput[] PerceiveRange(int startIndex = -1, int endIndex = -1)
+    {
+        ResetRayOutputs();
+
+        if (startIndex == -1 || endIndex == -1 || endIndex > input.Angles.Count) {
+            throw new ArgumentException("RaySensorBase.Perceive(): startIndex and endIndex must be set to valid values");
+        }
+
+        // Option 1: Perceive all rays in a single thread
+        for (var rayIndex = 0; rayIndex < endIndex; rayIndex++)
+        {
             rayOutputs[rayIndex] = PerceiveSingleRay(input, rayIndex);
         }
 
@@ -107,7 +235,6 @@ public abstract class RaySensorBase : Sensor<SensorPerceiveOutput[]> {
             HitGameObjects = new GameObject[] { hitObject },
             StartPositionWorld = startPositionWorld,
             EndPositionWorld = endPositionWorld,
-            //ScaledCastRadius = scaledCastRadius
         };
 
         if (castHit) {
@@ -136,6 +263,22 @@ public abstract class RaySensorBase : Sensor<SensorPerceiveOutput[]> {
 
         return rayOutput;
     }
+
+    public override void Init()
+    {
+        input = GetRayPerceptionInput();
+        rayOutputs = new SensorPerceiveOutput[input.Angles.Count];
+    }
+
+    public void ResetRayOutputs()
+    {
+        for (int i = 0; i < rayOutputs.Length; i++)
+        {
+            rayOutputs[i] = null;
+        }
+    }
+
+
 
     public RayPerceptionInput GetRayPerceptionInput() {
         var rayAngles = GetRayAngles(RaysPerDirection, MaxRayDegrees);

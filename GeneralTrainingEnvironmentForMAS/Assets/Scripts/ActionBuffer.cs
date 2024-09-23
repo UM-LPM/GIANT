@@ -14,4 +14,26 @@ public class ActionBuffer {
         DiscreteActions = discreteActions;
     }
 
+    public void ResetActions()
+    {
+        ResetContinuousActions();
+        ResetDiscreteActions();
+    }
+
+    public void ResetContinuousActions()
+    {
+        for (int i = 0; i < ContinuousActions.Length; i++)
+        {
+            ContinuousActions[i] = 0;
+        }
+    }
+
+    public void ResetDiscreteActions()
+    {
+        for (int i = 0; i < DiscreteActions.Length; i++)
+        {
+            DiscreteActions[i] = 0;
+        }
+    }
+
 }

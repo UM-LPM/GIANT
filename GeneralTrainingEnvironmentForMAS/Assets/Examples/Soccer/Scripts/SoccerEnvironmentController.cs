@@ -1,3 +1,4 @@
+using Collector;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +23,7 @@ public class SoccerEnvironmentController : EnvironmentControllerBase {
     GoalComponent GoalPurple;
     GoalComponent GoalBlue;
 
-    protected override void DefineAdditionalDataOnAwake() {
+    protected override void DefineAdditionalDataOnPostAwake() {
         SoccerBall = GetComponentInChildren<SoccerBallComponent>();
 
         if (SceneLoadMode == SceneLoadMode.LayerMode) {
@@ -33,13 +34,15 @@ public class SoccerEnvironmentController : EnvironmentControllerBase {
             GoalBlue = GetComponentsInChildren<GoalComponent>().Where(a => a.Team == Team.Blue).First();
             GoalPurple = GetComponentsInChildren<GoalComponent>().Where(a => a.Team == Team.Purple).First();
         }
+
+        ReadParamsFromMainConfiguration();
     }
 
     protected override void OnUpdate() {
         OnGameInput();
     }
 
-    public override void UpdateAgents() {
+    public override void UpdateAgents(bool updateBTs) {
         if (ManualAgentControl) {
             MoveAgentsManualInput(Agents);
         }
@@ -52,6 +55,47 @@ public class SoccerEnvironmentController : EnvironmentControllerBase {
         }
         else {
             UpdateAgentsWithBTs(AgentsPredefinedBehaviour);
+        }
+    }
+
+    void ReadParamsFromMainConfiguration()
+    {
+        if (MenuManager.Instance != null && MenuManager.Instance.MainConfiguration != null)
+        {
+            MainConfiguration conf = MenuManager.Instance.MainConfiguration;
+
+            SoccerFitness.FitnessValues = conf.FitnessValues;
+
+            if (conf.ProblemConfiguration.ContainsKey("DecisionRequestInterval"))
+            {
+                DecisionRequestInterval = int.Parse(conf.ProblemConfiguration["DecisionRequestInterval"]);
+            }
+
+            if (conf.ProblemConfiguration.ContainsKey("AgentRunSpeed"))
+            {
+                AgentRunSpeed = float.Parse(conf.ProblemConfiguration["AgentRunSpeed"]);
+            }
+
+            if (conf.ProblemConfiguration.ContainsKey("AgentRotationSpeed"))
+            {
+                AgentRotationSpeed = float.Parse(conf.ProblemConfiguration["AgentRotationSpeed"]);
+            }
+
+            if (conf.ProblemConfiguration.ContainsKey("KickPower"))
+            {
+                KickPower = float.Parse(conf.ProblemConfiguration["KickPower"]);
+            }
+
+            if (conf.ProblemConfiguration.ContainsKey("GameScenarioType"))
+            {
+                GameScenarioType = (SoccerGameScenarioType)int.Parse(conf.ProblemConfiguration["GameScenarioType"]);
+            }
+
+            if (conf.ProblemConfiguration.ContainsKey("PassTolerance"))
+            {
+                PassTolerance = float.Parse(conf.ProblemConfiguration["PassTolerance"]);
+            }
+
         }
     }
 

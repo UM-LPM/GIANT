@@ -23,7 +23,7 @@ public class GridSensor2D : Sensor<SensorPerceiveOutput[,]> {
 
     }
 
-    public override SensorPerceiveOutput[,] Perceive() {
+    public override SensorPerceiveOutput[,] PerceiveAll() {
         Vector2 agentPos = DiscretizeGridPos? new Vector2(CustomRound(transform.position.x), CustomRound(transform.position.y)) : transform.position;
         SensorPerceiveOutputs = new SensorPerceiveOutput[GridSize.x, GridSize.y];
 
@@ -50,9 +50,24 @@ public class GridSensor2D : Sensor<SensorPerceiveOutput[,]> {
         return SensorPerceiveOutputs;
     }
 
+    public override SensorPerceiveOutput[,] PerceiveSingle(int xPos = -1, int yPos = -1, int zPos = -1)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override SensorPerceiveOutput[,] PerceiveRange(int startIndex = -1, int endIndex = -1)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void Init()
+    {
+
+    }
+
     void OnDrawGizmosSelected() {
         if (DrawGizmos) {
-            Perceive();
+            PerceiveAll();
 
             // Loop through each cell in the SensorPerceiveOutputs
             for (int x = 0; x < GridSize.x; x++) {

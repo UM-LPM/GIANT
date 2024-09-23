@@ -104,6 +104,8 @@ namespace WebAPI.Models {
                     return "61431bba79d7d7843b82bf1de71703f5";
                 case NodeType.Inverter:
                     return "e658b1bd308bc5c429f5a9b404a04943";
+                case NodeType.Encapsulator:
+                    return "88210b6ae4b65bc4f975f7a750c75612";
                 case NodeType.MoveForward:
                     return "1fd1e85f30abba2499f6834e124b1450";
                 case NodeType.MoveSide:
@@ -120,6 +122,12 @@ namespace WebAPI.Models {
                     return "dfab410791810f74995e77be14f491cb";
                 case NodeType.GridCellContainsObject:
                     return "5c69b16a0f5bc7e43adf37e9a2a453dc";
+                case NodeType.HealthLevelBellow:
+                    return "e7005ef9ca3dafc4b86928393e168f40";
+                case NodeType.ShieldLevelBellow:
+                    return "a380d7f9274338e4485e03ec126c5859";
+                case NodeType.AmmoLevelBellow:
+                    return "3541a6a84d600d443a32c4b10ae322a3";
             }
             return "";
         }
@@ -139,6 +147,8 @@ namespace WebAPI.Models {
                     return NodeType.Sequencer;
                 case "Inverter":
                     return NodeType.Inverter;
+                case "Encapsulator":
+                    return NodeType.Encapsulator;
                 case "MoveForward":
                     return NodeType.MoveForward;
                 case "MoveSide":
@@ -155,6 +165,12 @@ namespace WebAPI.Models {
                     return NodeType.PlaceBomb;
                 case "GridCellContainsObject":
                     return NodeType.GridCellContainsObject;
+                case "HealthLevelBellow":
+                    return NodeType.HealthLevelBellow;
+                case "ShieldLevelBellow":
+                    return NodeType.ShieldLevelBellow;
+                case "AmmoLevelBellow":
+                    return NodeType.AmmoLevelBellow;
             }
 
             throw new Exception("Invalid NodeTypeString");
@@ -171,6 +187,8 @@ namespace WebAPI.Models {
                     return "Sequencer";
                 case NodeType.Inverter:
                     return "Inverter";
+                case NodeType.Encapsulator:
+                    return "Encapsulator";
                 case NodeType.MoveForward:
                     return "MoveForward";
                 case NodeType.MoveSide:
@@ -179,6 +197,12 @@ namespace WebAPI.Models {
                     return "Rotate";
                 case NodeType.RayHitObject:
                     return "RayHitObject";
+                case NodeType.HealthLevelBellow:
+                    return "HealthLevelBellow";
+                case NodeType.ShieldLevelBellow:
+                    return "ShieldLevelBellow";
+                case NodeType.AmmoLevelBellow:
+                    return "AmmoLevelBellow";
             }
             throw new Exception("Invalid NodeType");
         }

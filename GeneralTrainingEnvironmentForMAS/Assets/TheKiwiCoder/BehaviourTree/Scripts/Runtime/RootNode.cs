@@ -24,5 +24,19 @@ namespace TheKiwiCoder {
             node.child = child.Clone();
             return node;
         }
+
+        public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviourTree tree) {
+            // Create node
+            RootNode rootNode = new RootNode();
+            
+            // Find the child node
+            BehaviourTreeNodeDef childNodeDef = behaviourTreeNodeDefs.Find(def => def.m_fileID == behaviourTreeNodeDef.child.fileID);
+            
+            // Set node properties
+            rootNode.child = Node.CreateNodeTreeFromBehaviourTreeNodeDef(childNodeDef, behaviourTreeNodeDefs, tree);
+
+            tree.nodes.Add(rootNode);
+            return rootNode;
+        }
     }
 }

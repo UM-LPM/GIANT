@@ -50,13 +50,13 @@ public class VisionSensor : Sensor<SensorPerceiveOutput[]> {
             scanTimer -= Time.fixedDeltaTime;
             if (scanTimer < 0) {
                 scanTimer += scanInterval;
-                Perceive();
+                PerceiveAll();
             }
         }
     }
 
 
-    public override SensorPerceiveOutput[] Perceive() {
+    public override SensorPerceiveOutput[] PerceiveAll() {
         if (ScanFrequency <= 0) {
             List<SensorPerceiveOutput> outputs = new List<SensorPerceiveOutput>();
 
@@ -78,6 +78,16 @@ public class VisionSensor : Sensor<SensorPerceiveOutput[]> {
         }
 
         return SensorPerceiveOutputs == null ? new SensorPerceiveOutput[0] : SensorPerceiveOutputs.ToArray();
+    }
+
+    public override SensorPerceiveOutput[] PerceiveSingle(int xPos = -1, int yPos = -1, int zPos = -1)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override SensorPerceiveOutput[] PerceiveRange(int startIndex = -1, int endIndex = -1)
+    {
+        throw new NotImplementedException();
     }
 
     bool IsInSight(GameObject obj) {
@@ -192,9 +202,14 @@ public class VisionSensor : Sensor<SensorPerceiveOutput[]> {
         meshCollider.isTrigger = true;
     }
 
+    public override void Init()
+    {
+
+    }
+
     private void OnDrawGizmosSelected() {
         if (DrawGizmos) {
-            Perceive();
+            PerceiveAll();
             if (mesh) {
                 Gizmos.color = BaseSensorColor;
                 Gizmos.DrawMesh(mesh, transform.position, transform.rotation);

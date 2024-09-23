@@ -5,6 +5,7 @@
         Selector,
         Sequencer,
         Inverter,
+        Encapsulator,
         MoveForward,
         MoveSide,
         Rotate,
@@ -12,6 +13,10 @@
         Shoot,
         PlaceBomb,
         RayHitObject,
-        GridCellContainsObject
+        GridCellContainsObject,
+        HealthLevelBellow,
+        ShieldLevelBellow,
+        AmmoLevelBellow,
+
     }
 }

@@ -21,5 +21,15 @@ public abstract class Sensor<T> : MonoBehaviour {
         Name = name;
     }
 
-    public abstract T Perceive();
+    public abstract T PerceiveAll();
+    public abstract T PerceiveSingle(int xPos = -1, int yPos = -1, int zPos = -1);
+
+    public abstract T PerceiveRange(int startIndex = -1, int endIndex = -1);
+
+    public abstract void Init();
+
+    private void Awake()
+    {
+        Init();
+    }
 }

@@ -41,11 +41,18 @@ namespace TheKiwiCoder {
             return children;
         }
 
-        public static void Traverse(Node node, System.Action<Node> visiter) {
+        public static void Traverse(Node node, System.Action<Node> visiter, bool includeEncapsulatedNodes = true) {
             if (node) {
                 visiter.Invoke(node);
+
+                // If the node is an encapsulator, we don't want to traverse its children // TODO Control this with a parameter
+                if (node is Encapsulator && !includeEncapsulatedNodes)
+                {
+                    return;
+                }
+
                 var children = GetChildren(node);
-                children.ForEach((n) => Traverse(n, visiter));
+                children.ForEach((n) => Traverse(n, visiter, includeEncapsulatedNodes));
             }
         }
 
@@ -79,6 +86,28 @@ namespace TheKiwiCoder {
         public void UpdateTree(in ActionBuffer actionsOut) {
             blackboard.actionsOut = actionsOut;
             Update();
+        }
+
+        public void InitNodeCallFrequencyCounter()
+        {
+            Traverse(rootNode, (node) =>
+            {
+                node.callFrequencyCount = 0;
+            });
+        }
+
+        public int[] GetNodeCallFrequencies(bool includeEncapsulatedNodes)
+        {
+            List<int> callFrequencies = new List<int>();
+            Traverse(rootNode, (node) =>
+            {
+                callFrequencies.Add(node.callFrequencyCount);
+            }, includeEncapsulatedNodes);
+
+            // Remove first two elements (root and first child (Repeat))
+            callFrequencies.RemoveRange(0, 2);
+
+            return callFrequencies.ToArray();
         }
 
         #region Editor Compatibility

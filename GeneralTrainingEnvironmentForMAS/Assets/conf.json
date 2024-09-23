@@ -1,0 +1,79 @@
+{
+				"AutoStart": true,
+				"ProblemDomain": "Robostrike",
+				"StartURI": "http://localhost:4444/",
+				"BtSource": "RobostrikeBts",
+				"TimeScale": 2,
+				"FixedTimeStep": 0.04,
+				"RerunTimes": 1,
+				"InitialSeed": 963852,
+				"Render": false,
+				"RandomSeedMode": 1,
+				"SimulationSteps": 4000,
+				"SimulationTime": 0,
+				"GameScenarios": [
+					{"GameSceneName": "RobostrikeGameScene1"},
+					{"GameSceneName": "RobostrikeGameScene2"},
+					{"GameSceneName": "RobostrikeGameScene3"},
+					{"GameSceneName": "RobostrikeGameScene4"},
+					{"GameSceneName": "RobostrikeGameScene5"}
+				],
+				"AgentScenarios": [
+					{
+						"AgentSceneName": "RobostrikeAgentScene2", 
+						"BTLoadMode": 1,
+						"GameScenarios": [
+							{"GameSceneName": "RobostrikeGameScene5"}
+						]
+					}
+				],
+				"ProblemConfiguration": {
+					"ArenaSizeX": 500,
+					"ArenaSizeZ": 500,
+					"ArenaOffset": 4.0,
+					"AgentAimFitnessUpdateInterval": 4,
+					"AgentMoveFitnessMinDistance": 4,
+					"AgentMoveFitnessUpdateInterval": 5,
+					"AgentNearWallUpdateInterval": 6,
+					"AgentMoveSpeed": 10,
+					"AgentRespawnType": 1,
+					"AgentRotationSpeed": 150,
+					"AgentStartAmmo": 10,
+					"AgentStartHealth": 10,
+					"AgentStartShield": 0,
+					"AgentTurrentRotationSpeed": 1,
+					"AmmoBoxSpawnAmount": 100,
+					"AmmoPowerUpValue": 10,
+					"DestroyMissileAfter": 1,
+					"GameMode": 1,
+					"GameScenarioType": 1,
+					"HealthBoxSpawnAmount": 100,
+					"HealthPowerUpValue": 5,
+					"MaxAmmo": 20,
+					"MaxHealth": 10,
+					"MaxShield": 10,
+					"MinPowerUpDistance": 8,
+					"MissileDamage": 2,
+					"MissileShootCooldown": 1,
+					"MissleLaunchSpeed": 15,
+					"ShieldBoxSpawnAmount": 100,
+					"ShieldPowerUpValue": 5
+				},
+				"FitnessValues": 
+				{ 
+					"MissileHitAgent": -5,
+					"AgentHitByRocket": 5,
+					"MissileMissedAgent": 1,
+					"SurvivalBonus": -50,
+					"LastSurvivalBonus": -30,
+					"DeathPenalty": 20,
+					"AgentDestroyedBonus": -25,
+					"AgentMovedBonus": -2,
+					"AgentAimingOpponent": -1,
+					"AgentFiredMissile": -1,
+					"AgentNearWall": 1,
+					"AgentPickedUpHealthBoxPowerUp": -2,
+					"AgentPickedUpShieldBoxPowerUp": -2,
+					"AgentPickedUpAmmoBoxPowerUp": -4
+				}
+			}

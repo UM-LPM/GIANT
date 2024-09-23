@@ -1,0 +1,52 @@
+{
+				"AutoStart": true,
+				"ProblemDomain": "Collector",
+				"StartURI": "http://localhost:4444/",
+				"BtSource": "CollectorBts",
+				"TimeScale": 5,
+				"FixedTimeStep": 0.02,
+				"RerunTimes": 1,
+				"InitialSeed": 963852,
+				"Render": true,
+				"RandomSeedMode": 1,
+				"SimulationSteps": 10000,
+				"SimulationTime": 0,
+				"IncludeEncapsulatedNodesToFreqCount": false,
+				"GameScenarios": [
+					{"GameSceneName": "CollectorGameScene1"}
+					
+				],
+				"AgentScenarios": [
+					{
+						"AgentSceneName": "CollectorAgentScene", 
+						"BTLoadMode": 0,
+						"GameScenarios": [
+							{"GameSceneName": "CollectorGameScene1"}
+						]
+					}
+				],
+				"ProblemConfiguration": {
+					"DecisionRequestInterval": 2,
+					"ArenaRadius": 18,
+					"ArenaOffset": 0.0,
+					"AgentMoveSpeed": 10,
+					"AgentRotationSpeed": 180,
+					"GameMode": 1,
+					"StartNumberOfTargets": 1,
+					"TargetMinDistanceFromAgents": 10,
+					"TargetToTargetMinDistance": 10
+				},
+				"FitnessValues": 
+				{ 
+					"AgentPickedTarget": -50,
+					"AgentExploredSector": -3,
+					"AgentReExploredSector": -1,
+					"AgentNearTarget": -2,
+					"AgentSpottedTarget": -2,
+					"AgentsBtContainsMainObject": -5,
+					"AgentTouchedStaticObject": 5,
+					"AgentBTNodePenalty": 1,
+					"AgentNotMoved": 0,
+					"TimePassedPenalty": 0
+				}
+			}

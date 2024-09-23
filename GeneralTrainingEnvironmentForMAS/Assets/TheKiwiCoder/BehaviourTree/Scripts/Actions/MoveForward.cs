@@ -15,9 +15,9 @@ public class MoveForward : ActionNode {
 
     public MoveForwardDirection moveForwardDirection = MoveForwardDirection.Random;
     
-    private Util util;
+    private Util Util;
     protected override void OnStart() {
-        util = this.context.gameObject.GetComponentInParent<Util>();
+        Util = context.gameObject.GetComponentInParent<Util>();
     }
 
     protected override void OnStop() {
@@ -25,9 +25,20 @@ public class MoveForward : ActionNode {
 
     protected override State OnUpdate() {
         var discreteActionsOut = blackboard.actionsOut.DiscreteActions;
-        discreteActionsOut[0] = moveForwardDirection == MoveForwardDirection.Random ? this.util.rnd.Next(3) : (int)moveForwardDirection;
+        discreteActionsOut[0] = moveForwardDirection == MoveForwardDirection.Random ? Util.NextIntBt(3) : (int)moveForwardDirection;
 
         return State.Success;
+    }
+
+    public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviourTree tree) {
+        // Create node
+        MoveForward moveForwardNode = new MoveForward();
+
+        // Set node properties
+        moveForwardNode.moveForwardDirection = (MoveForwardDirection)int.Parse(behaviourTreeNodeDef.node_properties["moveForwardDirection"]);
+
+        tree.nodes.Add(moveForwardNode);
+        return moveForwardNode;
     }
 }
 

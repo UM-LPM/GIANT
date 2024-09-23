@@ -5,14 +5,14 @@ using UnityEngine;
 
 public class SoccerFitness : Fitness
 {
-    public static Dictionary<string, int> FitnessValues = new Dictionary<string, int> {
+    public static Dictionary<string, float> FitnessValues = new Dictionary<string, float> {
         { "GoalScored", -30 },
         { "GoalReceived", 20 },
         { "AutoGoal", 35 },
         { "PassToOponentGoal", -2 },
         { "PassToOwnGoal", 1 },
         { "Pass", -1 },
-        // TODO Include
+        // Include ???
         { "TouchOtherAgent", 2 },
         { "PositionCloseToBall", -1 },
         { "WallTouch", 2 },

@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿#if UNITY_EDITOR
+using UnityEditor;
 using UnityEngine;
 
 [CustomEditor(typeof(CameraSensor))]
@@ -44,3 +45,4 @@ public class CameraSensorEditor : Editor {
 
 
 }
+#endif

@@ -1,7 +1,5 @@
-﻿using UnityEditorInternal;
+﻿using System;
 using UnityEngine;
-using UnityEngine.Rendering;
-using UnityEngine.Timeline;
 
 public class CameraSensor : Sensor<Texture> {
 
@@ -17,7 +15,7 @@ public class CameraSensor : Sensor<Texture> {
 
     public CameraSensor() : base("Camera Sensor") { }
 
-    public override Texture Perceive() {
+    public override Texture PerceiveAll() {
         Texture = new Texture2D(Width, Height, TextureFormat.RGB24, false);
         Camera.cullingMask = LayerMask;
 
@@ -52,6 +50,16 @@ public class CameraSensor : Sensor<Texture> {
         return Texture;
     }
 
+    public override Texture PerceiveSingle(int xPos = -1, int yPos = -1, int zPos = -1)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override Texture PerceiveRange(int startIndex = -1, int endIndex = -1)
+    {
+        throw new NotImplementedException();
+    }
+
 
     private Texture2D Resize(Texture2D source, int newWidth, int newHeight) {
         source.filterMode = FilterMode.Bilinear;
@@ -79,9 +87,14 @@ public class CameraSensor : Sensor<Texture> {
         return texture;
     }
 
+    public override void Init()
+    {
+
+    }
+
     private void OnDrawGizmosSelected() {
         if(DrawGizmos) {
-            Perceive();
+            PerceiveAll();
         }
     }
 }
