@@ -9,20 +9,16 @@ namespace Collector
     public class CollectorFitness : Fitness
     {
         public static Dictionary<string, float> FitnessValues = new Dictionary<string, float> {
-        { "AgentPickedTarget", -5f }, // Implemented
-        { "AgentExploredSector", -0.03f }, // Implemented
-        { "AgentReExploredSector", -0.002f }, // Implemented
-        { "AgentNearTarget", -0.2f }, // Implemented
-        { "AgentSpottedTarget", -0.02f }, // Implemented
-        { "AgentsBtContainsMainObject", -0.2f }, // Implemented
-        { "AgentTouchedStaticObject", 0.1f }, // Implemented
-        { "AgentBTNodePenalty", 0.01f }, // Implemented
-
-
-        { "AgentNotMoved", 0f }, //0.5f },
-        //{ "AgentTouchedStaticObject", 0f }, //0.05f },
-        //{ "AgentNearTarget", 0f }, //-1 },
-        { "TimePassedPenalty", 0f }, //0.001f },
+        { "AgentPickedTarget", -50f },
+        { "AgentExploredSector", -3f },
+        { "AgentReExploredSector", -1f },
+        { "AgentNearTarget", -2f },
+        { "AgentSpottedTarget", -2f },
+        { "AgentsBtContainsMainObject", -5f },
+        { "AgentTouchedStaticObject", 5f },
+        { "AgentBTNodePenalty", 1f },
+        { "AgentNotMoved", 0f },
+        { "TimePassedPenalty", 0f },
     };
 
         public static string[] Keys = FitnessValues.Keys.ToArray();

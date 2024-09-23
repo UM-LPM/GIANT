@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 
 public class BombermanFitness : Fitness {
 
-    public static Dictionary<string, int> FitnessValues = new Dictionary<string, int> {
+    public static Dictionary<string, float> FitnessValues = new Dictionary<string, float> {
         { "AgentMove", -1 },
         { "BombPlaced", -5 },
         { "BlockDestroyed", -2 },
-        { "PowerUpCollected", -3 },
+        { "PowerUpCollected", -5 },
         { "AgentHitByBomb", 20 },
         { "AgentHitByOwnBomb", 30 },
-        { "AgentHealthZero", 10 },
+        { "AgentHealthZero", 100 },
         { "BombHitAgent", -10 },
-        { "AgentKilled", -20 },
+        { "AgentKilled", -100},
         { "SurvivalBonus", -8 },
         { "LastSurvivalBonus", -10 }
     };

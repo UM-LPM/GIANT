@@ -432,6 +432,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69b8e2d92dc5e0b489cb8cfea5c4f8f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GameType: 1
   SimulationSteps: 3000
   SimulationTime: 0
   IndividualId: 0
@@ -441,17 +442,19 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   Environment: {fileID: 1214270036}
+  IncludeEncapsulatedNodesToFreqCount: 0
   RandomAgentInitialization: 0
   AgentPrefab: {fileID: 0}
   ArenaSize: {x: 0, y: 0, z: 0}
   ArenaRadius: 0
   ArenaCenterPoint: {x: 0, y: 0, z: 0}
   ArenaOffset: 3
-  MinPlayerDistance: 3
-  AgentColliderExtendsMultiplier: 0.495
+  MinAgentDistance: 3
+  AgentColliderExtendsMultiplier: {x: 0.5, y: 0.495, z: 0.505}
   ManualAgentControl: 0
   ManualAgentPredefinedBehaviourControl: 0
   DecisionRequestInterval: 1
+  Util: {fileID: 0}
   ForwardSpeed: 1
   LateralSpeed: 1
   AgentRunSpeed: 2
@@ -475,7 +478,7 @@ GameObject:
   - component: {fileID: 1763614763848186295}
   m_Layer: 0
   m_Name: SoccerBall(Target1)
-  m_TagString: Untagged
+  m_TagString: Object1
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1420,6 +1423,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <HasPredefinedBehaviour>k__BackingField: 1
   <BehaviourTree>k__BackingField: {fileID: 11400000, guid: 977c830b3af960341aa8d119e54a4fa9, type: 2}
+  Team: 1
 --- !u!114 &3342959757993465230
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1434,6 +1438,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <HasPredefinedBehaviour>k__BackingField: 1
   <BehaviourTree>k__BackingField: {fileID: 11400000, guid: 977c830b3af960341aa8d119e54a4fa9, type: 2}
+  Team: 1
 --- !u!114 &3342959758085060732
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1448,6 +1453,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <HasPredefinedBehaviour>k__BackingField: 0
   <BehaviourTree>k__BackingField: {fileID: 0}
+  Team: 0
 --- !u!114 &3342959758340674006
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1462,6 +1468,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <HasPredefinedBehaviour>k__BackingField: 0
   <BehaviourTree>k__BackingField: {fileID: 0}
+  Team: 0
 --- !u!23 &3661584834263949306
 MeshRenderer:
   m_ObjectHideFlags: 0

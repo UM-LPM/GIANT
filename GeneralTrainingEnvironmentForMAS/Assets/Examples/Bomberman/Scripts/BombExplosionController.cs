@@ -95,7 +95,6 @@ public class BombExplosionController : MonoBehaviour {
 
         if (tile != null) {
             DestructibleComponent destructible = Instantiate(DestructiblePrefab, position, Quaternion.identity, transform);
-            destructible.Util = Util;
             EnvironmentControllerBase.SetLayerRecursively(destructible.gameObject, gameObject.layer);
 
             DestructibleTiles.SetTile(cell, null);

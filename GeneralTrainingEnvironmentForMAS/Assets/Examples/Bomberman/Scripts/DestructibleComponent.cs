@@ -6,22 +6,22 @@ using System.Threading.Tasks;
 using UnityEngine;
 
 public class DestructibleComponent : MonoBehaviour {
-    [SerializeField] float DestructionTime = 1f;
-    [Range(0f, 1f)]
-    [SerializeField] float ItemSpawnChance = 0.2f;
-    [SerializeField] GameObject[] SpawnableItems;
+        private BombermanEnvironmentController BombermanEnvironmentController;
 
-    public Util Util { get; set; }
+    private void Awake()
+    {
+        BombermanEnvironmentController = GetComponentInParent<BombermanEnvironmentController>();
+    }
 
     private void Start() {
-        Destroy(gameObject, DestructionTime);
+        Destroy(gameObject, BombermanEnvironmentController.DestructibleDestructionTime);
     }
 
     private void OnDestroy() {
-        // Spawn an item
-        if (SpawnableItems.Length > 0 && Util.NextDouble() < ItemSpawnChance) {
-            int index = Util.NextInt(0, SpawnableItems.Length);
-            GameObject item = Instantiate(SpawnableItems[index], transform.position, Quaternion.identity, transform.parent);
+        // Spawn an item (power up)
+        if (BombermanEnvironmentController.SpawnableItems.Length > 0 && BombermanEnvironmentController.Util.NextDouble() < BombermanEnvironmentController.PowerUpSpawnChance) {
+            int index = BombermanEnvironmentController.Util.NextInt(0, BombermanEnvironmentController.SpawnableItems.Length);
+            GameObject item = Instantiate(BombermanEnvironmentController.SpawnableItems[index], transform.position, Quaternion.identity, transform.parent);
             EnvironmentControllerBase.SetLayerRecursively(item, gameObject.layer);
         }
     }

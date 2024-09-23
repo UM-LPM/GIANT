@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Collector;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,7 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
 
     [Header("Bomberman Agent configuration")]
     [SerializeField] float AgentStartMoveSpeed = 5f;
-    [SerializeField] int StartAgentBombAmout = 1;
+    [SerializeField] int StartAgentBombAmount = 1;
     [SerializeField] int StartExplosionRadius = 1;
     [SerializeField] int StartHealth = 1;
     [SerializeField] public float ExplosionDamageCooldown = 0.8f;
@@ -20,15 +21,73 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
     [SerializeField] public bool DiscreteAgentMovement = true;
     [SerializeField] public float AgentUpdateinterval = 0.1f;
 
+    [Header("Bomberman Game Configuration")]
+    [SerializeField] public float DestructibleDestructionTime = 1f;
+    [Range(0f, 1f)]
+    [SerializeField] public float PowerUpSpawnChance = 0.4f;
+    [SerializeField] public GameObject[] SpawnableItems;
+
     private BombExplosionController BombExplosionController { get; set; }
 
     protected override void DefineAdditionalDataOnPostAwake() {
+        ReadParamsFromMainConfiguration();
+
         BombExplosionController = GetComponent<BombExplosionController>();
     }
 
     protected override void DefineAdditionalDataOnPostStart() {
         SetAgentDefaultParams(Agents);
         SetAgentDefaultParams(AgentsPredefinedBehaviour);
+    }
+
+    void ReadParamsFromMainConfiguration()
+    {
+        if (MenuManager.Instance != null && MenuManager.Instance.MainConfiguration != null)
+        {
+            MainConfiguration conf = MenuManager.Instance.MainConfiguration;
+
+            BombermanFitness.FitnessValues = conf.FitnessValues;
+
+            if (conf.ProblemConfiguration.ContainsKey("DecisionRequestInterval"))
+            {
+                DecisionRequestInterval = int.Parse(conf.ProblemConfiguration["DecisionRequestInterval"]);
+            }
+
+            if (conf.ProblemConfiguration.ContainsKey("AgentStartMoveSpeed"))
+            {
+                AgentStartMoveSpeed = float.Parse(conf.ProblemConfiguration["AgentStartMoveSpeed"]);
+            }
+
+            if (conf.ProblemConfiguration.ContainsKey("StartAgentBombAmount"))
+            {
+                StartAgentBombAmount = int.Parse(conf.ProblemConfiguration["StartAgentBombAmount"]);
+            }
+
+            if (conf.ProblemConfiguration.ContainsKey("StartExplosionRadius"))
+            {
+                StartExplosionRadius = int.Parse(conf.ProblemConfiguration["StartExplosionRadius"]);
+            }
+
+            if (conf.ProblemConfiguration.ContainsKey("StartHealth"))
+            {
+                StartHealth = int.Parse(conf.ProblemConfiguration["StartHealth"]);
+            }
+
+            if (conf.ProblemConfiguration.ContainsKey("ExplosionDamageCooldown"))
+            {
+                ExplosionDamageCooldown = float.Parse(conf.ProblemConfiguration["ExplosionDamageCooldown"]);
+            }
+
+            if (conf.ProblemConfiguration.ContainsKey("DestructibleDestructionTime"))
+            {
+                DestructibleDestructionTime = float.Parse(conf.ProblemConfiguration["DestructibleDestructionTime"]);
+            }
+
+            if (conf.ProblemConfiguration.ContainsKey("PowerUpSpawnChance"))
+            {
+                PowerUpSpawnChance = float.Parse(conf.ProblemConfiguration["PowerUpSpawnChance"]);
+            }
+        }
     }
 
     public override void UpdateAgents(bool updateBTs) {
@@ -63,7 +122,7 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
             agent.MoveSpeed = AgentStartMoveSpeed;
             agent.Health = StartHealth;
             agent.ExplosionRadius = StartExplosionRadius;
-            agent.SetBombs(StartAgentBombAmout);
+            agent.SetBombs(StartAgentBombAmount);
             agent.SetDirection(Vector2.zero, agent.SpriteRendererDown);
         }
     }

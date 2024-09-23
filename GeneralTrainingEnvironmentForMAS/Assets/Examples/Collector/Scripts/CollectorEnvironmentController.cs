@@ -30,21 +30,10 @@ namespace Collector
         [SerializeField] float AgentMoveFitnessUpdateInterval = 4f;
         [SerializeField] float AgentMoveFitnessMinDistance = 3f;
 
-        [Header("Collector configuration Agent Near Wall Fitness")]
-        [SerializeField] float AgentNearWallUpdateInterval = 4f;
-        [SerializeField] float AgentNearWallExtends = 0.6f;
-
-        [Header("Collector configuration Agent Near Target Fitness")]
-        [SerializeField] float AgentNearTargetUpdateInterval = 4f;
-        [SerializeField] float AgentNearTargetExtends = 1.5f;
-
         [Header("Collector configuration Collector Game Mode")]
         [SerializeField] CollectorGameMode GameMode = CollectorGameMode.SingleTargetPickup;
 
         float ForwardSpeed = 1f;
-        float NextAgentMoveFitnessUpdate = 0;
-        float NextAgentNearWallFitnessUpdate = 0;
-        float NextAgentNearTargetFitnessUpdate = 0;
 
         protected override void DefineAdditionalDataOnPostAwake()
         {
@@ -89,32 +78,6 @@ namespace Collector
             {
                 UpdateAgentsWithBTs(AgentsPredefinedBehaviour, updateBTs);
             }
-
-            // Update agent near wall fitness
-            /*if (CurrentSimulationTime >= NextAgentNearTargetFitnessUpdate)
-            {
-                UpdateAgentNearTargetFitness(Agents);
-                UpdateAgentNearTargetFitness(AgentsPredefinedBehaviour);
-                NextAgentNearTargetFitnessUpdate += AgentNearTargetUpdateInterval;
-            }*/
-
-            // Update agent move fitness
-            /*if (CurrentSimulationTime >= NextAgentMoveFitnessUpdate)
-            {
-                if (CheckOnlyLastKnownPosition)
-                {
-                    UpdateAgentMoveFitness(Agents);
-                    UpdateAgentMoveFitness(AgentsPredefinedBehaviour);
-                }
-                else
-                {
-                    CheckAgentGloboalMovement(Agents);
-                    CheckAgentGloboalMovement(AgentsPredefinedBehaviour);
-
-                }
-
-                NextAgentMoveFitnessUpdate += AgentMoveFitnessUpdateInterval;
-            }*/
 
             // Time penalty
             //AddTimePenaltyToAgents(Agents);
@@ -335,27 +298,6 @@ namespace Collector
             agent.GetComponent<CollectorAgentComponent>().HitObjects.Clear();
         }
 
-        void UpdateAgentMoveFitness(AgentComponent[] agents)
-        {
-            foreach (CollectorAgentComponent agent in agents)
-            {
-                // Only update agents that are active
-                if (agent.gameObject.activeSelf)
-                {
-                    if (agent.LastKnownPositions != null && agent.LastKnownPositions.Count == 0)
-                    {
-                        float distance = Vector3.Distance(agent.LastKnownPositions[0], agent.transform.position);
-                        if (distance <= AgentMoveFitnessMinDistance)
-                        {
-                            agent.AgentFitness.Fitness.UpdateFitness(CollectorFitness.FitnessValues[CollectorFitness.FitnessKeys.AgentNotMoved.ToString()], CollectorFitness.FitnessKeys.AgentNotMoved.ToString());
-                        }
-                    }
-                    agent.LastKnownPositions[0] = agent.transform.position;
-                }
-            }
-
-        }
-
         public virtual bool TargetSpawnPointSuitable(Vector3 newSpawnPos, Quaternion newRotation)
         {
             Collider[] colliders = Physics.OverlapBox(newSpawnPos, Vector3.one * TargetExtends, newRotation, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)) + DefaultLayer);
@@ -367,41 +309,6 @@ namespace Collector
             return true;
         }
 
-        /*void UpdateAgentNearWallFitness(AgentComponent[] agents) {
-            foreach (CollectorAgentComponent agent in agents) {
-                if (agent.gameObject.activeSelf) {
-                    Collider agentCol = agent.GetComponent<Collider>();
-
-                    Collider[] colliders = Physics.OverlapBox(agent.transform.position, Vector3.one * AgentNearWallExtends, agent.transform.rotation, LayerMask.GetMask(LayerMask.LayerToName(agent.gameObject.layer)) + DefaultLayer);
-                    foreach (Collider col in colliders) {
-                        if (col.gameObject.tag.Contains("Wall") || col.gameObject.tag.Contains("Obstacle")) {
-                            agent.AgentFitness.Fitness.UpdateFitness(CollectorFitness.FitnessValues[CollectorFitness.FitnessKeys.AgentTouchedStaticObject.ToString()], CollectorFitness.FitnessKeys.AgentTouchedStaticObject.ToString());
-                        }
-                    }
-                }
-            }
-        }*/
-
-        /*void UpdateAgentNearTargetFitness(AgentComponent[] agents)
-        {
-            foreach (CollectorAgentComponent agent in agents)
-            {
-                if (agent.gameObject.activeSelf)
-                {
-                    Collider agentCol = agent.GetComponent<Collider>();
-
-                    Collider[] colliders = Physics.OverlapBox(agent.transform.position, Vector3.one * AgentNearTargetExtends, agent.transform.rotation, LayerMask.GetMask(LayerMask.LayerToName(agent.gameObject.layer)) + DefaultLayer);
-                    foreach (Collider col in colliders)
-                    {
-                        if (col.gameObject.tag.Contains("Object1"))
-                        {
-                            agent.AgentFitness.Fitness.UpdateFitness(CollectorFitness.FitnessValues[CollectorFitness.FitnessKeys.AgentNearTarget.ToString()], CollectorFitness.FitnessKeys.AgentNearTarget.ToString());
-                        }
-                    }
-                }
-            }
-        }*/
-
         void AddTimePenaltyToAgents(AgentComponent[] agents)
         {
             foreach (CollectorAgentComponent agent in agents)
@@ -410,27 +317,10 @@ namespace Collector
             }
         }
 
-        public void CheckAgentGloboalMovement(AgentComponent[] agents)
-        {
-            foreach (CollectorAgentComponent agent in agents)
-            {
-                foreach (Vector3 pos in agent.LastKnownPositions)
-                {
-                    if (Vector3.Distance(pos, agent.transform.position) <= AgentMoveFitnessMinDistance)
-                    {
-                        agent.AgentFitness.Fitness.UpdateFitness(CollectorFitness.FitnessValues[CollectorFitness.FitnessKeys.AgentNotMoved.ToString()], CollectorFitness.FitnessKeys.AgentNotMoved.ToString());
-                        break;
-                    }
-                }
-                agent.LastKnownPositions.Add(agent.transform.position);
-            }
-        }
-
         private void RayHitObject_OnTargetHit(object sender, OnTargetHitEventargs e)
         {
             if (e.TargetGameObject.GetComponent<TargetComponent>() != null)
             {
-                //UnityEngine.Debug.Log("AgentSpottedTarget"); // TODO Remove
                 // Update agent fitness
                 e.Agent.AgentFitness.Fitness.UpdateFitness(CollectorFitness.FitnessValues[CollectorFitness.FitnessKeys.AgentSpottedTarget.ToString()], CollectorFitness.FitnessKeys.AgentSpottedTarget.ToString());
             }

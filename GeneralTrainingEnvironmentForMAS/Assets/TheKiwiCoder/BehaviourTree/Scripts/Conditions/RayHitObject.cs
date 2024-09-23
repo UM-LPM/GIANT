@@ -32,7 +32,40 @@ public enum TargetGameObject {
     Object5,
     Object6,
     Object7,
-    Unknown
+    Object8,
+    Object9,
+    Object10,
+    Object11,
+    Object12,
+    Object13,
+    Object14,
+    Object15,
+    Object16,
+    Object17,
+    Object18,
+    Object19,
+    Object20,
+    Object21,
+    Object22,
+    Object23,
+    Object24,
+    Object25,
+    Object26,    
+    Object27,
+    Object28,
+    Object29,
+    Object30,
+    Object31,
+    Object32,
+    Object33,
+    Object34,
+    Object35,
+    Object36,
+    Object37,
+    Object38,
+    Object39,
+    Object40,
+    Empty
 }
 
 public class RayHitObject : ConditionNode {
@@ -66,7 +99,7 @@ public class RayHitObject : ConditionNode {
         //sensorPerceiveOutputs = raySensor.PerceiveAll();
 
         // Option 1 : Check if the target game object is hit by the single ray based on RayIndex
-        if (sensorPerceiveOutputs[rayIndex].HasHit && sensorPerceiveOutputs[rayIndex].HitGameObjects[0].name.Contains(TargetGameObjectsToString(targetGameObject)))
+        if (sensorPerceiveOutputs[rayIndex].HasHit && sensorPerceiveOutputs[rayIndex].HitGameObjects[0].tag.Contains(TargetGameObjectsToString(targetGameObject)))
         {
             targetHit = true;
 
@@ -112,7 +145,8 @@ public class RayHitObject : ConditionNode {
     }
 
     public static string TargetGameObjectsToString(TargetGameObject targetGameObject) {
-        switch (targetGameObject) {
+        switch (targetGameObject)
+        {
             case TargetGameObject.Agent:
                 return "Agent";
             case TargetGameObject.Wall:
@@ -133,12 +167,81 @@ public class RayHitObject : ConditionNode {
                 return "Object6";
             case TargetGameObject.Object7:
                 return "Object7";
+            case TargetGameObject.Object8:
+                return "Object8";
+            case TargetGameObject.Object9:
+                return "Object9";
+            case TargetGameObject.Object10:
+                return "Object10";
+            case TargetGameObject.Object11:
+                return "Object11";
+            case TargetGameObject.Object12:
+                return "Object12";
+            case TargetGameObject.Object13:
+                return "Object13";
+            case TargetGameObject.Object14:
+                return "Object14";
+            case TargetGameObject.Object15:
+                return "Object15";
+            case TargetGameObject.Object16:
+                return "Object16";
+            case TargetGameObject.Object17:
+                return "Object17";
+            case TargetGameObject.Object18:
+                return "Object18";
+            case TargetGameObject.Object19:
+                return "Object19";
+            case TargetGameObject.Object20:
+                return "Object20";
+            case TargetGameObject.Object21:
+                return "Object21";
+            case TargetGameObject.Object22:
+                return "Object22";
+            case TargetGameObject.Object23:
+                return "Object23";
+            case TargetGameObject.Object24:
+                return "Object24";
+            case TargetGameObject.Object25:
+                return "Object25";
+            case TargetGameObject.Object26:
+                return "Object26";
+            case TargetGameObject.Object27:
+                return "Object27";
+            case TargetGameObject.Object28:
+                return "Object28";
+            case TargetGameObject.Object29:
+                return "Object29";
+            case TargetGameObject.Object30:
+                return "Object30";
+            case TargetGameObject.Object31:
+                return "Object31";
+            case TargetGameObject.Object32:
+                return "Object32";
+            case TargetGameObject.Object33:
+                return "Object33";
+            case TargetGameObject.Object34:
+                return "Object34";
+            case TargetGameObject.Object35:
+                return "Object35";
+            case TargetGameObject.Object36:
+                return "Object36";
+            case TargetGameObject.Object37:
+                return "Object37";
+            case TargetGameObject.Object38:
+                return "Object38";
+            case TargetGameObject.Object39:
+                return "Object39";
+            case TargetGameObject.Object40:
+                return "Object40";
+            case TargetGameObject.Empty:
+                return "Empty";
         }
         return "";
     }
 
     public static TargetGameObject TargetGameObjectsFromString(string targetGameObjectString) {
-        switch (targetGameObjectString) {
+        switch (targetGameObjectString)
+        {
             case "Agent":
                 return TargetGameObject.Agent;
             case "Wall":
@@ -159,9 +262,75 @@ public class RayHitObject : ConditionNode {
                 return TargetGameObject.Object6;
             case "Object7":
                 return TargetGameObject.Object7;
+            case "Object8":
+                return TargetGameObject.Object8;
+            case "Object9":
+                return TargetGameObject.Object9;
+            case "Object10":
+                return TargetGameObject.Object10;
+            case "Object11":
+                return TargetGameObject.Object11;
+            case "Object12":
+                return TargetGameObject.Object12;
+            case "Object13":
+                return TargetGameObject.Object13;
+            case "Object14":
+                return TargetGameObject.Object14;
+            case "Object15":
+                return TargetGameObject.Object15;
+            case "Object16":
+                return TargetGameObject.Object16;
+            case "Object17":
+                return TargetGameObject.Object17;
+            case "Object18":
+                return TargetGameObject.Object18;
+            case "Object19":
+                return TargetGameObject.Object19;
+            case "Object20":
+                return TargetGameObject.Object20;
+            case "Object21":
+                return TargetGameObject.Object21;
+            case "Object22":
+                return TargetGameObject.Object22;
+            case "Object23":
+                return TargetGameObject.Object23;
+            case "Object24":
+                return TargetGameObject.Object24;
+            case "Object25":
+                return TargetGameObject.Object25;
+            case "Object26":
+                return TargetGameObject.Object26;
+            case "Object27":
+                return TargetGameObject.Object27;
+            case "Object28":
+                return TargetGameObject.Object28;
+            case "Object29":
+                return TargetGameObject.Object29;
+            case "Object30":
+                return TargetGameObject.Object30;
+            case "Object31":
+                return TargetGameObject.Object31;
+            case "Object32":
+                return TargetGameObject.Object32;
+            case "Object33":
+                return TargetGameObject.Object33;
+            case "Object34":
+                return TargetGameObject.Object34;
+            case "Object35":
+                return TargetGameObject.Object35;
+            case "Object36":
+                return TargetGameObject.Object36;
+            case "Object37":
+                return TargetGameObject.Object37;
+            case "Object38":
+                return TargetGameObject.Object38;
+            case "Object39":
+                return TargetGameObject.Object39;
+            case "Object40":
+                return TargetGameObject.Object40;
         }
 
-        return TargetGameObject.Unknown;
+        return TargetGameObject.Empty;
     }
     public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviourTree tree) {
         // Create node

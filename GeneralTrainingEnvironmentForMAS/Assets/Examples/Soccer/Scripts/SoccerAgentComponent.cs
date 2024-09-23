@@ -6,10 +6,9 @@ using UnityEngine.UIElements;
 public class SoccerAgentComponent : AgentComponent
 {
     public Rigidbody Rigidbody { get; set; }
-    public Team Team { get; set; }
+    public Team Team;
     public float KickPower { get; set; }
-    public Vector3 StartPosition { get; set; }
-    public Quaternion StartRotation { get; set; }
+
     SoccerEnvironmentController SoccerEnvironmentController { get; set; }
 
     protected override void DefineAdditionalDataOnAwake() {

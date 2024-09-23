@@ -586,7 +586,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
             for (int i = 1; i < Agents.Length; i++)
             {
                 nodeCallFrequency = Agents[i].BehaviourTree.GetNodeCallFrequencies(IncludeEncapsulatedNodesToFreqCount);
-                for (int j = 0; i < nodeCallFrequency.Length; j++)
+                for (int j = 0; j < nodeCallFrequency.Length; j++)
                 {
                     nodeCallFrequencies[0][j] = nodeCallFrequencies[0][j] + nodeCallFrequency[j];
                 }
