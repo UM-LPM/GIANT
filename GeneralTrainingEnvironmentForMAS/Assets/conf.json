@@ -1,79 +1,52 @@
 {
 				"AutoStart": true,
-				"ProblemDomain": "Robostrike",
+				"ProblemDomain": "Bomberman",
 				"StartURI": "http://localhost:4444/",
-				"BtSource": "RobostrikeBts",
-				"TimeScale": 2,
-				"FixedTimeStep": 0.04,
+				"BtSource": "BombermanBts",
+				"TimeScale": 1,
+				"FixedTimeStep": 0.02,
 				"RerunTimes": 1,
 				"InitialSeed": 963852,
-				"Render": false,
+				"Render": true,
 				"RandomSeedMode": 1,
-				"SimulationSteps": 4000,
+				"SimulationSteps": 10000,
 				"SimulationTime": 0,
+				"IncludeEncapsulatedNodesToFreqCount": false,
 				"GameScenarios": [
-					{"GameSceneName": "RobostrikeGameScene1"},
-					{"GameSceneName": "RobostrikeGameScene2"},
-					{"GameSceneName": "RobostrikeGameScene3"},
-					{"GameSceneName": "RobostrikeGameScene4"},
-					{"GameSceneName": "RobostrikeGameScene5"}
+					{"GameSceneName": "BombermanGameScene"}
+					
 				],
 				"AgentScenarios": [
 					{
-						"AgentSceneName": "RobostrikeAgentScene2", 
-						"BTLoadMode": 1,
+						"AgentSceneName": "BombermanAgentScene1", 
+						"BTLoadMode": 0,
 						"GameScenarios": [
-							{"GameSceneName": "RobostrikeGameScene5"}
+							{"GameSceneName": "BombermanGameScene"}
 						]
 					}
 				],
 				"ProblemConfiguration": {
-					"ArenaSizeX": 500,
-					"ArenaSizeZ": 500,
-					"ArenaOffset": 4.0,
-					"AgentAimFitnessUpdateInterval": 4,
-					"AgentMoveFitnessMinDistance": 4,
-					"AgentMoveFitnessUpdateInterval": 5,
-					"AgentNearWallUpdateInterval": 6,
-					"AgentMoveSpeed": 10,
-					"AgentRespawnType": 1,
-					"AgentRotationSpeed": 150,
-					"AgentStartAmmo": 10,
-					"AgentStartHealth": 10,
-					"AgentStartShield": 0,
-					"AgentTurrentRotationSpeed": 1,
-					"AmmoBoxSpawnAmount": 100,
-					"AmmoPowerUpValue": 10,
-					"DestroyMissileAfter": 1,
-					"GameMode": 1,
-					"GameScenarioType": 1,
-					"HealthBoxSpawnAmount": 100,
-					"HealthPowerUpValue": 5,
-					"MaxAmmo": 20,
-					"MaxHealth": 10,
-					"MaxShield": 10,
-					"MinPowerUpDistance": 8,
-					"MissileDamage": 2,
-					"MissileShootCooldown": 1,
-					"MissleLaunchSpeed": 15,
-					"ShieldBoxSpawnAmount": 100,
-					"ShieldPowerUpValue": 5
+					"DecisionRequestInterval": 4,
+					"AgentStartMoveSpeed": 5,
+					"StartAgentBombAmount": 1,
+					"StartExplosionRadius": 1,
+					"StartHealth": 2,
+					"ExplosionDamageCooldown": 1,
+					"DestructibleDestructionTime": 1,
+					"PowerUpSpawnChance": 0.4
 				},
 				"FitnessValues": 
 				{ 
-					"MissileHitAgent": -5,
-					"AgentHitByRocket": 5,
-					"MissileMissedAgent": 1,
-					"SurvivalBonus": -50,
-					"LastSurvivalBonus": -30,
-					"DeathPenalty": 20,
-					"AgentDestroyedBonus": -25,
-					"AgentMovedBonus": -2,
-					"AgentAimingOpponent": -1,
-					"AgentFiredMissile": -1,
-					"AgentNearWall": 1,
-					"AgentPickedUpHealthBoxPowerUp": -2,
-					"AgentPickedUpShieldBoxPowerUp": -2,
-					"AgentPickedUpAmmoBoxPowerUp": -4
+					"AgentMove": -1,
+					"BombPlaced": -5,
+					"BlockDestroyed": -2,
+					"PowerUpCollected": -5,
+					"AgentHitByBomb": 20,
+					"AgentHitByOwnBomb": 30,
+					"AgentHealthZero": 100,
+					"BombHitAgent": -10,
+					"AgentKilled": -100,
+					"SurvivalBonus": -8,
+					"LastSurvivalBonus": -10
 				}
 			}
