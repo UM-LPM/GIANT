@@ -1,5 +1,14 @@
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure Kestrel server options
+builder.WebHost.ConfigureKestrel(serverOptions => {
+    serverOptions.Limits.MaxRequestBodySize = null; // null for unlimited
+});
+
+builder.Services.AddControllers(options => {
+    options.MaxModelBindingRecursionDepth = 64;
+});
+
 // Add services to the container.
 
 builder.Services.AddControllers();
