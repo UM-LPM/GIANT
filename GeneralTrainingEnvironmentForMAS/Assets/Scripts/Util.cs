@@ -243,7 +243,7 @@ public class UnityAssetParser {
         string nodeLine = reader.ReadLine();
         nodeLine = nodeLine.Replace(" ", "").Trim();
         while (nodeLine.Contains("{fileID:")) {
-            nodeLine = nodeLine.Replace("-", "").Trim();
+            nodeLine = nodeLine.Trim().Substring(1);
             nodes.Add(JsonConvert.DeserializeObject<Child>(convertSringArrayToJson(nodeLine)));
             if(reader.Peek() != ' ')
                 break;
