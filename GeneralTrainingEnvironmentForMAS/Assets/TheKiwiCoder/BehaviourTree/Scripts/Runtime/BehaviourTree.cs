@@ -42,17 +42,27 @@ namespace TheKiwiCoder {
         }
 
         public static void Traverse(Node node, System.Action<Node> visiter, bool includeEncapsulatedNodes = true) {
-            if (node) {
-                visiter.Invoke(node);
+            if(node == null) return;
+
+            Queue<Node> queue = new Queue<Node>();
+            queue.Enqueue(node);
+
+            while (queue.Count > 0)
+            {
+                Node currentNode = queue.Dequeue();
+                visiter.Invoke(currentNode);
 
                 // If the node is an encapsulator, we don't want to traverse its children // TODO Control this with a parameter
-                if (node is Encapsulator && !includeEncapsulatedNodes)
+                if (currentNode is Encapsulator && !includeEncapsulatedNodes)
                 {
-                    return;
+                    continue;
                 }
 
-                var children = GetChildren(node);
-                children.ForEach((n) => Traverse(n, visiter, includeEncapsulatedNodes));
+                var children = GetChildren(currentNode);
+                foreach (var child in children)
+                {
+                    queue.Enqueue(child);
+                }
             }
         }
 
