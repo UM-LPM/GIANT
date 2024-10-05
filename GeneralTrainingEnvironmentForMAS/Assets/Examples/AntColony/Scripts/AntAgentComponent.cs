@@ -1,11 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class AntAgentComponent : AgentComponent
 {
-    public float detectionRadius=3f;
-    
+    public float detectionRadius = 3f;
+
     public Rigidbody2D Rigidbody { get; set; }
     public float pheromoneEvaporationRate { get; set; }
 
@@ -23,10 +21,10 @@ public class AntAgentComponent : AgentComponent
     public Vector2 MoveDirection { get; private set; }
 
     public float NextAgentUpdateTime { get; set; }
-     public float stamina;
+    public float stamina;
     [SerializeField] public float maxStamina = 100f;
-    [SerializeField]  public float restThreshold = 50f;
-    [SerializeField]  public float recoveryRate = 10f;
+    [SerializeField] public float restThreshold = 50f;
+    [SerializeField] public float recoveryRate = 10f;
     [SerializeField] public float attackRange = 10f;
 
     public Hive hive { get; set; }
@@ -46,4 +44,4 @@ public class AntAgentComponent : AgentComponent
     {
         MoveDirection = newDirection;
     }
-    }
+}

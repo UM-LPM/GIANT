@@ -2,38 +2,33 @@ using UnityEngine;
 
 public class PheromoneNodeComponent : MonoBehaviour
 {
-    public float intensity; 
+    public float intensity;
     public Vector3 position;
-    public float creationTime; 
+    public float creationTime;
     public float evaporationRate;
     public PheromoneType type;
     public PheromoneNodeComponent next { get; set; }
     public PheromoneNodeComponent previous { get; set; }
 
-    public void Initialize(float intensity, Vector3 position,float evaporationRate, PheromoneType pheromoneType, PheromoneNodeComponent next, PheromoneNodeComponent previous)
+    public void Initialize(float intensity, Vector3 position, float evaporationRate, PheromoneType pheromoneType, PheromoneNodeComponent next, PheromoneNodeComponent previous)
     {
         this.intensity = intensity;
         this.position = position;
         this.evaporationRate = evaporationRate;
-        this.creationTime = Time.time; 
+        this.creationTime = Time.time;
         this.next = next;
         this.previous = previous;
         type = pheromoneType;
     }
     public void Evaporate()
     {
-        float elapsedTime = Time.time - creationTime;
 
-        if (elapsedTime >= 30.0f)
-        {
-            intensity -= evaporationRate * (elapsedTime - 30.0f);
-        }
+        intensity -= evaporationRate * Time.deltaTime;
 
         if (intensity < 0)
         {
             intensity = 0;
         }
-
     }
 
     public bool IsEvaporated()

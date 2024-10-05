@@ -21,7 +21,7 @@ public class Hive : MonoBehaviour
     public void TakeDamage(float damage)
     {
         currentHealth -= damage;
-        if (currentHealth <= maxHealth * 0.75f) 
+        if (currentHealth <= maxHealth * 0.75f)
         {
             needsMaintenance = true;
         }

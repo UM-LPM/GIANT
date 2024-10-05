@@ -20,7 +20,7 @@ public class IsPheromoneTrailEstablished : ConditionNode
         bool activePheromoneTrailEstablished = false;
         if(antAgent.activePheromoneTrail != null)
             {
-                float distanceToHive = Vector3.Distance(antAgent.activePheromoneTrail.lastNode.transform.position, antAgent.hive.transform.position);
+             float distanceToHive = Vector3.Distance(antAgent.activePheromoneTrail.lastNode.transform.position, antAgent.hive.transform.position);
             activePheromoneTrailEstablished = distanceToHive <= 2.0f;
             }
         

@@ -1,5 +1,23 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-9050063747944952016
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7b404f698231cc4981e5390438fa522, type: 3}
+  m_Name: PickUpFood
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 53074b1c87db233498f1293b9b9ae6fe
+  position: {x: 2142, y: 826}
+  description: 
+  drawGizmos: 0
 --- !u!114 &-8846528902125309218
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -76,8 +94,8 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: d04746af939a23b4c83dee1b58e90bad
-  position: {x: 2841, y: 343.99997}
-  description: 
+  position: {x: 2937.0408, y: 718.00006}
+  description: previous node exists
   drawGizmos: 1
 --- !u!114 &-7859747705043607034
 MonoBehaviour:
@@ -117,6 +135,69 @@ MonoBehaviour:
   description: 
   drawGizmos: 0
   antAgent: {fileID: 0}
+--- !u!114 &-7494920875381231905
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
+  m_Name: Sequencer
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: dfc4b6f2d7d61f14eb9d44098797b100
+  position: {x: 2113, y: 675.00006}
+  description: handle food
+  drawGizmos: 0
+  children:
+  - {fileID: 3991502917658751144}
+  - {fileID: -9050063747944952016}
+--- !u!114 &-6928387650757292377
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 460be9e34c566ea45b9e282b1adcb028, type: 3}
+  m_Name: Selector
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: e13c64c984476b644a6a88b524d49ecd
+  position: {x: 2896.041, y: 375}
+  description: 'Previous node check
+
+'
+  drawGizmos: 0
+  children:
+  - {fileID: 168987222562515424}
+  - {fileID: -2675248804028408546}
+--- !u!114 &-6515662466102874858
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fd1e85f30abba2499f6834e124b1450, type: 3}
+  m_Name: MoveForward
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 8e56b3495927435419c502d495ac2fdf
+  position: {x: 2534, y: 826}
+  description: 
+  drawGizmos: 0
+  moveForwardDirection: 1
 --- !u!114 &-6496235240982680068
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -136,6 +217,27 @@ MonoBehaviour:
   description: 
   drawGizmos: 1
   antAgent: {fileID: 0}
+--- !u!114 &-6462756548033840500
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
+  m_Name: Sequencer
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: c8e99bd2968a67f4f9b0efaf476c1e07
+  position: {x: 3271.0408, y: 707}
+  description: handle water
+  drawGizmos: 0
+  children:
+  - {fileID: 5560362943106787487}
+  - {fileID: 8409478222711631283}
 --- !u!114 &-6239821656576947194
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -229,6 +331,27 @@ MonoBehaviour:
   description: 
   drawGizmos: 1
   antAgent: {fileID: 0}
+--- !u!114 &-5136208319628381131
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
+  m_Name: Sequencer
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 205457faa5859774aa7b70c491097b18
+  position: {x: 1728.9999, y: 484}
+  description: 
+  drawGizmos: 0
+  children:
+  - {fileID: 9008018255626605262}
+  - {fileID: 4635933278944643794}
 --- !u!114 &-5040420668715626891
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -370,6 +493,25 @@ MonoBehaviour:
   description: 
   drawGizmos: 1
   rotateDirection: 1
+--- !u!114 &-3298976733957711802
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bde3e04b8f254174ba9b57c4726ba358, type: 3}
+  m_Name: previousPheromoneExists
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 7e4651d4408e66d42be616ae17effcc9
+  position: {x: 2720.0408, y: 718.00006}
+  description: 
+  drawGizmos: 0
+  antAgent: {fileID: 0}
 --- !u!114 &-3162768692100999250
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -427,6 +569,27 @@ MonoBehaviour:
   description: 
   drawGizmos: 0
   antAgent: {fileID: 0}
+--- !u!114 &-2675248804028408546
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 460be9e34c566ea45b9e282b1adcb028, type: 3}
+  m_Name: Selector
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 48c9e547397977a4789815587103752f
+  position: {x: 3364.0408, y: 564}
+  description: previous node doesn't exist
+  drawGizmos: 0
+  children:
+  - {fileID: -6462756548033840500}
+  - {fileID: 5816768052359602172}
 --- !u!114 &-2585443681699355374
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -503,6 +666,27 @@ MonoBehaviour:
 '
   drawGizmos: 0
   child: {fileID: 8930497607671726991}
+--- !u!114 &-2195844059436132153
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
+  m_Name: Sequencer
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 1697c5b7c1d92f14ea54977e763d60ef
+  position: {x: 2372, y: 668}
+  description: if no food remove trail, move randomly
+  drawGizmos: 0
+  children:
+  - {fileID: -1692548785067960129}
+  - {fileID: -6515662466102874858}
 --- !u!114 &-1815893815986775630
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -526,6 +710,24 @@ MonoBehaviour:
   children:
   - {fileID: -5467663485045002348}
   - {fileID: 6056151892523922519}
+--- !u!114 &-1692548785067960129
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 449e074e60b12c74590dab5984141e1c, type: 3}
+  m_Name: RemoveActivePheromoneTrail
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 30ac22497098c9d4b8b6e27d50d11f1e
+  position: {x: 2304, y: 826}
+  description: 
+  drawGizmos: 0
 --- !u!114 &-1338761528921150500
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -591,7 +793,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 98c120bce30fd094880d246f58b8799a
-  position: {x: 2629, y: 357}
+  position: {x: 2630.0408, y: 380.00006}
   description: 
   drawGizmos: 1
 --- !u!114 &-930654457038589897
@@ -630,7 +832,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 29a543e6124193345926060bb8a37540
-  position: {x: 2714, y: 147}
+  position: {x: 2534.0408, y: 218.00005}
   description: 'Detect water pheromone- move to previous node
 
 '
@@ -638,7 +840,7 @@ MonoBehaviour:
   children:
   - {fileID: 5618549746693118132}
   - {fileID: -1067746381850803468}
-  - {fileID: -8224865101751163449}
+  - {fileID: -6928387650757292377}
 --- !u!114 &-440246745300112859
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -785,7 +987,45 @@ MonoBehaviour:
   - {fileID: 4975064672849950963}
   - {fileID: 4271260125890471868}
   - {fileID: 2226733925583198989}
+  - {fileID: -6928387650757292377}
+  - {fileID: 168987222562515424}
+  - {fileID: -3298976733957711802}
+  - {fileID: -2675248804028408546}
+  - {fileID: -6462756548033840500}
+  - {fileID: 5560362943106787487}
+  - {fileID: 8409478222711631283}
+  - {fileID: 5816768052359602172}
+  - {fileID: 55983948429777871}
+  - {fileID: 3627136350311606659}
+  - {fileID: 6638692448274122450}
+  - {fileID: -5136208319628381131}
+  - {fileID: 9008018255626605262}
+  - {fileID: 8173481621592563907}
+  - {fileID: -7494920875381231905}
+  - {fileID: 3991502917658751144}
+  - {fileID: -9050063747944952016}
+  - {fileID: -2195844059436132153}
+  - {fileID: -1692548785067960129}
+  - {fileID: -6515662466102874858}
   bTNodes: []
+--- !u!114 &55983948429777871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 449e074e60b12c74590dab5984141e1c, type: 3}
+  m_Name: RemoveActivePheromoneTrail
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: e74a485332e18704fad0f657247c6c3e
+  position: {x: 3632.0408, y: 875}
+  description: 
+  drawGizmos: 0
 --- !u!114 &151704379902810450
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -807,6 +1047,27 @@ MonoBehaviour:
   child: {fileID: 5080345857457856378}
   restartOnSuccess: 1
   restartOnFailure: 0
+--- !u!114 &168987222562515424
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
+  m_Name: Sequencer
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 1c3a49850944df5428c66237808715e4
+  position: {x: 2821.0408, y: 564}
+  description: previous node exists
+  drawGizmos: 0
+  children:
+  - {fileID: -3298976733957711802}
+  - {fileID: -8224865101751163449}
 --- !u!114 &337879598559682993
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -967,6 +1228,46 @@ MonoBehaviour:
   children:
   - {fileID: -111860092558257593}
   - {fileID: 1916121390293090297}
+--- !u!114 &3627136350311606659
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fd1e85f30abba2499f6834e124b1450, type: 3}
+  m_Name: MoveForward
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: d5ec6407b0d7fe44e8586a35095745e4
+  position: {x: 3885.0408, y: 875}
+  description: 
+  drawGizmos: 0
+  moveForwardDirection: 1
+--- !u!114 &3991502917658751144
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 769d331b8661db449ae33011df5214da, type: 3}
+  m_Name: DetectsFood
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: f4437c30e02fd8f4fadcb93988fdef04
+  position: {x: 1963.0001, y: 826}
+  description: 
+  drawGizmos: 0
+  foodLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &3998429798716255553
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -982,7 +1283,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: c4d3ec5739a4f9e4ea0fa2339ce5de05
-  position: {x: 1917, y: 279}
+  position: {x: 1577.75, y: 291}
   description: 
   drawGizmos: 0
   child: {fileID: 6221770873129580777}
@@ -1019,7 +1320,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 43646328aee133f4289026c76cb8c2fe
-  position: {x: 2078.0002, y: 281}
+  position: {x: 1738.75, y: 293}
   description: 
   drawGizmos: 0
 --- !u!114 &4271260125890471868
@@ -1091,7 +1392,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: be91eca901e1c734ea59a30c7b5ea061
-  position: {x: 2247.0005, y: 280}
+  position: {x: 1781.5, y: 675.00006}
   description: 
   drawGizmos: 1
 --- !u!114 &4655183594022075856
@@ -1214,6 +1515,27 @@ MonoBehaviour:
   position: {x: 179, y: 1300}
   description: 
   drawGizmos: 0
+--- !u!114 &5560362943106787487
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c94afa60ae99a7489f9ff0d4b8f7c2f, type: 3}
+  m_Name: DetectsWater
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: d40582ab82bcee046ace558f70d611b7
+  position: {x: 3190.0408, y: 858}
+  description: 
+  drawGizmos: 0
+  waterLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &5618549746693118132
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1229,10 +1551,31 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: a91b30d29c368364781cb769972925bd
-  position: {x: 2457.7, y: 364}
+  position: {x: 2459.041, y: 387.00006}
   description: 
   drawGizmos: 0
   child: {fileID: 7863767929244440747}
+--- !u!114 &5816768052359602172
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
+  m_Name: Sequencer
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 1879ff319798fcf4ead07b344aa827b8
+  position: {x: 3657.0408, y: 707}
+  description: if no water remove trail, move randomly
+  drawGizmos: 0
+  children:
+  - {fileID: 55983948429777871}
+  - {fileID: 3627136350311606659}
 --- !u!114 &6056151892523922519
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1312,7 +1655,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 7f77c29c5bd29274ead51fc7f4d74213
-  position: {x: 1917.0001, y: 408}
+  position: {x: 1577.75, y: 420}
   description: 
   drawGizmos: 0
 --- !u!114 &6269944176442580323
@@ -1336,6 +1679,27 @@ MonoBehaviour:
   children:
   - {fileID: 6994376940745487230}
   - {fileID: -4422381189507414152}
+--- !u!114 &6638692448274122450
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 460be9e34c566ea45b9e282b1adcb028, type: 3}
+  m_Name: Selector
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: f589a60f999999549be5de048cd68f14
+  position: {x: 2016.251, y: 275}
+  description: Previous node check
+  drawGizmos: 0
+  children:
+  - {fileID: -5136208319628381131}
+  - {fileID: 8173481621592563907}
 --- !u!114 &6842889772594184866
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1415,7 +1779,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: e5ec9ca75c38d0c4d973574412c0afaa
-  position: {x: 2457.7, y: 491}
+  position: {x: 2459.041, y: 514}
   description: 
   drawGizmos: 0
 --- !u!114 &7877575983780279267
@@ -1436,9 +1800,8 @@ MonoBehaviour:
   position: {x: -929.408, y: -195.96007}
   description: 
   drawGizmos: 0
-  foodLayer:
-    serializedVersion: 2
-    m_Bits: 0
+  detectionDistance: 0.5
+  angleOffset: 15
 --- !u!114 &8099558178501817337
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1461,6 +1824,45 @@ MonoBehaviour:
   - {fileID: -2743352623708897754}
   - {fileID: 4009589593596036733}
   - {fileID: 4539247605769010040}
+--- !u!114 &8173481621592563907
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 460be9e34c566ea45b9e282b1adcb028, type: 3}
+  m_Name: Selector
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 5e943dbd5bdb1534681675e32d78b823
+  position: {x: 2142, y: 514}
+  description: previous node doesnt exist
+  drawGizmos: 0
+  children:
+  - {fileID: -7494920875381231905}
+  - {fileID: -2195844059436132153}
+--- !u!114 &8409478222711631283
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a457a0288d5e4d4084fc987f727be99, type: 3}
+  m_Name: PickUpWater
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 70a1e951022336a4e8941c44016772fd
+  position: {x: 3379.0408, y: 858}
+  description: 
+  drawGizmos: 0
 --- !u!114 &8592452261894218338
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1542,6 +1944,25 @@ MonoBehaviour:
   position: {x: -62.021885, y: -89.00008}
   description: 
   drawGizmos: 0
+--- !u!114 &9008018255626605262
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bde3e04b8f254174ba9b57c4726ba358, type: 3}
+  m_Name: previousPheromoneExists
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 5ca53b9f03cef9e43b94fa729128faec
+  position: {x: 1592.5, y: 675.00006}
+  description: 
+  drawGizmos: 0
+  antAgent: {fileID: 0}
 --- !u!114 &9111370732654448132
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1557,13 +1978,13 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 7c4659b2b652c2341a7af3c90da9ceb2
-  position: {x: 2067, y: 121}
+  position: {x: 1727.75, y: 133}
   description: Detect food pheromone-move to previous node
   drawGizmos: 0
   children:
   - {fileID: 3998429798716255553}
   - {fileID: 4125714699989651011}
-  - {fileID: 4635933278944643794}
+  - {fileID: 6638692448274122450}
 --- !u!114 &9144616435764456101
 MonoBehaviour:
   m_ObjectHideFlags: 0

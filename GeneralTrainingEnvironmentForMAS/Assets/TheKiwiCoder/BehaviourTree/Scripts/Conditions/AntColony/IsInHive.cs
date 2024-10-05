@@ -18,7 +18,10 @@ public class IsInHive : ConditionNode
     protected override bool CheckConditions()
     {
         antAgent = context.gameObject.GetComponentInParent<AntAgentComponent>();
-        Vector2 positionHive= antAgent.hive.gameObject.transform.position;
+        Debug.Log("is in hive agent", antAgent);
+        Debug.Log("is in hive hive", antAgent.hive.gameObject);
+
+        Vector2 positionHive = antAgent.hive.gameObject.transform.position;
         Vector2 positionAgent=  antAgent.transform.position;
         return  Vector3.Distance(positionHive, positionAgent) < 2.0;
 

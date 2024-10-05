@@ -2,13 +2,13 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-public   class PheromoneTrailComponent:MonoBehaviour
+public class PheromoneTrailComponent : MonoBehaviour
 {
-    public float weakTrailTreshold=40;
+    public float weakTrailTreshold = 40;
     public PheromoneNodeComponent firstNode { get; set; }
     public PheromoneNodeComponent lastNode { get; set; }
 
-     public PheromoneType pheromoneType;
+    public PheromoneType pheromoneType;
 
     private Dictionary<PheromoneType, GameObject> pheromonePrefabs;
 
@@ -16,7 +16,7 @@ public   class PheromoneTrailComponent:MonoBehaviour
     {
         PheromoneNodeComponent currentNode = firstNode;
         float totalIntensity = 0;
-        int length=0;
+        int length = 0;
         while (currentNode != null)
         {
             currentNode.Evaporate();
@@ -26,17 +26,17 @@ public   class PheromoneTrailComponent:MonoBehaviour
 
         }
 
-        return (totalIntensity% length);
+        return (totalIntensity % length);
     }
     // Function to load prefabs using AssetDatabase
     private GameObject LoadPrefab(string path)
     {
-            #if UNITY_EDITOR
-                    return (GameObject)AssetDatabase.LoadAssetAtPath(path, typeof(GameObject));
-            #else
+#if UNITY_EDITOR
+        return (GameObject)AssetDatabase.LoadAssetAtPath(path, typeof(GameObject));
+#else
                     return null;  
-            #endif
-                }
+#endif
+    }
     public bool IsTrailWeak()
     {
         return CalculateTotalIntensity() < weakTrailTreshold;
@@ -64,7 +64,7 @@ public   class PheromoneTrailComponent:MonoBehaviour
             firstNode = newNode;
             lastNode = newNode;
 
-}
+        }
         else
         {
             lastNode.next = newNode;
@@ -80,13 +80,13 @@ public   class PheromoneTrailComponent:MonoBehaviour
             currentNode.Evaporate();
             if (currentNode.IsEvaporated())
             {
-                RemovePheromone(currentNode);
+                RemovePheromoneNode(currentNode);
             }
             currentNode = currentNode.next;
         }
     }
 
-    private void RemovePheromone(PheromoneNodeComponent node)
+    private void RemovePheromoneNode(PheromoneNodeComponent node)
     {
         if (node.previous != null)
         {
@@ -105,8 +105,8 @@ public   class PheromoneTrailComponent:MonoBehaviour
         {
             lastNode = node.previous;
         }
-
-        Destroy(node);
+            
+        Destroy(node.gameObject);
     }
 
 }

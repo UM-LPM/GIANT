@@ -3,8 +3,10 @@ using UnityEngine;
 
 public class DetectsWall : ConditionNode
 {
-    public LayerMask foodLayer;
     private AntAgentComponent agent;
+    public float detectionDistance = 0.5f;
+    public float angleOffset = 15f; 
+
 
     protected override void OnStart()
     {
@@ -13,11 +15,35 @@ public class DetectsWall : ConditionNode
 
     protected override bool CheckConditions()
     {
-        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(agent.transform.position, 1f);
+        Vector2 forward = agent.transform.right;
 
-        foreach (Collider2D collider in hitColliders)
+        if (RaycastForWalls(forward))
         {
-            WallComponent wallComponent = collider.GetComponent<WallComponent>();
+            return true;
+        }
+
+        Vector2 leftDirection = Quaternion.Euler(0, 0, angleOffset) * forward;
+        if (RaycastForWalls(leftDirection))
+        {
+            return true;
+        }
+
+        Vector2 rightDirection = Quaternion.Euler(0, 0, -angleOffset) * forward;
+        if (RaycastForWalls(rightDirection))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    private bool RaycastForWalls(Vector2 direction)
+    {
+        RaycastHit2D hit = Physics2D.Raycast(agent.transform.position, direction, detectionDistance);
+
+        if (hit.collider != null)
+        {
+            WallComponent wallComponent = hit.collider.GetComponent<WallComponent>();
             if (wallComponent != null)
             {
                 return true;
