@@ -4792,9 +4792,10 @@ GameObject:
   m_Component:
   - component: {fileID: 1408735112}
   - component: {fileID: 1408735114}
+  - component: {fileID: 1408735115}
   - component: {fileID: 1408735113}
   m_Layer: 0
-  m_Name: Communicator
+  m_Name: Manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4827,7 +4828,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e80d176e2f31d4f4abec2e5f8a9853c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uri: http://localhost:4444/
+  CommunicatorURI: http://localhost:4444/
   SceneLoadMode: 0
   MinLayerId: 6
   MaxLayerId: 26
@@ -4868,6 +4869,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0477555d0364e848bf077a28dfad47c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1408735115
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1408735111}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbfab60dc5a19db41828271db59adde9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CoordinatorURI: http://localhost:4000/
 --- !u!1 &1469986147
 GameObject:
   m_ObjectHideFlags: 0

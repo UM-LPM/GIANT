@@ -16,7 +16,8 @@ public class MainConfiguration {
 
     // Communicator configuration
     public string ProblemDomain { get; set; }
-    public string StartURI { get; set; }
+    public string CoordinatorURI { get; set; }
+    public string StartCommunicatorURI { get; set; }
     public string BtSource { get; set; }
     public float TimeScale { get; set; }
     public float FixedTimeStep { get; set; }

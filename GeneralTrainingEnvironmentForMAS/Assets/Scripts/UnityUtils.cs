@@ -16,4 +16,9 @@ public static class UnityUtils
         float multiplier = Mathf.Pow(10.0f, decimalPlaces);
         return Mathf.Round(value * multiplier) / multiplier;
     }
+
+    public static void WriteErrorToFile(string error, string filePath)
+    {
+        System.IO.File.WriteAllText(filePath, error);
+    }
 }
