@@ -14,7 +14,7 @@ using Newtonsoft.Json;
 public class Communicator : MonoBehaviour {
 
     [Header("HTTP Server Configuration")]
-    [SerializeField] public string uri = "http://localhost:4444/";
+    [SerializeField] public string CommunicatorURI = "http://localhost:4444/";
 
     [Header("Scene Loading Configuration")]
     [SerializeField] public SceneLoadMode SceneLoadMode = SceneLoadMode.LayerMode;
@@ -101,7 +101,7 @@ public class Communicator : MonoBehaviour {
         {
             if (MenuManager.Instance.MainConfiguration != null)
             {
-                uri = MenuManager.Instance.MainConfiguration.StartURI;
+                CommunicatorURI = MenuManager.Instance.MainConfiguration.StartCommunicatorURI;
                 BtSource = MenuManager.Instance.MainConfiguration.BtSource;
                 TimeScale = MenuManager.Instance.MainConfiguration.TimeScale;
                 FixedTimeStep = MenuManager.Instance.MainConfiguration.FixedTimeStep;
@@ -115,7 +115,7 @@ public class Communicator : MonoBehaviour {
             }
             else
             {
-                uri = MenuManager.Instance.URI;
+                CommunicatorURI = MenuManager.Instance.CommunicatorURI;
             }
         }
     }
@@ -128,17 +128,19 @@ public class Communicator : MonoBehaviour {
             try
             {
                 Listener = new HttpListener();
-                Listener.Prefixes.Add(uri);
+                Listener.Prefixes.Add(CommunicatorURI);
                 Listener.Start();
+
+                Debug.Log("Communicator HTTP server is running");
 
                 break;
             }
             catch (Exception e)
             {
-                uriParts = uri.Split(':');
+                uriParts = CommunicatorURI.Split(':');
                 uriParts[2] = uriParts[2].Split('/')[0];
                 uriParts[2] = int.Parse(uriParts[2]) + 1 + "";
-                uri = uriParts[0] + ":" + uriParts[1] + ":" + uriParts[2] + "/";
+                CommunicatorURI = uriParts[0] + ":" + uriParts[1] + ":" + uriParts[2] + "/";
             }
         }
     }
@@ -184,6 +186,9 @@ public class Communicator : MonoBehaviour {
         UnityMainThreadDispatcher.Instance().Enqueue((PerformEvaluation(context)));
     }
 
+    /// <summary>
+    /// This method is called from the main thread and performs the evaluation of the population in ranges specified by the client.
+    /// </summary>
     IEnumerator PerformEvaluation(HttpListenerContext context) {
         // Read body from the request
         if (!context.Request.HasEntityBody) {
@@ -442,8 +447,6 @@ public class Communicator : MonoBehaviour {
         Listener.Close();
         ListenerThread.Join();
         ListenerThread.Abort();
-
-        EnvironmentControllerBase.OnGameFinished -= EnvironmentController_OnGameFinished;
 
         Destroy(this.gameObject);
     }

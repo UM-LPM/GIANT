@@ -81,6 +81,12 @@ public class UIController: MonoBehaviour {
             Communicator.Instance.StopListener();
             Communicator.Instance = null;
         }
+
+        if (Coordinator.Instance != null)
+        {
+            Coordinator.Instance.StopListener();
+            Coordinator.Instance = null;
+        }
     }
 
     public void BackToMenuButtonClick() {
@@ -100,7 +106,7 @@ public class UIController: MonoBehaviour {
     public void DisplayUri()
     {
         if (UriText != null && Communicator.Instance != null)
-            UriText.text = Communicator.Instance.uri;
+            UriText.text = Communicator.Instance.CommunicatorURI;
     }
 
     public void UpdateTimeScale() {

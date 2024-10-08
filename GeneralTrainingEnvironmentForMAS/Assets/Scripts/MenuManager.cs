@@ -17,12 +17,15 @@ public class MenuManager : MonoBehaviour
     public static MenuManager Instance;
 
     [SerializeField] TMP_Dropdown ProblemDropdown;
-    [SerializeField] TMP_InputField URIInputField;
+    [SerializeField] TMP_InputField CoordinatorURIInputField;
+    [SerializeField] TMP_InputField CommunicatorURIInputField;
 
     [SerializeField] ProblemDomains[] ProblemDomains;
-    [SerializeField] string baseURI = "http://localhost:4444/";
+    [SerializeField] string baseCoordinatorURI = "http://localhost:4000/";
+    [SerializeField] string baseCommunicatorURI = "http://localhost:4444/";
 
-    public string URI { get; private set; }
+    public string CoordinatorURI { get; private set; }
+    public string CommunicatorURI { get; private set; }
     public MainConfiguration MainConfiguration { get; set; }
 
     private void Awake() {
@@ -42,7 +45,8 @@ public class MenuManager : MonoBehaviour
         ProblemDropdown.ClearOptions();
         ProblemDropdown.AddOptions(new List<string>(System.Enum.GetNames(typeof(ProblemDomains))));
 
-        URIInputField.text = baseURI;
+        CoordinatorURIInputField.text = baseCoordinatorURI;
+        CommunicatorURIInputField.text = baseCommunicatorURI;
 
         ReadConfigurationFromFile();
     }
@@ -66,14 +70,16 @@ public class MenuManager : MonoBehaviour
             problemDomain = MainConfiguration.ProblemDomain;
         }
 
-        URI = URIInputField.text;
+        CoordinatorURI = CoordinatorURIInputField.text;
+        CommunicatorURI = CommunicatorURIInputField.text;
+
         if (string.IsNullOrEmpty(problemDomain)) {
             Debug.LogError("Problem domain is empty");
             return;
         }
 
-        if (string.IsNullOrEmpty(URI)) {
-            Debug.LogError("URL is empty");
+        if (string.IsNullOrEmpty(CoordinatorURI) || string.IsNullOrEmpty(CommunicatorURI)) {
+            Debug.LogError("CoordinatorURI or CommunicatorURI is empty");
             return;
         }
 
