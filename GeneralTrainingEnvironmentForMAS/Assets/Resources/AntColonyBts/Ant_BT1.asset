@@ -37,48 +37,6 @@ MonoBehaviour:
   description: 
   drawGizmos: 0
   antAgent: {fileID: 0}
---- !u!114 &-8830314555013438043
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 769d331b8661db449ae33011df5214da, type: 3}
-  m_Name: DetectsFood
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 323f1b21cc4166e48b5f2525343d9bae
-  position: {x: 3518.3303, y: 299.20004}
-  description: 
-  drawGizmos: 0
-  foodLayer:
-    serializedVersion: 2
-    m_Bits: 0
---- !u!114 &-8664993260552195743
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8c94afa60ae99a7489f9ff0d4b8f7c2f, type: 3}
-  m_Name: DetectsWater
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 69580e40358edd24b9207b2c323a3959
-  position: {x: 3106.3303, y: 292.80005}
-  description: 
-  drawGizmos: 0
-  waterLayer:
-    serializedVersion: 2
-    m_Bits: 0
 --- !u!114 &-8224865101751163449
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -154,7 +112,7 @@ MonoBehaviour:
   description: handle food
   drawGizmos: 0
   children:
-  - {fileID: 3991502917658751144}
+  - {fileID: -2526118800549076038}
   - {fileID: -9050063747944952016}
 --- !u!114 &-6928387650757292377
 MonoBehaviour:
@@ -236,7 +194,7 @@ MonoBehaviour:
   description: handle water
   drawGizmos: 0
   children:
-  - {fileID: 5560362943106787487}
+  - {fileID: 9214758439735976443}
   - {fileID: 8409478222711631283}
 --- !u!114 &-6239821656576947194
 MonoBehaviour:
@@ -512,6 +470,25 @@ MonoBehaviour:
   description: 
   drawGizmos: 0
   antAgent: {fileID: 0}
+--- !u!114 &-3223064200139567556
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fbcbc49f4b16d14c9fc1b47107801c2, type: 3}
+  m_Name: DetectPheromoneOfType
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 6ee810bde5f23f241bcf0580996b337d
+  position: {x: -2340, y: -181}
+  description: 
+  drawGizmos: 0
+  pheromoneType: 2
 --- !u!114 &-3162768692100999250
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -608,6 +585,30 @@ MonoBehaviour:
   position: {x: 3699.9304, y: 289.60004}
   description: 
   drawGizmos: 1
+--- !u!114 &-2526118800549076038
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25f41315e22a2bd4bb3c5593c4853f7e, type: 3}
+  m_Name: DetectsObjectOfType
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 62f7eb774a2fdeb49bf1ea85a209ff59
+  position: {x: 1954.9996, y: 825.99976}
+  description: 
+  drawGizmos: 0
+  objectType: 3
+  detectionLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  detectionDistance: 2
+  angleOffset: 15
 --- !u!114 &-2512001496756730032
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -778,24 +779,6 @@ MonoBehaviour:
   - {fileID: 4655183594022075856}
   - {fileID: -930654457038589897}
   - {fileID: 3201368041459705833}
---- !u!114 &-1067746381850803468
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 723b3f4812a63a348b2b5431a63e44dc, type: 3}
-  m_Name: DetectWaterPheromone
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 98c120bce30fd094880d246f58b8799a
-  position: {x: 2630.0408, y: 380.00006}
-  description: 
-  drawGizmos: 1
 --- !u!114 &-930654457038589897
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -815,8 +798,32 @@ MonoBehaviour:
   description: 
   drawGizmos: 0
   children:
-  - {fileID: -8830314555013438043}
+  - {fileID: -720243854295081103}
   - {fileID: -2585443681699355374}
+--- !u!114 &-720243854295081103
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25f41315e22a2bd4bb3c5593c4853f7e, type: 3}
+  m_Name: DetectsObjectOfType
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 3ee1627e0379b7847a25f7ab8ad59f5d
+  position: {x: 3514, y: 293.00003}
+  description: 
+  drawGizmos: 0
+  objectType: 3
+  detectionLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  detectionDistance: 2
+  angleOffset: 15
 --- !u!114 &-559953249765407674
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -839,26 +846,8 @@ MonoBehaviour:
   drawGizmos: 0
   children:
   - {fileID: 5618549746693118132}
-  - {fileID: -1067746381850803468}
+  - {fileID: 3032256642035071898}
   - {fileID: -6928387650757292377}
---- !u!114 &-440246745300112859
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1127286d4a5636042831ac500197815e, type: 3}
-  m_Name: DetectThreatPheromone
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: c5548d3cc4c5d464c9f5e7eb88837015
-  position: {x: -2368.4082, y: -180.96008}
-  description: 
-  drawGizmos: 1
 --- !u!114 &-111860092558257593
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -914,18 +903,15 @@ MonoBehaviour:
   nodes:
   - {fileID: -4446618645871219273}
   - {fileID: 6063603694876241772}
-  - {fileID: -440246745300112859}
   - {fileID: -2428661340253663103}
   - {fileID: 7046897098773267897}
   - {fileID: -1153189806389546302}
   - {fileID: 9111370732654448132}
   - {fileID: 3201368041459705833}
   - {fileID: 4655183594022075856}
-  - {fileID: 4125714699989651011}
   - {fileID: -111860092558257593}
   - {fileID: 1916121390293090297}
   - {fileID: -559953249765407674}
-  - {fileID: -1067746381850803468}
   - {fileID: -5040420668715626891}
   - {fileID: -5781110461485054589}
   - {fileID: 4995859147835234408}
@@ -939,9 +925,7 @@ MonoBehaviour:
   - {fileID: -1338761528921150500}
   - {fileID: 1676952849803916308}
   - {fileID: -4422381189507414152}
-  - {fileID: -8664993260552195743}
   - {fileID: -930654457038589897}
-  - {fileID: -8830314555013438043}
   - {fileID: -2585443681699355374}
   - {fileID: -4236526659773203946}
   - {fileID: 8800396175613839679}
@@ -959,7 +943,6 @@ MonoBehaviour:
   - {fileID: 4635933278944643794}
   - {fileID: -8224865101751163449}
   - {fileID: 8592452261894218338}
-  - {fileID: 7877575983780279267}
   - {fileID: -3668289030686264167}
   - {fileID: 1848266506025527338}
   - {fileID: -3125487868044152103}
@@ -992,7 +975,6 @@ MonoBehaviour:
   - {fileID: -3298976733957711802}
   - {fileID: -2675248804028408546}
   - {fileID: -6462756548033840500}
-  - {fileID: 5560362943106787487}
   - {fileID: 8409478222711631283}
   - {fileID: 5816768052359602172}
   - {fileID: 55983948429777871}
@@ -1002,11 +984,18 @@ MonoBehaviour:
   - {fileID: 9008018255626605262}
   - {fileID: 8173481621592563907}
   - {fileID: -7494920875381231905}
-  - {fileID: 3991502917658751144}
   - {fileID: -9050063747944952016}
   - {fileID: -2195844059436132153}
   - {fileID: -1692548785067960129}
   - {fileID: -6515662466102874858}
+  - {fileID: 5322068205911789378}
+  - {fileID: -3223064200139567556}
+  - {fileID: 9214758439735976443}
+  - {fileID: -720243854295081103}
+  - {fileID: 766369615082697116}
+  - {fileID: 3032256642035071898}
+  - {fileID: 7619762581465196820}
+  - {fileID: -2526118800549076038}
   bTNodes: []
 --- !u!114 &55983948429777871
 MonoBehaviour:
@@ -1104,6 +1093,30 @@ MonoBehaviour:
   position: {x: 1295.1287, y: 969}
   description: 
   drawGizmos: 1
+--- !u!114 &766369615082697116
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25f41315e22a2bd4bb3c5593c4853f7e, type: 3}
+  m_Name: DetectsObjectOfType
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 8fd461e818751c04a94c457c66bf277a
+  position: {x: 3144, y: 299.00006}
+  description: 
+  drawGizmos: 0
+  objectType: 1
+  detectionLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  detectionDistance: 2
+  angleOffset: 15
 --- !u!114 &1676952849803916308
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1184,6 +1197,25 @@ MonoBehaviour:
   - {fileID: -5760553298048119028}
   - {fileID: -8846528902125309218}
   - {fileID: 4271260125890471868}
+--- !u!114 &3032256642035071898
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fbcbc49f4b16d14c9fc1b47107801c2, type: 3}
+  m_Name: DetectPheromoneOfType
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 74db34c9c4d600b4796f80637647516b
+  position: {x: 2636, y: 411.00006}
+  description: 
+  drawGizmos: 0
+  pheromoneType: 0
 --- !u!114 &3048229429329614348
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1247,27 +1279,6 @@ MonoBehaviour:
   description: 
   drawGizmos: 0
   moveForwardDirection: 1
---- !u!114 &3991502917658751144
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 769d331b8661db449ae33011df5214da, type: 3}
-  m_Name: DetectsFood
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: f4437c30e02fd8f4fadcb93988fdef04
-  position: {x: 1963.0001, y: 826}
-  description: 
-  drawGizmos: 0
-  foodLayer:
-    serializedVersion: 2
-    m_Bits: 0
 --- !u!114 &3998429798716255553
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1303,24 +1314,6 @@ MonoBehaviour:
   started: 0
   guid: 6615dfedd407d79478838d6efe445f3f
   position: {x: 1353, y: 1299}
-  description: 
-  drawGizmos: 0
---- !u!114 &4125714699989651011
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1040dff3dc50b454e8a13b07f2cba306, type: 3}
-  m_Name: DetectFoodPheromone
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 43646328aee133f4289026c76cb8c2fe
-  position: {x: 1738.75, y: 293}
   description: 
   drawGizmos: 0
 --- !u!114 &4271260125890471868
@@ -1416,7 +1409,7 @@ MonoBehaviour:
 '
   drawGizmos: 0
   children:
-  - {fileID: -8664993260552195743}
+  - {fileID: 766369615082697116}
   - {fileID: -2512001496756730032}
 --- !u!114 &4723329839282357253
 MonoBehaviour:
@@ -1515,7 +1508,7 @@ MonoBehaviour:
   position: {x: 179, y: 1300}
   description: 
   drawGizmos: 0
---- !u!114 &5560362943106787487
+--- !u!114 &5322068205911789378
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1524,18 +1517,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8c94afa60ae99a7489f9ff0d4b8f7c2f, type: 3}
-  m_Name: DetectsWater
+  m_Script: {fileID: 11500000, guid: 25f41315e22a2bd4bb3c5593c4853f7e, type: 3}
+  m_Name: DetectsObjectOfType
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: d40582ab82bcee046ace558f70d611b7
-  position: {x: 3190.0408, y: 858}
+  guid: a9d91619caf730043a3c6053685c1c46
+  position: {x: -919, y: -213}
   description: 
   drawGizmos: 0
-  waterLayer:
+  objectType: 0
+  detectionLayer:
     serializedVersion: 2
     m_Bits: 0
+  detectionDistance: 0.5
+  angleOffset: 15
 --- !u!114 &5618549746693118132
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1615,7 +1611,7 @@ MonoBehaviour:
 '
   drawGizmos: 0
   children:
-  - {fileID: -440246745300112859}
+  - {fileID: -3223064200139567556}
   - {fileID: -2428661340253663103}
   - {fileID: 7046897098773267897}
 --- !u!114 &6099012204396303878
@@ -1764,6 +1760,25 @@ MonoBehaviour:
 '
   drawGizmos: 1
   moveForwardDirection: 1
+--- !u!114 &7619762581465196820
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fbcbc49f4b16d14c9fc1b47107801c2, type: 3}
+  m_Name: DetectPheromoneOfType
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 3ebecbda16749b54ab4d7e80f75a0baa
+  position: {x: 1752.8004, y: 291}
+  description: 
+  drawGizmos: 0
+  pheromoneType: 1
 --- !u!114 &7863767929244440747
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1782,26 +1797,6 @@ MonoBehaviour:
   position: {x: 2459.041, y: 514}
   description: 
   drawGizmos: 0
---- !u!114 &7877575983780279267
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 93cc0af1376e84449a5b65d4a31da024, type: 3}
-  m_Name: DetectsWall
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 0
-  guid: 47b61eca3cbfe214596fce111dc6155e
-  position: {x: -929.408, y: -195.96007}
-  description: 
-  drawGizmos: 0
-  detectionDistance: 0.5
-  angleOffset: 15
 --- !u!114 &8099558178501817337
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1882,7 +1877,7 @@ MonoBehaviour:
   description: Wall
   drawGizmos: 0
   children:
-  - {fileID: 7877575983780279267}
+  - {fileID: 5322068205911789378}
   - {fileID: -3668289030686264167}
   - {fileID: -3125487868044152103}
   - {fileID: 1848266506025527338}
@@ -1983,7 +1978,7 @@ MonoBehaviour:
   drawGizmos: 0
   children:
   - {fileID: 3998429798716255553}
-  - {fileID: 4125714699989651011}
+  - {fileID: 7619762581465196820}
   - {fileID: 6638692448274122450}
 --- !u!114 &9144616435764456101
 MonoBehaviour:
@@ -2003,3 +1998,27 @@ MonoBehaviour:
   position: {x: 2213, y: 1268}
   description: 
   drawGizmos: 0
+--- !u!114 &9214758439735976443
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25f41315e22a2bd4bb3c5593c4853f7e, type: 3}
+  m_Name: DetectsObjectOfType
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 261aca104151b264a8aa4b07b605000c
+  position: {x: 3191.0002, y: 858.0001}
+  description: 
+  drawGizmos: 0
+  objectType: 1
+  detectionLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  detectionDistance: 2
+  angleOffset: 15
