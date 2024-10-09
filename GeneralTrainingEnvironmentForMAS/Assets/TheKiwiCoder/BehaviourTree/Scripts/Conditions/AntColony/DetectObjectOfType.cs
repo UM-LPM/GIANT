@@ -11,7 +11,6 @@ public class DetectsObjectOfType : ConditionNode
         Food
     }
     public ObjectType objectType;
-    public LayerMask detectionLayer; 
     private AntAgentComponent agent;
     public float detectionDistance = 2f; 
     public float angleOffset = 15f; 
@@ -30,7 +29,7 @@ public class DetectsObjectOfType : ConditionNode
             case ObjectType.Water:
                 return DetectObject<WaterComponent>(detectionDistance);
             case ObjectType.Threat:
-                return DetectObject<Threat>(5f); // Different detection range for threats
+                return DetectObject<Threat>(5f);
             case ObjectType.Food:
                 return DetectObject<FoodComponent>(detectionDistance);
             default:
@@ -66,7 +65,7 @@ public class DetectsObjectOfType : ConditionNode
 
     private bool DetectObject<T>(float radius) where T : Component
     {
-        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(agent.transform.position, radius, detectionLayer);
+        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(agent.transform.position, radius);
 
         foreach (Collider2D collider in hitColliders)
         {
