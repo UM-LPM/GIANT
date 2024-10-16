@@ -36,10 +36,7 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
 
     protected override void DefineAdditionalDataOnPreStart()
     {
-        //  SpawnHives();
-        // SpawnFood();
-        // SpawnWaterSource();
-
+     
         for (int i = 0; i < numOfAnts; i++)
         {
             GameObject agent = Instantiate(AgentPrefab, hiveItems[0].transform.position, Quaternion.identity, this.gameObject.transform);
@@ -64,12 +61,7 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
             agent.hive = this.GetComponentsInChildren<Hive>()[0];
             agent.Rigidbody = agent.GetComponent<Rigidbody2D>();
         }
-        /*   foreach (AntAgentComponent agent in AgentsPredefinedBehaviour)
-           {
-               agent.Rigidbody = agent.GetComponent<Rigidbody>();
-               Instantiate(agent.gameObject, hiveItems[0].transform, this.gameObject.transform);
-
-           } */
+       
     }
     void SpawnFood()
     {
@@ -419,6 +411,8 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
             currentPheromoneTrail.AddPheromone(position, strength, evaporationRate);
             ant.currentActiveNodePheromone = currentPheromoneTrail.lastNode;
         }
+        ant.AgentFitness.Fitness.UpdateFitness(AntColonyFitness.FitnessValues[AntColonyFitness.FitnessKeys.AgentPheromoneRelease.ToString()], AntColonyFitness.FitnessKeys.AgentPheromoneRelease.ToString());
+
     }
     void PickUpCarriableItem(AntAgentComponent antAgent, CarriableItemType itemType)
     {
@@ -433,6 +427,7 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
                 var pickedUpItemRepresentation = Instantiate(WaterPrefab, antAgent.transform);
                 antAgent.carriedItemObject = pickedUpItemRepresentation;
                 antAgent.detectCarriableItem.SetActive(false);
+
 
             }
         }
@@ -497,10 +492,14 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
 
 
         }
+        antAgent.AgentFitness.Fitness.UpdateFitness(AntColonyFitness.FitnessValues[AntColonyFitness.FitnessKeys.AgentObjectGathered.ToString()], AntColonyFitness.FitnessKeys.AgentObjectGathered.ToString());
+
     }
     void ReinforcePheromone(AntAgentComponent antAgent)
     {
         antAgent.currentActiveNodePheromone.intensity += 10;
+        antAgent.AgentFitness.Fitness.UpdateFitness(AntColonyFitness.FitnessValues[AntColonyFitness.FitnessKeys.AgentPheromoneReinforce.ToString()], AntColonyFitness.FitnessKeys.AgentPheromoneReinforce.ToString());
+
     }
     void RestAndRecover(AntAgentComponent antAgent)
     {

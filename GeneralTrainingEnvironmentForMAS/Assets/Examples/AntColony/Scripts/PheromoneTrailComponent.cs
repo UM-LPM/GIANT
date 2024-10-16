@@ -49,7 +49,7 @@ public class PheromoneTrailComponent : MonoBehaviour
         {
             { PheromoneType.Food, LoadPrefab("Assets/Examples/AntColony/Prefabs/foodPheromonePrefab.prefab") },
             { PheromoneType.Water, LoadPrefab("Assets/Examples/AntColony/Prefabs/waterPheromonePrefab.prefab") },
-            { PheromoneType.Threat,  LoadPrefab("Assets/Examples/AntColony/Prefabs/dangerPheromonePrefab.prefab") }
+            { PheromoneType.Threat,  LoadPrefab("Assets/Examples/AntColony/Prefabs/threatPheromonePrefab.prefab") }
         };
     }
     public void AddPheromone(Vector3 position, float strength, float evaporationRate)
