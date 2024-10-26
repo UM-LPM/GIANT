@@ -7,13 +7,14 @@ using UnityEditor.Experimental.GraphView;
 using System;
 using System.Linq;
 using System.IO;
+using AgentControllers.AIAgentControllers;
 
 namespace AITechniques.BehaviorTrees {
     public class BehaviourTreeView : GraphView {
 
         public Action<NodeView> OnNodeSelected;
         public new class UxmlFactory : UxmlFactory<BehaviourTreeView, GraphView.UxmlTraits> { }
-        BehaviourTree tree;
+        BehaviorTreeAgentController tree;
         BehaviourTreeSettings settings;
 
         public struct ScriptTemplate {
@@ -56,7 +57,7 @@ namespace AITechniques.BehaviorTrees {
             return GetNodeByGuid(node.guid) as NodeView;
         }
 
-        internal void PopulateView(BehaviourTree tree) {
+        internal void PopulateView(BehaviorTreeAgentController tree) {
             this.tree = tree;
 
             graphViewChanged -= OnGraphViewChanged;
@@ -75,7 +76,7 @@ namespace AITechniques.BehaviorTrees {
 
             // Create edges
             tree.nodes.ForEach(n => {
-                var children = BehaviourTree.GetChildren(n);
+                var children = BehaviorTreeAgentController.GetChildren(n);
                 children.ForEach(c => {
                     NodeView parentView = FindNodeView(n);
                     NodeView childView = FindNodeView(c);

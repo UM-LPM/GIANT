@@ -6,13 +6,14 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEditor.UIElements;
 using UnityEditor.Callbacks;
+using AgentControllers.AIAgentControllers;
 
 namespace AITechniques.BehaviorTrees {
 
     public class BehaviourTreeEditor : EditorWindow {
 
         BehaviourTreeView treeView;
-        BehaviourTree tree;
+        BehaviorTreeAgentController behaviorTreeAgentController;
         InspectorView inspectorView;
         IMGUIContainer blackboardView;
         ToolbarMenu toolbarMenu;
@@ -34,7 +35,7 @@ namespace AITechniques.BehaviorTrees {
 
         [OnOpenAsset]
         public static bool OnOpenAsset(int instanceId, int line) {
-            if (Selection.activeObject is BehaviourTree) {
+            if (Selection.activeObject is BehaviorTreeAgentController) {
                 OpenWindow();
                 return true;
             }
@@ -87,7 +88,7 @@ namespace AITechniques.BehaviorTrees {
 
             // Toolbar assets menu
             toolbarMenu = root.Q<ToolbarMenu>();
-            var behaviourTrees = LoadAssets<BehaviourTree>();
+            var behaviourTrees = LoadAssets<BehaviorTreeAgentController>();
             behaviourTrees.ForEach(tree => {
                 toolbarMenu.menu.AppendAction($"{tree.name}", (a) => {
                     Selection.activeObject = tree;
@@ -103,10 +104,10 @@ namespace AITechniques.BehaviorTrees {
             createNewTreeButton = root.Q<Button>("CreateButton");
             createNewTreeButton.clicked += () => CreateNewTree(treeNameField.value);
 
-            if (tree == null) {
+            if (behaviorTreeAgentController == null) {
                 OnSelectionChange();
             } else {
-                SelectTree(tree);
+                SelectTree(behaviorTreeAgentController);
             }
         }
 
@@ -136,13 +137,13 @@ namespace AITechniques.BehaviorTrees {
 
         private void OnSelectionChange() {
             EditorApplication.delayCall += () => {
-                BehaviourTree tree = Selection.activeObject as BehaviourTree;
+                BehaviorTreeAgentController tree = Selection.activeObject as BehaviorTreeAgentController;
                 // TODO Remove this?
-                /*if (!tree) {
+                /*if (!behaviorTreeAgentController) {
                     if (Selection.activeGameObject) {
-                        BehaviourTree runner = Selection.activeGameObject.GetComponent<BehaviourTree>();
+                        BehaviorTreeAgentController runner = Selection.activeGameObject.GetComponent<BehaviorTreeAgentController>();
                         if (runner) {
-                            tree = runner.Tree;
+                            behaviorTreeAgentController = runner.Tree;
                         }
                     }
                 }*/
@@ -151,7 +152,7 @@ namespace AITechniques.BehaviorTrees {
             };
         }
 
-        void SelectTree(BehaviourTree newTree) {
+        void SelectTree(BehaviorTreeAgentController newTree) {
 
             if (treeView == null) {
                 return;
@@ -161,18 +162,18 @@ namespace AITechniques.BehaviorTrees {
                 return;
             }
 
-            this.tree = newTree;
+            this.behaviorTreeAgentController = newTree;
 
             overlay.style.visibility = Visibility.Hidden;
 
             if (Application.isPlaying) {
-                treeView.PopulateView(tree);
+                treeView.PopulateView(behaviorTreeAgentController);
             } else {
-                treeView.PopulateView(tree);
+                treeView.PopulateView(behaviorTreeAgentController);
             }
 
             
-            treeObject = new SerializedObject(tree);
+            treeObject = new SerializedObject(behaviorTreeAgentController);
             blackboardProperty = treeObject.FindProperty("blackboard");
 
             EditorApplication.delayCall += () => {
@@ -190,7 +191,7 @@ namespace AITechniques.BehaviorTrees {
 
         void CreateNewTree(string assetName) {
             string path = System.IO.Path.Combine(locationPathField.value, $"{assetName}.asset");
-            BehaviourTree tree = ScriptableObject.CreateInstance<BehaviourTree>();
+            BehaviorTreeAgentController tree = ScriptableObject.CreateInstance<BehaviorTreeAgentController>();
             tree.name = treeNameField.ToString();
             AssetDatabase.CreateAsset(tree, path);
             AssetDatabase.SaveAssets();
