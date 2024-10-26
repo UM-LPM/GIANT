@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using UnityEngine;
 
 namespace AITechniques.BehaviorTrees {
-    // TODO Meant for Heterogenous agents
-    [CreateAssetMenu(menuName ="BTs/Behaviour Tree Group")]
+    // TODO Remove ???
+    //[CreateAssetMenu(menuName ="BTs/Behaviour Tree Group")]
     public class BehaviourTreeGroup : ScriptableObject {
         public BehaviourTree[] BehaviourTrees;
         public BehaviourTreeGroupBlackboard BehaviourTreeGroupBlackboard;
