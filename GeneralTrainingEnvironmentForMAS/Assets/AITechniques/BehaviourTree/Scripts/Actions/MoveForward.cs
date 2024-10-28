@@ -25,7 +25,8 @@ public class MoveForward : ActionNode {
 
     protected override State OnUpdate() {
         var discreteActionsOut = blackboard.actionsOut.DiscreteActions;
-        discreteActionsOut[0] = moveForwardDirection == MoveForwardDirection.Random ? Util.NextIntBt(3) : (int)moveForwardDirection;
+
+        blackboard.actionsOut.AddDiscreteAction("moveForwardDirection", moveForwardDirection == MoveForwardDirection.Random ? Util.NextIntBt(3) : (int)moveForwardDirection);
 
         return State.Success;
     }

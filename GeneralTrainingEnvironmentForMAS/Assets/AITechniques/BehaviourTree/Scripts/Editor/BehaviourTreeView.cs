@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using System.IO;
 using AgentControllers.AIAgentControllers;
+using AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
 
 namespace AITechniques.BehaviorTrees {
     public class BehaviourTreeView : GraphView {
@@ -65,17 +66,17 @@ namespace AITechniques.BehaviorTrees {
             graphViewChanged += OnGraphViewChanged;
 
             // Automatically create RootNode if behaviour Tree is empty
-            if (tree.rootNode == null) {
-                tree.rootNode = tree.CreateNode(typeof(RootNode)) as RootNode;
+            if (tree.RootNode == null) {
+                tree.RootNode = tree.CreateNode(typeof(RootNode)) as RootNode;
                 EditorUtility.SetDirty(tree);
                 AssetDatabase.SaveAssets();
             }
 
             // Creates node view
-            tree.nodes.ForEach(n => CreateNodeView(n));
+            tree.Nodes.ForEach(n => CreateNodeView(n));
 
             // Create edges
-            tree.nodes.ForEach(n => {
+            tree.Nodes.ForEach(n => {
                 var children = BehaviorTreeAgentController.GetChildren(n);
                 children.ForEach(c => {
                     NodeView parentView = FindNodeView(n);
@@ -213,7 +214,7 @@ namespace AITechniques.BehaviorTrees {
         }
 
 
-        // TODO upgrade for multiple nodes at the same time + edges
+        // TODO upgrade for multiple Nodes at the same time + edges
         void DuplicateNode(Vector2 position) {
             NodeView nodeView = selection[0] as NodeView;
 

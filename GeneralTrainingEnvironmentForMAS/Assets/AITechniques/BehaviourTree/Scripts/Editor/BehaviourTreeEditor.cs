@@ -7,6 +7,7 @@ using UnityEngine.UIElements;
 using UnityEditor.UIElements;
 using UnityEditor.Callbacks;
 using AgentControllers.AIAgentControllers;
+using AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
 
 namespace AITechniques.BehaviorTrees {
 
@@ -174,7 +175,7 @@ namespace AITechniques.BehaviorTrees {
 
             
             treeObject = new SerializedObject(behaviorTreeAgentController);
-            blackboardProperty = treeObject.FindProperty("blackboard");
+            blackboardProperty = treeObject.FindProperty("Blackboard");
 
             EditorApplication.delayCall += () => {
                 treeView.FrameAll();

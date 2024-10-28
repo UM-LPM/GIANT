@@ -25,7 +25,7 @@ public class Rotate : ActionNode {
 
     protected override State OnUpdate() {
         var discreteActionsOut = blackboard.actionsOut.DiscreteActions;
-        discreteActionsOut[2] = rotateDirection == RotateDirection.Random? Util.NextIntBt(3) : (int)rotateDirection;
+        blackboard.actionsOut.AddDiscreteAction("rotateDirection", rotateDirection == RotateDirection.Random ? Util.NextIntBt(3) : (int)rotateDirection);
 
         return State.Success;
     }

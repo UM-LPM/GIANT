@@ -33,9 +33,9 @@ public class ItemPickupComponent : MonoBehaviour {
     }
 
     /*private void OnTriggerEnter2D(Collider2D collision) {
-        BombermanAgentComponent agent;
-        if(collision.gameObject.TryGetComponent<BombermanAgentComponent>(out agent)) {
-            OnItemPickup(agent);
+        BombermanAgentComponent Agent;
+        if(collision.gameObject.TryGetComponent<BombermanAgentComponent>(out Agent)) {
+            OnItemPickup(Agent);
         }
     }*/
 }

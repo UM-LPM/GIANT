@@ -13,6 +13,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     public static event EventHandler<OnGameFinishedEventargs> OnGameFinished;
 
     [Header("Base Configuration")]
+    [SerializeField] public EnvironmentControllerType EnvironmentControllerType = EnvironmentControllerType.MOCK;
     [SerializeField] public GameType GameType = GameType._3D;
     [SerializeField] public float SimulationSteps = 10000;
     [SerializeField] public float SimulationTime = 10f;
@@ -67,8 +68,12 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
 
     protected virtual void Awake()
     {
-
         DefineAdditionalDataOnPreAwake();
+
+        if (EnvironmentControllerType == EnvironmentControllerType.MOCK)
+        {
+            return;
+        }
 
         GameState = GameState.IDLE;
         Util = gameObject.GetComponent<Util>();
@@ -98,9 +103,12 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
 
     protected virtual void Start()
     {
-
         DefineAdditionalDataOnPreStart();
 
+        if (EnvironmentControllerType == EnvironmentControllerType.MOCK)
+        {
+            return;
+        }
 
         GetAgentBehaviourTrees(SceneLoadMode == SceneLoadMode.LayerMode ? LayerBTIndex.BTIndex : GridCell.BTIndex);
 
@@ -128,6 +136,11 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
 
     private void FixedUpdate() {
         OnPreFixedUpdate();
+
+        if (EnvironmentControllerType == EnvironmentControllerType.MOCK)
+        {
+            return;
+        }
 
         CurrentSimulationTime += Time.fixedDeltaTime;
         CurrentSimulationSteps += 1;
@@ -473,7 +486,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
         for (int i = 0; i < AgentsPredefinedBehaviour.Length; i++) {
             if(!ManualAgentPredefinedBehaviourControl) {
                 if(AgentsPredefinedBehaviour[i].BehaviourTree == null) {
-                    UnityEngine.Debug.LogWarning("Behaviour tree for agent with predefined behaviour not set");
+                    UnityEngine.Debug.LogWarning("Behaviour tree for Agent with predefined behaviour not set");
                 }
                 else {
                     AgentsPredefinedBehaviour[i].BehaviourTree = AgentsPredefinedBehaviour[i].BehaviourTree.Clone();
@@ -569,7 +582,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
         List<int[]> nodeCallFrequencies = new List<int[]>();
 
         // Based on BtLoadMode set fitness
-        // BTLoadMode.Full -> Each agent corresponds to only one Individual
+        // BTLoadMode.Full -> Each Agent corresponds to only one Individual
         // BTLoadMode.Single -> All agents correspond to the same Inidivdual
         if (BTLoadMode == BTLoadMode.Full)
         {
@@ -618,7 +631,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
         }
     }
 
-    public abstract void UpdateAgents(bool updateBTs);
+    public abstract void UpdateAgents(bool updateBTs); // Move updateBTs to somwhere else
 }
 
 public enum GameState {
@@ -630,4 +643,10 @@ public enum GameType
 {
     _2D,
     _3D
+}
+
+public enum EnvironmentControllerType
+{
+    MOCK,
+    REAL
 }

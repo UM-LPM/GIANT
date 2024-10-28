@@ -274,7 +274,7 @@ public class Communicator : MonoBehaviour {
                         }
                     }
 
-                    // Wait for all agent scenarios for current game scenario be finished before continuing to the other one (To prevent collision detection problems)
+                    // Wait for all Agent scenarios for current game scenario be finished before continuing to the other one (To prevent collision detection problems)
                     while (Layer.NumberOfUsedLayeres() > 0) {
                         yield return null;
                     }
@@ -282,7 +282,7 @@ public class Communicator : MonoBehaviour {
                     SceneManager.UnloadSceneAsync(gameScenario.GameSceneName);
                 }
 
-                // Wait for all scene to finish when all different game and agent scenarios have been loaded
+                // Wait for all scene to finish when all different game and Agent scenarios have been loaded
                 while (Layer.NumberOfUsedLayeres() > 0) {
                     yield return null;
                 }
@@ -318,7 +318,7 @@ public class Communicator : MonoBehaviour {
                     }
                 }
 
-                // Wait for all scene to finish when all different game and agent scenarios have been loaded
+                // Wait for all scene to finish when all different game and Agent scenarios have been loaded
                 while (Grid.NumberOfUsedGridCells() > 0) {
                     yield return null;
                 }

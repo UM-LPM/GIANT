@@ -3,21 +3,17 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace AgentControllers.AIAgentControllers
+namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 {
     [CreateAssetMenu(menuName = "AgentControllers/AIAgentControllers/BehaviorTreeAgentController")]
     public class BehaviorTreeAgentController : AIAgentController
     {
-        public int id;
-        public Node rootNode;
-        public Node.State treeState = Node.State.Running;
-        public List<Node> nodes = new List<Node>();
-        public Blackboard blackboard = new Blackboard(); // Blackboard for all nodes
-        public BTNode[] bTNodes;
-
-        public BehaviorTreeAgentController()
-            : base()
-        {}
+        public int Id;
+        public Node RootNode;
+        public Node.State TreeState = Node.State.Running;
+        public List<Node> Nodes = new List<Node>();
+        public Blackboard Blackboard = new Blackboard(); // Blackboard for all Nodes
+        public BTNode[] BTNodes;
 
         public override void GetActions(in ActionBuffer actionsOut)
         {
@@ -26,11 +22,11 @@ namespace AgentControllers.AIAgentControllers
 
         public Node.State Update()
         {
-            if (rootNode.state == Node.State.Running)
+            if (RootNode.state == Node.State.Running)
             {
-                treeState = rootNode.Update();
+                TreeState = RootNode.Update();
             }
-            return treeState;
+            return TreeState;
         }
         public static List<Node> GetChildren(Node parent)
         {
@@ -83,10 +79,10 @@ namespace AgentControllers.AIAgentControllers
         public BehaviorTreeAgentController Clone()
         {
             BehaviorTreeAgentController tree = Instantiate(this);
-            tree.rootNode = tree.rootNode.Clone();
-            tree.nodes = new List<Node>();
-            Traverse(tree.rootNode, (n) => {
-                tree.nodes.Add(n);
+            tree.RootNode = tree.RootNode.Clone();
+            tree.Nodes = new List<Node>();
+            Traverse(tree.RootNode, (n) => {
+                tree.Nodes.Add(n);
             });
 
             return tree;
@@ -94,16 +90,16 @@ namespace AgentControllers.AIAgentControllers
 
         public void Bind(Context context)
         {
-            Traverse(rootNode, node => {
+            Traverse(RootNode, node => {
                 node.context = context;
-                node.blackboard = blackboard;
+                node.blackboard = Blackboard;
                 // Here other shared properties of behaviour Tree must be binded
             });
         }
 
         public Context GetContext()
         {
-            return rootNode.context;
+            return RootNode.context;
         }
 
         public static Context CreateBehaviourTreeContext(GameObject agentGameObject)
@@ -113,13 +109,13 @@ namespace AgentControllers.AIAgentControllers
 
         public void UpdateTree(in ActionBuffer actionsOut)
         {
-            blackboard.actionsOut = actionsOut;
+            Blackboard.actionsOut = actionsOut;
             Update();
         }
 
         public void InitNodeCallFrequencyCounter()
         {
-            Traverse(rootNode, (node) =>
+            Traverse(RootNode, (node) =>
             {
                 node.callFrequencyCount = 0;
             });
@@ -128,7 +124,7 @@ namespace AgentControllers.AIAgentControllers
         public int[] GetNodeCallFrequencies(bool includeEncapsulatedNodes)
         {
             List<int> callFrequencies = new List<int>();
-            Traverse(rootNode, (node) =>
+            Traverse(RootNode, (node) =>
             {
                 callFrequencies.Add(node.callFrequencyCount);
             }, includeEncapsulatedNodes);
@@ -149,7 +145,7 @@ namespace AgentControllers.AIAgentControllers
             node.guid = GUID.Generate().ToString();
 
             Undo.RecordObject(this, "Behaviour Tree (CreateNode)");
-            nodes.Add(node);
+            Nodes.Add(node);
 
             if (!Application.isPlaying)
             {
@@ -165,7 +161,7 @@ namespace AgentControllers.AIAgentControllers
         public void DeleteNode(Node node)
         {
             Undo.RecordObject(this, "Behaviour Tree (DeleteNode)");
-            nodes.Remove(node);
+            Nodes.Remove(node);
 
             //AssetDatabase.RemoveObjectFromAsset(node);
             Undo.DestroyObjectImmediate(node);

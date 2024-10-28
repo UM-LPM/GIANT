@@ -14,7 +14,7 @@ namespace AITechniques.BehaviorTrees {
         public Node rootNode;
         public Node.State treeState = Node.State.Running;
         public List<Node> nodes = new List<Node>();
-        public Blackboard blackboard = new Blackboard(); // Blackboard for all nodes
+        public Blackboard blackboard = new Blackboard(); // Blackboard for all Nodes
         public BTNode[] bTNodes;
          
         public Node.State Update() {
