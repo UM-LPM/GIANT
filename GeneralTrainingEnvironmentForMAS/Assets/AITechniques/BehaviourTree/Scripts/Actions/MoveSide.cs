@@ -25,7 +25,7 @@ public class MoveSide : ActionNode {
 
     protected override State OnUpdate() {
         var discreteActionsOut = blackboard.actionsOut.DiscreteActions;
-        discreteActionsOut[1] = moveSideDirection == MoveSideDirection.Random ? Util.NextIntBt(3) : (int)moveSideDirection;
+        blackboard.actionsOut.AddDiscreteAction("moveSideDirection", moveSideDirection == MoveSideDirection.Random ? Util.NextIntBt(3) : (int)moveSideDirection);
 
         return State.Success;
     }

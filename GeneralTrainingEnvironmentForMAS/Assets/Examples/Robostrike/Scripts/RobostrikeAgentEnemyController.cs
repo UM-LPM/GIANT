@@ -57,7 +57,7 @@ public class RobostrikeAgentEnemyContoller: MonoBehaviour
 
         NavMeshAgent.isStopped = false;
 
-        // Based on the current state of the agent, decide which goal to pursue
+        // Based on the current state of the Agent, decide which goal to pursue
         if(AgentComponent.HealthComponent.Health < 2)
         {
             LastGoal = ActiveGoal;
@@ -200,7 +200,7 @@ public class RobostrikeAgentEnemyContoller: MonoBehaviour
         if(NavMeshAgent.remainingDistance < 4.0f)
         {
             NavMeshAgent.isStopped = true;
-            // Slowly Rotate the agent towards the detected object
+            // Slowly Rotate the Agent towards the detected object
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(DetectedObject.transform.position - transform.position), 0.2f);
         }
         else

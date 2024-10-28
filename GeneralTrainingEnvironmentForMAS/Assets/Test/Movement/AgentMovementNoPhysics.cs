@@ -33,34 +33,33 @@ public class AgentMovementNoPhysics : MonoBehaviour
     }
 
     void OnInput() {
-        ActionBufferManual = new ActionBuffer(null, new int[] { 0, 0, 0 }); // Forward,  Rotate
-        var discreteActionsOut = ActionBufferManual.DiscreteActions;
+        ActionBufferManual = new ActionBuffer(); // Forward,  Rotate
         //forward
         if (Input.GetKey(KeyCode.W)) {
-            discreteActionsOut[0] = 1;
+            ActionBufferManual.AddDiscreteAction("moveForwardDirection", 1);
         }
         if (Input.GetKey(KeyCode.S)) {
-            discreteActionsOut[0] = 2;
+            ActionBufferManual.AddDiscreteAction("moveForwardDirection", 2);
         }
         //rotate
         if (Input.GetKey(KeyCode.A)) {
-            discreteActionsOut[1] = 1;
+            ActionBufferManual.AddDiscreteAction("rotateDirection", 1);
         }
         if (Input.GetKey(KeyCode.D)) {
-            discreteActionsOut[1] = 2;
+            ActionBufferManual.AddDiscreteAction("rotateDirection", 2);
         }
     }
 
     void MoveAgent() {
-        if (ActionBufferManual == null || ActionBufferManual.DiscreteActions == null || ActionBufferManual.DiscreteActions.Length == 0)
+        if (ActionBufferManual == null || ActionBufferManual.DiscreteActions == null || ActionBufferManual.DiscreteActions.Count == 0)
             return;
 
         var dirToGo = Vector3.zero;
         var rotateDir = Vector3.zero;
 
 
-        var forwardAxis = ActionBufferManual.DiscreteActions[0];
-        var rotateAxis = ActionBufferManual.DiscreteActions[1];
+        var forwardAxis = ActionBufferManual.GetDiscreteAction("moveForwardDirection");
+        var rotateAxis = ActionBufferManual.GetDiscreteAction("rotateDirection");
 
         switch (forwardAxis) {
             case 1:

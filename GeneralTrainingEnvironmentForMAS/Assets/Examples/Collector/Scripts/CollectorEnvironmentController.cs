@@ -139,7 +139,7 @@ namespace Collector
                 {
                     if (updateBTs)
                     {
-                        actionBuffer = new ActionBuffer(null, new int[] { 0, 0, 0 }); // Forward, Side, Rotate
+                        actionBuffer = new ActionBuffer(); // Forward, Side, Rotate
 
                         agent.BehaviourTree.UpdateTree(actionBuffer);
                         agent.ActionBuffer = actionBuffer;
@@ -159,9 +159,8 @@ namespace Collector
             var dirToGo = Vector3.zero;
             var rotateDir = Vector3.zero;
 
-            var forwardAxis = actionBuffer.DiscreteActions[0];
-            var rightAxis = actionBuffer.DiscreteActions[1];
-            var rotateAxis = actionBuffer.DiscreteActions[2];
+            var forwardAxis = actionBuffer.GetDiscreteAction("moveForwardDirection");
+            var rotateAxis = actionBuffer.GetDiscreteAction("rotateDirection");
 
             switch (forwardAxis)
             {
@@ -184,8 +183,8 @@ namespace Collector
             }
 
             // Movement Version 1 
-            /*agent.transform.Translate(dirToGo * Time.fixedDeltaTime * AgentMoveSpeed);
-            agent.transform.Rotate(rotateDir, Time.fixedDeltaTime * AgentRotationSpeed);*/
+            /*Agent.transform.Translate(dirToGo * Time.fixedDeltaTime * AgentMoveSpeed);
+            Agent.transform.Rotate(rotateDir, Time.fixedDeltaTime * AgentRotationSpeed);*/
 
             // Movement Version 2
             agent.Rigidbody.MovePosition(agent.Rigidbody.position + (dirToGo * AgentMoveSpeed * Time.fixedDeltaTime));
@@ -279,7 +278,7 @@ namespace Collector
 
         public void TargetAquired(AgentComponent agent)
         {
-            // Update agent fitness
+            // Update Agent fitness
             agent.AgentFitness.Fitness.UpdateFitness(CollectorFitness.FitnessValues[CollectorFitness.FitnessKeys.AgentPickedTarget.ToString()], CollectorFitness.FitnessKeys.AgentPickedTarget.ToString());
             agent.GetComponent<CollectorAgentComponent>().TargetsAquired++;
 
@@ -321,7 +320,7 @@ namespace Collector
         {
             if (e.TargetGameObject.GetComponent<TargetComponent>() != null)
             {
-                // Update agent fitness
+                // Update Agent fitness
                 e.Agent.AgentFitness.Fitness.UpdateFitness(CollectorFitness.FitnessValues[CollectorFitness.FitnessKeys.AgentSpottedTarget.ToString()], CollectorFitness.FitnessKeys.AgentSpottedTarget.ToString());
             }
         }
@@ -346,7 +345,7 @@ namespace Collector
         { 
             foreach (CollectorAgentComponent agent in agents)
             {
-                // Loop through all the nodes in the behaviour tree
+                // Loop through all the Nodes in the behaviour tree
                 foreach (Node node in agent.BehaviourTree.nodes)
                 {
                     if (node is RayHitObject)

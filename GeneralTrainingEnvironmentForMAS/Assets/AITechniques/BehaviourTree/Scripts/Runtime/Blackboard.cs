@@ -4,8 +4,8 @@ using UnityEngine;
 
 namespace AITechniques.BehaviorTrees {
 
-    // This is the blackboard container shared between all nodes.
-    // Use this to store temporary data that multiple nodes need read and write access to.
+    // This is the Blackboard container shared between all Nodes.
+    // Use this to store temporary data that multiple Nodes need read and write access to.
     // Add other properties here that make sense for your specific use case.
     [System.Serializable]
     public class Blackboard {
@@ -13,7 +13,7 @@ namespace AITechniques.BehaviorTrees {
     }
 
 
-    // This is the blackboard container shared between all behaviour trees in an BehaviourTreeGroup
+    // This is the Blackboard container shared between all behaviour trees in an BehaviourTreeGroup
     // Use this to store temp data
     // Use this for communication?
     [System.Serializable]

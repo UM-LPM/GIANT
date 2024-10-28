@@ -100,33 +100,32 @@ public class SoccerEnvironmentController : EnvironmentControllerBase {
     }
 
     void OnGameInput() {
-        ActionBufferManual = new ActionBuffer(null, new int[] { 0, 0, 0}); // Forward, Side, Rotate
-        var discreteActionsOut = ActionBufferManual.DiscreteActions;
+        ActionBufferManual = new ActionBuffer(); // Forward, Side, Rotate
         //forward
         if (Input.GetKey(KeyCode.W)) {
-            discreteActionsOut[0] = 1;
+            ActionBufferManual.AddDiscreteAction("moveForwardDirection", 1);
         }
         if (Input.GetKey(KeyCode.S)) {
-            discreteActionsOut[0] = 2;
+            ActionBufferManual.AddDiscreteAction("moveForwardDirection", 2);
         }
         //rotate
         if (Input.GetKey(KeyCode.A)) {
-            discreteActionsOut[1] = 1;
+            ActionBufferManual.AddDiscreteAction("rotateDirection", 1);
         }
         if (Input.GetKey(KeyCode.D)) {
-            discreteActionsOut[1] = 2;
+            ActionBufferManual.AddDiscreteAction("rotateDirection", 2);
         }
         //right
         if (Input.GetKey(KeyCode.E)) {
-            discreteActionsOut[2] = 1;
+            ActionBufferManual.AddDiscreteAction("moveSideDirection", 1);
         }
         if (Input.GetKey(KeyCode.Q)) {
-            discreteActionsOut[2] = 2;
+            ActionBufferManual.AddDiscreteAction("moveSideDirection", 2);
         }
     }
 
     void MoveAgentsManualInput(AgentComponent[] agents) {
-        if(ActionBufferManual.DiscreteActions.Length == 0)
+        if(ActionBufferManual.DiscreteActions.Count == 0)
             return;
 
         foreach (SoccerAgentComponent agent in agents) {
@@ -140,7 +139,7 @@ public class SoccerEnvironmentController : EnvironmentControllerBase {
         ActionBuffer actionBuffer;
         foreach (SoccerAgentComponent agent in agents) {
             if (agent.gameObject.activeSelf) {
-                actionBuffer = new ActionBuffer(null, new int[] { 0, 0, 0}); // Forward, Side, Rotate
+                actionBuffer = new ActionBuffer(); // Forward, Side, Rotate
 
                 agent.BehaviourTree.UpdateTree(actionBuffer);
                 MoveAgent(agent, actionBuffer);
@@ -155,9 +154,9 @@ public class SoccerEnvironmentController : EnvironmentControllerBase {
 
         agent.KickPower = 0f;
 
-        var forwardAxis = actionBuffer.DiscreteActions[0];
-        var rightAxis = actionBuffer.DiscreteActions[1];
-        var rotateAxis = actionBuffer.DiscreteActions[2];
+        var forwardAxis = actionBuffer.GetDiscreteAction("moveForwardDirection");
+        var rightAxis = actionBuffer.GetDiscreteAction("moveSideDirection");
+        var rotateAxis = actionBuffer.GetDiscreteAction("rotateDirection");
 
         switch (forwardAxis) {
             case 1:
@@ -246,7 +245,7 @@ public class SoccerEnvironmentController : EnvironmentControllerBase {
 
     public void AgentTouchedSoccerBall(SoccerAgentComponent agent, SoccerBallComponent soccerBall) {
         GoalComponent goal = agent.Team == Team.Blue ? GoalPurple : GoalBlue;
-        // Only update if agent intentionaly hit the ball
+        // Only update if Agent intentionaly hit the ball
         if(Mathf.Abs(soccerBall.Rigidbody.velocity.x) > VelocityPassTreshold) {
             Vector3 directionToTarget = (goal.transform.position - soccerBall.transform.position).normalized;
             float dotProduct = Vector3.Dot(soccerBall.Rigidbody.velocity.normalized, directionToTarget);

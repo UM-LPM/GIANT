@@ -17,7 +17,7 @@ public class PlaceBomb : ActionNode {
 
     protected override State OnUpdate() {
         var discreteActionsOut = blackboard.actionsOut.DiscreteActions;
-        discreteActionsOut[2] = placeBomb;
+        blackboard.actionsOut.AddDiscreteAction("placeBomb", placeBomb);
 
         return State.Success;
     }

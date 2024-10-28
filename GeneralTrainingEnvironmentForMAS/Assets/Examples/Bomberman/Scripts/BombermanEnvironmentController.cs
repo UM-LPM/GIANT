@@ -236,10 +236,10 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
                 }
                 else {
                     // TODO ?
-                    /*Vector2 position = agent.Rigidbody.position;
-                    Vector2 translation = agent.MoveDirection * agent.MoveSpeed * Time.fixedDeltaTime;
+                    /*Vector2 position = Agent.Rigidbody.position;
+                    Vector2 translation = Agent.MoveDirection * Agent.MoveSpeed * Time.fixedDeltaTime;
 
-                    agent.Rigidbody.MovePosition(position + translation);*/
+                    Agent.Rigidbody.MovePosition(position + translation);*/
                 }
             }
         }
@@ -289,7 +289,7 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
         ActionBuffer actionBuffer;
         foreach(BombermanAgentComponent agent in agents) { 
             if (agent.gameObject.activeSelf && agent.enabled) {
-                actionBuffer = new ActionBuffer(null, new int[] { 0, 0, 0 }); // Forward, Side, Place bomb
+                actionBuffer = new ActionBuffer(); // Forward, Side, Place bomb
 
                 agent.BehaviourTree.UpdateTree(actionBuffer);
 
@@ -302,8 +302,8 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
     public void MoveAgent(BombermanAgentComponent agent, ActionBuffer actionBuffer) {
 
         // Set direction
-        var verticalAxis = actionBuffer.DiscreteActions[0];
-        var horizontalAxis = actionBuffer.DiscreteActions[1];
+        var verticalAxis = actionBuffer.GetDiscreteAction("moveForwardDirection");
+        var horizontalAxis = actionBuffer.GetDiscreteAction("moveSideDirection");
 
         switch (verticalAxis) {
             case 1:
@@ -335,16 +335,16 @@ public class BombermanEnvironmentController: EnvironmentControllerBase {
             }
         }
         else {
-            // Move agent TODO ?
-            /*Vector2 position = agent.Rigidbody.position;
-            Vector2 translation = agent.MoveDirection * agent.MoveSpeed * Time.fixedDeltaTime;
+            // Move Agent TODO ?
+            /*Vector2 position = Agent.Rigidbody.position;
+            Vector2 translation = Agent.MoveDirection * Agent.MoveSpeed * Time.fixedDeltaTime;
 
-            agent.Rigidbody.MovePosition(position + translation);*/
+            Agent.Rigidbody.MovePosition(position + translation);*/
         }
     }
 
     public void PlaceBomb(BombermanAgentComponent agent, ActionBuffer actionBuffer) {
-        if (agent.BombsRemaining > 0 && actionBuffer.DiscreteActions[2] == 1) {
+        if (agent.BombsRemaining > 0 && actionBuffer.GetDiscreteAction("placeBomb") == 1) {
             StartCoroutine(BombExplosionController.PlaceBomb(agent));
         }
     }

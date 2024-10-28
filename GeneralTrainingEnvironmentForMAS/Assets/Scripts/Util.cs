@@ -136,7 +136,7 @@ public class UnityAssetParser {
                 else if (lineArray[0].Contains("position")) {
                     behaviourTreeNodeDef.position = JsonConvert.DeserializeObject<Position>(convertSringArrayToJson(lineArray[1].Trim()));
                 }
-                else if (lineArray[0].Contains("blackboard")) {
+                else if (lineArray[0].Contains("Blackboard")) {
                     lineArray[1] = lineArray[1].Trim();
                     if (lineArray[1].Length > 0) {
                         behaviourTreeNodeDef.blackboard = JsonConvert.DeserializeObject<Blackboard>(convertSringArrayToJson(lineArray[1].Trim()));
@@ -146,17 +146,17 @@ public class UnityAssetParser {
                     behaviourTreeNodeDef.drawGizmos = int.Parse(lineArray[1].Trim());
                 }
                 /////// Behaviour tree properties START
-                else if (lineArray[0].Contains("nodes")) {
+                else if (lineArray[0].Contains("Nodes")) {
                     behaviourTreeNodeDef.nodes = GetNodeList(reader);
                 }
-                else if (lineArray[0].Trim().Equals("id")) {
-                    behaviourTreeNodeDef.bt_properties.Add("id", lineArray[1].Trim());
+                else if (lineArray[0].Trim().Equals("Id")) {
+                    behaviourTreeNodeDef.bt_properties.Add("Id", lineArray[1].Trim());
                 }
-                else if (lineArray[0].Contains("rootNode")) {
-                    behaviourTreeNodeDef.bt_properties.Add("rootNode", (JsonConvert.DeserializeObject<Child>(convertSringArrayToJson(lineArray[1].Trim())).fileID));
+                else if (lineArray[0].Contains("RootNode")) {
+                    behaviourTreeNodeDef.bt_properties.Add("RootNode", (JsonConvert.DeserializeObject<Child>(convertSringArrayToJson(lineArray[1].Trim())).fileID));
                 }
-                else if (lineArray[0].Contains("treeState")) {
-                    behaviourTreeNodeDef.bt_properties.Add("treeState", lineArray[1].Trim());
+                else if (lineArray[0].Contains("TreeState")) {
+                    behaviourTreeNodeDef.bt_properties.Add("TreeState", lineArray[1].Trim());
                 }
                 else if (lineArray[0].Contains("callFrequencyCount"))
                 {
@@ -267,15 +267,15 @@ public class UnityAssetParser {
         BehaviourTree tree = new BehaviourTree();
 
         // Find the behaviour tree base def
-        BehaviourTreeNodeDef behaviourTreeDef = behaviourTreeNodeDefs.Find(x => x.bt_properties.ContainsKey("rootNode"));
+        BehaviourTreeNodeDef behaviourTreeDef = behaviourTreeNodeDefs.Find(x => x.bt_properties.ContainsKey("RootNode"));
 
-        tree.id = int.Parse(behaviourTreeDef.bt_properties["id"]);
+        tree.id = int.Parse(behaviourTreeDef.bt_properties["Id"]);
         tree.name = behaviourTreeDef.m_Name;
-        tree.treeState = Node.NodeStateStringToNodeState(behaviourTreeDef.bt_properties["treeState"]);
+        tree.treeState = Node.NodeStateStringToNodeState(behaviourTreeDef.bt_properties["TreeState"]);
         
         // Find RootBehaviourTreeNodeDef
         //BehaviourTreeNodeDef rootBehaviourTreeNodeDef = behaviourTreeNodeDefs.Find(x => x.m_Script.guid.Equals("163c147d123e4a945b688eddc64e3ea5"));
-        BehaviourTreeNodeDef rootBehaviourTreeNodeDef = behaviourTreeNodeDefs.Find(x => x.m_fileID == behaviourTreeDef.bt_properties["rootNode"]);
+        BehaviourTreeNodeDef rootBehaviourTreeNodeDef = behaviourTreeNodeDefs.Find(x => x.m_fileID == behaviourTreeDef.bt_properties["RootNode"]);
 
         // Set root node and create the tree from behaviourTreeNodeDefs
         tree.rootNode = Node.CreateNodeTreeFromBehaviourTreeNodeDef(rootBehaviourTreeNodeDef, behaviourTreeNodeDefs, tree);
