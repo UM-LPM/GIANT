@@ -52,9 +52,9 @@ public class DetectsObjectOfType : ConditionNode
     }
 
     private bool RaycastForWalls(Vector2 direction)
-    {
-        RaycastHit2D hit = Physics2D.Raycast(agent.transform.position, direction, detectionDistance);
+    { RaycastHit2D hit = Physics2D.Raycast(agent.transform.position, direction, detectionDistance);
 
+       
         if (hit.collider != null && hit.collider.GetComponent<WallComponent>() != null)
         {
             return true;

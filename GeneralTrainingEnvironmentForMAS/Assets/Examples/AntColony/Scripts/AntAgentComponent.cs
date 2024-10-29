@@ -6,7 +6,7 @@ public class AntAgentComponent : AgentComponent
 
     public Rigidbody2D Rigidbody { get; set; }
     public float pheromoneEvaporationRate { get; set; }
-
+    public GameObject targetObject { get; set; }
     public GameObject detectCarriableItem { get; set; }
     public GameObject carriedItemObject { get; set; }
 

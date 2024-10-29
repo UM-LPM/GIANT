@@ -15,7 +15,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: ddfa5b8ab2af26043bc753087e8aca97
-  position: {x: -1023, y: 466.00006}
+  position: {x: -911.70776, y: 486}
   description: 
   drawGizmos: 0
 --- !u!114 &-8596637260937464432
@@ -52,7 +52,7 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 64855dfc8b8aee64ca64dfbacd8eb886
-  position: {x: -792.2249, y: 446.0001}
+  position: {x: -711.1253, y: 486}
   description: 
   drawGizmos: 0
 --- !u!114 &-7913458097828331399
@@ -112,6 +112,7 @@ MonoBehaviour:
   description: 
   drawGizmos: 0
   children:
+  - {fileID: -418703121131540137}
   - {fileID: 6247471814775869217}
   - {fileID: -8727574419713565353}
   - {fileID: -8244763230581156311}
@@ -173,6 +174,7 @@ MonoBehaviour:
 '
   drawGizmos: 0
   children:
+  - {fileID: 5424188253556528724}
   - {fileID: -4248842814215709158}
   - {fileID: 6242833514989196877}
   - {fileID: 1308049258768359563}
@@ -337,6 +339,44 @@ MonoBehaviour:
   description: 
   drawGizmos: 0
   antAgent: {fileID: 0}
+--- !u!114 &-923017813470799033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e71f30de97e02e4fb9db296ebd74cb7, type: 3}
+  m_Name: IsOnPheromoneTrail
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 71251a8dc97e8114397195976a9f08fc
+  position: {x: -1959.0001, y: 632.833}
+  description: 
+  drawGizmos: 0
+  antAgent: {fileID: 0}
+--- !u!114 &-418703121131540137
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
+  m_Name: Inverter
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: eee5d6370110f964184e7088fd38a0c9
+  position: {x: -1225, y: 474}
+  description: 
+  drawGizmos: 0
+  child: {fileID: 8285937238990073320}
 --- !u!114 &-270482220478386499
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -375,9 +415,6 @@ MonoBehaviour:
   description: 
   drawGizmos: 0
   objectType: 0
-  detectionLayer:
-    serializedVersion: 2
-    m_Bits: 0
   detectionDistance: 0.5
   angleOffset: 15
 --- !u!114 &11400000
@@ -427,6 +464,10 @@ MonoBehaviour:
   - {fileID: -4248842814215709158}
   - {fileID: 6247471814775869217}
   - {fileID: -137830052289935803}
+  - {fileID: 5424188253556528724}
+  - {fileID: -923017813470799033}
+  - {fileID: -418703121131540137}
+  - {fileID: 8285937238990073320}
   bTNodes: []
 --- !u!114 &9429243366753226
 MonoBehaviour:
@@ -533,6 +574,25 @@ MonoBehaviour:
   child: {fileID: -3714626799326867741}
   restartOnSuccess: 1
   restartOnFailure: 0
+--- !u!114 &5424188253556528724
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
+  m_Name: Inverter
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 2dd4c76470bd01040b18846db103e2ff
+  position: {x: -1958.6064, y: 474}
+  description: 
+  drawGizmos: 0
+  child: {fileID: -923017813470799033}
 --- !u!114 &5673642550660121012
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -629,13 +689,10 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: fd75c04f454dc8740ba9b50fcece0af0
-  position: {x: -1205, y: 466}
+  position: {x: -1086.1034, y: 486}
   description: 
   drawGizmos: 0
   objectType: 2
-  detectionLayer:
-    serializedVersion: 2
-    m_Bits: 0
   detectionDistance: 2
   angleOffset: 15
 --- !u!114 &6444067607131463068
@@ -676,3 +733,22 @@ MonoBehaviour:
   position: {x: 562.00006, y: 542}
   description: 
   drawGizmos: 0
+--- !u!114 &8285937238990073320
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e71f30de97e02e4fb9db296ebd74cb7, type: 3}
+  m_Name: IsOnPheromoneTrail
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 2c3d4c9e50685b542be8bb1fba42c1f8
+  position: {x: -1225, y: 601}
+  description: 
+  drawGizmos: 0
+  antAgent: {fileID: 0}
