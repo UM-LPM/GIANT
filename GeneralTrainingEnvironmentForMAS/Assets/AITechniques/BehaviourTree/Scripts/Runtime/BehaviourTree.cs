@@ -15,7 +15,6 @@ namespace AITechniques.BehaviorTrees {
         public Node.State treeState = Node.State.Running;
         public List<Node> nodes = new List<Node>();
         public Blackboard blackboard = new Blackboard(); // Blackboard for all Nodes
-        public BTNode[] bTNodes;
          
         public Node.State Update() {
             if (rootNode.state == Node.State.Running) {

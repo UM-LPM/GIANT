@@ -4,22 +4,59 @@ using AgentControllers.AIAgentControllers.NeuralNetworkAgentController;
 using AgentControllers.AIAgentControllers.NeuralNetworkAgentController.ObservationCollectors;
 using AITechniques.BehaviorTrees;
 using System.Collections.Generic;
-using Unity.Barracuda;
+//using Unity.Barracuda;
 using UnityEngine;
 
 public class ONNXModelController : MonoBehaviour
 {
-    public AgentController AgentController;
+    public AgentComponent[] AgentComponents { get; set; }
 
-    private ActionExecutor ActionExecutor;
+    private void Awake()
+    {
+        AgentComponents = GetComponentsInChildren<AgentComponent>();
+    }
 
-    void Start()
+    private void Start()
+    {
+        foreach (AgentComponent agentComponent in AgentComponents)
+        {
+            if (agentComponent.AgentController is NeuralNetworkAgentController)
+            {
+                Dictionary<string, object> initParams = new Dictionary<string, object>
+                {
+                    { "observationCollector", new DummyActionObservationProcessor(85, 6, true) }
+                };
+
+                agentComponent.AgentController.Initialize(initParams);
+            }
+            else if (agentComponent.AgentController is BehaviorTreeAgentController)
+            {
+                agentComponent.AgentController = ((BehaviorTreeAgentController)agentComponent.AgentController).Clone();
+                ((BehaviorTreeAgentController)agentComponent.AgentController).Bind(BehaviourTree.CreateBehaviourTreeContext(agentComponent.gameObject));
+                ((BehaviorTreeAgentController)agentComponent.AgentController).InitNodeCallFrequencyCounter();
+            }
+        }
+    }
+
+    public void FixedUpdate()
+    {
+        ActionBuffer actionBuffer = new ActionBuffer();
+        foreach (AgentComponent agentComponent in AgentComponents)
+        {
+            agentComponent.AgentController.GetActions(in actionBuffer);
+            agentComponent.ActionExecutor.ExecuteActions(actionBuffer);
+
+            actionBuffer.ResetActions();
+        }
+    }
+
+    /*void Start()
     {
         if (AgentController is NeuralNetworkAgentController)
         {
             Dictionary<string, object> initParams = new Dictionary<string, object>
             {
-                { "observationCollector", new DummyObservationCollector(85, 6, true) }
+                { "observationCollector", new DummyActionObservationProcessor(85, 6, true) }
             };
 
             AgentController.Initialize(initParams);
@@ -45,7 +82,7 @@ public class ONNXModelController : MonoBehaviour
         AgentController.GetActions(in actionBuffer);
 
         ActionExecutor.ExecuteActions(actionBuffer);
-    }
+    }*/
 
 
     /*public NNModel modelAsset;
