@@ -19,13 +19,13 @@ namespace AgentControllers.AIAgentControllers.NeuralNetworkAgentController
             if(ModelAsset == null)
             {
                 throw new System.Exception("ModelAsset is not set!");
-                // TODO: Add error reporting here
+                // TODO Add error reporting here
             }
 
             if (!initParams.ContainsKey("observationCollector"))
             {
                 throw new System.Exception("observationCollector is not set!");
-                // TODO: Add error reporting here
+                // TODO Add error reporting here
             }
 
             ObservationCollector = (ActionObservationProcessor)initParams["observationCollector"];
@@ -56,7 +56,7 @@ namespace AgentControllers.AIAgentControllers.NeuralNetworkAgentController
             }
             catch (System.Exception ex)
             {
-                // TODO: Add error reporting here
+                // TODO Add error reporting here
             }
 
             try
@@ -67,7 +67,7 @@ namespace AgentControllers.AIAgentControllers.NeuralNetworkAgentController
             }
             catch (System.Exception ex)
             {
-                // TODO: Add error reporting here
+                // TODO Add error reporting here
             }
         }
 
