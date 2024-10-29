@@ -13,7 +13,6 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
         public Node.State TreeState = Node.State.Running;
         public List<Node> Nodes = new List<Node>();
         public Blackboard Blackboard = new Blackboard(); // Blackboard for all Nodes
-        public BTNode[] BTNodes;
 
         public override void GetActions(in ActionBuffer actionsOut)
         {

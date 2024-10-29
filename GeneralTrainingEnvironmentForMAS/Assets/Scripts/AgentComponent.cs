@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AgentControllers;
 using AITechniques.BehaviorTrees;
 using UnityEngine;
 
@@ -18,12 +19,19 @@ public abstract class AgentComponent : MonoBehaviour {
     public List<Vector3> LastKnownPositions { get; set; }
     public ActionBuffer ActionBuffer { get; set; }
 
+    // New properties
+    [field: SerializeField]
+    public AgentController AgentController { get; set; }
+    public ActionExecutor ActionExecutor { get; set; }
+
     private void Awake() {
         AgentFitness = new FitnessIndividual();
         StartPosition = transform.position;
         StartRotation = transform.rotation;
         LastKnownPositions = new List<Vector3>();
         LastKnownPositions.Add(transform.position);
+
+        ActionExecutor = GetComponent<ActionExecutor>();
 
         DefineAdditionalDataOnAwake();
     }

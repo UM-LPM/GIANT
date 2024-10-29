@@ -13,7 +13,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     public static event EventHandler<OnGameFinishedEventargs> OnGameFinished;
 
     [Header("Base Configuration")]
-    [SerializeField] public EnvironmentControllerType EnvironmentControllerType = EnvironmentControllerType.MOCK;
+    [SerializeField] public EnvironmentControllerSetupType EnvironmentControllerSetup = EnvironmentControllerSetupType.MOCK;
     [SerializeField] public GameType GameType = GameType._3D;
     [SerializeField] public float SimulationSteps = 10000;
     [SerializeField] public float SimulationTime = 10f;
@@ -70,7 +70,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     {
         DefineAdditionalDataOnPreAwake();
 
-        if (EnvironmentControllerType == EnvironmentControllerType.MOCK)
+        if (EnvironmentControllerSetup == EnvironmentControllerSetupType.MOCK)
         {
             return;
         }
@@ -105,7 +105,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     {
         DefineAdditionalDataOnPreStart();
 
-        if (EnvironmentControllerType == EnvironmentControllerType.MOCK)
+        if (EnvironmentControllerSetup == EnvironmentControllerSetupType.MOCK)
         {
             return;
         }
@@ -137,7 +137,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     private void FixedUpdate() {
         OnPreFixedUpdate();
 
-        if (EnvironmentControllerType == EnvironmentControllerType.MOCK)
+        if (EnvironmentControllerSetup == EnvironmentControllerSetupType.MOCK)
         {
             return;
         }
@@ -645,7 +645,7 @@ public enum GameType
     _3D
 }
 
-public enum EnvironmentControllerType
+public enum EnvironmentControllerSetupType
 {
     MOCK,
     REAL

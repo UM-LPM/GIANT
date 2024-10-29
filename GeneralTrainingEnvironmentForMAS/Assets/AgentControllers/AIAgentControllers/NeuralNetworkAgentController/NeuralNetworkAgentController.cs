@@ -8,7 +8,7 @@ namespace AgentControllers.AIAgentControllers.NeuralNetworkAgentController
     [CreateAssetMenu(menuName = "AgentControllers/AIAgentControllers/NeuralNetworkAgentController")]
     public class NeuralNetworkAgentController : AIAgentController
     {
-        public ObservationCollector ObservationCollector { get; set; }
+        public ActionObservationProcessor ObservationCollector { get; set; }
         public NNModel ModelAsset;
 
         private Model Model;
@@ -28,7 +28,7 @@ namespace AgentControllers.AIAgentControllers.NeuralNetworkAgentController
                 // TODO: Add error reporting here
             }
 
-            ObservationCollector = (ObservationCollector)initParams["observationCollector"];
+            ObservationCollector = (ActionObservationProcessor)initParams["observationCollector"];
             Model = ModelLoader.Load(ModelAsset);
             Worker = WorkerFactory.CreateWorker(WorkerFactory.Type.ComputePrecompiled, Model);
         }

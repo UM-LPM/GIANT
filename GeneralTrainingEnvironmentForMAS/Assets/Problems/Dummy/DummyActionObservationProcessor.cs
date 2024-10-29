@@ -5,7 +5,7 @@ namespace AgentControllers.AIAgentControllers.NeuralNetworkAgentController.Obser
     /// <summary>
     /// Dummy observation collector for testing purposes. It randomly generates dummy observation data and action masks data.
     /// </summary>
-    public class DummyObservationCollector : ObservationCollector
+    public class DummyActionObservationProcessor : ActionObservationProcessor
     {
         public int ObservationDataSize { get; private set; }
         public int ActionMasksDataSize { get; private set; }
@@ -14,7 +14,7 @@ namespace AgentControllers.AIAgentControllers.NeuralNetworkAgentController.Obser
         private float[] observationData;
         private float[] actionMasksData;
 
-        public DummyObservationCollector(int observationDataSize, int actionMasksDataSize, bool setRandomData)
+        public DummyActionObservationProcessor(int observationDataSize, int actionMasksDataSize, bool setRandomData)
         {
             ObservationDataSize = observationDataSize;
             ActionMasksDataSize = actionMasksDataSize;
