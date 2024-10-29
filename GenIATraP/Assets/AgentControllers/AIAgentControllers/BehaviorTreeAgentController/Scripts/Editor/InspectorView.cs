@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine.UIElements;
 using UnityEditor;
 
-namespace AITechniques.BehaviorTrees {
+namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
     public class InspectorView : VisualElement {
         public new class UxmlFactory : UxmlFactory<InspectorView, VisualElement.UxmlTraits> { }
 

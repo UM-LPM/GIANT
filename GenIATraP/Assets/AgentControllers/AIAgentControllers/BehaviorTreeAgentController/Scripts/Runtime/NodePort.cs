@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine.UIElements;
 
-namespace AITechniques.BehaviorTrees {
+namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
 
     public class NodePort : Port {
 

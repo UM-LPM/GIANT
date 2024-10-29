@@ -2,7 +2,7 @@ using AgentControllers;
 using AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
 using AgentControllers.AIAgentControllers.NeuralNetworkAgentController;
 using AgentControllers.AIAgentControllers.NeuralNetworkAgentController.ObservationCollectors;
-using AITechniques.BehaviorTrees;
+using AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
 using System.Collections.Generic;
 //using Unity.Barracuda;
 using UnityEngine;
@@ -38,7 +38,7 @@ public class ExampleModelController : MonoBehaviour // TODO Remove in the future
                     break;
                 case BehaviorTreeAgentController:
                     agentComponent.AgentController = ((BehaviorTreeAgentController)agentComponent.AgentController).Clone();
-                    ((BehaviorTreeAgentController)agentComponent.AgentController).Bind(BehaviourTree.CreateBehaviourTreeContext(agentComponent.gameObject));
+                    ((BehaviorTreeAgentController)agentComponent.AgentController).Bind(BehaviorTreeAgentController.CreateBehaviourTreeContext(agentComponent.gameObject));
                     ((BehaviorTreeAgentController)agentComponent.AgentController).InitNodeCallFrequencyCounter();
                     break;
                 // TODO Implement other AgentController types

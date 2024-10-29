@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using global::AITechniques.BehaviorTrees;
+using global::AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
 
 public class RotateTurret : ActionNode {
 
@@ -23,14 +23,14 @@ public class RotateTurret : ActionNode {
         return State.Success;
     }
 
-    public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviourTree tree) {
+    public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviorTreeAgentController tree) {
         // Create node
         RotateTurret rotateTurretNode = new RotateTurret();
 
         // Set node properties
         rotateTurretNode.rotateDirection = (RotateDirection)int.Parse(behaviourTreeNodeDef.node_properties["rotateDirection"]);
 
-        tree.nodes.Add(rotateTurretNode);
+        tree.Nodes.Add(rotateTurretNode);
         return rotateTurretNode;
     }
 }

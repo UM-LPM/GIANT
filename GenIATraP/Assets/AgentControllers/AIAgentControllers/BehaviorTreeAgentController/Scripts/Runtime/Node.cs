@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace AITechniques.BehaviorTrees {
+namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
     public abstract class Node : ScriptableObject {
         public enum State {
             Running,
@@ -44,7 +44,7 @@ namespace AITechniques.BehaviorTrees {
         }
 
         public void Abort() {
-            BehaviourTree.Traverse(this, (node) => {
+            BehaviorTreeAgentController.Traverse(this, (node) => {
                 node.started = false;
                 node.state = State.Running;
                 node.OnStop();
@@ -85,7 +85,7 @@ namespace AITechniques.BehaviorTrees {
             }
         }
 
-        public static Node CreateNodeTreeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef currentBehaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviourTree tree) {
+        public static Node CreateNodeTreeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef currentBehaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviorTreeAgentController tree) {
             // 1. Create node from rootBehaviourTreeNodeDef
             Node node = null;
             switch (currentBehaviourTreeNodeDef.m_Script.guid) {

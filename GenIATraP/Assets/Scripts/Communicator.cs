@@ -3,7 +3,7 @@ using System.Collections;
 using System.Net;
 using System.Text;
 using System.Threading;
-using AITechniques.BehaviorTrees;
+using AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using PimDeWitte.UnityMainThreadDispatcher;

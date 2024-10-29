@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using AITechniques.BehaviorTrees;
+using AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
 using Unity.VisualScripting;
 using System.Linq;
 using static EnvironmentControllerBase;
@@ -332,7 +332,7 @@ public class RayHitObject : ConditionNode {
 
         return TargetGameObject.Empty;
     }
-    public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviourTree tree) {
+    public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviorTreeAgentController tree) {
         // Create node
         RayHitObject rayHitObjectNode = new RayHitObject();
 
@@ -341,7 +341,7 @@ public class RayHitObject : ConditionNode {
         rayHitObjectNode.side = (AgentSideAdvanced)int.Parse(behaviourTreeNodeDef.node_properties["side"]);
         rayHitObjectNode.rayIndex = int.Parse(behaviourTreeNodeDef.node_properties["rayIndex"]);
 
-        tree.nodes.Add(rayHitObjectNode);
+        tree.Nodes.Add(rayHitObjectNode);
         return rayHitObjectNode;
     }
 

@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using AITechniques.BehaviorTrees;
+using AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
 using UnityEngine;
 
 public class Util : MonoBehaviour {
@@ -80,15 +80,15 @@ public class Util : MonoBehaviour {
 }
 
 public class UnityAssetParser {
-    public static BehaviourTree[] ParseBehaviourTreesFromFolder(string folderPath, int start, int end) {
-        List<BehaviourTree> trees = new List<BehaviourTree>();
+    public static BehaviorTreeAgentController[] ParseBehaviourTreesFromFolder(string folderPath, int start, int end) {
+        List<BehaviorTreeAgentController> trees = new List<BehaviorTreeAgentController>();
 
         // Read all files in the folder
         string[] files = System.IO.Directory.GetFiles(folderPath, "*.asset");
         files = files.OrderBy(file => int.Parse(Regex.Match(file, @"(\d+)").Groups[0].ToString())).ToArray();
 
         for (int i = start; i < end; i++) {
-            BehaviourTree tree = ParseBehaviourTree(files[i]);
+            BehaviorTreeAgentController tree = ParseBehaviourTree(files[i]);
             trees.Add(tree);
         }
 
@@ -102,7 +102,7 @@ public class UnityAssetParser {
         return trees.ToArray();
     }
 
-    public static BehaviourTree ParseBehaviourTree(string path) {
+    public static BehaviorTreeAgentController ParseBehaviourTree(string path) {
         List<BehaviourTreeNodeDef> behaviourTreeNodeDefs = new List<BehaviourTreeNodeDef>();
 
         BehaviourTreeNodeDef behaviourTreeNodeDef = null;
@@ -263,22 +263,22 @@ public class UnityAssetParser {
         return input;
     }
 
-    public static BehaviourTree ConvertBehaviourTreeNodeDefsToBehaviourTree(List<BehaviourTreeNodeDef> behaviourTreeNodeDefs) {
-        BehaviourTree tree = new BehaviourTree();
+    public static BehaviorTreeAgentController ConvertBehaviourTreeNodeDefsToBehaviourTree(List<BehaviourTreeNodeDef> behaviourTreeNodeDefs) {
+        BehaviorTreeAgentController tree = new BehaviorTreeAgentController();
 
         // Find the behaviour tree base def
         BehaviourTreeNodeDef behaviourTreeDef = behaviourTreeNodeDefs.Find(x => x.bt_properties.ContainsKey("RootNode"));
 
-        tree.id = int.Parse(behaviourTreeDef.bt_properties["Id"]);
+        tree.Id = int.Parse(behaviourTreeDef.bt_properties["Id"]);
         tree.name = behaviourTreeDef.m_Name;
-        tree.treeState = Node.NodeStateStringToNodeState(behaviourTreeDef.bt_properties["TreeState"]);
+        tree.TreeState = Node.NodeStateStringToNodeState(behaviourTreeDef.bt_properties["TreeState"]);
         
         // Find RootBehaviourTreeNodeDef
         //BehaviourTreeNodeDef rootBehaviourTreeNodeDef = behaviourTreeNodeDefs.Find(x => x.m_Script.guid.Equals("163c147d123e4a945b688eddc64e3ea5"));
         BehaviourTreeNodeDef rootBehaviourTreeNodeDef = behaviourTreeNodeDefs.Find(x => x.m_fileID == behaviourTreeDef.bt_properties["RootNode"]);
 
         // Set root node and create the tree from behaviourTreeNodeDefs
-        tree.rootNode = Node.CreateNodeTreeFromBehaviourTreeNodeDef(rootBehaviourTreeNodeDef, behaviourTreeNodeDefs, tree);
+        tree.RootNode = Node.CreateNodeTreeFromBehaviourTreeNodeDef(rootBehaviourTreeNodeDef, behaviourTreeNodeDefs, tree);
 
         return tree;
     }

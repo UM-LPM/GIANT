@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEngine.UIElements;
 using UnityEditor.Experimental.GraphView;
 
-namespace AITechniques.BehaviorTrees {
+namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
     public class DoubleClickSelection : MouseManipulator {
         double time;
         double doubleClickDuration = 0.3;
@@ -55,7 +55,7 @@ namespace AITechniques.BehaviorTrees {
             }
 
             // Add children to selection so the root element can be moved
-            BehaviourTree.Traverse(clickedElement.node, node => {
+            BehaviorTreeAgentController.Traverse(clickedElement.node, node => {
                 var view = graphView.FindNodeView(node);
                 graphView.AddToSelection(view);
             });

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using AITechniques.BehaviorTrees;
+using AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
 using UnityEngine;
 
 public class GridCellContainsObject : ConditionNode {
@@ -43,7 +43,7 @@ public class GridCellContainsObject : ConditionNode {
 
     }
 
-    public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviourTree tree) {
+    public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviorTreeAgentController tree) {
         // Create node
         GridCellContainsObject gridCellContainsObjectNode = new GridCellContainsObject();
 
@@ -52,7 +52,7 @@ public class GridCellContainsObject : ConditionNode {
         gridCellContainsObjectNode.gridPositionX = int.Parse(behaviourTreeNodeDef.node_properties["gridPositionX"]);
         gridCellContainsObjectNode.gridPositionY = int.Parse(behaviourTreeNodeDef.node_properties["gridPositionY"]);
 
-        tree.nodes.Add(gridCellContainsObjectNode);
+        tree.Nodes.Add(gridCellContainsObjectNode);
         return gridCellContainsObjectNode;
     }
 }

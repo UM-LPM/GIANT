@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using global::AITechniques.BehaviorTrees;
+using global::AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
 
 public enum RotateDirection {
     Left = 1,
@@ -30,14 +30,14 @@ public class Rotate : ActionNode {
         return State.Success;
     }
 
-    public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviourTree tree) {
+    public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviorTreeAgentController tree) {
         // Create node
         Rotate rotateNode = new Rotate();
 
         // Set node properties
         rotateNode.rotateDirection = (RotateDirection)int.Parse(behaviourTreeNodeDef.node_properties["rotateDirection"]);
 
-        tree.nodes.Add(rotateNode);
+        tree.Nodes.Add(rotateNode);
         return rotateNode;
     }
 }

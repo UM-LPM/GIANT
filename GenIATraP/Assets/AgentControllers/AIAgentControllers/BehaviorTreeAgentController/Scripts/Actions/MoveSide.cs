@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using global::AITechniques.BehaviorTrees;
+using global::AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
 
 public enum MoveSideDirection {
     Left = 1,
@@ -30,14 +30,14 @@ public class MoveSide : ActionNode {
         return State.Success;
     }
 
-    public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviourTree tree) {
+    public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviorTreeAgentController tree) {
         // Create node
         MoveSide moveSideNode = new MoveSide();
 
         // Set node properties
         moveSideNode.moveSideDirection = (MoveSideDirection)int.Parse(behaviourTreeNodeDef.node_properties["moveSideDirection"]);
 
-        tree.nodes.Add(moveSideNode);
+        tree.Nodes.Add(moveSideNode);
         return moveSideNode;
     }
 }

@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using AITechniques.BehaviorTrees;
+using AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
 
 public enum ShieldLevel
 {
@@ -38,7 +38,7 @@ public class ShieldLevelBellow : ConditionNode
         return false;
     }
 
-    public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviourTree tree)
+    public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviorTreeAgentController tree)
     {
         // Create node
         ShieldLevelBellow shieldLevelNode = new ShieldLevelBellow();
@@ -46,7 +46,7 @@ public class ShieldLevelBellow : ConditionNode
         // Set node properties
         shieldLevelNode.shieldLevel = (ShieldLevel)int.Parse(behaviourTreeNodeDef.node_properties["shieldLevel"]);
 
-        tree.nodes.Add(shieldLevelNode);
+        tree.Nodes.Add(shieldLevelNode);
         return shieldLevelNode;
     }
 

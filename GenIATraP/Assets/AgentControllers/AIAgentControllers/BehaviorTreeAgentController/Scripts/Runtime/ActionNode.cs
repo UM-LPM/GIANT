@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-namespace AITechniques.BehaviorTrees {
+namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
     public abstract class ActionNode : Node {
 
     }

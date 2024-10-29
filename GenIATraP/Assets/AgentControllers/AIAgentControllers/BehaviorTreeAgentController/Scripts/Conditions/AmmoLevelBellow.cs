@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using AITechniques.BehaviorTrees;
+using AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
 
 public enum AmmoLevel
 {
@@ -38,7 +38,7 @@ public class AmmoLevelBellow : ConditionNode
         return false;
     }
 
-    public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviourTree tree)
+    public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviorTreeAgentController tree)
     {
         // Create node
         AmmoLevelBellow ammoLevelNode = new AmmoLevelBellow();
@@ -46,7 +46,7 @@ public class AmmoLevelBellow : ConditionNode
         // Set node properties
         ammoLevelNode.ammoLevel = (AmmoLevel)int.Parse(behaviourTreeNodeDef.node_properties["ammoLevel"]);
 
-        tree.nodes.Add(ammoLevelNode);
+        tree.Nodes.Add(ammoLevelNode);
         return ammoLevelNode;
     }
 

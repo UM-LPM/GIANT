@@ -9,7 +9,7 @@ using UnityEditor.Callbacks;
 using AgentControllers.AIAgentControllers;
 using AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
 
-namespace AITechniques.BehaviorTrees {
+namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
 
     public class BehaviourTreeEditor : EditorWindow {
 
@@ -27,7 +27,7 @@ namespace AITechniques.BehaviorTrees {
         SerializedObject treeObject;
         SerializedProperty blackboardProperty;
 
-        [MenuItem("AITechniques.BehaviorTrees/BehaviourTreeEditor ...")]
+        [MenuItem("AgentControllers.AIAgentControllers.BehaviorTreeAgentController/BehaviourTreeEditor ...")]
         public static void OpenWindow() {
             BehaviourTreeEditor wnd = GetWindow<BehaviourTreeEditor>();
             wnd.titleContent = new GUIContent("BehaviourTreeEditor");

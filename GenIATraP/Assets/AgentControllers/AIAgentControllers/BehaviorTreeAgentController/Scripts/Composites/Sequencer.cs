@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace AITechniques.BehaviorTrees {
+namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
     public class Sequencer : CompositeNode {
         protected int current;
 
@@ -31,7 +31,7 @@ namespace AITechniques.BehaviorTrees {
             return State.Success;
         }
 
-        public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviourTree tree) {
+        public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviorTreeAgentController tree) {
             // Create node
             Sequencer sequencerNode = new Sequencer();
 
@@ -41,7 +41,7 @@ namespace AITechniques.BehaviorTrees {
                 sequencerNode.children.Add(Node.CreateNodeTreeFromBehaviourTreeNodeDef(childNodeDef, behaviourTreeNodeDefs, tree));
             }
 
-            tree.nodes.Add(sequencerNode);
+            tree.Nodes.Add(sequencerNode);
             return sequencerNode;
         }
     }

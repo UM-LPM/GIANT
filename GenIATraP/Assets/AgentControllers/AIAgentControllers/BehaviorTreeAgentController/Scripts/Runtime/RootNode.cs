@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace AITechniques.BehaviorTrees {
+namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
 
     public class RootNode : Node {
         [HideInInspector] public Node child;
@@ -25,7 +25,7 @@ namespace AITechniques.BehaviorTrees {
             return node;
         }
 
-        public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviourTree tree) {
+        public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviorTreeAgentController tree) {
             // Create node
             RootNode rootNode = new RootNode();
             
@@ -35,7 +35,7 @@ namespace AITechniques.BehaviorTrees {
             // Set node properties
             rootNode.child = Node.CreateNodeTreeFromBehaviourTreeNodeDef(childNodeDef, behaviourTreeNodeDefs, tree);
 
-            tree.nodes.Add(rootNode);
+            tree.Nodes.Add(rootNode);
             return rootNode;
         }
     }

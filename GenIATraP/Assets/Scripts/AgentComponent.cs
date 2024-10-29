@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AgentControllers;
-using AITechniques.BehaviorTrees;
+using AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
 using UnityEngine;
 
 public abstract class AgentComponent : MonoBehaviour {
@@ -12,7 +12,7 @@ public abstract class AgentComponent : MonoBehaviour {
     [field: SerializeField, Header("Base Agent Configuration")]
     public bool HasPredefinedBehaviour { get; set; }
     [field: SerializeField]
-    public BehaviourTree BehaviourTree { get; set; } // TODO Replace this with a AgentController
+    public BehaviorTreeAgentController BehaviourTree { get; set; } // TODO Replace this with a AgentController
     public FitnessIndividual AgentFitness { get; set; }
     public Vector3 StartPosition { get; set; } // TODO remove this (this must be defined in AgentScene or GameScene or EnvController)
     public Quaternion StartRotation{ get; set; } // TODO remove this (this must be defined in AgentScene or GameScene or EnvController)
