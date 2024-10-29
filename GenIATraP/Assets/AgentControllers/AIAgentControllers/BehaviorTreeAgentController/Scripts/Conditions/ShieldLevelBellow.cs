@@ -24,7 +24,8 @@ public class ShieldLevelBellow : ConditionNode
 
     protected override bool CheckConditions()
     {
-        ShieldComponent shieldComponent = context.gameObject.GetComponent<ShieldComponent>();
+        // TODO Implement
+        /*ShieldComponent shieldComponent = context.gameObject.GetComponent<ShieldComponent>();
 
         if (shieldComponent != null)
         {
@@ -32,7 +33,7 @@ public class ShieldLevelBellow : ConditionNode
             {
                 return true;
             }
-        }
+        }*/
 
         return false;
     }

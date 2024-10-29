@@ -24,7 +24,8 @@ public class AmmoLevelBellow : ConditionNode
 
     protected override bool CheckConditions()
     {
-        AmmoComponent ammoComponent = context.gameObject.GetComponent<AmmoComponent>();
+        // TODO Implement
+        /*AmmoComponent ammoComponent = context.gameObject.GetComponent<AmmoComponent>();
 
         if (ammoComponent != null)
         {
@@ -32,7 +33,7 @@ public class AmmoLevelBellow : ConditionNode
             {
                 return true;
             }
-        }
+        }*/
 
         return false;
     }

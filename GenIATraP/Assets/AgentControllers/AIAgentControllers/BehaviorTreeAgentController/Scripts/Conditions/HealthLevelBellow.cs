@@ -25,7 +25,8 @@ public class HealthLevelBellow : ConditionNode
 
     protected override bool CheckConditions()
     {
-        HealthComponent healthComponent = context.gameObject.GetComponent<HealthComponent>();
+        // TODO Implement
+        /*HealthComponent healthComponent = context.gameObject.GetComponent<HealthComponent>();
 
         if (healthComponent != null)
         {
@@ -33,7 +34,7 @@ public class HealthLevelBellow : ConditionNode
             {
                 return true;
             }
-        }
+        }*/
 
         return false;
     }
