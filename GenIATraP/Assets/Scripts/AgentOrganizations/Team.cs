@@ -1,4 +1,3 @@
-
 using UnityEngine;
 
 namespace AgentOrganizations
@@ -6,6 +5,7 @@ namespace AgentOrganizations
     [CreateAssetMenu(menuName = "AgentOrganizations/Team")]
     public class Team: ScriptableObject
     {
+        public int TeamId;
         public string TeamName;
         public Individual[] Individuals;
     }
