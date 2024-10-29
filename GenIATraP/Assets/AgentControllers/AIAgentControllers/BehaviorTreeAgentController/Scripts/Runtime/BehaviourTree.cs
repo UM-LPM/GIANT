@@ -8,7 +8,7 @@ using UnityEditor;
 
 
 namespace AITechniques.BehaviorTrees {
-    [CreateAssetMenu(menuName = "BTs/Behaviour Tree")]
+    //[CreateAssetMenu(menuName = "BTs/Behaviour Tree")]
     public class BehaviourTree : ScriptableObject {
         public int id;
         public Node rootNode;
