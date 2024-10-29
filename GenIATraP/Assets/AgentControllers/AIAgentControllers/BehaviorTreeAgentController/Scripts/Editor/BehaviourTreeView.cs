@@ -10,7 +10,7 @@ using System.IO;
 using AgentControllers.AIAgentControllers;
 using AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
 
-namespace AITechniques.BehaviorTrees {
+namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
     public class BehaviourTreeView : GraphView {
 
         public Action<NodeView> OnNodeSelected;

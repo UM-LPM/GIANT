@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using AITechniques.BehaviorTrees;
+using AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
 
 public class Shoot : ActionNode {
 
@@ -17,14 +17,14 @@ public class Shoot : ActionNode {
         return State.Success;
     }
 
-    public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviourTree tree) {
+    public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviorTreeAgentController tree) {
         // Create node
         Shoot shootNode = new Shoot();
 
         // Set node properties
         shootNode.shoot = int.Parse(behaviourTreeNodeDef.node_properties["shoot"]);
 
-        tree.nodes.Add(shootNode);
+        tree.Nodes.Add(shootNode);
         return shootNode;
     }
 }

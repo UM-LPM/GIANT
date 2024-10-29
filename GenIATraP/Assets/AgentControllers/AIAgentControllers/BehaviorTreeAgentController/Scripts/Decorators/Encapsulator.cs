@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace AITechniques.BehaviorTrees
+namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 {
 	public class Encapsulator : DecoratorNode
 	{
@@ -29,7 +29,7 @@ namespace AITechniques.BehaviorTrees
 			return State.Failure;
 		}
 
-		public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviourTree tree)
+		public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviorTreeAgentController tree)
 		{
 			// Create node
 			Encapsulator encapsulatedNode = new Encapsulator();
@@ -40,7 +40,7 @@ namespace AITechniques.BehaviorTrees
             // Set node properties
             encapsulatedNode.child = Node.CreateNodeTreeFromBehaviourTreeNodeDef(childNodeDef, behaviourTreeNodeDefs, tree);
 
-			tree.nodes.Add(encapsulatedNode);
+			tree.Nodes.Add(encapsulatedNode);
 			return encapsulatedNode;
 		}
 	}

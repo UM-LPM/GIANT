@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using AITechniques.BehaviorTrees;
+using AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
 
 public enum HealthLevel
 {
@@ -39,7 +39,7 @@ public class HealthLevelBellow : ConditionNode
         return false;
     }
 
-    public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviourTree tree)
+    public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviorTreeAgentController tree)
     {
         // Create node
         HealthLevelBellow healthLevelNode = new HealthLevelBellow();
@@ -47,7 +47,7 @@ public class HealthLevelBellow : ConditionNode
         // Set node properties
         healthLevelNode.healthLevel = (HealthLevel)int.Parse(behaviourTreeNodeDef.node_properties["healthLevel"]);
 
-        tree.nodes.Add(healthLevelNode);
+        tree.Nodes.Add(healthLevelNode);
         return healthLevelNode;
     }
 

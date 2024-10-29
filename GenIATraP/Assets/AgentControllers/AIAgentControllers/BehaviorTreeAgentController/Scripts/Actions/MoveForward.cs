@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using global::AITechniques.BehaviorTrees;
+using global::AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
 
 public enum MoveForwardDirection {
     Forward = 1,
@@ -31,14 +31,14 @@ public class MoveForward : ActionNode {
         return State.Success;
     }
 
-    public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviourTree tree) {
+    public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviorTreeAgentController tree) {
         // Create node
         MoveForward moveForwardNode = new MoveForward();
 
         // Set node properties
         moveForwardNode.moveForwardDirection = (MoveForwardDirection)int.Parse(behaviourTreeNodeDef.node_properties["moveForwardDirection"]);
 
-        tree.nodes.Add(moveForwardNode);
+        tree.Nodes.Add(moveForwardNode);
         return moveForwardNode;
     }
 }

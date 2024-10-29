@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace AITechniques.BehaviorTrees {
+namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
     public class Selector : CompositeNode {
         protected int current;
 
@@ -32,7 +32,7 @@ namespace AITechniques.BehaviorTrees {
             return State.Failure;
         }
 
-        public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviourTree tree) {
+        public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviorTreeAgentController tree) {
             // Create node
             Selector selectorNode = new Selector();
 
@@ -42,7 +42,7 @@ namespace AITechniques.BehaviorTrees {
                 selectorNode.children.Add(Node.CreateNodeTreeFromBehaviourTreeNodeDef(childNodeDef, behaviourTreeNodeDefs, tree));
             }
 
-            tree.nodes.Add(selectorNode);
+            tree.Nodes.Add(selectorNode);
             return selectorNode;
         }
     }

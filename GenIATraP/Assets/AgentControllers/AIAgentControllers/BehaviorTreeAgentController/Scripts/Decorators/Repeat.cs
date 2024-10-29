@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace AITechniques.BehaviorTrees {
+namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
     public class Repeat : DecoratorNode {
 
         public bool restartOnSuccess = true;
@@ -37,7 +37,7 @@ namespace AITechniques.BehaviorTrees {
             return State.Running;
         }
 
-        public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviourTree tree) {
+        public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviorTreeAgentController tree) {
             // Create node
             Repeat repeatNode = new Repeat();
 
@@ -49,7 +49,7 @@ namespace AITechniques.BehaviorTrees {
             repeatNode.restartOnSuccess = behaviourTreeNodeDef.node_properties["restartOnSuccess"] == "1";
             repeatNode.restartOnFailure = behaviourTreeNodeDef.node_properties["restartOnFailure"] == "1";
 
-            tree.nodes.Add(repeatNode);
+            tree.Nodes.Add(repeatNode);
             return repeatNode;
         }
     }
