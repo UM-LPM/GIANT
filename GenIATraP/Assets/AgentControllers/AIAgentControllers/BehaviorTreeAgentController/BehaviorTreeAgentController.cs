@@ -8,7 +8,6 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
     [CreateAssetMenu(menuName = "AgentControllers/AIAgentControllers/BehaviorTreeAgentController")]
     public class BehaviorTreeAgentController : AIAgentController
     {
-        public int Id;
         public Node RootNode;
         public Node.State TreeState = Node.State.Running;
         public List<Node> Nodes = new List<Node>();

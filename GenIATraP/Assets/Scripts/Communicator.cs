@@ -15,6 +15,34 @@ public class Communicator : MonoBehaviour
 {
     [HideInInspector] public static Communicator Instance;
 
+    [Header("HTTP Server Configuration")]
+    [SerializeField] public string CommunicatorURI = "http://localhost:4444/";
+
+    [Header("Scene Loading Configuration")]
+    [SerializeField] public SceneLoadMode SceneLoadMode = SceneLoadMode.LayerMode;
+
+    [Header("LayerMode Configuration")]
+    [SerializeField] int MinLayerId = 6;
+    [SerializeField] int MaxLayerId = 26;
+    [SerializeField] private int BatchSize = 1;
+
+    [Header("GridMode Configuration")]
+    [SerializeField] Vector3Int GridSize = new Vector3Int(10, 0, 10);
+    [SerializeField] Vector3Int GridSpacing = new Vector3Int(50, 0, 50);
+
+    [Header("Scenes Configuration")]
+    [SerializeField] public string BtSource;
+    [SerializeField] GameScenario[] GameScenarios;
+    [SerializeField] AgentScenario[] AgentScenarios;
+
+    [Header("Execution Configuration")]
+    [SerializeField] public float TimeScale = 1f;
+    [SerializeField] public float FixedTimeStep = 0.02f;
+    [SerializeField] public int RerunTimes = 1;
+
+    [Header("Response Configuration TODO")]
+    // TODO Implement
+
     [Header("Initial Seed Configuration")]
     [SerializeField] public int InitialSeed = 316227711;
     [SerializeField] public RandomSeedMode RandomSeedMode = RandomSeedMode.Fixed;

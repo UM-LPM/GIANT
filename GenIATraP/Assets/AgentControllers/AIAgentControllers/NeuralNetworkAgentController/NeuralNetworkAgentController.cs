@@ -8,8 +8,8 @@ namespace AgentControllers.AIAgentControllers.NeuralNetworkAgentController
     [CreateAssetMenu(menuName = "AgentControllers/AIAgentControllers/NeuralNetworkAgentController")]
     public class NeuralNetworkAgentController : AIAgentController
     {
-        public ActionObservationProcessor ObservationCollector { get; set; }
         public NNModel ModelAsset;
+        public ActionObservationProcessor ObservationCollector { get; set; }
 
         private Model Model;
         private IWorker Worker;

@@ -4,18 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AgentControllers;
-using AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
+using AgentControllers.AIAgentControllers;
 using UnityEngine;
 
 public abstract class AgentComponent : MonoBehaviour {
 
     [field: SerializeField, Header("Base Agent Configuration")]
-    public bool HasPredefinedBehaviour { get; set; }
-    [field: SerializeField]
-    public BehaviorTreeAgentController BehaviourTree { get; set; } // TODO Replace this with a AgentController
     public FitnessIndividual AgentFitness { get; set; }
-    public Vector3 StartPosition { get; set; } // TODO remove this (this must be defined in AgentScene or GameScene or EnvController)
-    public Quaternion StartRotation{ get; set; } // TODO remove this (this must be defined in AgentScene or GameScene or EnvController)
+    public Vector3 StartPosition { get; set; }
+    public Quaternion StartRotation{ get; set; }
     public List<Vector3> LastKnownPositions { get; set; }
     public ActionBuffer ActionBuffer { get; set; }
 
@@ -23,6 +20,9 @@ public abstract class AgentComponent : MonoBehaviour {
     [field: SerializeField]
     public AgentController AgentController { get; set; }
     public ActionExecutor ActionExecutor { get; set; }
+
+    public int IndividualID { get; set; }
+    public int TeamID { get; set; }
 
     private void Awake() {
         AgentFitness = new FitnessIndividual();

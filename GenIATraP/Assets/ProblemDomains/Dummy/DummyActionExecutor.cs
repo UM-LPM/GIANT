@@ -7,7 +7,6 @@ namespace Problems.Dummy
     {
         private DummyEnvironmentController DummyEnvironmentController;
         private DummyAgentComponent Agent;
-        private float ForwardSpeed = 1f;
 
         private void Start()
         {
@@ -31,10 +30,10 @@ namespace Problems.Dummy
             switch (forwardAxis)
             {
                 case 1:
-                    dirToGo = Agent.transform.forward * ForwardSpeed;
+                    dirToGo = Agent.transform.forward * DummyEnvironmentController.ForwardSpeed;
                     break;
                 case 2:
-                    dirToGo = Agent.transform.forward * -ForwardSpeed;
+                    dirToGo = Agent.transform.forward * -DummyEnvironmentController.ForwardSpeed;
                     break;
             }
 

@@ -269,7 +269,7 @@ public class UnityAssetParser {
         // Find the behaviour tree base def
         BehaviourTreeNodeDef behaviourTreeDef = behaviourTreeNodeDefs.Find(x => x.bt_properties.ContainsKey("RootNode"));
 
-        tree.Id = int.Parse(behaviourTreeDef.bt_properties["Id"]);
+        tree.AgentControllerId = int.Parse(behaviourTreeDef.bt_properties["Id"]);
         tree.name = behaviourTreeDef.m_Name;
         tree.TreeState = Node.NodeStateStringToNodeState(behaviourTreeDef.bt_properties["TreeState"]);
         

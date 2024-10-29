@@ -11,6 +11,7 @@ namespace AgentControllers
 
     public abstract class AgentController: ScriptableObject
     {
+        public int AgentControllerId;
         public ControllerType ControllerType;
 
         public virtual void Initialize(Dictionary<string, object> initParams) { }

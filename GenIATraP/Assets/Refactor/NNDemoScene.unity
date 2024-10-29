@@ -135,6 +135,7 @@ GameObject:
   - component: {fileID: 253094001}
   - component: {fileID: 253094002}
   - component: {fileID: 253094003}
+  - component: {fileID: 253094004}
   m_Layer: 0
   m_Name: EnvironmentController
   m_TagString: Untagged
@@ -173,6 +174,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   EnvironmentControllerSetup: 0
+  Environment: {fileID: 0}
+  AgentPrefab: {fileID: 761679441804085278, guid: 434bf2c994950c64699b7cf9a58ecdfa, type: 3}
+  ArenaSize: {x: 40, y: 0.5, z: 40}
+  ArenaRadius: 0
+  ArenaCenterPoint: {x: 0, y: 0, z: 0}
+  ArenaOffset: 3
+  MinAgentDistance: 10
+  AgentColliderExtendsMultiplier: {x: 0.5, y: 0.495, z: 0.505}
+  Match: {fileID: 11400000, guid: 7f2c48598c0bdc741a3ccc4c608c2890, type: 2}
   AgentMoveSpeed: 5
   AgentRotationSpeed: 80
   ForwardSpeed: 1
@@ -199,6 +209,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a7b33a3bbac17574387ae8a0536a4bcb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &253094004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 253093999}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 385fe2f8544abab4f8f4cfc5bcdc9436, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &273797715
@@ -1052,7 +1074,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1779568046
 Transform:
   m_ObjectHideFlags: 0
@@ -1081,9 +1103,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0490499c5f075fc46be2f8e76c0bec48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <HasPredefinedBehaviour>k__BackingField: 0
-  <BehaviourTree>k__BackingField: {fileID: 0}
-  <AgentController>k__BackingField: {fileID: 11400000, guid: de9fd499c3b151d4fafad28e83227c00, type: 2}
+  <AgentController>k__BackingField: {fileID: 11400000, guid: 1d68fc7168278d94a974999689a699b7, type: 2}
 --- !u!114 &1779568048
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1357,7 +1377,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1894764218
 Transform:
   m_ObjectHideFlags: 0
@@ -1386,8 +1406,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0490499c5f075fc46be2f8e76c0bec48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <HasPredefinedBehaviour>k__BackingField: 0
-  <BehaviourTree>k__BackingField: {fileID: 0}
   <AgentController>k__BackingField: {fileID: 11400000, guid: de9fd499c3b151d4fafad28e83227c00, type: 2}
 --- !u!114 &1894764220
 MonoBehaviour:
@@ -1887,7 +1905,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &3570845888483645942
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2230,8 +2248,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0490499c5f075fc46be2f8e76c0bec48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <HasPredefinedBehaviour>k__BackingField: 0
-  <BehaviourTree>k__BackingField: {fileID: 0}
   <AgentController>k__BackingField: {fileID: 11400000, guid: b22c4be0de211e74d85ff0abf2d89a9a, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
