@@ -37,7 +37,7 @@ public class MainConfiguration {
     // Problem Specific Configuration
     public Dictionary<string, string> ProblemConfiguration { get; set; }
 
-    // Fitness configuration
+    // AgentFitness configuration
     public Dictionary<string, float> FitnessValues { get; set;}
 
     /*

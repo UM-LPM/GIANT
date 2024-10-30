@@ -14,5 +14,10 @@ namespace AgentControllers.AIAgentControllers
         {
             throw new System.NotImplementedException();
         }
+
+        public override AgentController Clone()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

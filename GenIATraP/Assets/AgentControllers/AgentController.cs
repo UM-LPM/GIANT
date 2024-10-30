@@ -20,5 +20,7 @@ namespace AgentControllers
         /// Processes the input and returns the ActionBuffer with the decisions that Agent should perform in the next fixedUpdate() method call
         /// </summary>
         public abstract void GetActions(in ActionBuffer actionsOut);
+
+        public abstract AgentController Clone();
     }
 }

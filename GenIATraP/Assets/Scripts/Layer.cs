@@ -85,7 +85,7 @@ public class Layer {
 
 public class LayerData {
     public int LayerId;
-    public int BTIndex;
+    public int BTIndex; // TODO Rename
     public string GameSceneName;
     public string AgentSceneName;
 

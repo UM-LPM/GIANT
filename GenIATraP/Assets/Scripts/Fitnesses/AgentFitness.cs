@@ -5,18 +5,74 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+namespace Fitnesses
+{
+    [Serializable]
+    public class AgentFitness
+    {
+        public float Value { get; set; }
+        public Dictionary<string, float> IndividualValues { get; set; }
 
-public class Fitness {
+
+        public AgentFitness()
+        {
+            this.Value = 0f;
+            this.IndividualValues = new Dictionary<string, float>();
+        }
+
+        public AgentFitness(float startValue)
+        {
+            this.Value = startValue;
+            this.IndividualValues = new Dictionary<string, float>();
+        }
+
+        public float GetFitness()
+        {
+            return Value;
+        }
+
+        public Dictionary<string, float> GetIndividualFitnessValues()
+        {
+            return IndividualValues;
+        }
+
+        public void SetFitness(float value)
+        {
+            this.Value = value;
+        }
+
+        public virtual void UpdateFitness(float value, string keyValue)
+        {
+            this.Value += value;
+
+            if (value != 0)
+            {
+                // Update individual values
+                if (IndividualValues.ContainsKey(keyValue))
+                {
+                    IndividualValues[keyValue] += value;
+                }
+                else
+                {
+                    IndividualValues.Add(keyValue, value);
+                }
+            }
+        }
+    }
+}
+
+
+/*public class AgentFitness {
     public float Value { get; set; }
     public Dictionary<string, float> IndividualValues { get; set; }
 
 
-    public Fitness() {
+    public AgentFitness() {
         this.Value = 0f;
         this.IndividualValues = new Dictionary<string, float>();
     }
 
-    public Fitness(float startValue) {
+    public AgentFitness(float startValue) {
         this.Value = startValue;
         this.IndividualValues = new Dictionary<string, float>();
     }
@@ -61,28 +117,28 @@ public class PopFitness {
 }
 
 public class FitnessIndividual {
-    [JsonIgnore] public int IndividualId { get; set; }
-    [JsonIgnore] public Fitness Fitness { get; set; } // Used to store fitness from a single game scenario (which is currently running)
+    [JsonIgnore] public int IndividualID { get; set; }
+    [JsonIgnore] public AgentFitness AgentFitness { get; set; } // Used to store fitness from a single game scenario (which is currently running)
 
     public float FinalFitness { get; set; } // Used to store final fitness (sum of all fitnesses from different game scenarios)
     public float FinalFitnessStats { get; set; } // Used to store final fitness calculated statistic (mean, std deviation, min, max,...)
-    public Dictionary<string, Fitness> Fitnesses { get; set;} // Used to store fitnesses from different game scenarios
+    public Dictionary<string, AgentFitness> Fitnesses { get; set;} // Used to store fitnesses from different game scenarios
 
     public FitnessIndividual() {
-        IndividualId = -1;
-        Fitnesses = new Dictionary<string, Fitness>();
-        Fitness = new Fitness();
+        IndividualID = -1;
+        Fitnesses = new Dictionary<string, AgentFitness>();
+        AgentFitness = new AgentFitness();
     }
 
     public FitnessIndividual(int individualId) { 
-        IndividualId = individualId;
-        Fitnesses = new Dictionary<string, Fitness>();
-        Fitness = new Fitness();
+        IndividualID = individualId;
+        Fitnesses = new Dictionary<string, AgentFitness>();
+        AgentFitness = new AgentFitness();
     }
 
     public float SumFitness() {
         float sum = 0f;
-        foreach (KeyValuePair<string, Fitness> fitness in Fitnesses) {
+        foreach (KeyValuePair<string, AgentFitness> fitness in Fitnesses) {
             sum += fitness.Value.GetFitness();
         }
         return sum;
@@ -93,8 +149,8 @@ public class FitnessIndividual {
             throw new Exception("Fitnesses list is empty");
         }
 
-        Fitness minFitness = null;
-        foreach (KeyValuePair<string, Fitness> fitness in Fitnesses) {
+        AgentFitness minFitness = null;
+        foreach (KeyValuePair<string, AgentFitness> fitness in Fitnesses) {
             if (minFitness == null || fitness.Value.GetFitness() < minFitness.GetFitness()) {
                 minFitness = fitness.Value;
             }
@@ -108,8 +164,8 @@ public class FitnessIndividual {
             throw new Exception("Fitnesses list is empty");
         }
 
-        Fitness maxFitness = null;
-        foreach (KeyValuePair<string, Fitness> fitness in Fitnesses) {
+        AgentFitness maxFitness = null;
+        foreach (KeyValuePair<string, AgentFitness> fitness in Fitnesses) {
             if (maxFitness == null || fitness.Value.GetFitness() > maxFitness.GetFitness()) {
                 maxFitness = fitness.Value;
             }
@@ -123,7 +179,7 @@ public class FitnessIndividual {
         }
 
         float sum = 0f;
-        foreach (KeyValuePair<string, Fitness> fitness in Fitnesses) {
+        foreach (KeyValuePair<string, AgentFitness> fitness in Fitnesses) {
             sum += fitness.Value.GetFitness();
         }
 
@@ -137,10 +193,10 @@ public class FitnessIndividual {
 
         float mean = MeanFitness();
         float sum = 0f;
-        foreach (KeyValuePair<string, Fitness> fitness in Fitnesses) {
+        foreach (KeyValuePair<string, AgentFitness> fitness in Fitnesses) {
             sum += (fitness.Value.GetFitness() - mean) * (fitness.Value.GetFitness() - mean);
         }
 
         return (float)Math.Sqrt(sum / Fitnesses.Count);
     }
-}
+}*/
