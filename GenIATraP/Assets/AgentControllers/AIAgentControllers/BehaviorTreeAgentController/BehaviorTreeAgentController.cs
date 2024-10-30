@@ -18,6 +18,18 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
             UpdateTree(actionsOut);
         }
 
+        public override AgentController Clone()
+        {
+            BehaviorTreeAgentController tree = Instantiate(this);
+            tree.RootNode = tree.RootNode.Clone();
+            tree.Nodes = new List<Node>();
+            Traverse(tree.RootNode, (n) => {
+                tree.Nodes.Add(n);
+            });
+
+            return tree;
+        }
+
         public Node.State Update()
         {
             if (RootNode.state == Node.State.Running)
@@ -74,7 +86,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
             }
         }
 
-        public BehaviorTreeAgentController Clone()
+        /*public BehaviorTreeAgentController Clone()
         {
             BehaviorTreeAgentController tree = Instantiate(this);
             tree.RootNode = tree.RootNode.Clone();
@@ -84,7 +96,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
             });
 
             return tree;
-        }
+        }*/
 
         public void Bind(Context context)
         {

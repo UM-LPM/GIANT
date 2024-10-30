@@ -1,19 +1,30 @@
 using Unity.Barracuda;
+using UnityEngine;
 
 namespace AgentControllers.AIAgentControllers.NeuralNetworkAgentController.ObservationCollectors
 {
     /// <summary>
-    /// Dummy observation collector for testing purposes. It randomly generates dummy observation data and action masks data.
+    /// Dummy observation collector for testing purposes. It randomly generates dummy observation and action masks data.
     /// </summary>
     public class DummyActionObservationProcessor : ActionObservationProcessor
     {
-        public int ObservationDataSize { get; private set; }
-        public int ActionMasksDataSize { get; private set; }
-        public bool SetRandomData { get; private set; }
+        [field: SerializeField]
+        public int ObservationDataSize { get; set; }
+        [field: SerializeField]
+        public int ActionMasksDataSize { get; set; }
+        [field: SerializeField]
+        public bool SetRandomData { get; set; }
 
         private float[] observationData;
         private float[] actionMasksData;
 
+        private void Awake()
+        {
+            observationData = new float[ObservationDataSize];
+            actionMasksData = new float[ActionMasksDataSize];
+        }
+
+        // TODO Remove in the future
         public DummyActionObservationProcessor(int observationDataSize, int actionMasksDataSize, bool setRandomData)
         {
             ObservationDataSize = observationDataSize;
@@ -71,6 +82,11 @@ namespace AgentControllers.AIAgentControllers.NeuralNetworkAgentController.Obser
 
             actionBuffer.DiscreteActions.Add("moveForwardDirection", (int)discreteActions[0]);
             actionBuffer.DiscreteActions.Add("rotateDirection", (int)discreteActions[1]);
+        }
+
+        public override ActionObservationProcessor Clone()
+        {
+            return new DummyActionObservationProcessor(ObservationDataSize, ActionMasksDataSize, SetRandomData);
         }
     }
 }

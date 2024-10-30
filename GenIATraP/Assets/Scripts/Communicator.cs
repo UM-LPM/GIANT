@@ -10,6 +10,7 @@ using PimDeWitte.UnityMainThreadDispatcher;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using AgentOrganizations;
 
 public class Communicator : MonoBehaviour
 {
@@ -46,6 +47,34 @@ public class Communicator : MonoBehaviour
     [Header("Initial Seed Configuration")]
     [SerializeField] public int InitialSeed = 316227711;
     [SerializeField] public RandomSeedMode RandomSeedMode = RandomSeedMode.Fixed;
+
+
+    private List<Match> Matches;
+
+    private Layer Layer;
+    private Grid Grid;
+
+
+    public LayerData GetReservedLayer()
+    {
+        return Layer.GetReservedLayer();
+    }
+
+    public GridCell GetReservedGridCell()
+    {
+        return Grid.GetReservedGridCell();
+    }
+
+    public Match GetMatch(int matchIndex)
+    {
+        if(Matches == null)
+        {
+            throw new System.Exception("Matches is not defined");
+            // TODO Add error reporting here
+        }
+        
+        return Matches[matchIndex];
+    }
 }
 public enum SceneLoadMode {
     LayerMode,

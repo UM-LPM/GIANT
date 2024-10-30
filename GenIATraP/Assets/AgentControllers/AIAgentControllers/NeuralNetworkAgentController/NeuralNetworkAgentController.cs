@@ -2,6 +2,7 @@ using UnityEngine;
 using Unity.Barracuda;
 using System.Collections.Generic;
 using AgentControllers.AIAgentControllers.NeuralNetworkAgentController.ObservationCollectors;
+using Unity.VisualScripting;
 
 namespace AgentControllers.AIAgentControllers.NeuralNetworkAgentController
 {
@@ -9,7 +10,7 @@ namespace AgentControllers.AIAgentControllers.NeuralNetworkAgentController
     public class NeuralNetworkAgentController : AIAgentController
     {
         public NNModel ModelAsset;
-        public ActionObservationProcessor ObservationCollector { get; set; }
+        public ActionObservationProcessor ActionObservationProcessor { get; set; }
 
         private Model Model;
         private IWorker Worker;
@@ -22,21 +23,30 @@ namespace AgentControllers.AIAgentControllers.NeuralNetworkAgentController
                 // TODO Add error reporting here
             }
 
-            if (!initParams.ContainsKey("observationCollector"))
+            if (!initParams.ContainsKey("actionObservationProcessor"))
             {
-                throw new System.Exception("observationCollector is not set!");
+                throw new System.Exception("ActionObservationProcessor is not set!");
                 // TODO Add error reporting here
             }
 
-            ObservationCollector = (ActionObservationProcessor)initParams["observationCollector"];
+            ActionObservationProcessor = (ActionObservationProcessor)initParams["actionObservationProcessor"];
             Model = ModelLoader.Load(ModelAsset);
             Worker = WorkerFactory.CreateWorker(WorkerFactory.Type.ComputePrecompiled, Model);
         }
 
         public override void GetActions(in ActionBuffer actionsOut)
         {
-            Observation observation = ObservationCollector.CollectObservation();
+            Observation observation = ActionObservationProcessor.CollectObservation();
             RunInference(actionsOut, observation.ObservationDataTensor, observation.ActionMasksDataTensor);
+        }
+
+        override public AgentController Clone()
+        {
+            NeuralNetworkAgentController clone = Instantiate(this);
+            clone.ModelAsset = ModelAsset;
+            if(ActionObservationProcessor != null)
+                clone.ActionObservationProcessor = ActionObservationProcessor.Clone();
+            return clone;
         }
 
         public void RunInference(ActionBuffer actionsOut, Tensor obs0Tensor, Tensor actionMasksTensor)
@@ -51,7 +61,7 @@ namespace AgentControllers.AIAgentControllers.NeuralNetworkAgentController
             try
             {
                 Tensor discreteActions = Worker.PeekOutput("discrete_actions");
-                ObservationCollector.MapModelPredictionToActionBuffer(in actionsOut, discreteActions, null);
+                ActionObservationProcessor.MapModelPredictionToActionBuffer(in actionsOut, discreteActions, null);
                 discreteActions.Dispose();
             }
             catch (System.Exception ex)

@@ -1,4 +1,5 @@
 using Unity.Barracuda;
+using UnityEngine;
 
 namespace AgentControllers.AIAgentControllers.NeuralNetworkAgentController.ObservationCollectors
 {
@@ -6,7 +7,7 @@ namespace AgentControllers.AIAgentControllers.NeuralNetworkAgentController.Obser
     /// Class that collects the observation data and action masks data from the environment. Every problem needs to implement its own observation collector.
     /// </summary>
     [System.Serializable]
-    public abstract class ActionObservationProcessor // TODO Rename this
+    public abstract class ActionObservationProcessor : MonoBehaviour
     {
         /// <summary>
         /// Collects the observation data and action masks data from the environment.
@@ -14,6 +15,8 @@ namespace AgentControllers.AIAgentControllers.NeuralNetworkAgentController.Obser
         public abstract Observation CollectObservation();
 
         public abstract void MapModelPredictionToActionBuffer(in ActionBuffer actionBuffer, Tensor discreteActions, Tensor continousActions);
+
+        public abstract ActionObservationProcessor Clone();
     }
 
     public class Observation

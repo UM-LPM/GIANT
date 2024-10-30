@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 using AgentControllers;
 using AgentControllers.AIAgentControllers;
 using UnityEngine;
+using Fitnesses;
 
 public abstract class AgentComponent : MonoBehaviour {
 
     [field: SerializeField, Header("Base Agent Configuration")]
-    public FitnessIndividual AgentFitness { get; set; }
+    public AgentFitness AgentFitness { get; set; }
     public Vector3 StartPosition { get; set; }
     public Quaternion StartRotation{ get; set; }
     public List<Vector3> LastKnownPositions { get; set; }
@@ -25,11 +26,13 @@ public abstract class AgentComponent : MonoBehaviour {
     public int TeamID { get; set; }
 
     private void Awake() {
-        AgentFitness = new FitnessIndividual();
+        AgentFitness = new AgentFitness();
         StartPosition = transform.position;
         StartRotation = transform.rotation;
-        LastKnownPositions = new List<Vector3>();
-        LastKnownPositions.Add(transform.position);
+        LastKnownPositions = new List<Vector3>
+        {
+            transform.position
+        };
 
         ActionExecutor = GetComponent<ActionExecutor>();
 

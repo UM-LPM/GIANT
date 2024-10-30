@@ -8,7 +8,7 @@ namespace Problems.Dummy
         private DummyEnvironmentController DummyEnvironmentController;
         private DummyAgentComponent Agent;
 
-        private void Start()
+        private void Awake()
         {
             Agent = GetComponent<DummyAgentComponent>();
             DummyEnvironmentController = GetComponentInParent<DummyEnvironmentController>();

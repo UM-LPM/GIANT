@@ -10,9 +10,5 @@ namespace Problems.Dummy
 
         [HideInInspector] public float ForwardSpeed = 1f;
 
-        public override void UpdateAgents(bool updateBTs)
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }

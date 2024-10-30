@@ -5,6 +5,17 @@ using System.Linq;
 
 public abstract class IndividualSpawner: MonoBehaviour
 {
+    /// <summary>
+    /// Checks if all conditions for spawning agents are meet.
+    /// </summary>
+    /// <returns>True if all conditions for spawning agents are meet and False if the aren't.</returns>
+    public abstract void validateSpawnConditions(EnvironmentControllerBase environmentController);
+
+    /// <summary>
+    /// Spawns the individuals in the environment.
+    /// </summary>
+    /// <param name="environmentController"></param>
+    /// <returns>Returns list of AgentComponents from spawned agents.</returns>
     public abstract List<AgentComponent> SpawnIndividuals(EnvironmentControllerBase environmentController);
 
     public static Vector3 GetRandomSpawnPoint(Util util, GameType gameType, Vector3 arenaSize, float arenaRadius, Vector3 arenaCenterPoint, float arenaOffset)

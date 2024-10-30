@@ -33,7 +33,7 @@ public class ExampleModelController : MonoBehaviour // TODO Remove in the future
                     // Problem specific initialization parameters
                     agentComponent.AgentController.Initialize(new Dictionary<string, object>
                     {
-                        { "observationCollector", new DummyActionObservationProcessor(85, 6, true) }
+                        { "actionObservationProcessor", new DummyActionObservationProcessor(85, 6, true) }
                     });
                     break;
                 case BehaviorTreeAgentController:
