@@ -20,6 +20,7 @@ public class Communicator : MonoBehaviour
 
     [Header("Base Configuration")]
     [SerializeField] public ComponentSetupType CommunicatorSetup = ComponentSetupType.MOCK;
+    [SerializeField] public string IndividualsSource;
 
     [Header("HTTP Server Configuration")]
     [SerializeField] public string CommunicatorURI = "http://localhost:4444/";
@@ -37,7 +38,6 @@ public class Communicator : MonoBehaviour
     [SerializeField] Vector3Int GridSpacing = new Vector3Int(50, 0, 50);
 
     [Header("Scenes Configuration")]
-    [SerializeField] public string AgentControllersSource;
     [SerializeField] GameScenario[] GameScenarios;
     [SerializeField] AgentScenario[] AgentScenarios;
 
@@ -113,7 +113,7 @@ public class Communicator : MonoBehaviour
             if (MenuManager.Instance.MainConfiguration != null)
             {
                 CommunicatorURI = MenuManager.Instance.MainConfiguration.StartCommunicatorURI;
-                AgentControllersSource = MenuManager.Instance.MainConfiguration.BtSource;
+                IndividualsSource = MenuManager.Instance.MainConfiguration.IndividualsSource;
                 TimeScale = MenuManager.Instance.MainConfiguration.TimeScale;
                 FixedTimeStep = MenuManager.Instance.MainConfiguration.FixedTimeStep;
                 RerunTimes = MenuManager.Instance.MainConfiguration.RerunTimes;

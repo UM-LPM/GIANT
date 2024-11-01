@@ -6,6 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using Newtonsoft.Json;
+using Evaluators.RatingSystems;
+using Evaluators.TournamentOrganizations;
+using Evaluators;
 
 /// <summary>
 /// Main configuration class
@@ -18,7 +21,7 @@ public class MainConfiguration {
     public string ProblemDomain { get; set; }
     public string CoordinatorURI { get; set; }
     public string StartCommunicatorURI { get; set; }
-    public string BtSource { get; set; }
+    public string IndividualsSource { get; set; }
     public float TimeScale { get; set; }
     public float FixedTimeStep { get; set; }
     public int RerunTimes { get; set; }
@@ -33,6 +36,12 @@ public class MainConfiguration {
     public int SimulationSteps { get; set; }
     public int SimulationTime { get; set; }
     public bool IncludeEncapsulatedNodesToFreqCount { get; set; }
+
+    // Evaluation configuration
+    public EvaluatiorType EvaluatorType { get; set; }
+    public RatingSystemType RatingSystemType { get; set; }
+    public TournamentOrganizationType TournamentOrganizationType { get; set; }
+    public int TournamentRounds { get; set; }
 
     // Problem Specific Configuration
     public Dictionary<string, string> ProblemConfiguration { get; set; }
