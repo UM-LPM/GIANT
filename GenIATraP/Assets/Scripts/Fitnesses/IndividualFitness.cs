@@ -61,6 +61,11 @@ namespace Fitnesses
             }
         }
 
+        public float GetIndividualFitness()
+        {
+            return Value;
+        }
+
         // TODO Implement additional methods
     }
 }

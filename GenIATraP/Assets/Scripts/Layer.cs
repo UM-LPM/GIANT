@@ -41,12 +41,12 @@ public class Layer {
         return counter;
     }
 
-    public int GetAndReserveAvailableLayer(int BtIndex, string gameSceneName, string agentSceneName) {
+    public int GetAndReserveAvailableLayer(int matchIndex, string gameSceneName, string agentSceneName) {
         if (CanUseAnotherLayer()) {
             for (int i = 0; i < LayerAvailability.Length; i++) {
                 if (LayerAvailability[i] == 0) {
                     LayerAvailability[i] = 1; // Set Layer to reserved
-                    LayerData[i].BTIndex = BtIndex;
+                    LayerData[i].MatchIndex = matchIndex;
                     LayerData[i].GameSceneName = gameSceneName;
                     LayerData[i].AgentSceneName = agentSceneName;
                     return i;
@@ -85,12 +85,12 @@ public class Layer {
 
 public class LayerData {
     public int LayerId;
-    public int BTIndex; // TODO Rename
+    public int MatchIndex;
     public string GameSceneName;
     public string AgentSceneName;
 
     public LayerData(int layerId, int btIndex) {
         LayerId = layerId;
-        BTIndex = btIndex;
+        MatchIndex = btIndex;
     }
 }

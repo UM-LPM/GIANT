@@ -8,6 +8,7 @@ using AgentControllers.AIAgentControllers;
 using UnityEngine;
 using Fitnesses;
 
+[DisallowMultipleComponent]
 public abstract class AgentComponent : MonoBehaviour {
 
     [field: SerializeField, Header("Base Agent Configuration")]

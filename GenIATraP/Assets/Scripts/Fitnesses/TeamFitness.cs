@@ -24,5 +24,15 @@ namespace Fitnesses
 
             individualFitness.AddAgentFitness(agent);
         }
+
+        public float GetTeamFitness()
+        {
+            float teamFitness = 0.0f;
+            foreach (var individualFitness in IndividualFitness)
+            {
+                teamFitness += individualFitness.GetIndividualFitness();
+            }
+            return teamFitness;
+        }
     }
 }

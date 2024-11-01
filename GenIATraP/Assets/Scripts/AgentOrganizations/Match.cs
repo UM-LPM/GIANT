@@ -8,13 +8,13 @@ namespace AgentOrganizations
     {
         public int MatchId;
         public Team[] Teams;
-        public MatchType MatchType;
+        //public MatchType MatchType; // TODO Add support in the future 
     }
 
-    public enum MatchType
+    /*public enum MatchType
     {
         _Xvs0,
         _XvsY,
 
-    }
+    }*/
 }

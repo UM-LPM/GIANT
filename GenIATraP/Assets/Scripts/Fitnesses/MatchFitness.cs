@@ -5,6 +5,7 @@ namespace Fitnesses
     public class MatchFitness
     {
         public int MatchId { get; set; }
+        public string MatchName { get; set; }
         public List<TeamFitness> TeamFitnesses { get; set; }
 
         public MatchFitness()
