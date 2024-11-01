@@ -64,7 +64,7 @@ public class UIController : MonoBehaviour
             }
 
             if (ACSourceInputField != null)
-                ACSourceInputField.text = Communicator.Instance.AgentControllersSource;
+                ACSourceInputField.text = Communicator.Instance.IndividualsSource;
             if (RndSeedInputField != null)
                 RndSeedInputField.text = Communicator.Instance.InitialSeed.ToString();
             if (RerunTimesInputField != null)

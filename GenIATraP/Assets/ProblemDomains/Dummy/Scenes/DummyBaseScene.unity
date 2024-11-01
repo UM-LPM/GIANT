@@ -6362,6 +6362,7 @@ GameObject:
   - component: {fileID: 1798691730}
   - component: {fileID: 1798691732}
   - component: {fileID: 1798691731}
+  - component: {fileID: 1798691733}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Untagged
@@ -6397,6 +6398,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CommunicatorSetup: 0
+  IndividualsSource: C:\Users\marko\UnityProjects\GenIATraP_refactor\GeneralTrainingEnvironmentForMAS\GenIATraP\Assets\Resources\Dummy\
   CommunicatorURI: http://localhost:4444/
   SceneLoadMode: 0
   MinLayerId: 6
@@ -6404,7 +6406,6 @@ MonoBehaviour:
   BatchSize: 20
   GridSize: {x: 10, y: 0, z: 10}
   GridSpacing: {x: 50, y: 0, z: 50}
-  AgentControllersSource: 
   GameScenarios:
   - GameSceneName: DummyGameScene
   AgentScenarios:
@@ -6432,6 +6433,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0477555d0364e848bf077a28dfad47c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1798691733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1798691729}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbfab60dc5a19db41828271db59adde9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IndividualsSource: C:\Users\marko\UnityProjects\GenIATraP_refactor\GeneralTrainingEnvironmentForMAS\GenIATraP\Assets\Resources\Dummy\
+  CoordinatorURI: http://localhost:4000/
+  InitialSeed: 316227711
+  EvaluatorType: 0
+  RatingSystemType: 0
+  TournamentOrganizationType: 0
+  TournamentRounds: 0
 --- !u!1 &1850808320
 GameObject:
   m_ObjectHideFlags: 0
@@ -6547,7 +6567,8 @@ MonoBehaviour:
   RndSeedModeDropdown: {fileID: 142498663}
   RndSeedInputField: {fileID: 854705470}
   RenderToggle: {fileID: 1624267320}
-  RenderToggleGameObjectList: []
+  RenderToggleGameObjectList:
+  - {fileID: 761679441804085278, guid: 434bf2c994950c64699b7cf9a58ecdfa, type: 3}
   UriText: {fileID: 1681533918}
   RenderUI: {fileID: 1239031664}
   ToggleElements: {fileID: 525024846}
