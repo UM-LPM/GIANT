@@ -7,6 +7,7 @@ namespace AgentControllers.AIAgentControllers.NeuralNetworkAgentController.Obser
     /// Class that collects the observation data and action masks data from the environment. Every problem needs to implement its own observation collector.
     /// </summary>
     [System.Serializable]
+    [DisallowMultipleComponent]
     public abstract class ActionObservationProcessor : MonoBehaviour
     {
         /// <summary>

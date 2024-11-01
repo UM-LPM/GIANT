@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Text;
+using AgentOrganizations;
 
 public class Coordinator : MonoBehaviour
 {
@@ -119,22 +120,5 @@ public class Coordinator : MonoBehaviour
     {
         // TODO Implement
         yield return null;
-    }
-}
-
-public class EvalRequestData
-{
-    public string[] evalEnvInstances { get; set; }
-    public int evalRangeStart { get; set; }
-    public int evalRangeEnd { get; set; }
-
-    public string evalEnvInstancesToString()
-    {
-        string evalEnvInstancesString = "";
-        foreach (string instance in evalEnvInstances)
-        {
-            evalEnvInstancesString += instance + ", ";
-        }
-        return evalEnvInstancesString;
     }
 }

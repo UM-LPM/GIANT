@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
 using UnityEngine;
 
+[DisallowMultipleComponent]
 public class Util : MonoBehaviour {
     //[SerializeField] bool SeedFromCommunicator = true;
     [SerializeField] int InitialSeed = 316227711;

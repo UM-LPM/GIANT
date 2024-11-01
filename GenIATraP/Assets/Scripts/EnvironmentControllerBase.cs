@@ -1,18 +1,17 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using AgentOrganizations;
-using static Unity.VisualScripting.LudiqRootObjectEditor;
 using AgentControllers.AIAgentControllers.NeuralNetworkAgentController.ObservationCollectors;
 using AgentControllers.AIAgentControllers.NeuralNetworkAgentController;
 using Fitnesses;
+using IndividualSpawners;
+using UnityEditor;
 
+[DisallowMultipleComponent]
+[RequireComponent(typeof(Util))]
 public abstract class EnvironmentControllerBase : MonoBehaviour {
 
     public static event EventHandler<OnGameFinishedEventargs> OnGameFinished;
@@ -68,6 +67,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
 
         GameState = GameState.IDLE;
         Util = gameObject.GetComponent<Util>();
+
         IndividualSpawner = gameObject.GetComponent<IndividualSpawner>();
         ActionObservationProcessor = gameObject.GetComponent<ActionObservationProcessor>();
 
@@ -87,7 +87,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
 
         if (EnvironmentControllerSetup == ComponentSetupType.REAL)
         {
-            GetMatch(SceneLoadMode == SceneLoadMode.LayerMode ? LayerBTIndex.BTIndex : GridCell.BTIndex);
+            GetMatch(SceneLoadMode == SceneLoadMode.LayerMode ? LayerBTIndex.MatchIndex : GridCell.MatchIndex);
         }
 
         Agents = IndividualSpawner.SpawnIndividuals(this);
@@ -263,12 +263,12 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
             OnPreFinishGame();
 
             string guid = Guid.NewGuid().ToString();
-            MatchFitness matchFitness = MapAgentFitnessesToMatchFitness(); // TODO Remove in the future
             OnGameFinished?.Invoke(this, new OnGameFinishedEventargs()
             {
                 MatchFitness = MapAgentFitnessesToMatchFitness(),
-                ScenarioName = SceneLoadMode == SceneLoadMode.LayerMode ? LayerBTIndex.GameSceneName + "_" + LayerBTIndex.AgentSceneName + "_" + guid : GridCell.GameSceneName + "_" + GridCell.AgentSceneName + "_" + guid,                                                                                                                                                                     //ScenarioName = SceneLoadMode == SceneLoadMode.LayerMode ? LayerBTIndex.GameSceneName + "_" + LayerBTIndex.AgentSceneName + "_" : GridCell.GameSceneName + "_" + GridCell.AgentSceneName + "_",
                 SimulationSteps = CurrentSimulationSteps,
+                LayerId = gameObject.layer,
+                GridCell = GridCell,
             });
         }
 
@@ -283,9 +283,16 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
         MatchFitness matchFitness = new MatchFitness();
         matchFitness.MatchId = Match.MatchId;
 
+        Guid guid = Guid.NewGuid();
+        string scenarioName = SceneLoadMode == SceneLoadMode.LayerMode ? LayerBTIndex.GameSceneName + "_" + LayerBTIndex.AgentSceneName + "_" + guid : GridCell.GameSceneName + "_" + GridCell.AgentSceneName + "_" + guid;
+        matchFitness.MatchName = Match.MatchId + "_" +scenarioName;
+
         for (int i = 0; i < Agents.Count; i++)
         {
-            matchFitness.AddAgentFitness(Agents[i]);
+            if (Agents[i].TeamID >= 0)
+            {
+                matchFitness.AddAgentFitness(Agents[i]);
+            }
         }
 
         return matchFitness;
@@ -300,29 +307,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     protected virtual void OnPostFixedUpdate() { }
     protected virtual void OnPreFinishGame() { }
 
-    protected virtual void OnUpdate() {
-        // TODO Remove in the future
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            // Add random fitness to random agent
-            int randomAgentIndex = Util.NextInt(0, Agents.Count);
-            string[] fitnessKeys = new string[] { "RandomFitness1", "RandomFitness2", "RandomFitness3", "RandomFitness4", "RandomFitness5", "RandomFitness6" };
-            int randomFitnessKeyIndex = Util.NextInt(0, fitnessKeys.Length);
-
-            Dictionary<string, float> fitnessValues = new Dictionary<string, float>()
-            {
-                { "RandomFitness1", 1 },
-                { "RandomFitness2", 2 },
-                { "RandomFitness3", 3 },
-                { "RandomFitness4", 4 },
-                { "RandomFitness5", 5 },
-                { "RandomFitness6", 6 },
-            };
-
-            Agents[randomAgentIndex].AgentFitness.UpdateFitness(fitnessValues[fitnessKeys[randomFitnessKeyIndex]], fitnessKeys[randomFitnessKeyIndex]);
-            Debug.Log("Random fitness added to agent " + randomAgentIndex + " with key " + fitnessKeys[randomFitnessKeyIndex] + " and value " + fitnessValues[fitnessKeys[randomFitnessKeyIndex]]);
-        }
-    }
+    protected virtual void OnUpdate() { }
 
     public virtual void UpdateAgents(bool getNewDecisions){
         ActionBuffer actionBuffer;
@@ -344,13 +329,6 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
             Agents[i].ActionExecutor.ExecuteActions(Agents[i].ActionBuffer);
         }
     }
-}
-
-public class OnGameFinishedEventargs : EventArgs
-{
-    public MatchFitness MatchFitness;
-    public string ScenarioName;
-    public int SimulationSteps;
 }
 
 public enum GameState {

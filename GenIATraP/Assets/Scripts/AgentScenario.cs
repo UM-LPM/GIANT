@@ -8,7 +8,6 @@ using UnityEngine;
 [Serializable]
 public class AgentScenario {
     public string AgentSceneName;
-    public BTLoadMode BTLoadMode;
     public GameScenario[] GameScenarios;
 
     public bool ContainsGameScenario(string gameSceneName) {
@@ -24,11 +23,4 @@ public class AgentScenario {
 [Serializable]
 public class GameScenario {
     public string GameSceneName;
-}
-
-
-public enum BTLoadMode {
-    Single,
-    Full,
-    Custom
 }
