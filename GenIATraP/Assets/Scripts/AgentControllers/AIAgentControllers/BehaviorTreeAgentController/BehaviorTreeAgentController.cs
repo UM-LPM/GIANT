@@ -1,11 +1,13 @@
 using AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
+using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
 namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 {
-    [CreateAssetMenu(menuName = "AgentControllers/AIAgentControllers/BehaviorTreeAgentController")]
+    [Serializable]
+    [CreateAssetMenu(fileName = "BehaviorTreeAgentController", menuName = "AgentControllers/AIAgentControllers/BehaviorTreeAgentController")]
     public class BehaviorTreeAgentController : AIAgentController
     {
         public Node RootNode;

@@ -6,10 +6,7 @@ using System.Linq;
 using System;
 using AgentOrganizations;
 using System.Text.RegularExpressions;
-using System.Xml.Serialization;
-using VYaml.Serialization;
-using Unity.VisualScripting;
-using YamlDotNet.Serialization;
+using AgentControllers;
 
 public class UnityAssetParser
 {
@@ -23,69 +20,89 @@ public class UnityAssetParser
 
         individuals = new Individual[files.Length];
 
-        YamlFile[] yamlIndividualFiles = ReadYamlDocumentsFromFolder(files);
+        YamlFile[] yamlFiles = YamlParser.ReadYamlFilesFromFolder(files);
 
-        /*for (int i = 0; i < files.Length; i++)
-        {
-            string fileContent = File.ReadAllText(files[i]);
-            string[] fileLines = fileContent.Split('\n');
-            byte[] bytes = System.Text.Encoding.Default.GetBytes(fileContent);
-            var yaml = YamlSerializer.DeserializeMultipleDocuments<dynamic>(bytes);
-
-            // TODO Implement
-            throw new NotImplementedException();
-            //BehaviorTreeAgentController tree = ParseBehaviourTree(files[i]);
-            //trees.Add(tree);
-
-
-        }*/
+        individuals = ParseIndividualsFromYamlFiles(yamlFiles);
 
         return individuals;
     }
 
-    public static YamlFile[] ReadYamlDocumentsFromFolder(string[] files)
+    public static Individual[] ParseIndividualsFromYamlFiles(YamlFile[] yamlFiles)
     {
-        YamlFile[] yamlFiles = new YamlFile[files.Length];
+        Individual[] individuals = new Individual[yamlFiles.Length];
 
-        for (int i = 0; i < files.Length; i++)
+        for (int i = 0; i < yamlFiles.Length; i++)
         {
-            yamlFiles[i] = ReadYamlDocumentsFromFolder(files[i]);
+            individuals[i] = ParseIndividualFromYamlFile(yamlFiles[i]);
         }
 
-        return yamlFiles;
+        return individuals;
     }
 
-    public static YamlFile ReadYamlDocumentsFromFolder(string filePath)
+    public static Individual ParseIndividualFromYamlFile(YamlFile yamlFile)
     {
-        string fileContent = File.ReadAllText(filePath);
-        string[] fileLines = fileContent.Split('\n');
+        Individual individual = new Individual();
 
-        YamlFile yamlFile = new YamlFile();
+        // 1. Find the individual base def (Document where DocumentProperties contain property "AgentControllers")
+        YamlDocument individualDef = yamlFile.Documents.Find(x => x.DocumentProperties.ContainsKey("AgentControllers"));
 
-        YamlDocument yamlDocument = null;
-        for (int i = 0; i < fileLines.Length; i++)
+        // 2. Find the agent controllers (Get the list of agent controllers from the individual base def)
+        List<Dictionary<string, object>> agentControllerFileIDs = individualDef.DocumentProperties["AgentControllers"] as List<Dictionary<string, object>>;
+
+        // 3. For each agent controller, load the correct agent controller parser (agent controller can be of type BehaviourTreeAgentController, NeuralNetworkAgentController, etc.)
+        List<AgentController> agentControllers = new List<AgentController>();
+        foreach (Dictionary<string, object> agentControllerFileID in agentControllerFileIDs)
         {
-            if (fileLines[i].Contains("---")){
-                if(yamlDocument != null)
-                {
-                    yamlFile.Documents.Add(yamlDocument);
-                }
-
-                yamlDocument = new YamlDocument();
-                string[] nodeHeaderArray = fileLines[i].Split(' ');
-                nodeHeaderArray[2] = nodeHeaderArray[2].Replace('&', ' ').Trim();
-                yamlDocument.DocumentId = nodeHeaderArray[2];
-
-                yamlDocument.DocumentType = fileLines[++i].Split(":")[0].Trim();
-            }
+            // 4. Parse the agent controllers
+            agentControllers.Add(ParseAgentController(yamlFile, agentControllerFileID["fileID"].ToString()));
         }
 
-        if(yamlDocument != null)
+        if(agentControllers.Count == 0)
         {
-            yamlFile.Documents.Add(yamlDocument);
+            throw new Exception("No agent controllers found in the individual");
+            // TODO Add error reporting here
         }
 
-        return yamlFile;
+        // 5. Set the individual agent controllers   
+        individual.AgentControllers = agentControllers.ToArray();
+
+        // 6. Return the individual
+        return individual;
+    }
+
+    public static AgentController ParseAgentController(YamlFile yamlFile, string agentControllerFileID)
+    {
+        YamlDocument yamlDocumentACBase = yamlFile.Documents.Find(x => x.DocumentId == agentControllerFileID);
+        
+        if(yamlDocumentACBase == null)
+        {
+            throw new Exception("Agent controller not found in the yaml file");
+            // TODO Add error reporting here
+        }
+
+        if(yamlDocumentACBase.DocumentProperties.ContainsKey("RootNode"))
+        {
+            return ParseBehaviourTreeAgentController(yamlFile, agentControllerFileID);
+        }
+        else if (yamlDocumentACBase.DocumentProperties.ContainsKey("ModelAsset"))
+        {
+            return ParseNeuralNetworkAgentController(yamlFile, agentControllerFileID);
+        }
+        else // TODO Add support in the future for other agent controller types
+        {
+            throw new NotImplementedException("Parsers for specified AgentController not implemented");
+            // TODO Add error reporting here
+        }
+    }
+
+    public static AgentController ParseBehaviourTreeAgentController(YamlFile yamlFile, string agentControllerFileID)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static AgentController ParseNeuralNetworkAgentController(YamlFile yamlFile, string agentControllerFileID)
+    {
+        throw new NotImplementedException();
     }
 
 

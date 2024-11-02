@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,6 +10,7 @@ namespace AgentControllers
         Manual
     }
 
+    [Serializable]
     public class AgentController: ScriptableObject
     {
         public int AgentControllerId;

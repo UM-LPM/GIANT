@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace AgentControllers.AIAgentControllers.ScriptAgentControllers
 {
-    [CreateAssetMenu(menuName = "AgentControllers/AIAgentControllers/ScriptAgentControllers/DemoScriptAgentController")]
+    [CreateAssetMenu(fileName = "DemoScriptAgentController", menuName = "AgentControllers/AIAgentControllers/ScriptAgentControllers/DemoScriptAgentController")]
     public class DemoScriptAgentController : ScriptAgentController
     {
         public DemoScriptAgentController()

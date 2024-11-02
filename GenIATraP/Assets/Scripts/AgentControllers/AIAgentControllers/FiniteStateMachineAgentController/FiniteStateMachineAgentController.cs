@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace AgentControllers.AIAgentControllers
 {
-    [CreateAssetMenu(menuName = "AgentControllers/AIAgentControllers/FiniteStateMachineAgentController")]
+    [CreateAssetMenu(fileName = "FiniteStateMachineAgentController", menuName = "AgentControllers/AIAgentControllers/FiniteStateMachineAgentController")]
     public class FiniteStateMachineAgentController : AIAgentController
     {
         public FiniteStateMachineAgentController()
