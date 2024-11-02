@@ -3,10 +3,12 @@ using Unity.Barracuda;
 using System.Collections.Generic;
 using AgentControllers.AIAgentControllers.NeuralNetworkAgentController.ObservationCollectors;
 using Unity.VisualScripting;
+using System;
 
 namespace AgentControllers.AIAgentControllers.NeuralNetworkAgentController
 {
-    [CreateAssetMenu(menuName = "AgentControllers/AIAgentControllers/NeuralNetworkAgentController")]
+    [Serializable]
+    [CreateAssetMenu(fileName = "NeuralNetworkAgentController", menuName = "AgentControllers/AIAgentControllers/NeuralNetworkAgentController")]
     public class NeuralNetworkAgentController : AIAgentController
     {
         public NNModel ModelAsset;

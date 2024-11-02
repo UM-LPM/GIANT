@@ -12,6 +12,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using AgentOrganizations;
 using Fitnesses;
+using AgentControllers;
 
 [RequireComponent(typeof(UnityMainThreadDispatcher))]
 public class Communicator : MonoBehaviour
@@ -65,7 +66,7 @@ public class Communicator : MonoBehaviour
     private int ScenesLoadedCount;
     private int ScenesLoadedCountRequired;
 
-    private int SimulationStepsCombined;
+    private int SimulationStepsCombined; // TODO Add support in the future
 
     private HttpListener Listener;
     private Thread ListenerThread;
@@ -214,6 +215,34 @@ public class Communicator : MonoBehaviour
         }
 
         Debug.Log("PerformEvaluation  with " + Matches.Count + " Matches.");
+
+        // Demo save // TODO Remove in the future
+        // Serialization with JSON and custom settings (To avoid self referencing loop error when serializing)
+        /*var settings = new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.All
+        };
+
+        string json = JsonConvert.SerializeObject(Matches[0].Teams[0].Individuals[0].AgentControllers[0], settings);
+        System.IO.File.WriteAllText("TestMatch.json", json);
+        string json2 = System.IO.File.ReadAllText("TestMatch.json");
+        AgentController individual = JsonConvert.DeserializeObject<AgentController>(json2, settings);
+        string json3 = JsonConvert.SerializeObject(individual, settings);
+
+        System.IO.File.WriteAllText("TestMatch2.json", json3);*/
+
+        /*var settings = new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.All
+        };
+
+        string json = JsonConvert.SerializeObject(Matches[0], settings);
+        System.IO.File.WriteAllText("TestMatch.json", json);
+        json = System.IO.File.ReadAllText("TestMatch.json");
+        Match deserializedObject = JsonConvert.DeserializeObject<Match>(json, settings);
+        string json2 = JsonConvert.SerializeObject(deserializedObject, settings);
+
+        System.IO.File.WriteAllText("TestMatch2.json", json2);*/
 
         MatchFitnesses = new List<MatchFitness>();
         SimulationStepsCombined = 0;

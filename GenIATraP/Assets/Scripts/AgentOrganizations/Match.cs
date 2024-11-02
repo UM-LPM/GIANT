@@ -1,9 +1,11 @@
+using System;
 using System.IO;
 using UnityEngine;
 
 namespace AgentOrganizations
 {
-    [CreateAssetMenu(menuName = "AgentOrganizations/Match")]
+    [Serializable]
+    [CreateAssetMenu(fileName = "Match", menuName = "AgentOrganizations/Match")]
     public class Match : ScriptableObject
     {
         public int MatchId;

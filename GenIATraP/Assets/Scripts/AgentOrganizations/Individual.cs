@@ -1,10 +1,12 @@
 using AgentControllers;
+using System;
 using UnityEngine;
 
 
 namespace AgentOrganizations
 {
-    [CreateAssetMenu(menuName = "AgentOrganizations/Individual")]
+    [Serializable]
+    [CreateAssetMenu(fileName ="Individual", menuName = "AgentOrganizations/Individual")]
     public class Individual : ScriptableObject
     {
         public int IndividualId;

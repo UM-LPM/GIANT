@@ -34,10 +34,12 @@ public class Coordinator : MonoBehaviour
     [SerializeField] public TournamentOrganizationType TournamentOrganizationType;
     [SerializeField] public int TournamentRounds;
 
+    [Header("Individuals Configuration")]
+    [SerializeField] public Individual[] Individuals;
+
     private HttpListener Listener;
     private Thread ListenerThread;
 
-    private Individual[] Individuals;
 
     public System.Random Random { get; private set; }
 
@@ -148,6 +150,23 @@ public class Coordinator : MonoBehaviour
     /// </summary>
     IEnumerator CordinateEvaluation(HttpListenerContext context)
     {
+        // TODO Remove in the future
+        string path = "C:\\Users\\marko\\UnityProjects\\GenIATraP_refactor\\GeneralTrainingEnvironmentForMAS\\GenIATraP\\Assets\\Resources\\JSONs\\Dummy";
+        int i = 1;
+        foreach (var individual in Individuals)
+        {
+            var settings = new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All
+            };
+
+            string json = JsonConvert.SerializeObject(individual, settings);
+            System.IO.File.WriteAllText(path + "\\DemoIndividual" + i + ".json", json);
+            i++;
+        }
+
+        throw new NotImplementedException("Coordinator Cordinate Evaluator is not implemented yet");
+
         InitializeRandomGenerator();
 
         // Load Individuals from IndividualsSource

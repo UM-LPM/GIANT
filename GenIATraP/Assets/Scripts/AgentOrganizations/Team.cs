@@ -1,8 +1,10 @@
+using System;
 using UnityEngine;
 
 namespace AgentOrganizations
 {
-    [CreateAssetMenu(menuName = "AgentOrganizations/Team")]
+    [Serializable]
+    [CreateAssetMenu(fileName = "Team", menuName = "AgentOrganizations/Team")]
     public class Team: ScriptableObject
     {
         public int TeamId;

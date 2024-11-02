@@ -1,6 +1,7 @@
 using AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
 using System.Collections.Generic;
 
+// TODO Remove in the future
 public class BehaviourTreeNodeDef
 {
     public string m_fileID { get; set; }
@@ -24,11 +25,11 @@ public class BehaviourTreeNodeDef
     }
 }
 
-/*public class Position
+public class Position
 {
     public float x { get; set; }
     public float y { get; set; }
-}*/
+}
 
 public class Child
 {
