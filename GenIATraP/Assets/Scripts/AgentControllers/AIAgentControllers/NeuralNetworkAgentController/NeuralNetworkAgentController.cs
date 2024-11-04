@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using AgentControllers.AIAgentControllers.NeuralNetworkAgentController.ObservationCollectors;
 using Unity.VisualScripting;
 using System;
+using UnityEditor;
 
 namespace AgentControllers.AIAgentControllers.NeuralNetworkAgentController
 {
@@ -19,7 +20,7 @@ namespace AgentControllers.AIAgentControllers.NeuralNetworkAgentController
 
         public override void Initialize(Dictionary<string, object> initParams)
         {
-            if(ModelAsset == null)
+            if (ModelAsset == null)
             {
                 throw new System.Exception("ModelAsset is not set!");
                 // TODO Add error reporting here
@@ -46,7 +47,7 @@ namespace AgentControllers.AIAgentControllers.NeuralNetworkAgentController
         {
             NeuralNetworkAgentController clone = Instantiate(this);
             clone.ModelAsset = ModelAsset;
-            if(ActionObservationProcessor != null)
+            if (ActionObservationProcessor != null)
                 clone.ActionObservationProcessor = ActionObservationProcessor.Clone();
             return clone;
         }
@@ -94,6 +95,11 @@ namespace AgentControllers.AIAgentControllers.NeuralNetworkAgentController
             }
 
             return intArray;
+        }
+
+        public override void AddAgentControllerToSO(ScriptableObject parent)
+        {
+            AssetDatabase.AddObjectToAsset(ModelAsset, parent);
         }
     }
 }

@@ -11,7 +11,7 @@ namespace AgentControllers
     }
 
     [Serializable]
-    public class AgentController: ScriptableObject
+    public abstract class AgentController : ScriptableObject
     {
         public int AgentControllerId;
         public ControllerType ControllerType;
@@ -21,10 +21,10 @@ namespace AgentControllers
         /// <summary>
         /// Processes the input and returns the ActionBuffer with the decisions that Agent should perform in the next fixedUpdate() method call
         /// </summary>
-        public virtual void GetActions(in ActionBuffer actionsOut) { }
+        public abstract void GetActions(in ActionBuffer actionsOut);
 
-        public virtual AgentController Clone() {
-            return this;
-        }
+        public abstract AgentController Clone();
+
+        public abstract void AddAgentControllerToSO(ScriptableObject parent);
     }
 }

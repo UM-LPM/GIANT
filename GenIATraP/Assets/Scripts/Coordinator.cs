@@ -16,13 +16,15 @@ using Evaluators;
 using Evaluators.RatingSystems;
 using Evaluators.TournamentOrganizations;
 using Fitnesses;
+using UnityEditor;
 
 public class Coordinator : MonoBehaviour
 {
     [HideInInspector] public static Coordinator Instance;
 
     [Header("Base Configuration")]
-    [SerializeField] public string IndividualsSource;
+    [SerializeField] public string IndividualsSourceJSON;
+    [SerializeField] public string IndividualsSourceSO;
 
     [Header("HTTP Server Configuration")]
     [SerializeField] public string CoordinatorURI = "http://localhost:4000/";
@@ -65,13 +67,6 @@ public class Coordinator : MonoBehaviour
     {
         ListenerThread = new Thread(StartListener);
         ListenerThread.Start();
-
-        // Set global JSON settings to ignore self-referencing loops but preserve references
-        JsonConvert.DefaultSettings = () => new JsonSerializerSettings
-        {
-            PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-        };
     }
 
     void ReadDataFromConfig()
@@ -85,7 +80,8 @@ public class Coordinator : MonoBehaviour
                 RatingSystemType = MenuManager.Instance.MainConfiguration.RatingSystemType;
                 TournamentOrganizationType = MenuManager.Instance.MainConfiguration.TournamentOrganizationType;
                 TournamentRounds = MenuManager.Instance.MainConfiguration.TournamentRounds;
-                IndividualsSource = MenuManager.Instance.MainConfiguration.IndividualsSource;
+                IndividualsSourceJSON = MenuManager.Instance.MainConfiguration.IndividualsSourceJSON;
+                IndividualsSourceSO = MenuManager.Instance.MainConfiguration.IndividualsSourceSO;
             }
             else
             {
@@ -150,32 +146,14 @@ public class Coordinator : MonoBehaviour
     /// </summary>
     IEnumerator CordinateEvaluation(HttpListenerContext context)
     {
-        // TODO Remove in the future
-        string path = "C:\\Users\\marko\\UnityProjects\\GenIATraP_refactor\\GeneralTrainingEnvironmentForMAS\\GenIATraP\\Assets\\Resources\\JSONs\\Dummy";
-        int i = 1;
-        foreach (var individual in Individuals)
-        {
-            var settings = new JsonSerializerSettings
-            {
-                TypeNameHandling = TypeNameHandling.All
-            };
-
-            string json = JsonConvert.SerializeObject(individual, settings);
-            System.IO.File.WriteAllText(path + "\\DemoIndividual" + i + ".json", json);
-            i++;
-        }
-
-        throw new NotImplementedException("Coordinator Cordinate Evaluator is not implemented yet");
-
         InitializeRandomGenerator();
-
-        // Load Individuals from IndividualsSource
-        LoadIndividuals();
 
         // Read body from the request
         CoordinatorEvalRequestData evalRequestData = ReadDataFromRequestBody(context);
         Debug.Log("Coordinator Cordinate Evaluator: EvalInstances: " + evalRequestData.EvalEnvInstancesToString());
 
+        // Load Individuals from IndividualsSource
+        LoadIndividuals(evalRequestData.EvalRangeStart.HasValue? evalRequestData.EvalRangeStart.Value : -1, evalRequestData.EvalRangeEnd.HasValue ? evalRequestData.EvalRangeEnd.Value : -1);
 
         Evaluator evaluator;
         Task<CoordinatorEvaluationResult> evaluationResultTask = null;
@@ -245,28 +223,27 @@ public class Coordinator : MonoBehaviour
         }
     }
 
-    public void LoadIndividuals()
+    public void LoadIndividuals(int evalRangeStart, int evalRangeEnd)
     {
-        if(IndividualsSource == null)
+        if(IndividualsSourceJSON == null || IndividualsSourceJSON.Length == 0 || IndividualsSourceSO == null || IndividualsSourceSO.Length == 0)
         {
-            throw new Exception("IndividualsSource is not set");
+            throw new Exception("IndividualsSourceJSON or IndividualsSourceSO are not defined");
             // TODO Add error reporting here
         }
 
-        // Load individuals from the IndividualsSource
-        Individuals = UnityAssetParser.ParseIndividualsFromFolder(IndividualsSource);
+        // Loading individuals from JSON files
+        Individuals = UnityAssetParser.ParseIndividualsFromFolder(IndividualsSourceJSON, evalRangeStart, evalRangeEnd);
 
-        if (Individuals == null || Individuals.Length == 0)
-        {
-            throw new Exception("No individuals were loaded from the IndividualsSource");
-            // TODO Add error reporting here
-        }
+        // Save individuals to Scriptable Objects if in Editor mode
+        UnityAssetParser.SaveIndividualsToFolder(Individuals, IndividualsSourceSO);
     }
 }
 
 public class CoordinatorEvalRequestData
 {
     public string[] EvalEnvInstances { get; set; }
+    public int? EvalRangeStart { get; set; }
+    public int? EvalRangeEnd { get; set; }
 
     public string EvalEnvInstancesToString()
     {
@@ -281,6 +258,5 @@ public class CoordinatorEvalRequestData
 
 public class CoordinatorEvaluationResult
 {
-    // TODO Replace this with IndividualFitnessExtended which will track Fitness values from different games and other specific data (BTs node call frequencies)
-    public IndividualFitness[] IndividualFitnesses { get; set; } 
+    public FinalIndividualFitness[] IndividualFitnesses { get; set; } 
 }

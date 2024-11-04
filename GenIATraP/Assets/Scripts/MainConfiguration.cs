@@ -15,6 +15,14 @@ using Evaluators;
 /// </summary>
 [Serializable]
 public class MainConfiguration {
+    
+    public static JsonSerializerSettings JSON_SERIALIZATION_SETTINGS = new JsonSerializerSettings
+    {
+        TypeNameHandling = TypeNameHandling.All,
+        PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+    };
+
     public bool AutoStart { get; set; }
 
     // Communicator configuration
@@ -22,6 +30,8 @@ public class MainConfiguration {
     public string CoordinatorURI { get; set; }
     public string StartCommunicatorURI { get; set; }
     public string IndividualsSource { get; set; }
+    public string IndividualsSourceJSON { get; set; }
+    public string IndividualsSourceSO { get; set; }
     public float TimeScale { get; set; }
     public float FixedTimeStep { get; set; }
     public int RerunTimes { get; set; }
