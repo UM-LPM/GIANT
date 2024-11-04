@@ -39,18 +39,6 @@ public class HealthLevelBellow : ConditionNode
         return false;
     }
 
-    public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviorTreeAgentController tree)
-    {
-        // Create node
-        HealthLevelBellow healthLevelNode = new HealthLevelBellow();
-
-        // Set node properties
-        healthLevelNode.healthLevel = (HealthLevel)int.Parse(behaviourTreeNodeDef.node_properties["healthLevel"]);
-
-        tree.Nodes.Add(healthLevelNode);
-        return healthLevelNode;
-    }
-
     public static int HealthLevelToValue(HealthLevel healthLevel)
     {
         switch (healthLevel)

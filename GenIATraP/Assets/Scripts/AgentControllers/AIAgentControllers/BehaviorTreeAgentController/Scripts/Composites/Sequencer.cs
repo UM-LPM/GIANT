@@ -30,19 +30,5 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
 
             return State.Success;
         }
-
-        public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviorTreeAgentController tree) {
-            // Create node
-            Sequencer sequencerNode = new Sequencer();
-
-            // Set node properties
-            foreach (var child in behaviourTreeNodeDef.children) {
-                BehaviourTreeNodeDef childNodeDef = behaviourTreeNodeDefs.Find(def => def.m_fileID == child.fileID);
-                sequencerNode.children.Add(Node.CreateNodeTreeFromBehaviourTreeNodeDef(childNodeDef, behaviourTreeNodeDefs, tree));
-            }
-
-            tree.Nodes.Add(sequencerNode);
-            return sequencerNode;
-        }
     }
 }

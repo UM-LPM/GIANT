@@ -30,16 +30,5 @@ public class MoveForward : ActionNode {
 
         return State.Success;
     }
-
-    public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviorTreeAgentController tree) {
-        // Create node
-        MoveForward moveForwardNode = new MoveForward();
-
-        // Set node properties
-        moveForwardNode.moveForwardDirection = (MoveForwardDirection)int.Parse(behaviourTreeNodeDef.node_properties["moveForwardDirection"]);
-
-        tree.Nodes.Add(moveForwardNode);
-        return moveForwardNode;
-    }
 }
 

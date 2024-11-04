@@ -29,16 +29,5 @@ public class MoveSide : ActionNode {
 
         return State.Success;
     }
-
-    public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviorTreeAgentController tree) {
-        // Create node
-        MoveSide moveSideNode = new MoveSide();
-
-        // Set node properties
-        moveSideNode.moveSideDirection = (MoveSideDirection)int.Parse(behaviourTreeNodeDef.node_properties["moveSideDirection"]);
-
-        tree.Nodes.Add(moveSideNode);
-        return moveSideNode;
-    }
 }
 

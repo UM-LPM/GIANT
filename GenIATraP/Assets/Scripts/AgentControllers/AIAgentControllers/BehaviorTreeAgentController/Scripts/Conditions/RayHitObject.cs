@@ -332,19 +332,6 @@ public class RayHitObject : ConditionNode {
 
         return TargetGameObject.Empty;
     }
-    public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviorTreeAgentController tree) {
-        // Create node
-        RayHitObject rayHitObjectNode = new RayHitObject();
-
-        // Set node properties
-        rayHitObjectNode.targetGameObject = (TargetGameObject)int.Parse(behaviourTreeNodeDef.node_properties["targetGameObject"]);
-        rayHitObjectNode.side = (AgentSideAdvanced)int.Parse(behaviourTreeNodeDef.node_properties["side"]);
-        rayHitObjectNode.rayIndex = int.Parse(behaviourTreeNodeDef.node_properties["rayIndex"]);
-
-        tree.Nodes.Add(rayHitObjectNode);
-        return rayHitObjectNode;
-    }
-
 }
 public class OnTargetHitEventargs : EventArgs
 {

@@ -29,16 +29,5 @@ public class Rotate : ActionNode {
 
         return State.Success;
     }
-
-    public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviorTreeAgentController tree) {
-        // Create node
-        Rotate rotateNode = new Rotate();
-
-        // Set node properties
-        rotateNode.rotateDirection = (RotateDirection)int.Parse(behaviourTreeNodeDef.node_properties["rotateDirection"]);
-
-        tree.Nodes.Add(rotateNode);
-        return rotateNode;
-    }
 }
 

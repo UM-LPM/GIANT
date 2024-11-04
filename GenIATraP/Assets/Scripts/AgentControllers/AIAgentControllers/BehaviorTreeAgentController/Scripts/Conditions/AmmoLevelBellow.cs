@@ -38,18 +38,6 @@ public class AmmoLevelBellow : ConditionNode
         return false;
     }
 
-    public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviorTreeAgentController tree)
-    {
-        // Create node
-        AmmoLevelBellow ammoLevelNode = new AmmoLevelBellow();
-
-        // Set node properties
-        ammoLevelNode.ammoLevel = (AmmoLevel)int.Parse(behaviourTreeNodeDef.node_properties["ammoLevel"]);
-
-        tree.Nodes.Add(ammoLevelNode);
-        return ammoLevelNode;
-    }
-
     public static int AmmoLevelToValue(AmmoLevel AmmoLevel)
     {
         switch (AmmoLevel)

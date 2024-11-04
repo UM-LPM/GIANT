@@ -16,15 +16,4 @@ public class Shoot : ActionNode {
 
         return State.Success;
     }
-
-    public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviorTreeAgentController tree) {
-        // Create node
-        Shoot shootNode = new Shoot();
-
-        // Set node properties
-        shootNode.shoot = int.Parse(behaviourTreeNodeDef.node_properties["shoot"]);
-
-        tree.Nodes.Add(shootNode);
-        return shootNode;
-    }
 }
