@@ -56,7 +56,7 @@ public class Communicator : MonoBehaviour
 
 
     [Header("Matches Configuration")]
-    [SerializeField] public List<Match> Matches;
+    [SerializeField] public Match[] Matches;
 
     private List<MatchFitness> MatchFitnesses;
 
@@ -214,35 +214,7 @@ public class Communicator : MonoBehaviour
             SetEvalRequestMatches(context);
         }
 
-        Debug.Log("PerformEvaluation  with " + Matches.Count + " Matches.");
-
-        // Demo save // TODO Remove in the future
-        // Serialization with JSON and custom settings (To avoid self referencing loop error when serializing)
-        /*var settings = new JsonSerializerSettings
-        {
-            TypeNameHandling = TypeNameHandling.All
-        };
-
-        string json = JsonConvert.SerializeObject(Matches[0].Teams[0].Individuals[0].AgentControllers[0], settings);
-        System.IO.File.WriteAllText("TestMatch.json", json);
-        string json2 = System.IO.File.ReadAllText("TestMatch.json");
-        AgentController individual = JsonConvert.DeserializeObject<AgentController>(json2, settings);
-        string json3 = JsonConvert.SerializeObject(individual, settings);
-
-        System.IO.File.WriteAllText("TestMatch2.json", json3);*/
-
-        /*var settings = new JsonSerializerSettings
-        {
-            TypeNameHandling = TypeNameHandling.All
-        };
-
-        string json = JsonConvert.SerializeObject(Matches[0], settings);
-        System.IO.File.WriteAllText("TestMatch.json", json);
-        json = System.IO.File.ReadAllText("TestMatch.json");
-        Match deserializedObject = JsonConvert.DeserializeObject<Match>(json, settings);
-        string json2 = JsonConvert.SerializeObject(deserializedObject, settings);
-
-        System.IO.File.WriteAllText("TestMatch2.json", json2);*/
+        Debug.Log("PerformEvaluation  with " + Matches.Length + " Matches.");
 
         MatchFitnesses = new List<MatchFitness>();
         SimulationStepsCombined = 0;
@@ -278,7 +250,7 @@ public class Communicator : MonoBehaviour
         CommunicatorEvalRequestData evalRequestData;
         try
         {
-            evalRequestData = JsonConvert.DeserializeObject<CommunicatorEvalRequestData>(reader.ReadToEnd());
+            evalRequestData = JsonConvert.DeserializeObject<CommunicatorEvalRequestData>(reader.ReadToEnd(), MainConfiguration.JSON_SERIALIZATION_SETTINGS);
         }
         catch (Exception ex)
         {
@@ -286,7 +258,7 @@ public class Communicator : MonoBehaviour
             // TODO Add error reporting here
         }
 
-        if(evalRequestData.Matches == null || evalRequestData.Matches.Count == 0)
+        if(evalRequestData.Matches == null || evalRequestData.Matches.Length == 0)
         {
             throw new Exception("No matches to execute");
             // TODO Add error reporting here
@@ -307,7 +279,7 @@ public class Communicator : MonoBehaviour
     /// </summary>
     private IEnumerator LoadEvaluationScenes()
     {
-        ScenesLoadedCountRequired = Matches.Count;
+        ScenesLoadedCountRequired = Matches.Length;
 
         for (int i = 0; i < RerunTimes; i++)
         {
@@ -454,7 +426,7 @@ public class Communicator : MonoBehaviour
 
 public class CommunicatorEvalRequestData
 {
-    public List<Match> Matches { get; set; }
+    public Match[] Matches { get; set; }
 }
 
 public class CommunicatorEvalResponseData

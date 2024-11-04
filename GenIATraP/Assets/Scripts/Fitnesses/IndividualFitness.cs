@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Fitnesses
 {
@@ -65,7 +66,74 @@ namespace Fitnesses
         {
             return Value;
         }
+    }
 
-        // TODO Implement additional methods
+    public class FinalIndividualFitness
+    {
+        public int IndividualID { get; set; }
+        public float Value { get; set; }
+        public List<IndividualMatchResult> IndividualMatchResults { get; set; }
+
+        public FinalIndividualFitness()
+        {
+            IndividualID = -1;
+            Value = 0f;
+            IndividualMatchResults = new List<IndividualMatchResult>();
+        }
+
+        public void AddIndividualFitness(IndividualFitness individualFitness, string matchName)
+        {
+            if (IndividualID == -1)
+            {
+                IndividualID = individualFitness.IndividualID;
+            }
+            else if (IndividualID != individualFitness.IndividualID)
+            {
+                throw new System.Exception("Individual ID does not match");
+                // TODO Add error reporting here
+            }
+
+            Value += individualFitness.Value;
+            IndividualMatchResults.Add(new IndividualMatchResult()
+            {
+                MatchName = matchName,
+                Value = individualFitness.Value,
+                IndividualValues = individualFitness.IndividualValues,
+                OpponentsIDs = new int[] { }
+            });
+        }
+    }
+
+    public class IndividualMatchResult
+    {
+        public int[] OpponentsIDs { get; set; }
+        public string MatchName { get; set; }
+        public float Value { get; set; }
+        public Dictionary<string, float> IndividualValues { get; set; }
+    }
+
+    public class FinalIndividualFitnessWrapper
+    {
+        public List<FinalIndividualFitness> FinalIndividualFitnesses { get; set; }
+
+        public FinalIndividualFitnessWrapper()
+        {
+            FinalIndividualFitnesses = new List<FinalIndividualFitness>();
+        }
+
+        public void UpdateFinalIndividualFitnesses(IndividualFitness individualFitness, string matchName)
+        {
+            FinalIndividualFitness finalIndividualFitness = FinalIndividualFitnesses.Find(x => x.IndividualID == individualFitness.IndividualID);
+            if (finalIndividualFitness == null)
+            {
+                finalIndividualFitness = new FinalIndividualFitness();
+                finalIndividualFitness.AddIndividualFitness(individualFitness, matchName);
+                FinalIndividualFitnesses.Add(finalIndividualFitness);
+            }
+            else
+            {
+                finalIndividualFitness.AddIndividualFitness(individualFitness, matchName);
+            }
+        }
     }
 }

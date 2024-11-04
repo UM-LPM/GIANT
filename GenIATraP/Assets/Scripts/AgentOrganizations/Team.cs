@@ -10,5 +10,12 @@ namespace AgentOrganizations
         public int TeamId;
         public string TeamName;
         public Individual[] Individuals;
+
+        public Team(int teamId, string teamName, Individual[] individuals)
+        {
+            TeamId = teamId;
+            TeamName = teamName;
+            Individuals = individuals;
+        }
     }
 }

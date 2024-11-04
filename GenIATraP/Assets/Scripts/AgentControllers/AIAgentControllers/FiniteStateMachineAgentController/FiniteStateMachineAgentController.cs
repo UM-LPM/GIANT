@@ -19,5 +19,10 @@ namespace AgentControllers.AIAgentControllers
         {
             throw new System.NotImplementedException();
         }
+
+        public override void AddAgentControllerToSO(ScriptableObject parent)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

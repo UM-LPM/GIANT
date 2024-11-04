@@ -147,6 +147,14 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
             return callFrequencies.ToArray();
         }
 
+        public override void AddAgentControllerToSO(ScriptableObject parent)
+        {
+            foreach (var node in Nodes)
+            {
+                AssetDatabase.AddObjectToAsset(node, parent);
+            }
+        }
+
         #region Editor Compatibility
 #if UNITY_EDITOR
 
