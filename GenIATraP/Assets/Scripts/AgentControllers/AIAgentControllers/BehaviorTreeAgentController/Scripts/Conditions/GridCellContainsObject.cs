@@ -42,17 +42,4 @@ public class GridCellContainsObject : ConditionNode {
         return gridContainsTarget;
 
     }
-
-    public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviorTreeAgentController tree) {
-        // Create node
-        GridCellContainsObject gridCellContainsObjectNode = new GridCellContainsObject();
-
-        // Set node properties
-        gridCellContainsObjectNode.targetGameObject = (TargetGameObject)int.Parse(behaviourTreeNodeDef.node_properties["targetGameObject"]);
-        gridCellContainsObjectNode.gridPositionX = int.Parse(behaviourTreeNodeDef.node_properties["gridPositionX"]);
-        gridCellContainsObjectNode.gridPositionY = int.Parse(behaviourTreeNodeDef.node_properties["gridPositionY"]);
-
-        tree.Nodes.Add(gridCellContainsObjectNode);
-        return gridCellContainsObjectNode;
-    }
 }

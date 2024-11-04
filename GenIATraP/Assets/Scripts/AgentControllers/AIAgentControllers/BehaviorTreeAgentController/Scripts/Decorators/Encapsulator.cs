@@ -28,20 +28,5 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 			}
 			return State.Failure;
 		}
-
-		public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviorTreeAgentController tree)
-		{
-			// Create node
-			Encapsulator encapsulatedNode = new Encapsulator();
-
-			// Find the child node
-			BehaviourTreeNodeDef childNodeDef = behaviourTreeNodeDefs.Find(def => def.m_fileID == behaviourTreeNodeDef.child.fileID);
-
-            // Set node properties
-            encapsulatedNode.child = Node.CreateNodeTreeFromBehaviourTreeNodeDef(childNodeDef, behaviourTreeNodeDefs, tree);
-
-			tree.Nodes.Add(encapsulatedNode);
-			return encapsulatedNode;
-		}
 	}
 }

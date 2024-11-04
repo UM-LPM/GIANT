@@ -37,19 +37,6 @@ public class ShieldLevelBellow : ConditionNode
 
         return false;
     }
-
-    public static Node CreateNodeFromBehaviourTreeNodeDef(BehaviourTreeNodeDef behaviourTreeNodeDef, List<BehaviourTreeNodeDef> behaviourTreeNodeDefs, BehaviorTreeAgentController tree)
-    {
-        // Create node
-        ShieldLevelBellow shieldLevelNode = new ShieldLevelBellow();
-
-        // Set node properties
-        shieldLevelNode.shieldLevel = (ShieldLevel)int.Parse(behaviourTreeNodeDef.node_properties["shieldLevel"]);
-
-        tree.Nodes.Add(shieldLevelNode);
-        return shieldLevelNode;
-    }
-
     public static int ShieldLevelToValue(ShieldLevel ShieldLevel)
     {
         switch (ShieldLevel)
