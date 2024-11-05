@@ -3,12 +3,12 @@ using AgentOrganizations;
 using System.Collections.Generic;
 using Problems.Dummy;
 
-namespace IndividualSpawners
+namespace Spawners
 {
     /// <summary>
     /// Class that randomly spawns the individuals in the environment for the Dummy problem domain
     /// </summary>
-    public class RandomIndividualSpawner : IndividualSpawner
+    public class RandomMatchSpawner : MatchSpawner
     {
         public override void validateSpawnConditions(EnvironmentControllerBase environmentController)
         {
@@ -34,11 +34,11 @@ namespace IndividualSpawners
             }
         }
 
-        public override List<AgentComponent> SpawnIndividuals(EnvironmentControllerBase environmentController)
+        public override List<T> Spawn<T>(EnvironmentControllerBase environmentController)
         {
             validateSpawnConditions(environmentController);
 
-            List<AgentComponent> agents = new List<AgentComponent>();
+            List<T> agents = new List<T>();
 
             // Randomly spawn all agents in the environment
             List<Vector3> usedSpawnPoints = new List<Vector3>();
@@ -56,6 +56,7 @@ namespace IndividualSpawners
                     {
                         while (true)
                         {
+                            // Get random spawn point and rotation
                             spawnPos = GetRandomSpawnPoint(
                                 environmentController.Util,
                                 environmentController.GameType,
@@ -69,6 +70,7 @@ namespace IndividualSpawners
 
                             rotation = GetRandomRotation(environmentController.Util, environmentController.GameType);
 
+                            // Validate spawn point
                             if (!SpawnPointSuitable(
                                 environmentController.GameType,
                                 spawnPos,
@@ -76,12 +78,14 @@ namespace IndividualSpawners
                                 usedSpawnPoints,
                                 environmentController.AgentColliderExtendsMultiplier,
                                 environmentController.MinAgentDistance,
+                                true,
                                 environmentController.gameObject.layer,
                                 environmentController.DefaultLayer))
                             {
                                 continue;
                             }
 
+                            // Instantiate agent and set layer
                             GameObject obj = Instantiate(environmentController.AgentPrefab, spawnPos, rotation, gameObject.transform);
                             if (environmentController.RandomTeamColor)
                             {
@@ -89,12 +93,15 @@ namespace IndividualSpawners
                                 obj.GetComponent<Renderer>().material = material;
                             }
 
-                            AgentComponent agent = obj.GetComponent<AgentComponent>();
-                            agent.AgentController = agentController.Clone(); // Clone the agent controller to prevent shared state between agents
-                            agent.IndividualID = individual.IndividualId;
-                            agent.TeamID = team.TeamId;
-                            usedSpawnPoints.Add(spawnPos);
+                            // Configure agent
+                            T agent = obj.GetComponent<T>();
+                            AgentComponent agentComponent = agent as AgentComponent;
+                            agentComponent.AgentController = agentController.Clone(); // Clone the agent controller to prevent shared state between agents
+                            agentComponent.IndividualID = individual.IndividualId;
+                            agentComponent.TeamID = team.TeamId;
 
+                            // Update lists
+                            usedSpawnPoints.Add(spawnPos);
                             agents.Add(agent);
                             break;
                         }
@@ -102,8 +109,6 @@ namespace IndividualSpawners
                     }
                 }
             }
-
-
 
             return agents;
         }

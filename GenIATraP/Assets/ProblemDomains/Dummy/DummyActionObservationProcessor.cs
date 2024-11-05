@@ -1,7 +1,8 @@
+using AgentControllers.AIAgentControllers.NeuralNetworkAgentController.ObservationCollectors;
 using Unity.Barracuda;
 using UnityEngine;
 
-namespace AgentControllers.AIAgentControllers.NeuralNetworkAgentController.ObservationCollectors
+namespace Problems.Dummy
 {
     /// <summary>
     /// Dummy observation collector for testing purposes. It randomly generates dummy observation and action masks data.
