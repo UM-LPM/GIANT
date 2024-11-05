@@ -4,9 +4,9 @@ using Problems.Dummy;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace IndividualSpawners
+namespace Spawners
 {
-    public class DummyIndividualSpawner : IndividualSpawner
+    public class DummyMatchSpawner : MatchSpawner
     {
         public Individual Opponent;
 
@@ -40,11 +40,11 @@ namespace IndividualSpawners
             }
         }
 
-        public override List<AgentComponent> SpawnIndividuals(EnvironmentControllerBase environmentController)
+        public override List<T> Spawn<T>(EnvironmentControllerBase environmentController)
         {
             validateSpawnConditions(environmentController);
 
-            List<AgentComponent> agents = new List<AgentComponent>();
+            List<T> agents = new List<T>();
 
             // Randomly spawn agents in the environment
             List<Vector3> usedSpawnPoints = new List<Vector3>();
@@ -82,6 +82,7 @@ namespace IndividualSpawners
                                 usedSpawnPoints,
                                 environmentController.AgentColliderExtendsMultiplier,
                                 environmentController.MinAgentDistance,
+                                true,
                                 environmentController.gameObject.layer,
                                 environmentController.DefaultLayer))
                             {
@@ -95,10 +96,10 @@ namespace IndividualSpawners
                                 obj.GetComponent<Renderer>().material = material;
                             }
 
-                            AgentComponent agent = obj.GetComponent<AgentComponent>();
-                            agent.AgentController = agentController.Clone(); // Clone the agent controller to prevent shared state between agents
-                            agent.IndividualID = individual.IndividualId;
-                            agent.TeamID = team.TeamId;
+                            T agent = obj.GetComponent<T>();
+                            (agent as AgentComponent).AgentController = agentController.Clone(); // Clone the agent controller to prevent shared state between agents
+                            (agent as AgentComponent).IndividualID = individual.IndividualId;
+                            (agent as AgentComponent).TeamID = team.TeamId;
                             usedSpawnPoints.Add(spawnPos);
 
                             agents.Add(agent);
@@ -109,14 +110,14 @@ namespace IndividualSpawners
                 }
             }
 
-            agents.AddRange(SpawnOpponent(environmentController, usedSpawnPoints));
+            agents.AddRange(SpawnOpponent<T>(environmentController, usedSpawnPoints));
 
             return agents;
         }
 
-        private List<AgentComponent> SpawnOpponent(EnvironmentControllerBase environmentController, List<Vector3> usedSpawnPoints)
+        private List<T> SpawnOpponent<T>(EnvironmentControllerBase environmentController, List<Vector3> usedSpawnPoints) where T: Component
         {
-            List<AgentComponent> opponentAgents = new List<AgentComponent>();
+            List<T> opponentAgents = new List<T>();
 
             // Randomly spawn opponents in the environment
             Vector3 spawnPos;
@@ -129,13 +130,14 @@ namespace IndividualSpawners
 
                 while (true)
                 {
+                    // Get random spawn point and rotation
                     spawnPos = GetRandomSpawnPoint(environmentController.Util,environmentController.GameType,environmentController.ArenaSize,environmentController.ArenaRadius,environmentController.ArenaCenterPoint,environmentController.ArenaOffset);
-
                     if (environmentController.SceneLoadMode == SceneLoadMode.GridMode)
                         spawnPos += environmentController.GridCell.GridCellPosition;
 
                     rotation = GetRandomRotation(environmentController.Util, environmentController.GameType);
 
+                    // Validate spawn point
                     if (!SpawnPointSuitable(
                         environmentController.GameType,
                         spawnPos,
@@ -143,12 +145,14 @@ namespace IndividualSpawners
                         usedSpawnPoints,
                         environmentController.AgentColliderExtendsMultiplier,
                         environmentController.MinAgentDistance,
+                        true,
                         environmentController.gameObject.layer,
                         environmentController.DefaultLayer))
                     {
                         continue;
                     }
 
+                    // Instantiate Agent and set layer
                     GameObject obj = Instantiate(environmentController.AgentPrefab, spawnPos, rotation, gameObject.transform);
                     if (environmentController.RandomTeamColor)
                     {
@@ -156,12 +160,15 @@ namespace IndividualSpawners
                         obj.GetComponent<Renderer>().material = material;
                     }
 
-                    AgentComponent agent = obj.GetComponent<AgentComponent>();
-                    agent.AgentController = agentController.Clone(); // Clone the agent controller to prevent shared state between agents
-                    agent.IndividualID = Opponent.IndividualId;
-                    agent.TeamID = -1;
-                    usedSpawnPoints.Add(spawnPos);
+                    // Configure agent
+                    T agent = obj.GetComponent<T>();
+                    AgentComponent agentComponent = agent as AgentComponent;
+                    agentComponent.AgentController = agentController.Clone(); // Clone the agent controller to prevent shared state between agents
+                    agentComponent.IndividualID = Opponent.IndividualId;
+                    agentComponent.TeamID = -1;
 
+                    // Upate lists
+                    usedSpawnPoints.Add(spawnPos);
                     opponentAgents.Add(agent);
                     break;
                 }

@@ -1,23 +1,22 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace IndividualSpawners
+namespace Spawners
 {
-    [DisallowMultipleComponent]
-    public abstract class IndividualSpawner : MonoBehaviour
+    public abstract class Spawner : MonoBehaviour
     {
         /// <summary>
-        /// Checks if all conditions for spawning agents are meet.
+        /// Checks if all conditions for spawning are meet.
         /// </summary>
         /// <returns>True if all conditions for spawning agents are meet and False if the aren't.</returns>
         public abstract void validateSpawnConditions(EnvironmentControllerBase environmentController);
 
         /// <summary>
-        /// Spawns the individuals in the environment.
+        /// Spawns gameobjects in the environment.
         /// </summary>
         /// <param name="environmentController"></param>
         /// <returns>Returns list of AgentComponents from spawned agents.</returns>
-        public abstract List<AgentComponent> SpawnIndividuals(EnvironmentControllerBase environmentController);
+        public abstract List<T> Spawn<T>(EnvironmentControllerBase environmentController) where T: Component;
 
         public static Vector3 GetRandomSpawnPoint(Util util, GameType gameType, Vector3 arenaSize, float arenaRadius, Vector3 arenaCenterPoint, float arenaOffset)
         {
@@ -74,9 +73,9 @@ namespace IndividualSpawners
                 return Quaternion.Euler(0, 0, util.NextFloat(0, 360));
         }
 
-        public static bool SpawnPointSuitable(GameType gameType, Vector3 newSpawnPos, Quaternion newRotation, List<Vector3> occupiedSpawnPoints, Vector3 halfExtends, float minObjectDistance, int layer, int defaultLayer)
+        public static bool SpawnPointSuitable(GameType gameType, Vector3 newSpawnPos, Quaternion newRotation, List<Vector3> occupiedSpawnPoints, Vector3 halfExtends, float minObjectDistance, bool ignoreTriggerGameObjs, int layer, int defaultLayer)
         {
-            if (PhysicsUtil.PhysicsOverlap(gameType, null, newSpawnPos, 0, halfExtends, newRotation, PhysicsOverlapType.OverlapBox, false, layer, defaultLayer))
+            if (PhysicsUtil.PhysicsOverlapObject(gameType, null, newSpawnPos, 0, halfExtends, newRotation, PhysicsOverlapType.OverlapBox, ignoreTriggerGameObjs, layer, defaultLayer))
                 return false;
 
             if (occupiedSpawnPoints != null && occupiedSpawnPoints.Count > 0)

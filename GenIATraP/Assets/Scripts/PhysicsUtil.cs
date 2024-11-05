@@ -1,30 +1,32 @@
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 public static class PhysicsUtil
 {
-    public static bool PhysicsOverlap(GameType gameType, GameObject caller, Vector3 position, float radius, Vector3 halfExtends, Quaternion newRotation, PhysicsOverlapType overlapType, bool ignoreTriggerGameObjs, int layer, int defaultLayer)
+    public static bool PhysicsOverlapObject(GameType gameType, GameObject caller, Vector3 position, float radius, Vector3 halfExtends, Quaternion rotation, PhysicsOverlapType overlapType, bool ignoreTriggerGameObjs, int layer, int defaultLayer)
     {
         switch (overlapType)
         {
             case PhysicsOverlapType.OverlapBox:
-                return PhysicsOverlapBox(gameType, caller, position, newRotation, halfExtends, ignoreTriggerGameObjs, layer, defaultLayer);
+                return PhysicsOverlapBox(gameType, caller, position, rotation, halfExtends, ignoreTriggerGameObjs, layer, defaultLayer);
             case PhysicsOverlapType.OverlapSphere:
                 return PhysicsOverlapSphere(gameType, caller, position, radius, ignoreTriggerGameObjs, layer, defaultLayer);
             case PhysicsOverlapType.OverlapCapsule:
-                return PhysicsOverlapCapsule(gameType, caller, position, radius, newRotation, ignoreTriggerGameObjs, layer, defaultLayer);
+                return PhysicsOverlapCapsule(gameType, caller, position, radius, rotation, ignoreTriggerGameObjs, layer, defaultLayer);
             default:
                 return false;
         }
     }
 
-    public static bool PhysicsOverlapBox(GameType gameType, GameObject caller, Vector3 position, Quaternion newRotation, Vector3 halfExtends, bool ignoreTriggerGameObjs, int layer, int defaultLayer)
+    public static bool PhysicsOverlapBox(GameType gameType, GameObject caller, Vector3 position, Quaternion rotation, Vector3 halfExtends, bool ignoreTriggerGameObjs, int layer, int defaultLayer)
     {
+        Component[] colliders = null;
         if (gameType == GameType._3D)
         {
-            Collider[] colliders = Physics.OverlapBox(position, halfExtends, newRotation, LayerMask.GetMask(LayerMask.LayerToName(layer)) + defaultLayer);
+            colliders = Physics.OverlapBox(position, halfExtends, rotation, LayerMask.GetMask(LayerMask.LayerToName(layer)) + defaultLayer);
             if (ignoreTriggerGameObjs)
-                colliders = colliders.Where(col => !col.isTrigger).ToArray();
+                colliders = colliders.Where(col => !(col as Collider).isTrigger).ToArray();
 
             if (colliders.Length > 1 || (colliders.Length == 1 && caller != colliders[0].gameObject))
             {
@@ -33,14 +35,14 @@ public static class PhysicsUtil
         }
         else
         {
-            Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(position, halfExtends, newRotation.eulerAngles.z, LayerMask.GetMask(LayerMask.LayerToName(layer)) + defaultLayer);
+            colliders = Physics2D.OverlapBoxAll(position, halfExtends, rotation.eulerAngles.z, LayerMask.GetMask(LayerMask.LayerToName(layer)) + defaultLayer);
             if (ignoreTriggerGameObjs)
-                collider2Ds = collider2Ds.Where(col => !col.isTrigger).ToArray();
+                colliders = colliders.Where(col => !(col as Collider2D).isTrigger).ToArray();
+        }
 
-            if (collider2Ds.Length > 1 || (collider2Ds.Length == 1 && caller != collider2Ds[0].gameObject))
-            {
-                return true;
-            }
+        if (colliders.Length > 1 || (colliders.Length == 1 && caller != colliders[0].gameObject))
+        {
+            return true;
         }
 
         return false;
@@ -48,38 +50,174 @@ public static class PhysicsUtil
 
     public static bool PhysicsOverlapSphere(GameType gameType, GameObject caller, Vector3 position, float radius, bool ignoreTriggerGameObjs, int layer, int defaultLayer)
     {
+        Component[] colliders = null;
         if (gameType == GameType._3D)
         {
-            Collider[] colliders = Physics.OverlapSphere(position, radius, LayerMask.GetMask(LayerMask.LayerToName(layer)) + defaultLayer);
+            colliders = Physics.OverlapSphere(position, radius, LayerMask.GetMask(LayerMask.LayerToName(layer)) + defaultLayer);
             if (ignoreTriggerGameObjs)
-                colliders = colliders.Where(col => !col.isTrigger).ToArray();
-
-            if (colliders.Length > 1 || (colliders.Length == 1 && caller != colliders[0].gameObject))
-            {
-                return true;
-            }
+                colliders = colliders.Where(col => !(col as Collider).isTrigger).ToArray();
         }
         else
         {
-            Collider2D[] collider2Ds = Physics2D.OverlapCircleAll(position, radius, LayerMask.GetMask(LayerMask.LayerToName(layer)) + defaultLayer);
+            colliders = Physics2D.OverlapCircleAll(position, radius, LayerMask.GetMask(LayerMask.LayerToName(layer)) + defaultLayer);
 
             if (ignoreTriggerGameObjs)
-                collider2Ds = collider2Ds.Where(col => !col.isTrigger).ToArray();
+                colliders = colliders.Where(col => !(col as Collider2D).isTrigger).ToArray();
 
-            if (collider2Ds.Length > 1 || (collider2Ds.Length == 1 && caller != collider2Ds[0].gameObject))
-            {
-                return true;
-            }
+        }
+
+        if (colliders.Length > 1 || (colliders.Length == 1 && caller != colliders[0].gameObject))
+        {
+            return true;
         }
 
         return false;
     }
 
-    public static bool PhysicsOverlapCapsule(GameType gameType, GameObject caller, Vector3 position, float radius, Quaternion newRotation, bool ignoreTriggerGameObjs, int layer, int defaultLayer)
+    public static bool PhysicsOverlapCapsule(GameType gameType, GameObject caller, Vector3 position, float radius, Quaternion rotation, bool ignoreTriggerGameObjs, int layer, int defaultLayer)
     {
-        // TODO Implement
+        throw new System.NotImplementedException();
+    }
 
-        return false;
+    public static T PhysicsOverlapTargetObject<T>(GameType gameType, GameObject caller, Vector3 position, float radius, Vector3 halfExtends, Quaternion rotation, PhysicsOverlapType overlapType, bool ignoreTriggerGameObjs, int layer, int defaultLayer) where T: Component
+    {
+        switch (overlapType)
+        {
+            case PhysicsOverlapType.OverlapBox:
+                return PhysicsOverlapBoxTargetObject<T>(gameType, caller, position, rotation, halfExtends, ignoreTriggerGameObjs, layer, defaultLayer);
+            case PhysicsOverlapType.OverlapSphere:
+                return PhysicsOverlapSphereTargetObject<T>(gameType, caller, position, radius, ignoreTriggerGameObjs, layer, defaultLayer);
+            case PhysicsOverlapType.OverlapCapsule:
+                return PhysicsOverlapCapsuleTargetObject<T>(gameType, caller, position, radius, rotation, ignoreTriggerGameObjs, layer, defaultLayer);
+            default:
+                return null;
+        }
+    }
+
+    public static T PhysicsOverlapBoxTargetObject<T>(GameType gameType, GameObject caller, Vector3 position, Quaternion rotation, Vector3 halfExtends, bool ignoreTriggerGameObjs, int layer, int defaultLayer) where T : Component
+    {
+        Component[] colliders = null;
+        if (gameType == GameType._3D)
+        {
+            colliders = Physics.OverlapBox(position, halfExtends, rotation, LayerMask.GetMask(LayerMask.LayerToName(layer)) + defaultLayer);
+            if (ignoreTriggerGameObjs)
+                colliders = colliders.Where(col => !(col as Collider).isTrigger).ToArray();
+        }
+        else
+        {
+            colliders = Physics2D.OverlapBoxAll(position, halfExtends, rotation.eulerAngles.z, LayerMask.GetMask(LayerMask.LayerToName(layer)) + defaultLayer);
+            if (ignoreTriggerGameObjs)
+                colliders = colliders.Where(col => !(col as Collider2D).isTrigger).ToArray();
+
+        }
+
+        foreach (var collider in colliders)
+        {
+            if (caller != collider.gameObject)
+            {
+                T component = collider.GetComponent<T>();
+                if (component != null)
+                    return component;
+            }
+        }
+
+        return null;
+    }
+
+    public static T PhysicsOverlapSphereTargetObject<T>(GameType gameType, GameObject caller, Vector3 position, float radius, bool ignoreTriggerGameObjs, int layer, int defaultLayer) where T : Component
+    {
+        Component[] colliders = null;
+        if (gameType == GameType._3D)
+        {
+            colliders = Physics.OverlapSphere(position, radius, LayerMask.GetMask(LayerMask.LayerToName(layer)) + defaultLayer);
+            if (ignoreTriggerGameObjs)
+                colliders = colliders.Where(col => !(col as Collider).isTrigger).ToArray();
+        }
+        else
+        {
+            colliders = Physics2D.OverlapCircleAll(position, radius, LayerMask.GetMask(LayerMask.LayerToName(layer)) + defaultLayer);
+
+            if (ignoreTriggerGameObjs)
+                colliders = colliders.Where(col => !(col as Collider2D).isTrigger).ToArray();
+        }
+
+        foreach (var collider in colliders)
+        {
+            if (caller != collider.gameObject)
+            {
+                T component = collider.GetComponent<T>();
+                if (component != null)
+                    return component;
+            }
+        }
+
+        return null;
+    }
+
+    public static T PhysicsOverlapCapsuleTargetObject<T>(GameType gameType, GameObject caller, Vector3 position, float radius, Quaternion rotation, bool ignoreTriggerGameObjs, int layer, int defaultLayer) where T : Component
+    {
+        throw new System.NotImplementedException();
+    }
+
+
+    public static List<T> PhysicsOverlapTargetObjects<T>(GameType gameType, GameObject caller, Vector3 position, float radius, Vector3 halfExtends, Quaternion rotation, PhysicsOverlapType overlapType, bool ignoreTriggerGameObjs, int layer, int defaultLayer) where T : Component
+    {
+        switch (overlapType)
+        {
+            case PhysicsOverlapType.OverlapBox:
+                return PhysicsOverlapBoxTargetObjects<T>(gameType, caller, position, rotation, halfExtends, ignoreTriggerGameObjs, layer, defaultLayer);
+            case PhysicsOverlapType.OverlapSphere:
+                return PhysicsOverlapSphereTargetObjects<T>(gameType, caller, position, radius, ignoreTriggerGameObjs, layer, defaultLayer);
+            case PhysicsOverlapType.OverlapCapsule:
+                return PhysicsOverlapCapsuleTargetObjects<T>(gameType, caller, position, radius, rotation, ignoreTriggerGameObjs, layer, defaultLayer);
+            default:
+                return null;
+        }
+    }
+
+    public static List<T> PhysicsOverlapBoxTargetObjects<T>(GameType gameType, GameObject caller, Vector3 position, Quaternion rotation, Vector3 halfExtends, bool ignoreTriggerGameObjs, int layer, int defaultLayer) where T : Component
+    {
+        Component[] colliders = null;
+        if (gameType == GameType._3D)
+        {
+            colliders = Physics.OverlapBox(position, halfExtends, rotation, LayerMask.GetMask(LayerMask.LayerToName(layer)) + defaultLayer);
+            if (ignoreTriggerGameObjs)
+                colliders = colliders.Where(col => !(col as Collider).isTrigger).ToArray();
+        }
+        else
+        {
+            colliders = Physics2D.OverlapBoxAll(position, halfExtends, rotation.eulerAngles.z, LayerMask.GetMask(LayerMask.LayerToName(layer)) + defaultLayer);
+            if (ignoreTriggerGameObjs)
+                colliders = colliders.Where(col => !(col as Collider2D).isTrigger).ToArray();
+
+        }
+
+        return colliders.Select(col => col.GetComponent<T>()).Where(component => component != null).ToList();
+    }
+
+    public static List<T> PhysicsOverlapSphereTargetObjects<T>(GameType gameType, GameObject caller, Vector3 position, float radius, bool ignoreTriggerGameObjs, int layer, int defaultLayer) where T : Component
+    {
+        Component[] colliders = null;
+        if (gameType == GameType._3D)
+        {
+            colliders = Physics.OverlapSphere(position, radius, LayerMask.GetMask(LayerMask.LayerToName(layer)) + defaultLayer);
+            if (ignoreTriggerGameObjs)
+                colliders = colliders.Where(col => !(col as Collider).isTrigger).ToArray();
+        }
+        else
+        {
+            colliders = Physics2D.OverlapCircleAll(position, radius, LayerMask.GetMask(LayerMask.LayerToName(layer)) + defaultLayer);
+
+            if (ignoreTriggerGameObjs)
+                colliders = colliders.Where(col => !(col as Collider2D).isTrigger).ToArray();
+        }
+
+        return colliders.Select(col => col.GetComponent<T>()).Where(component => component != null).ToList();
+    }
+
+    public static List<T> PhysicsOverlapCapsuleTargetObjects<T>(GameType gameType, GameObject caller, Vector3 position, float radius, Quaternion rotation, bool ignoreTriggerGameObjs, int layer, int defaultLayer) where T : Component
+    {
+        throw new System.NotImplementedException();
     }
 }
 

@@ -7,7 +7,7 @@ using AgentOrganizations;
 using AgentControllers.AIAgentControllers.NeuralNetworkAgentController.ObservationCollectors;
 using AgentControllers.AIAgentControllers.NeuralNetworkAgentController;
 using Fitnesses;
-using IndividualSpawners;
+using Spawners;
 using UnityEditor;
 
 [DisallowMultipleComponent]
@@ -43,7 +43,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     [Header("Match Configuration")]
     [SerializeField] public Match Match;
 
-    List<AgentComponent> Agents { get; set;}
+    public List<AgentComponent> Agents { get; set;}
     public int CurrentSimulationSteps { get; set; }
     public float CurrentSimulationTime { get; set; }
     public GameState GameState { get; set; }
@@ -53,7 +53,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     public LayerData LayerBTIndex { get; set; }
     public GridCell GridCell { get; set; }
 
-    public IndividualSpawner IndividualSpawner { get; set; }
+    public Spawner MatchSpawner { get; set; }
 
     private void Awake()
     {
@@ -68,7 +68,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
         GameState = GameState.IDLE;
         Util = gameObject.GetComponent<Util>();
 
-        IndividualSpawner = gameObject.GetComponent<IndividualSpawner>();
+        MatchSpawner = gameObject.GetComponent<Spawner>();
         ActionObservationProcessor = gameObject.GetComponent<ActionObservationProcessor>();
 
         SetLayerGridData();
@@ -90,7 +90,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
             GetMatch(SceneLoadMode == SceneLoadMode.LayerMode ? LayerBTIndex.MatchIndex : GridCell.MatchIndex);
         }
 
-        Agents = IndividualSpawner.SpawnIndividuals(this);
+        Agents = MatchSpawner.Spawn<AgentComponent>(this);
 
         InitializeAgents();
 
@@ -188,6 +188,11 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
             {
                 SimulationTime = MenuManager.Instance.MainConfiguration.SimulationTime;
                 SimulationSteps = 0;
+            }
+
+            if (conf.ProblemConfiguration.ContainsKey("DecisionRequestInterval"))
+            {
+                DecisionRequestInterval = int.Parse(conf.ProblemConfiguration["DecisionRequestInterval"]);
             }
 
             // TODO Add support in the future
