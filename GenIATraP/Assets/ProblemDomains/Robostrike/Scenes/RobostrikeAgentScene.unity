@@ -297,6 +297,37 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &105846537
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 105846538}
+  m_Layer: 0
+  m_Name: AgentSpawnPos1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &105846538
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 105846537}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: -0.30070576, w: 0.953717}
+  m_LocalPosition: {x: -13, y: -6.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 832544668}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -35}
 --- !u!1 &154790666
 GameObject:
   m_ObjectHideFlags: 0
@@ -396,6 +427,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 253094000}
+  - component: {fileID: 253094002}
+  - component: {fileID: 253094001}
+  - component: {fileID: 253094003}
+  - component: {fileID: 253094004}
+  - component: {fileID: 253094005}
   m_Layer: 0
   m_Name: EnvironmentController
   m_TagString: Untagged
@@ -417,8 +453,132 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1651248463}
+  - {fileID: 832544668}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &253094001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 253093999}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b6f9297315696946aa927ea3d5cf242, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  EnvironmentControllerSetup: 1
+  GameType: 0
+  SimulationSteps: 1000
+  SimulationTime: 0
+  DefaultLayer:
+    serializedVersion: 2
+    m_Bits: 1
+  Environment: {fileID: 1651248462}
+  SceneLoadMode: 0
+  AgentPrefab: {fileID: 726593963373549367, guid: 6b4e4d4edee05e64697feecac1732d25, type: 3}
+  ArenaSize: {x: 30, y: 20, z: 0}
+  ArenaRadius: 0
+  ArenaCenterPoint: {x: 0, y: 0, z: 0}
+  ArenaOffset: 3
+  MinAgentDistance: 10
+  AgentColliderExtendsMultiplier: {x: 0.5, y: 0.5, z: 0}
+  RandomTeamColor: 0
+  DecisionRequestInterval: 1
+  Match: {fileID: 0}
+  AgentStartHealth: 10
+  AgentStartShield: 0
+  AgentStartAmmo: 0
+  AgentRespawnType: 0
+  GameScenarioType: 0
+  AgentMoveSpeed: 5
+  AgentRotationSpeed: 80
+  AgentTurrentRotationSpeed: 90
+  MissilePrefab: {fileID: 5049200600163564288, guid: 1d856b76c5c116c40ac637fa48cd6346, type: 3}
+  DestroyMissileAfter: 1
+  MissileShootCooldown: 1
+  MissleLaunchSpeed: 15
+  HealthPowerUpValue: 5
+  ShieldPowerUpValue: 5
+  AmmoPowerUpValue: 10
+  MinPowerUpDistance: 8
+  PowerUpColliderExtendsMultiplier: {x: 0.5, y: 0.5, z: 0}
+  HealthBoxPrefab: {fileID: 4059224678619971596, guid: 701289b6e00ea604d8b5f3259cdf529a, type: 3}
+  HealthBoxSpawnAmount: 1
+  ShieldBoxPrefab: {fileID: 1668036172732572605, guid: 992be74865f84e841b4e12abf8efd8a4, type: 3}
+  ShieldBoxSpawnAmount: 1
+  AmmoBoxPrefab: {fileID: 3925929529766172192, guid: dcf41fbb4ac2ea34e8dcdacdd57125ce, type: 3}
+  AmmoBoxSpawnAmount: 2
+--- !u!114 &253094002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 253093999}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f26b563772158044b6ecbe4df7f558e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  InitialSeed: 316227711
+--- !u!114 &253094003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 253093999}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fb6ec0c4b8080641867a20cc922bb28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SpawnPoints:
+  - {fileID: 105846538}
+  - {fileID: 674073069}
+  Hulls:
+  - {fileID: 21300000, guid: 519db26ac7648064fabb6f100ecfe3db, type: 3}
+  - {fileID: 21300000, guid: d54dd0dff73f8d143ad4456394686d5c, type: 3}
+  - {fileID: 21300000, guid: e722d640e03e2154d89310b4e8b374db, type: 3}
+  Turrets:
+  - {fileID: 21300000, guid: d4560c6d6fc01cb42a07c7c64db28fde, type: 3}
+  - {fileID: 21300000, guid: 175673e2c2e70c74a901e9ad4cab8a44, type: 3}
+  - {fileID: 21300000, guid: 824ea3f6607b3d444ab24cd5340a1e5f, type: 3}
+  Tracks:
+  - {fileID: 21300000, guid: eb1901a4dd1676441a505df73e03038a, type: 3}
+  - {fileID: 21300000, guid: dbb6e3fbaab305d43b5605af51a8052a, type: 3}
+  - {fileID: 21300000, guid: 6e3675dd33e7b404b86496d5a7c4f3f9, type: 3}
+  - {fileID: 21300000, guid: 5d095de063c482c4a8b4d113bb0c38a0, type: 3}
+  Guns:
+  - {fileID: 21300000, guid: 6c55d1b41192f50409d83ab5e5953d29, type: 3}
+  - {fileID: 21300000, guid: b3d5a576150683f42a18c0ceb3d0203f, type: 3}
+  - {fileID: 21300000, guid: c6e5d078bcdd07746ace23393ca0db59, type: 3}
+--- !u!114 &253094004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 253093999}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 937ce01f3dfaa0b4eaecdee4331369bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &253094005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 253093999}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64faba3b31eca104ab3856ed468ce8eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &335844245
 GameObject:
   m_ObjectHideFlags: 0
@@ -994,6 +1154,37 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!1 &674073068
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 674073069}
+  m_Layer: 0
+  m_Name: AgentSpawnPos2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &674073069
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 674073068}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0.953717, w: 0.30070582}
+  m_LocalPosition: {x: 13, y: 6.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 832544668}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 145}
 --- !u!1 &706474803
 GameObject:
   m_ObjectHideFlags: 0
@@ -1304,6 +1495,39 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!1 &832544667
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 832544668}
+  m_Layer: 0
+  m_Name: AgentStartSpawnPoints
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &832544668
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 832544667}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 105846538}
+  - {fileID: 674073069}
+  m_Father: {fileID: 253094000}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &850935281
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,7 +1,5 @@
 using UnityEngine;
-using AgentOrganizations;
 using System.Collections.Generic;
-using Problems.Dummy;
 
 namespace Spawners
 {
