@@ -9,6 +9,7 @@ using AgentControllers.AIAgentControllers.NeuralNetworkAgentController;
 using Fitnesses;
 using Spawners;
 using UnityEditor;
+using AgentControllers;
 
 [DisallowMultipleComponent]
 [RequireComponent(typeof(Util))]
@@ -49,11 +50,14 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     public GameState GameState { get; set; }
     public Util Util { get; set; }
     public ActionObservationProcessor ActionObservationProcessor { get; set; }
+    public ActionExecutor ActionExecutor { get; set; }
 
     public LayerData LayerBTIndex { get; set; }
     public GridCell GridCell { get; set; }
 
     public Spawner MatchSpawner { get; set; }
+
+    private ActionBuffer ActionBuffer;
 
     private void Awake()
     {
@@ -70,6 +74,18 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
 
         MatchSpawner = gameObject.GetComponent<Spawner>();
         ActionObservationProcessor = gameObject.GetComponent<ActionObservationProcessor>();
+        if(ActionObservationProcessor == null)
+        {
+            throw new System.Exception("ActionObservationProcessor is not set!");
+            // TODO Add error reporting here
+        }
+
+        ActionExecutor = gameObject.GetComponent<ActionExecutor>();
+        if(ActionExecutor == null)
+        {
+            throw new System.Exception("ActionExecutor is not set!");
+            // TODO Add error reporting here
+        }
 
         SetLayerGridData();
 
@@ -91,6 +107,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
         }
 
         Agents = MatchSpawner.Spawn<AgentComponent>(this);
+        ActionBuffer = new ActionBuffer();
 
         InitializeAgents();
 
@@ -315,23 +332,25 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     protected virtual void OnUpdate() { }
 
     public virtual void UpdateAgents(bool getNewDecisions){
-        ActionBuffer actionBuffer;
         for (int i = 0; i < Agents.Count; i++)
         {
-            if (getNewDecisions)
+            if (Agents[i].gameObject.activeSelf)
             {
-                actionBuffer = new ActionBuffer();
-                Agents[i].AgentController.GetActions(in actionBuffer);
-                Agents[i].ActionBuffer = actionBuffer;
-            }
+                if (getNewDecisions)
+                {
+                    ActionBuffer.ResetActions();
+                    Agents[i].AgentController.GetActions(in ActionBuffer);
+                    Agents[i].ActionBuffer = ActionBuffer;
+                }
 
-            if(Agents[i].ActionBuffer == null)
-            {
-                throw new System.Exception("ActionBuffer is not set!");
-                // TODO Add error reporting here
-            }
+                if (Agents[i].ActionBuffer == null)
+                {
+                    throw new System.Exception("ActionBuffer is not set!");
+                    // TODO Add error reporting here
+                }
 
-            Agents[i].ActionExecutor.ExecuteActions(Agents[i].ActionBuffer);
+                ActionExecutor.ExecuteActions(Agents[i]);
+            }
         }
     }
 }

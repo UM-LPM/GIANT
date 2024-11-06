@@ -6,6 +6,6 @@ namespace AgentControllers
     [DisallowMultipleComponent]
     public abstract class ActionExecutor: MonoBehaviour
     {
-        public abstract void ExecuteActions(ActionBuffer actionBuffer);
+        public abstract void ExecuteActions(AgentComponent agent);
     }
 }
