@@ -23,6 +23,7 @@ public class Coordinator : MonoBehaviour
     [HideInInspector] public static Coordinator Instance;
 
     [Header("Base Configuration")]
+    [SerializeField] public ComponentSetupType CoordinatorSetup = ComponentSetupType.MOCK;
     [SerializeField] public string IndividualsSourceJSON;
     [SerializeField] public string IndividualsSourceSO;
 
@@ -152,8 +153,11 @@ public class Coordinator : MonoBehaviour
         CoordinatorEvalRequestData evalRequestData = ReadDataFromRequestBody(context);
         Debug.Log("Coordinator Cordinate Evaluator: EvalInstances: " + evalRequestData.EvalEnvInstancesToString());
 
-        // Load Individuals from IndividualsSource
-        LoadIndividuals(evalRequestData.EvalRangeStart.HasValue? evalRequestData.EvalRangeStart.Value : -1, evalRequestData.EvalRangeEnd.HasValue ? evalRequestData.EvalRangeEnd.Value : -1);
+        if(CoordinatorSetup == ComponentSetupType.REAL)
+        {
+            // Load Individuals from IndividualsSource
+            LoadIndividuals(evalRequestData.EvalRangeStart.HasValue ? evalRequestData.EvalRangeStart.Value : -1, evalRequestData.EvalRangeEnd.HasValue ? evalRequestData.EvalRangeEnd.Value : -1);
+        }
 
         Evaluator evaluator;
         Task<CoordinatorEvaluationResult> evaluationResultTask = null;

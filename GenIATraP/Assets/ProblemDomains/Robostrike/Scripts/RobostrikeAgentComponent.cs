@@ -1,0 +1,195 @@
+using Problems.Dummy;
+using UnityEngine;
+
+namespace Problems.Robostrike
+{
+    public class RobostrikeAgentComponent : AgentComponent
+    {
+        public HullComponent Hull{ get; set; }
+        public TurretComponent Turret { get; set; }
+        public TrackComponent[] Tracks { get; set; }
+        public GunComponent Gun { get; set; }
+
+        public MissileSpawnPointComponent MissileSpawnPoint { get; set; }
+        public float NextShootTime { get; set; }
+
+        public Vector3 LastSectorPosition { get; set; }
+
+        public HealthComponent HealthComponent { get; set; }
+        public ShieldComponent ShieldComponent { get; set; }
+        public AmmoComponent AmmoComponent { get; set; }
+
+        private AgentStatBars StatBars;
+
+        protected override void DefineAdditionalDataOnAwake()
+        {
+            Hull = GetComponentInChildren<HullComponent>();
+            Turret = GetComponentInChildren<TurretComponent>();
+            Tracks = GetComponentsInChildren<TrackComponent>();
+            Gun = GetComponentInChildren<GunComponent>();
+
+            MissileSpawnPoint = GetComponentInChildren<MissileSpawnPointComponent>();
+            StatBars = GetComponent<AgentStatBars>();
+
+            HealthComponent = GetComponent<HealthComponent>();
+            ShieldComponent = GetComponent<ShieldComponent>();
+            AmmoComponent = GetComponent<AmmoComponent>();
+
+            CheckComponentValidity();
+        }
+
+        protected override void DefineAdditionalDataOnStart()
+        {
+            UpdatetStatBars();
+        }
+
+        void CheckComponentValidity()
+        {
+            if(Hull == null)
+            {
+                throw new System.Exception("HullComponent component is missing");
+                // TODO Add error reporting here
+            }
+
+            if (Turret == null)
+            {
+                throw new System.Exception("TurretComponent component is missing");
+                // TODO Add error reporting here
+            }
+
+            if (Tracks == null)
+            {
+                throw new System.Exception("TrackComponent component is missing");
+                // TODO Add error reporting here
+            }
+
+            if (Gun == null)
+            {
+                throw new System.Exception("GunComponent component is missing");
+                // TODO Add error reporting here
+            }
+
+            if (StatBars == null)
+            {
+                throw new System.Exception("AgentStatBars component is missing");
+                // TODO Add error reporting here
+            }
+
+            if (HealthComponent == null)
+            {
+                throw new System.Exception("HealthComponent component is missing");
+                // TODO Add error reporting here
+            }
+
+            if (ShieldComponent == null)
+            {
+                throw new System.Exception("ShieldComponent component is missing");
+                // TODO Add error reporting here
+            }
+
+            if (AmmoComponent == null)
+            {
+                throw new System.Exception("AmmoComponent component is missing");
+                // TODO Add error reporting here
+            }
+
+            if (MissileSpawnPoint == null)
+            {
+                throw new System.Exception("MissileSpawnPointComponent component is missing");
+                // TODO Add error reporting here
+            }
+        }
+
+        public bool SetHealth(int value)
+        {
+            if (HealthComponent.Health + value <= RobostrikeEnvironmentController.MAX_HEALTH)
+            {
+                HealthComponent.Health += value;
+                return true;
+            }
+            else if (HealthComponent.Health < RobostrikeEnvironmentController.MAX_HEALTH && HealthComponent.Health + value > RobostrikeEnvironmentController.MAX_HEALTH)
+            {
+                HealthComponent.Health = RobostrikeEnvironmentController.MAX_HEALTH;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool SetShield(int value)
+        {
+            if (ShieldComponent.Shield + value <= RobostrikeEnvironmentController.MAX_SHIELD)
+            {
+                ShieldComponent.Shield += value;
+                return true;
+            }
+            else if (ShieldComponent.Shield < RobostrikeEnvironmentController.MAX_SHIELD && ShieldComponent.Shield + value > RobostrikeEnvironmentController.MAX_SHIELD)
+            {
+                ShieldComponent.Shield = RobostrikeEnvironmentController.MAX_SHIELD;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool SetAmmo(int value)
+        {
+            if (AmmoComponent.Ammo + value <= RobostrikeEnvironmentController.MAX_AMMO)
+            {
+                AmmoComponent.Ammo += value;
+                return true;
+            }
+            else if (AmmoComponent.Ammo < RobostrikeEnvironmentController.MAX_AMMO && AmmoComponent.Ammo + value > RobostrikeEnvironmentController.MAX_AMMO)
+            {
+                AmmoComponent.Ammo = RobostrikeEnvironmentController.MAX_AMMO;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public void MissileFired()
+        {
+            if (AmmoComponent.Ammo > 0)
+            {
+                AmmoComponent.Ammo--;
+                UpdatetStatBars();
+            }
+        }
+
+        public void TakeDamage(int value)
+        {
+            if (ShieldComponent.Shield > 0)
+            {
+                if (ShieldComponent.Shield - (value * 2) < 0)
+                {
+                    ShieldComponent.Shield = 0;
+                }
+                else
+                {
+                    ShieldComponent.Shield -= value;
+                }
+                HealthComponent.Health -= value * 0.5f;
+            }
+            else
+            {
+                HealthComponent.Health -= value;
+            }
+
+            // Update Stat Bars 
+            UpdatetStatBars();
+        }
+
+        public void UpdatetStatBars()
+        {
+            if (StatBars != null)
+                StatBars.SetStats(HealthComponent.Health, ShieldComponent.Shield, AmmoComponent.Ammo);
+        }
+    }
+}

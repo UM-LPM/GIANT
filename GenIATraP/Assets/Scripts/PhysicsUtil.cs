@@ -192,7 +192,7 @@ public static class PhysicsUtil
 
         }
 
-        return colliders.Select(col => col.GetComponent<T>()).Where(component => component != null).ToList();
+        return colliders.Select(col => col.GetComponent<T>()).Where(component => component != null && caller != component.gameObject).ToList();
     }
 
     public static List<T> PhysicsOverlapSphereTargetObjects<T>(GameType gameType, GameObject caller, Vector3 position, float radius, bool ignoreTriggerGameObjs, int layer, int defaultLayer) where T : Component
@@ -212,7 +212,7 @@ public static class PhysicsUtil
                 colliders = colliders.Where(col => !(col as Collider2D).isTrigger).ToArray();
         }
 
-        return colliders.Select(col => col.GetComponent<T>()).Where(component => component != null).ToList();
+        return colliders.Select(col => col.GetComponent<T>()).Where(component => component != null && caller != component.gameObject).ToList();
     }
 
     public static List<T> PhysicsOverlapCapsuleTargetObjects<T>(GameType gameType, GameObject caller, Vector3 position, float radius, Quaternion rotation, bool ignoreTriggerGameObjs, int layer, int defaultLayer) where T : Component
