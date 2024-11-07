@@ -18,7 +18,7 @@ namespace Problems.Dummy
             }
         }
 
-        public override List<T> Spawn<T>(EnvironmentControllerBase environmentController)
+        public override T[] Spawn<T>(EnvironmentControllerBase environmentController)
         {
             validateSpawnConditions(environmentController);
 
@@ -30,12 +30,13 @@ namespace Problems.Dummy
             for (int i = 0; i < dummyEnvironmentController.StartNumberOfTargets; i++)
             {
                 targets.Add(SpawnTarget<T>(dummyEnvironmentController, targetSpawnPositions));
+                targetSpawnPositions.Add(targets[i].transform.position);
             }
 
-            return targets;
+            return targets.ToArray();
         }
 
-        public T SpawnTarget<T>(EnvironmentControllerBase environmentController, List<Vector3> targetSpawnPosition) where T : Component
+        public T SpawnTarget<T>(EnvironmentControllerBase environmentController, List<Vector3> targetSpawnPositions) where T : Component
         {
             validateSpawnConditions(environmentController);
 
@@ -62,7 +63,7 @@ namespace Problems.Dummy
                 if (!SpawnPointSuitable(dummyEnvironmentController.GameType,
                             spawnPos,
                             rotation,
-                            targetSpawnPosition,
+                            targetSpawnPositions,
                             dummyEnvironmentController.TargetColliderExtendsMultiplier,
                             dummyEnvironmentController.TargetToTargetDistance,
                             true,
@@ -89,7 +90,7 @@ namespace Problems.Dummy
             obj.layer = gameObject.layer;
 
             // Upate lists
-            targetSpawnPosition.Add(obj.transform.position);
+            targetSpawnPositions.Add(obj.transform.position);
 
             return obj.GetComponent<T>();
         }

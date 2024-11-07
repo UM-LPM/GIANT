@@ -317,7 +317,7 @@ namespace TMPro.Examples
                 //Debug.Log("Character [" + m_TextMeshPro.textInfo.characterInfo[index].character + "] was selected at POS: " + eventData.position);
                 m_lastIndex = charIndex;
 
-                Color32 c = new Color32((byte)Random.Range(0, 255), (byte)Random.Range(0, 255), (byte)Random.Range(0, 255), 255);
+                Color32 c = new Color32((byte)RandomPos.Range(0, 255), (byte)RandomPos.Range(0, 255), (byte)RandomPos.Range(0, 255), 255);
                 int vertexIndex = m_TextMeshPro.textInfo.characterInfo[charIndex].vertexIndex;
 
                 UIVertex[] uiVertices = m_TextMeshPro.textInfo.meshInfo.uiVertices;
@@ -424,7 +424,7 @@ namespace TMPro.Examples
                 #region Vertex Attribute Modification Example
                 UIVertex[] uiVertices = m_TextMeshPro.textInfo.meshInfo.uiVertices;
 
-                Color32 c = new Color32((byte)Random.Range(0, 255), (byte)Random.Range(0, 255), (byte)Random.Range(0, 255), 255);
+                Color32 c = new Color32((byte)RandomPos.Range(0, 255), (byte)RandomPos.Range(0, 255), (byte)RandomPos.Range(0, 255), 255);
                 for (int i = 0; i < linkInfo.characterCount; i++)
                 {
                     TMP_CharacterInfo cInfo = m_TextMeshPro.textInfo.characterInfo[linkInfo.firstCharacterIndex + i];

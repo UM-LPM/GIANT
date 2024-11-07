@@ -35,7 +35,7 @@ namespace TMPro.Examples
                     //go.transform.position = new Vector3(0, 1.01f, 0);
                     //go.renderer.castShadows = false;
                     //go.renderer.receiveShadows = false;
-                    //go.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360), 0);
+                    //go.transform.rotation = Quaternion.Euler(0, RandomPos.Range(0, 360), 0);
 
                     TextMeshPro textMeshPro = go.AddComponent<TextMeshPro>();
                     //textMeshPro.FontAsset = Resources.Load("Fonts & Materials/LiberationSans SDF", typeof(TextMeshProFont)) as TextMeshProFont;

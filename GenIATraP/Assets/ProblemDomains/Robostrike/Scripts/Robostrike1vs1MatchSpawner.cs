@@ -20,6 +20,9 @@ namespace Problems.Robostrike
         [SerializeField] public Sprite[] Tracks;
         [SerializeField] public Sprite[] Guns;
 
+        // Respawn variables
+        Vector3 respawnPos = Vector3.zero;
+        Quaternion rotation = Quaternion.identity;
 
         public override void validateSpawnConditions(EnvironmentControllerBase environmentController)
         {
@@ -66,9 +69,8 @@ namespace Problems.Robostrike
             }
         }
 
-        public override List<T> Spawn<T>(EnvironmentControllerBase environmentController)
+        public override T[] Spawn<T>(EnvironmentControllerBase environmentController)
         {
-            // TODO Uncomment this
             //validateSpawnConditions(environmentController);
 
             List<T> agents = new List<T>();
@@ -99,7 +101,39 @@ namespace Problems.Robostrike
                 }
             }
 
-            return agents;
+            return agents.ToArray();
+        }
+
+        public override void Respawn<T>(EnvironmentControllerBase environmentController, T respawnComponent)
+        {
+            //validateSpawnConditions(environmentController);
+
+            if(!(respawnComponent is AgentComponent))
+            {
+                throw new System.Exception("Invalid respawn component");
+                // TODO add error reporting here
+            }
+
+            RobostrikeEnvironmentController robostrikeEnvironmentController = environmentController as RobostrikeEnvironmentController;
+            AgentComponent agent = respawnComponent as AgentComponent;
+
+            if (robostrikeEnvironmentController.AgentRespawnType == RobostrikeAgentRespawnType.StartPos)
+            {
+                respawnPos = agent.StartPosition;
+                rotation = agent.StartRotation;
+            }
+            else if(robostrikeEnvironmentController.AgentRespawnType == RobostrikeAgentRespawnType.RandomPos)
+            {
+
+            }
+            else
+            {
+                throw new System.Exception("Invalid respawn type");
+                // TODO add error reporting here
+            }
+
+            agent.transform.position = respawnPos;
+            agent.transform.rotation = rotation;
         }
 
         void ConfigureAgentSprites(EnvironmentControllerBase environmentController, GameObject agentGameObject)

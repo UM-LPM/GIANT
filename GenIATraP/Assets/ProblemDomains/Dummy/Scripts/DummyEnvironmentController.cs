@@ -1,6 +1,7 @@
 using Fitnesses;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 using static UnityEngine.GraphicsBuffer;
@@ -52,7 +53,7 @@ namespace Problems.Dummy
             }
 
             // Spawn target
-            Targets = TargetSpawner.Spawn<TargetComponent>(this);
+            Targets = TargetSpawner.Spawn<TargetComponent>(this).ToList();
         }
 
         protected override void OnPostFixedUpdate()
@@ -60,7 +61,7 @@ namespace Problems.Dummy
             // Check if Any agent overlaps the target
             CheckAgentTargetOverlaps();
 
-            // Check if Any agent overlaps any sectors
+            // Check if Any agent overlaps any Sectors
             CheckAgentSectorOverlaps();
         }
 
@@ -117,7 +118,7 @@ namespace Problems.Dummy
                                 agent.AgentFitness.UpdateFitness((DummyFitness.FitnessValues[DummyFitness.Keys[(int)DummyFitness.FitnessKeys.AgentExploredSector]]), DummyFitness.FitnessKeys.AgentExploredSector.ToString());
                             }
 
-                            // Add explored sector to the list of explored sectors
+                            // Add explored sector to the list of explored Sectors
                             agent.LastKnownPositions.Add(sectorComponent.transform.position);
                             return;
                         }

@@ -1,7 +1,7 @@
 using Unity.Barracuda;
 using UnityEngine;
 
-namespace AgentControllers.AIAgentControllers.NeuralNetworkAgentController.ObservationCollectors
+namespace AgentControllers.AIAgentControllers.NeuralNetworkAgentController.ActionObservationCollectors
 {
     /// <summary>
     /// Class that collects the observation data and action masks data from the environment. Every problem needs to implement its own observation collector.

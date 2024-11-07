@@ -40,7 +40,7 @@ namespace Spawners
             }
         }
 
-        public override List<T> Spawn<T>(EnvironmentControllerBase environmentController)
+        public override T[] Spawn<T>(EnvironmentControllerBase environmentController)
         {
             validateSpawnConditions(environmentController);
 
@@ -112,7 +112,7 @@ namespace Spawners
 
             agents.AddRange(SpawnOpponent<T>(environmentController, usedSpawnPoints));
 
-            return agents;
+            return agents.ToArray();
         }
 
         private List<T> SpawnOpponent<T>(EnvironmentControllerBase environmentController, List<Vector3> usedSpawnPoints) where T: Component
@@ -175,6 +175,11 @@ namespace Spawners
             }
 
             return opponentAgents;
+        }
+
+        public override void Respawn<T>(EnvironmentControllerBase environmentController, T respawnComponent)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

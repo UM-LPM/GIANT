@@ -1,6 +1,7 @@
 using Problems.Dummy;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
@@ -16,8 +17,8 @@ namespace Problems.Robostrike
         [SerializeField] int AgentStartHealth = 10;
         [SerializeField] int AgentStartShield = 0;
         [SerializeField] int AgentStartAmmo = 0;
-        [SerializeField] RobostrikeAgentRespawnType AgentRespawnType = RobostrikeAgentRespawnType.StartPos;
-        [SerializeField] RobostrikeGameScenarioType GameScenarioType = RobostrikeGameScenarioType.Normal;
+        [SerializeField] public RobostrikeAgentRespawnType AgentRespawnType = RobostrikeAgentRespawnType.StartPos;
+        [SerializeField] public RobostrikeGameScenarioType GameScenarioType = RobostrikeGameScenarioType.Normal;
 
         [Header("Robostrike Movement Configuration")]
         [SerializeField] public float AgentMoveSpeed = 5f;
@@ -26,10 +27,10 @@ namespace Problems.Robostrike
         [HideInInspector] public float ForwardSpeed = 1f;
 
         [Header("Robostrike Missile Configuration")]
-        [SerializeField] GameObject MissilePrefab;
+        [SerializeField] public GameObject MissilePrefab;
         [SerializeField, Tooltip("Destroy Missile After X seconds")] public float DestroyMissileAfter = 3.0f;
-        [SerializeField] float MissileShootCooldown = 1.0f;
-        [SerializeField] float MissleLaunchSpeed = 30f;
+        [SerializeField] public float MissileShootCooldown = 1.0f;
+        [SerializeField] public float MissleLaunchSpeed = 30f;
         [SerializeField] public static int MissileDamage = 2;
 
         [Header("Robostrike PowerUps Configuration")]
@@ -39,6 +40,7 @@ namespace Problems.Robostrike
 
         [Header("Robostrike PowerUps Prefabs")]
         [SerializeField] public float MinPowerUpDistance = 8f;
+        [SerializeField] public float MinPowerUpDistanceFromAgents = 8f;
         [SerializeField] public Vector3 PowerUpColliderExtendsMultiplier = new Vector3(0.505f, 0.495f, 0.505f);
         [SerializeField] public GameObject HealthBoxPrefab;
         [SerializeField] public int HealthBoxSpawnAmount = 2;
@@ -47,11 +49,13 @@ namespace Problems.Robostrike
         [SerializeField] public GameObject AmmoBoxPrefab;
         [SerializeField] public int AmmoBoxSpawnAmount = 2;
 
+        public MissileController MissileController { get; set; }
+
         private RobostrikePowerUpSpawner PowerUpSpawner;
         private List<PowerUpComponent> PowerUps;
 
         // Sectors
-        SectorComponent[] sectors;
+        SectorComponent[] Sectors;
 
         protected override void DefineAdditionalDataOnPostAwake()
         {
@@ -61,6 +65,24 @@ namespace Problems.Robostrike
             if (PowerUpSpawner == null)
             {
                 throw new Exception("RobostrikePowerUpSpawner is not defined");
+                // TODO Add error reporting here
+            }
+
+            if(SceneLoadMode == SceneLoadMode.LayerMode)
+            {
+                // Only one problem environment exists
+                Sectors = FindObjectsOfType<SectorComponent>();
+            }
+            else
+            {
+                // Each EnvironmentController contains its own problem environment
+                Sectors = GetComponentsInChildren<SectorComponent>();
+            }
+
+            MissileController = GetComponent<MissileController>();
+            if (MissileController == null)
+            {
+                throw new Exception("MissileController is not defined");
                 // TODO Add error reporting here
             }
         }
@@ -76,12 +98,13 @@ namespace Problems.Robostrike
             }
 
             // Spawn powerUps
-            PowerUps = PowerUpSpawner.Spawn<PowerUpComponent>(this);
+            PowerUps = PowerUpSpawner.Spawn<PowerUpComponent>(this).ToList();
         }
 
         protected override void OnPostFixedUpdate()
         {
             CheckAgentsPickedPowerUps();
+            MissileController.UpdateMissilePosAndCheckForColls();
             CheckAgentsExploration();
         }
 
@@ -269,7 +292,8 @@ namespace Problems.Robostrike
                 // Spawn new health box
                 if (HealthBoxPrefab != null)
                 {
-                    PowerUpSpawner.SpawnPowerUp<PowerUpComponent>(this, HealthBoxPrefab);
+                    PowerUps.Remove(replacedPowerUpComponent);
+                    PowerUpSpawner.SpawnPowerUp<PowerUpComponent>(this, HealthBoxPrefab, PowerUps.Select(p => p.transform.position).ToList());
                 }
                 (agent as RobostrikeAgentComponent).UpdatetStatBars();
             }
@@ -287,7 +311,8 @@ namespace Problems.Robostrike
                 // Spawn new shield box
                 if (ShieldBoxPrefab != null)
                 {
-                    PowerUpSpawner.SpawnPowerUp<PowerUpComponent>(this, ShieldBoxPrefab);
+                    PowerUps.Remove(replacedPowerUpComponent);
+                    PowerUpSpawner.SpawnPowerUp<PowerUpComponent>(this, ShieldBoxPrefab, PowerUps.Select(p => p.transform.position).ToList());
                 }
                 (agent as RobostrikeAgentComponent).UpdatetStatBars();
             }
@@ -306,7 +331,8 @@ namespace Problems.Robostrike
                 // Spawn new ammo box
                 if (AmmoBoxPrefab != null)
                 {
-                    PowerUpSpawner.SpawnPowerUp<PowerUpComponent>(this, AmmoBoxPrefab);
+                    PowerUps.Remove(replacedPowerUpComponent);
+                    PowerUpSpawner.SpawnPowerUp<PowerUpComponent>(this, AmmoBoxPrefab, PowerUps.Select(p => p.transform.position).ToList());
                 }
                 (agent as RobostrikeAgentComponent).UpdatetStatBars();
             }
@@ -321,7 +347,7 @@ namespace Problems.Robostrike
             {
                 if (agent.gameObject.activeSelf)
                 {
-                    foreach (SectorComponent sector in sectors)
+                    foreach (SectorComponent sector in Sectors)
                     {
                         Vector3 sectorPosition = sector.transform.position;
                         if (IsAgentInSector(agent.transform.position, sector.gameObject.GetComponent<Collider2D>()))
@@ -373,6 +399,109 @@ namespace Problems.Robostrike
 
             return false;
         }
+
+        public void TankHit(MissileComponent missile, AgentComponent hitAgent)
+        {
+            UpdateFitnesses(missile, hitAgent);
+            UpdateAgentHealth(missile, hitAgent as RobostrikeAgentComponent);
+        }
+
+        public void ObstacleMissedAgent(MissileComponent missile)
+        {
+            missile.Parent.AgentFitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.MissileMissedAgent.ToString()], RobostrikeFitness.FitnessKeys.MissileMissedAgent.ToString());
+        }
+
+        void UpdateFitnesses(MissileComponent missile, AgentComponent hitAgent)
+        {
+            // Update Agent whose missile hit the other tank
+            missile.Parent.AgentFitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.MissileHitAgent.ToString()], RobostrikeFitness.FitnessKeys.MissileHitAgent.ToString());
+
+            // Update Agent who got hit by a missile
+            hitAgent.AgentFitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.AgentHitByRocket.ToString()], RobostrikeFitness.FitnessKeys.AgentHitByRocket.ToString());
+        }
+
+        void UpdateAgentHealth(MissileComponent missile, RobostrikeAgentComponent hitAgent)
+        {
+            RobostrikeAgentComponent rba = hitAgent as RobostrikeAgentComponent;
+            rba.TakeDamage(MissileDamage);
+
+            if (rba.HealthComponent.Health <= 0)
+            {
+                switch (GameScenarioType)
+                {
+                    case RobostrikeGameScenarioType.Normal:
+                        hitAgent.gameObject.SetActive(false);
+                        AddSurvivalFitnessBonus(Agents);
+                        CheckEndingState();
+                        break;
+                    case RobostrikeGameScenarioType.Deathmatch:
+                        missile.Parent.AgentFitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.AgentDestroyedBonus.ToString()], RobostrikeFitness.FitnessKeys.AgentDestroyedBonus.ToString());
+                        hitAgent.AgentFitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.DeathPenalty.ToString()], RobostrikeFitness.FitnessKeys.DeathPenalty.ToString());
+
+                        hitAgent.LastKnownPositions.Clear(); 
+                        hitAgent.LastSectorPosition = Vector3.zero;
+                        missile.Parent.LastKnownPositions.Clear();
+                        (missile.Parent as RobostrikeAgentComponent).LastSectorPosition = Vector3.zero;
+
+                        ResetAgent(hitAgent);
+
+                        break;
+                }
+            }
+        }
+
+        public void AddSurvivalFitnessBonus(AgentComponent[] agents)
+        {
+            bool lastSurvival = GetNumOfActiveAgents() > 1 ? false : true;
+            // Survival bonus
+            foreach (RobostrikeAgentComponent agent in agents)
+            {
+                if (agent.gameObject.activeSelf)
+                {
+                    agent.AgentFitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.SurvivalBonus.ToString()], RobostrikeFitness.FitnessKeys.SurvivalBonus.ToString());
+
+                    // Last survival bonus
+                    if (lastSurvival)
+                    {
+                        agent.AgentFitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.LastSurvivalBonus.ToString()], RobostrikeFitness.FitnessKeys.LastSurvivalBonus.ToString());
+                    }
+                }
+            }
+
+        }
+
+        public int GetNumOfActiveAgents()
+        {
+            int counter = 0;
+
+            foreach (var agent in Agents)
+            {
+                if (agent.gameObject.activeSelf)
+                    counter++;
+            }
+
+            return counter;
+        }
+
+        private void ResetAgent(RobostrikeAgentComponent agent)
+        {
+            // Restore health
+            agent.HealthComponent.Health = AgentStartHealth;
+            // Update Healthbar
+            agent.UpdatetStatBars();
+
+            // Set to new position
+            MatchSpawner.Respawn<AgentComponent>(this, agent);
+        }
+
+        public override void CheckEndingState()
+        {
+            if (GetNumOfActiveAgents() == 1)
+            {
+                FinishGame();
+            }
+        }
+
     }
 
     public enum RobostrikeGameScenarioType
@@ -384,7 +513,7 @@ namespace Problems.Robostrike
     public enum RobostrikeAgentRespawnType
     {
         StartPos,
-        Random
+        RandomPos
     }
 
 }

@@ -1,7 +1,7 @@
 using UnityEngine;
 using Unity.Barracuda;
 using System.Collections.Generic;
-using AgentControllers.AIAgentControllers.NeuralNetworkAgentController.ObservationCollectors;
+using AgentControllers.AIAgentControllers.NeuralNetworkAgentController.ActionObservationCollectors;
 using Unity.VisualScripting;
 using System;
 using UnityEditor;

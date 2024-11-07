@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
+using AgentControllers;
+using AgentOrganizations;
 
 namespace Spawners
 {
@@ -27,7 +29,7 @@ namespace Spawners
             }
         }
 
-        public override List<T> Spawn<T>(EnvironmentControllerBase environmentController)
+        public override T[] Spawn<T>(EnvironmentControllerBase environmentController)
         {
             validateSpawnConditions(environmentController);
 
@@ -103,7 +105,12 @@ namespace Spawners
                 }
             }
 
-            return agents;
+            return agents.ToArray();
+        }
+
+        public override void Respawn<T>(EnvironmentControllerBase environmentController, T respawnComponent)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
