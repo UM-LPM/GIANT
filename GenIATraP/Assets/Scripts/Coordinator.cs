@@ -43,6 +43,7 @@ public class Coordinator : MonoBehaviour
     private HttpListener Listener;
     private Thread ListenerThread;
 
+    private TournamentTeamOrganizator TeamOrganizator;
 
     public System.Random Random { get; private set; }
 
@@ -51,7 +52,7 @@ public class Coordinator : MonoBehaviour
         // Singleton pattern
         if (Instance != null)
         {
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         }
         else
         {
@@ -170,11 +171,24 @@ public class Coordinator : MonoBehaviour
                 break;
             case EvaluatiorType.Complex:
                 // Complex evaluation
-                // TODO Implement
+                // Somwhere should Last fitnesses be loaded
+                if (TeamOrganizator == null)
+                {
+                    TeamOrganizator = gameObject.GetComponent<TournamentTeamOrganizator>();
+
+                    if (TeamOrganizator == null)
+                    {
+                        throw new Exception("TournamentTeamOrganizator is not defined");
+                        // TODO Add error reporting here
+                    }
+                }
+                evaluator = new ComplexEvaluator(getRatingSystem(), getTournamentOrganizator(TeamOrganizator.OrganizeTeams(Individuals)));
+                evaluator.RatingSystem.DefinePlayers(evaluator.TournamentOrganization.Teams, PrepareLastEvalPopRatings(evalRequestData.LastEvalIndividualFitnesses));
+                evaluationResultTask = evaluator.ExecuteEvaluation(evalRequestData, Individuals);
                 break;
             default:
-                UnityEngine.Debug.LogError("Invalid evaluator type");
-                break;
+                throw new Exception("Invalid EvaluatorType");
+                // TODO Add error reporting here
         }
 
         while (!evaluationResultTask.IsCompleted)
@@ -241,6 +255,58 @@ public class Coordinator : MonoBehaviour
         // Save individuals to Scriptable Objects if in Editor mode
         UnityAssetParser.SaveIndividualsToFolder(Individuals, IndividualsSourceSO);
     }
+
+    private RatingSystem getRatingSystem()
+    {
+        switch (RatingSystemType)
+        {
+            case RatingSystemType.TrueSkill:
+                return new TrueSkillRatingSystem();
+            case RatingSystemType.Glicko2:
+                return new Glicko2RatingSystem();
+            default:
+                UnityEngine.Debug.LogError("Invalid rating system type");
+                return null;
+        }
+    }
+
+    private TournamentOrganization getTournamentOrganizator(List<TournamentTeam> teams)
+    {
+        switch (TournamentOrganizationType)
+        {
+            case TournamentOrganizationType.RoundRobin:
+                return new RoundRobinTournament(teams, TournamentRounds);
+            case TournamentOrganizationType.SwissSystem:
+                return new SwissSystemTournament(teams, TournamentRounds);
+            default:
+                UnityEngine.Debug.LogError("Invalid tournament organization type");
+                return null;
+        }
+    }
+
+    /// <summary>
+    /// Checks if every value in lastEvalPopRatings is set to 0 to see if the last evaluation population fitnesses were not set or provided.
+    /// </summary>
+    /// <param name="lastEvalPopRatings"></param>
+    /// <returns>lastEvalPopRatings or NULL if every value in lastEvalPopRatings is 0</returns>
+    private RatingSystemRating[] PrepareLastEvalPopRatings(IndividualFitness[] lastEvalIndividualFitnesses)
+    {
+        if (lastEvalIndividualFitnesses == null)
+        {
+            return null;
+        }
+
+        throw new NotImplementedException();
+        /*foreach (RatingSystemRating rating in lastEvalPopRatings)
+        {
+            if (rating.Mean != 0)
+            {
+                return lastEvalPopRatings;
+            }
+        }*/
+
+        return null;
+    }
 }
 
 public class CoordinatorEvalRequestData
@@ -248,6 +314,7 @@ public class CoordinatorEvalRequestData
     public string[] EvalEnvInstances { get; set; }
     public int? EvalRangeStart { get; set; }
     public int? EvalRangeEnd { get; set; }
+    public IndividualFitness[] LastEvalIndividualFitnesses { get; set; } // TODO implement
 
     public string EvalEnvInstancesToString()
     {

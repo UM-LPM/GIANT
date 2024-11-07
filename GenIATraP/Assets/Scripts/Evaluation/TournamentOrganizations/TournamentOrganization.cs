@@ -17,7 +17,7 @@ namespace Evaluators.TournamentOrganizations
         float teamFitness1;
         float teamFitness2;
 
-        public abstract List<Match> GenerateTournamentMatches();
+        public abstract Match[] GenerateTournamentMatches();
 
         public virtual void UpdateTeamsScore(List<MatchFitness> tournamentMatchFitness)
         {

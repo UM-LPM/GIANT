@@ -25,5 +25,16 @@ namespace Fitnesses
 
             teamFitness.AddAgentFitness(agent);
         }
+
+        public float[] GetTeamFitnesses()
+        {
+            float[] teamFitnesses = new float[TeamFitnesses.Count];
+            for(int i = 0; i < TeamFitnesses.Count; i++)
+            {
+                teamFitnesses[i] = TeamFitnesses[i].GetTeamFitness();
+            }
+
+            return teamFitnesses;
+        }
     }
 }

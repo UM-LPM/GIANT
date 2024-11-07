@@ -6,6 +6,7 @@ using Unity.Mathematics;
 using System;
 using AgentOrganizations;
 using Fitnesses;
+using System.Linq;
 
 namespace Evaluators.RatingSystems
 {
@@ -28,13 +29,99 @@ namespace Evaluators.RatingSystems
 
         public override void DefinePlayers(List<TournamentTeam> teams, RatingSystemRating[] initialPlayerRaitings)
         {
-            // Find unique tournament players in teams and add them to the list of players
-            throw new NotImplementedException();
+            // Find unique tournament individuals in teams and add them to the list of individuals
+            List<Individual> individuals = new List<Individual>();
+            foreach (TournamentTeam team in teams)
+            {
+                foreach (Individual individual in team.Individuals)
+                {
+                    if (!individuals.Contains(individual))
+                    {
+                        individuals.Add(individual);
+                        if (initialPlayerRaitings != null && initialPlayerRaitings.Length < individuals.Count)
+                        {
+                            throw new Exception("Initial individual rating array is not the same size as the number of individuals in the tournament");
+                        }
+
+                        if (initialPlayerRaitings != null && initialPlayerRaitings[individuals.Count - 1].Mean != int.MaxValue)
+                        {
+                            Players.Add(new TrueSkillPlayer(individual.IndividualId, new Player(individual.IndividualId), new Rating(math.abs(initialPlayerRaitings[individuals.Count - 1].Mean), initialPlayerRaitings[individuals.Count - 1].StandardDeviation)));
+                        }
+                        else
+                        {
+                            Players.Add(new TrueSkillPlayer(individual.IndividualId, new Player(individual.IndividualId), GameInfo.DefaultRating));
+                        }
+                    }
+                }
+            }
         }
 
         public override void UpdateRatings(List<MatchFitness> tournamentMatchFitnesses)
         {
-           throw new NotImplementedException();
+            foreach (MatchFitness match in tournamentMatchFitnesses)
+            {
+                if(match.TeamFitnesses.Count < 2)
+                {
+                    throw new System.Exception("TrueSkillRatingSystem requires at least two teams in each match");
+                }
+
+                // 1. Create teams 
+                Moserware.Skills.Team[] teams = new Moserware.Skills.Team[match.TeamFitnesses.Count];
+
+                for (int i = 0; i < match.TeamFitnesses.Count; i++)
+                {
+                    List<TrueSkillPlayer> teamPlayers = new List<TrueSkillPlayer>();
+
+                    foreach (IndividualFitness player in match.TeamFitnesses[i].IndividualFitness)
+                    {
+                        teamPlayers.Add(GetPlayer(player.IndividualID));
+                    }
+
+                    Moserware.Skills.Team team = new Moserware.Skills.Team();
+                    foreach (TrueSkillPlayer player in teamPlayers)
+                    {
+                        team.AddPlayer(player.Player, player.Rating);
+                    }
+
+                    teams[i] = team;
+                }
+
+                // 2. Define order ranking
+                int[] orderRanking = GetFitnessOrder(match.GetTeamFitnesses());
+
+                // 3. Calculate new ratings
+                var teamsConcatinated = Teams.Concat(teams);
+                var newRatings = SkillCalculator.CalculateNewRatings(GameInfo, teamsConcatinated, orderRanking);
+
+                // 4. Update ratings
+                // TODO Test this
+                for (int i = 0; i < match.TeamFitnesses.Count; i++)
+                {
+                    for (int j = 0; j < match.TeamFitnesses[i].IndividualFitness.Count; j++)
+                    {
+                        GetPlayer(match.TeamFitnesses[i].IndividualFitness[j].IndividualID).UpdateRating(newRatings[GetPlayer(match.TeamFitnesses[i].IndividualFitness[j].IndividualID).Player]);
+                    }
+                }
+            }
+        }
+
+        public static int[] GetFitnessOrder(float[] fitnesses)
+        {
+            // Create an array of indices and sort them based on the fitness values
+            int[] indices = Enumerable.Range(0, fitnesses.Length)
+                                      .OrderBy(i => fitnesses[i]) // Ascending order
+                                      .ToArray();
+
+            int[] orders = new int[fitnesses.Length];
+
+            // Assign rank (1-based) to each index based on sorted order
+            for (int rank = 0; rank < indices.Length; rank++)
+            {
+                int originalIndex = indices[rank];
+                orders[originalIndex] = rank + 1;
+            }
+
+            return orders;
         }
 
         public TrueSkillPlayer GetPlayer(int id)
@@ -55,23 +142,25 @@ namespace Evaluators.RatingSystems
 
         public override RatingSystemRating[] GetFinalRatings()
         {
-            RatingSystemRating[] fitnesses = new RatingSystemRating[Players.Count];
-            for (int i = 0; i < fitnesses.Length; i++)
+            RatingSystemRating[] ratings = new RatingSystemRating[Players.Count];
+            for (int i = 0; i < ratings.Length; i++)
             {
-                fitnesses[i] = new RatingSystemRating(Players[i].Rating.Mean, Players[i].Rating.StandardDeviation);
+                ratings[i] = new RatingSystemRating(Players[i].IndividualID, Players[i].Rating.Mean, Players[i].Rating.StandardDeviation);
             }
 
-            return fitnesses;
+            return ratings;
         }
     }
 
     public class TrueSkillPlayer
     {
+        public int IndividualID { get; set; }
         public Player Player { get; set; }
         public Rating Rating { get; set; }
 
-        public TrueSkillPlayer(Player player, Rating rating)
+        public TrueSkillPlayer(int IndividualId, Player player, Rating rating)
         {
+            IndividualID = IndividualId;
             Player = player;
             Rating = rating;
         }

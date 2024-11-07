@@ -17,11 +17,13 @@ namespace Evaluators.RatingSystems
 
     public class RatingSystemRating
     {
+        public int IndividualID { get; set; }
         public double Mean { get; set; }
         public double StandardDeviation { get; set; }
 
-        public RatingSystemRating(double mean, double standardDeviation)
+        public RatingSystemRating(int individualId, double mean, double standardDeviation)
         {
+            IndividualID = individualId;
             Mean = mean;
             StandardDeviation = standardDeviation;
         }
