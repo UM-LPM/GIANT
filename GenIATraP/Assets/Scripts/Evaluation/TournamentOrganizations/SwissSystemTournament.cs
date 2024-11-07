@@ -31,10 +31,10 @@ namespace Evaluators.TournamentOrganizations
             TeamsWhoGotBye = 0;
         }
 
-        public override List<Match> GenerateTournamentMatches()
+        public override Match[] GenerateTournamentMatches()
         {
             if (IsTournamentFinished())
-                return new List<Match>();
+                return new Match[] { };
             if (TeamsWhoGotBye == Teams.Count)
             {
                 ResetTeamByes();
@@ -48,7 +48,7 @@ namespace Evaluators.TournamentOrganizations
             return PairTeams(teamsSorted);
         }
 
-        private List<Match> PairTeams(List<TournamentTeam> teams)
+        private Match[] PairTeams(List<TournamentTeam> teams)
         {
             matches.Clear();
             unpairedTeams = new List<TournamentTeam>(teams);
@@ -96,7 +96,7 @@ namespace Evaluators.TournamentOrganizations
                     matches.Add(new Match(currentMatchID++, new Team[] { t2, t1 }));
             }
 
-            return matches;
+            return matches.ToArray();
         }
 
         private void ResetTeamByes()

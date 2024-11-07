@@ -29,10 +29,10 @@ namespace Evaluators.TournamentOrganizations
             tournamentMatches.Clear();
         }
 
-        public override List<Match> GenerateTournamentMatches()
+        public override Match[] GenerateTournamentMatches()
         {
             if (IsTournamentFinished())
-                return new List<Match>();
+                return new Match[] { };
 
             tournamentMatches.Clear();
 
@@ -57,7 +57,7 @@ namespace Evaluators.TournamentOrganizations
                 tournamentMatches[randomIndex] = temp;
             }
 
-            return tournamentMatches;
+            return tournamentMatches.ToArray();
         }
     }
 }
