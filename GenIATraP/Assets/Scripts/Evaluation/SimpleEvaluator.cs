@@ -104,9 +104,7 @@ namespace Evaluators
             {
 
                 Team team = new Team(i, "Team_" + i, new Individual[] { individuals[i] });
-                team.name = "Team_" + i;
                 matches[i] = new Match(i, new Team[] { team });
-                matches[i].name = "Match_" + i;
             }
 
             return matches;

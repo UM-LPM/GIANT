@@ -1,11 +1,31 @@
 using Evaluators.TournamentOrganizations;
+using Fitnesses;
 using System.Collections.Generic;
 
 namespace Evaluators.RatingSystems
 {
     public abstract class RatingSystem
     {
-        // TODO Implement
+        public abstract void UpdateRatings(List<MatchFitness> tournamentMatchFitnesses);
+
+        public abstract void DefinePlayers(List<TournamentTeam> teams, RatingSystemRating[] initialPlayerRaiting);
+
+        public abstract void DisplayRatings();
+
+        public abstract RatingSystemRating[] GetFinalRatings();
+    }
+
+    public class RatingSystemRating
+    {
+        public double Mean { get; set; }
+        public double StandardDeviation { get; set; }
+
+        public RatingSystemRating(double mean, double standardDeviation)
+        {
+            Mean = mean;
+            StandardDeviation = standardDeviation;
+        }
+
     }
 
     public enum RatingSystemType
