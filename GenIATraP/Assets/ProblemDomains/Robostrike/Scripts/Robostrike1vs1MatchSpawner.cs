@@ -71,7 +71,7 @@ namespace Problems.Robostrike
 
         public override T[] Spawn<T>(EnvironmentControllerBase environmentController)
         {
-            //validateSpawnConditions(environmentController);
+            validateSpawnConditions(environmentController);
 
             List<T> agents = new List<T>();
 
@@ -106,8 +106,6 @@ namespace Problems.Robostrike
 
         public override void Respawn<T>(EnvironmentControllerBase environmentController, T respawnComponent)
         {
-            //validateSpawnConditions(environmentController);
-
             if(!(respawnComponent is AgentComponent))
             {
                 throw new System.Exception("Invalid respawn component");

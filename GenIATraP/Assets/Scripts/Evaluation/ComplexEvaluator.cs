@@ -24,6 +24,31 @@ namespace Evaluators
         {
             // TODO Implement
             throw new NotImplementedException();
+
+            /*while (!TournamentOrganization.IsTournamentFinished())
+            {
+                List<TournamentMatch> tournamentMatches = TournamentOrganization.GenerateTournamentMatches();
+                if (tournamentMatches.Count == 0)
+                    break;
+
+                evalRequestData.tournamentMatches = tournamentMatches;
+
+                TournamentOutcome tournamentOutcome = await EvaluateTournamentMatches(evalRequestData);
+                TournamentOrganization.UpdateTeamsScore(tournamentOutcome);
+
+                RatingSystem.UpdateRatings(tournamentOutcome);
+            }
+
+            TournamentOrganization.DisplayStandings();
+            RatingSystem.DisplayRatings();
+
+            return GetEvaluationResults();*/
         }
+
+        /*public override async Task<TournamentOutcome> EvaluateTournamentMatches(CoordinatorEvalRequestData evalRequestData)
+        {
+            // TODO Implement
+            throw new NotImplementedException();
+        }*/
     }
 }
