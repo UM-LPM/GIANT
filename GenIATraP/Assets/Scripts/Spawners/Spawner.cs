@@ -16,7 +16,7 @@ namespace Spawners
         /// </summary>
         /// <param name="environmentController"></param>
         /// <returns>Returns list of AgentComponents from spawned agents.</returns>
-        public abstract List<T> Spawn<T>(EnvironmentControllerBase environmentController) where T: Component;
+        public abstract T[] Spawn<T>(EnvironmentControllerBase environmentController) where T: Component;
 
         public static Vector3 GetRandomSpawnPoint(Util util, GameType gameType, Vector3 arenaSize, float arenaRadius, Vector3 arenaCenterPoint, float arenaOffset)
         {

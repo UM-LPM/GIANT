@@ -12,7 +12,7 @@ public class Shoot : ActionNode {
 
     protected override State OnUpdate() {
         var discreteActionsOut = blackboard.actionsOut.DiscreteActions;
-        blackboard.actionsOut.AddDiscreteAction("shoot", shoot);
+        blackboard.actionsOut.AddDiscreteAction("shootMissile", shoot);
 
         return State.Success;
     }

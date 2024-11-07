@@ -4,7 +4,7 @@ using AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using AgentOrganizations;
-using AgentControllers.AIAgentControllers.NeuralNetworkAgentController.ObservationCollectors;
+using AgentControllers.AIAgentControllers.NeuralNetworkAgentController.ActionObservationCollectors;
 using AgentControllers.AIAgentControllers.NeuralNetworkAgentController;
 using Fitnesses;
 using Spawners;
@@ -44,7 +44,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     [Header("Match Configuration")]
     [SerializeField] public Match Match;
 
-    public List<AgentComponent> Agents { get; set;}
+    public AgentComponent[] Agents { get; set;}
     public int CurrentSimulationSteps { get; set; }
     public float CurrentSimulationTime { get; set; }
     public GameState GameState { get; set; }
@@ -55,7 +55,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     public LayerData LayerBTIndex { get; set; }
     public GridCell GridCell { get; set; }
 
-    public Spawner MatchSpawner { get; set; }
+    public MatchSpawner MatchSpawner { get; set; }
 
     private ActionBuffer ActionBuffer;
 
@@ -72,11 +72,11 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
         GameState = GameState.IDLE;
         Util = gameObject.GetComponent<Util>();
 
-        MatchSpawner = gameObject.GetComponent<Spawner>();
+        MatchSpawner = gameObject.GetComponent<MatchSpawner>();
         ActionObservationProcessor = gameObject.GetComponent<ActionObservationProcessor>();
         if(ActionObservationProcessor == null)
         {
-            throw new System.Exception("ActionObservationProcessor is not set!");
+            Debug.LogWarning("ActionObservationProcessor is not set!");
             // TODO Add error reporting here
         }
 
@@ -229,7 +229,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
 
     void InitializeAgents()
     {
-        for (int i = 0; i < Agents.Count; i++)
+        for (int i = 0; i < Agents.Length; i++)
         {
             if (Agents[i].AgentController == null)
             {
@@ -309,7 +309,7 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
         string scenarioName = SceneLoadMode == SceneLoadMode.LayerMode ? LayerBTIndex.GameSceneName + "_" + LayerBTIndex.AgentSceneName + "_" + guid : GridCell.GameSceneName + "_" + GridCell.AgentSceneName + "_" + guid;
         matchFitness.MatchName = Match.MatchId + "_" +scenarioName;
 
-        for (int i = 0; i < Agents.Count; i++)
+        for (int i = 0; i < Agents.Length; i++)
         {
             if (Agents[i].TeamID >= 0)
             {
@@ -329,10 +329,12 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
     protected virtual void OnPostFixedUpdate() { }
     protected virtual void OnPreFinishGame() { }
 
+    public virtual void CheckEndingState() { }
+
     protected virtual void OnUpdate() { }
 
     public virtual void UpdateAgents(bool getNewDecisions){
-        for (int i = 0; i < Agents.Count; i++)
+        for (int i = 0; i < Agents.Length; i++)
         {
             if (Agents[i].gameObject.activeSelf)
             {

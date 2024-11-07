@@ -16,7 +16,6 @@ namespace Problems.Robostrike
         int forwardAxis = 0;
         int rotateAxis = 0;
         int rotateTurrentAxis = 0;
-        Quaternion turnRotation;
 
         // Shoot missile variables
         GameObject obj;
@@ -85,8 +84,8 @@ namespace Problems.Robostrike
             newAgentRotation = Quaternion.Euler(0, 0, agent.transform.rotation.eulerAngles.z + UnityUtils.RoundToDecimals(rotateDir.z * Time.fixedDeltaTime * RobostrikeEnvironmentController.AgentRotationSpeed, 2));
 
             // Check if agent can be moved and rotated without colliding to other objects
-            if (PhysicsUtil.PhysicsOverlapObject(RobostrikeEnvironmentController.GameType, agent.gameObject, newAgentPos, RobostrikeEnvironmentController.AgentColliderExtendsMultiplier.x, Vector3.zero, newAgentRotation, PhysicsOverlapType.OverlapSphere, true, gameObject.layer, RobostrikeEnvironmentController.DefaultLayer)){
-                agent.transform.position += newAgentPos;
+            if (!PhysicsUtil.PhysicsOverlapObject(RobostrikeEnvironmentController.GameType, agent.gameObject, newAgentPos, RobostrikeEnvironmentController.AgentColliderExtendsMultiplier.x, Vector3.zero, newAgentRotation, PhysicsOverlapType.OverlapSphere, true, gameObject.layer, RobostrikeEnvironmentController.DefaultLayer)){
+                agent.transform.position = newAgentPos;
                 agent.transform.rotation = newAgentRotation;
             }
 
@@ -96,7 +95,31 @@ namespace Problems.Robostrike
 
         private void ShootMissile(RobostrikeAgentComponent agent)
         {
-            throw new System.NotImplementedException();
+            if (agent.ActionBuffer.GetDiscreteAction("shootMissile") == 1 && agent.NextShootTime <= RobostrikeEnvironmentController.CurrentSimulationTime && agent.AmmoComponent.Ammo > 0)
+            {
+                spawnPosition = agent.MissileSpawnPoint.transform.position;
+                spawnRotation = agent.Turret.transform.rotation;
+
+                localXDir = agent.MissileSpawnPoint.transform.TransformDirection(Vector3.up);
+                velocity = localXDir * RobostrikeEnvironmentController.MissleLaunchSpeed;
+
+                //Instantiate object
+                obj = Instantiate(RobostrikeEnvironmentController.MissilePrefab, spawnPosition, spawnRotation, transform);
+                obj.layer = gameObject.layer;
+                mc = obj.GetComponent<MissileComponent>();
+                mc.Parent = agent;
+                mc.MissileVelocity = velocity;
+                mc.RobostrikeEnvironmentController = RobostrikeEnvironmentController;
+                agent.NextShootTime = RobostrikeEnvironmentController.CurrentSimulationTime + RobostrikeEnvironmentController.MissileShootCooldown;
+
+                agent.MissileFired();
+
+                // Update fitness
+                agent.AgentFitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.AgentFiredMissile.ToString()], RobostrikeFitness.FitnessKeys.AgentFiredMissile.ToString());
+
+                // Add missile to missile controller
+                RobostrikeEnvironmentController.MissileController.AddMissile(mc);
+            }
         }
     }
 }

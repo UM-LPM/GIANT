@@ -1,4 +1,4 @@
-using AgentControllers.AIAgentControllers.NeuralNetworkAgentController.ObservationCollectors;
+using AgentControllers.AIAgentControllers.NeuralNetworkAgentController.ActionObservationCollectors;
 using Unity.Barracuda;
 using UnityEngine;
 
