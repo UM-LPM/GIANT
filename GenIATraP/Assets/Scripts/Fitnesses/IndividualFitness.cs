@@ -9,11 +9,14 @@ namespace Fitnesses
         public float Value { get; set; }
         public Dictionary<string, float> IndividualValues { get; set; }
 
+        public Dictionary<string, float> AdditionalValues { get; set; }
+
         public IndividualFitness()
         {
             IndividualID = -1;
             Value = 0f;
             IndividualValues = new Dictionary<string, float>();
+            AdditionalValues = new Dictionary<string, float>();
         }
 
         public void AddAgentFitness(AgentComponent agent)
@@ -66,6 +69,18 @@ namespace Fitnesses
         {
             return Value;
         }
+
+        public void UpdateAdditionalValues(string key, float value)
+        {
+            if (AdditionalValues.ContainsKey(key))
+            {
+                AdditionalValues[key] += value;
+            }
+            else
+            {
+                AdditionalValues.Add(key, value);
+            }
+        }
     }
 
     public class FinalIndividualFitness
@@ -73,12 +88,14 @@ namespace Fitnesses
         public int IndividualID { get; set; }
         public float Value { get; set; }
         public List<IndividualMatchResult> IndividualMatchResults { get; set; }
+        public Dictionary<string, float> AdditionalValues { get; set; }
 
         public FinalIndividualFitness()
         {
             IndividualID = -1;
             Value = 0f;
             IndividualMatchResults = new List<IndividualMatchResult>();
+            AdditionalValues = new Dictionary<string, float>();
         }
 
         public void AddIndividualFitness(IndividualFitness individualFitness, string matchName)
@@ -99,8 +116,21 @@ namespace Fitnesses
                 MatchName = matchName,
                 Value = individualFitness.Value,
                 IndividualValues = individualFitness.IndividualValues,
-                OpponentsIDs = new int[] { }
+                OpponentsIDs = new int[] { } // TODO Add support in the future
             });
+
+            // Update additional values
+            foreach (var additionalValue in individualFitness.AdditionalValues)
+            {
+                if (AdditionalValues.ContainsKey(additionalValue.Key))
+                {
+                    AdditionalValues[additionalValue.Key] += additionalValue.Value;
+                }
+                else
+                {
+                    AdditionalValues.Add(additionalValue.Key, additionalValue.Value);
+                }
+            }
         }
     }
 

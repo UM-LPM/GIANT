@@ -103,9 +103,12 @@ namespace Problems.Robostrike
 
         protected override void OnPostFixedUpdate()
         {
-            CheckAgentsPickedPowerUps();
-            MissileController.UpdateMissilePosAndCheckForColls();
-            CheckAgentsExploration();
+            if (GameState == GameState.RUNNING)
+            {
+                CheckAgentsPickedPowerUps();
+                MissileController.UpdateMissilePosAndCheckForColls();
+                CheckAgentsExploration();
+            }
         }
 
         public void ReadParamsFromMainConfiguration()
@@ -343,8 +346,9 @@ namespace Problems.Robostrike
         private void CheckAgentsExploration()
         {
             // Exploration bonus
-            foreach (RobostrikeAgentComponent agent in Agents)
+            for(int i = 0; i < Agents.Length; i++)
             {
+                RobostrikeAgentComponent agent = Agents[i] as RobostrikeAgentComponent;
                 if (agent.gameObject.activeSelf)
                 {
                     foreach (SectorComponent sector in Sectors)
@@ -383,7 +387,7 @@ namespace Problems.Robostrike
                             }
 
                             // Agent can only be in one sector at once
-                            return;
+                            break;
                         }
                     }
                 }

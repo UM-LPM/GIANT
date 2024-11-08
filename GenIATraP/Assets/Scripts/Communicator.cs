@@ -258,9 +258,9 @@ public class Communicator : MonoBehaviour
             // TODO Add error reporting here
         }
 
-        if(evalRequestData.Matches == null || evalRequestData.Matches.Length == 0)
+        if(evalRequestData == null || evalRequestData.Matches == null || evalRequestData.Matches.Length == 0)
         {
-            throw new Exception("No matches to execute");
+            throw new Exception("Empty request or no matches to execute");
             // TODO Add error reporting here
         }
 

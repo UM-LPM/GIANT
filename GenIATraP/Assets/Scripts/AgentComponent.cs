@@ -21,7 +21,6 @@ public abstract class AgentComponent : MonoBehaviour {
     // New properties
     [field: SerializeField]
     public AgentController AgentController { get; set; }
-    public ActionExecutor ActionExecutor { get; set; }
 
     public int IndividualID { get; set; }
     public int TeamID { get; set; }
@@ -34,8 +33,6 @@ public abstract class AgentComponent : MonoBehaviour {
         {
             transform.position
         };
-
-        ActionExecutor = GetComponent<ActionExecutor>();
 
         DefineAdditionalDataOnAwake();
     }

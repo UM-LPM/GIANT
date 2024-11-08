@@ -1,6 +1,4 @@
-using Palmmedia.ReportGenerator.Core;
 using System;
-using System.IO;
 using UnityEngine;
 
 namespace AgentOrganizations
@@ -17,6 +15,15 @@ namespace AgentOrganizations
             MatchId = matchId;
             Teams = teams;
             name = "Match_" + matchId;
+        }
+
+        public virtual Match Initialize(int matchId, Team[] teams)
+        {
+            MatchId = matchId;
+            Teams = teams;
+            name = "Match_" + matchId;
+
+            return this;
         }
     }
 }

@@ -54,8 +54,6 @@ namespace Evaluators
             int numOfMatchesPerInstance = numOfMatches / numOfInstances;
             int remainder = numOfMatches % numOfInstances;
 
-            List<MatchFitness> matchFitnesses = new List<MatchFitness>();
-
             try
             {
                 using (HttpClient client = new HttpClient())
@@ -135,7 +133,7 @@ namespace Evaluators
                 {
                     IndividualID = finalRaitings[i].IndividualID,
                     Value = (float)-finalRaitings[i].Mean,
-                    IndividualValues = new Dictionary<string, float>() { { "Rating", (float)-finalRaitings[i].Mean }, { "StdDeviation", (float)finalRaitings[i].StandardDeviation } }
+                    AdditionalValues = new Dictionary<string, float>() { { "Rating", (float)-finalRaitings[i].Mean }, { "StdDeviation", (float)finalRaitings[i].StandardDeviation } }
                 };
 
                 finalIndividualFitnessWrapper.UpdateFinalIndividualFitnesses(individualFitness, "Final");

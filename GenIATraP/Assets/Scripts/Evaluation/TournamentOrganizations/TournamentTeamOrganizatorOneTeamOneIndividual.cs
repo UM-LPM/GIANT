@@ -12,7 +12,7 @@ namespace Evaluators.TournamentOrganizations
 
             for (int i = 0; i < individuals.Length; i++)
             {
-                teams.Add(new TournamentTeam(i, "Team " + i, new Individual[] { individuals[i] }));
+                teams.Add(ScriptableObject.CreateInstance<TournamentTeam>().Initialize(i, "Team " + i, new Individual[] { individuals[i] }) as TournamentTeam);
             }
 
             return teams;

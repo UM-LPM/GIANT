@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Problems;
 
 public class UIController : MonoBehaviour
 {
@@ -21,6 +22,7 @@ public class UIController : MonoBehaviour
     [SerializeField] public TMP_InputField RndSeedInputField;
 
     [SerializeField] public Toggle RenderToggle;
+    [SerializeField] public Toggle RenderToggleInGameCanvas;
     [SerializeField] public GameObject[] RenderToggleGameObjectList;
     [SerializeField] public TMP_Text UriText;
 
@@ -140,37 +142,47 @@ public class UIController : MonoBehaviour
         }
     }
 
-    public void UpdateRender()
+    public void UpdateRender(Toggle renderToggle, bool updateInGameObjs, bool updateInGameCanvases, bool updatePrefabs)
     {
-        if (RenderToggle != null)
+        if (renderToggle != null)
         {
-            // Find all objects with renderer and update their visibility
-            Renderer[] renderers = GameObject.FindObjectsOfType<Renderer>();
-            foreach (var renderer in renderers)
+            Renderer[] renderers;
+            if (updateInGameObjs)
             {
-                renderer.enabled = RenderToggle.isOn;
+                // Find all objects with renderer and update their visibility
+                renderers = GameObject.FindObjectsOfType<Renderer>();
+                foreach (var renderer in renderers)
+                {
+                    renderer.enabled = renderToggle.isOn;
+                }
             }
 
-            // Find all objects with canvas and update their visibility
-            CanvasComponent[] canvasComponents = GameObject.FindObjectsOfType<CanvasComponent>();
-            foreach (var canvasComponent in canvasComponents)
+            if (updateInGameCanvases)
             {
-                canvasComponent.gameObject.GetComponent<Canvas>().enabled = RenderToggle.isOn;
+                // Find all objects with canvas and update their visibility
+                CanvasComponent[] canvasComponents = GameObject.FindObjectsOfType<CanvasComponent>();
+                foreach (var canvasComponent in canvasComponents)
+                {
+                    canvasComponent.gameObject.GetComponent<Canvas>().enabled = renderToggle.isOn;
+                }
             }
 
-            // Update all prefab gameObjects
-            foreach (GameObject go in RenderToggleGameObjectList)
+            if (updatePrefabs)
             {
-                renderers = go.GetComponentsInChildren<Renderer>();
-                renderers.ToList().ForEach(r => r.enabled = RenderToggle.isOn);
+                // Update all prefab gameObjects
+                foreach (GameObject go in RenderToggleGameObjectList)
+                {
+                    renderers = go.GetComponentsInChildren<Renderer>();
+                    renderers.ToList().ForEach(r => r.enabled = renderToggle.isOn);
 
-                // Update all canvas renderers
-                Canvas[] canvases = go.GetComponentsInChildren<Canvas>();
-                canvases.ToList().ForEach(r => r.enabled = RenderToggle.isOn);
+                    // Update all canvas renderers
+                    Canvas[] canvases = go.GetComponentsInChildren<Canvas>();
+                    canvases.ToList().ForEach(r => r.enabled = renderToggle.isOn);
 
-                Renderer goRenderer = go.GetComponent<Renderer>();
-                if (goRenderer != null)
-                    go.GetComponent<Renderer>().enabled = RenderToggle.isOn;
+                    Renderer goRenderer = go.GetComponent<Renderer>();
+                    if (goRenderer != null)
+                        go.GetComponent<Renderer>().enabled = renderToggle.isOn;
+                }
             }
         }
     }
@@ -182,7 +194,12 @@ public class UIController : MonoBehaviour
 
     public void OnRenderToggleValueChanged()
     {
-        UpdateRender();
+        UpdateRender(RenderToggle, true, true, true);
+    }
+
+    public void OnRenderToggleInGameCanvasValueChanged()
+    {
+        UpdateRender(RenderToggleInGameCanvas, false, true, false);
     }
 
     public void OnTimeScaleInputEditValueChange()
