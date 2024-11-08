@@ -46,6 +46,8 @@ public class Communicator : MonoBehaviour
     [SerializeField] public float TimeScale = 1f;
     [SerializeField] public float FixedTimeStep = 0.02f;
     [SerializeField] public int RerunTimes = 1;
+    [SerializeField] public float PredefinedMatchFitnessWinner = -1000f;
+    [SerializeField] public float PredefinedMatchFitnessLoser = 1000f;
 
     [Header("Response Configuration TODO")]
     // TODO Implement
@@ -70,6 +72,10 @@ public class Communicator : MonoBehaviour
 
     private HttpListener Listener;
     private Thread ListenerThread;
+
+    // SetMatchPredefinedScores()
+    MatchFitness matchFitness;
+    TeamFitness teamFitness;
 
     private void Awake()
     {
@@ -219,6 +225,8 @@ public class Communicator : MonoBehaviour
         MatchFitnesses = new List<MatchFitness>();
         SimulationStepsCombined = 0;
 
+        SetMatchPredefinedScores();
+
         // Load the scenes and wait for them to be loaded and finished
         yield return LoadEvaluationScenes();
 
@@ -272,6 +280,59 @@ public class Communicator : MonoBehaviour
         }
 
         Matches = evalRequestData.Matches;
+    }
+
+    /// <summary>
+    /// Sets predefined scores for the matches that have predefined scores (One of the teams has an ID of -1)
+    /// </summary>
+    void SetMatchPredefinedScores()
+    {
+        // Check if any Match has more teams but only their ID is -1
+        List<Match> predefinedMatches = new List<Match>();
+        for(int i = 0; i < Matches.Length; i++)
+        {
+            for (int j = 0; j < Matches[i].Teams.Length; j++)
+            {
+                if (Matches[i].Teams[j].TeamId == -1)
+                {
+                    predefinedMatches.Add(Matches[i]);
+                    break;
+                }
+            }
+        }
+
+        // Set predefined scores for the predefined matches and remove them from the Matches list
+        for (int i = 0; i < predefinedMatches.Count; i++)
+        {
+            matchFitness = new MatchFitness() { 
+                MatchName = predefinedMatches[i].name,
+                MatchId = predefinedMatches[i].MatchId,
+                IsDummy = true
+            };
+
+            for (int j = 0; j < predefinedMatches[i].Teams.Length; j++)
+            {
+                teamFitness = new TeamFitness();
+                teamFitness.TeamID = predefinedMatches[i].Teams[j].TeamId;
+                teamFitness.IndividualFitness = new List<IndividualFitness>();
+
+                if (predefinedMatches[i].Teams[j].TeamId == -1)
+                {
+                    teamFitness.IndividualFitness.Add(new IndividualFitness() { IndividualID = -1, Value = PredefinedMatchFitnessLoser });
+                }
+                else
+                {
+                    foreach (var individual in predefinedMatches[i].Teams[j].Individuals)
+                    {
+                        teamFitness.IndividualFitness.Add(new IndividualFitness() { IndividualID = individual.IndividualId, Value = PredefinedMatchFitnessWinner });
+                    }
+                }
+                matchFitness.TeamFitnesses.Add(teamFitness);
+            }
+
+            MatchFitnesses.Add(matchFitness);
+            Matches = Matches.Where(val => val.MatchId != predefinedMatches[i].MatchId).ToArray();
+        }
     }
 
     /// <summary>
