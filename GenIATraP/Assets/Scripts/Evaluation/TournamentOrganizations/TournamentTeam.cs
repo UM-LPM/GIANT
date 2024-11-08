@@ -1,5 +1,5 @@
 using AgentOrganizations;
-using System.ComponentModel;
+using Newtonsoft.Json;
 
 namespace Evaluators.TournamentOrganizations
 {
@@ -12,10 +12,20 @@ namespace Evaluators.TournamentOrganizations
         {
         }
 
+        [JsonConstructor]
         public TournamentTeam(int teamId, string teamName, Individual[] individuals, int score, bool hasBye) : base(teamId, teamName, individuals)
         {
             Score = score;
             HasBye = hasBye;
+        }
+
+        public override Team Initialize(int teamId, string teamName, Individual[] individuals)
+        {
+            base.Initialize(teamId, teamName, individuals);
+            Score = 0;
+            HasBye = false;
+
+            return this;
         }
     }
 }

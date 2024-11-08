@@ -105,7 +105,7 @@ namespace Evaluators.RatingSystems
             }
         }
 
-        public static int[] GetFitnessOrder(float[] fitnesses)
+        /*public static int[] GetFitnessOrder(float[] fitnesses)
         {
             // Create an array of indices and sort them based on the fitness values
             int[] indices = Enumerable.Range(0, fitnesses.Length)
@@ -119,6 +119,34 @@ namespace Evaluators.RatingSystems
             {
                 int originalIndex = indices[rank];
                 orders[originalIndex] = rank + 1;
+            }
+
+            return orders;
+        }*/
+
+        public static int[] GetFitnessOrder(float[] fitnesses)
+        {
+            // Create an array of indices and sort them based on the fitness values
+            int[] indices = Enumerable.Range(0, fitnesses.Length)
+                                      .OrderBy(i => fitnesses[i]) // Ascending order
+                                      .ToArray();
+
+            int[] orders = new int[fitnesses.Length];
+            int rank = 1; // Start with rank 1
+
+            for (int i = 0; i < indices.Length; i++)
+            {
+                int originalIndex = indices[i];
+
+                orders[originalIndex] = rank;
+
+                if (i < indices.Length - 1 && fitnesses[indices[i]] == fitnesses[indices[i + 1]])
+                {
+                    // If tied, do not increment rank
+                    continue;
+                }
+
+                rank = i + 2;
             }
 
             return orders;

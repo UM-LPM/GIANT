@@ -6,20 +6,20 @@ namespace Problems.Robostrike
     public class RobostrikeFitness
     {
         public static Dictionary<string, float> FitnessValues = new Dictionary<string, float> {
-        { "MissileHitAgent", -5 },
-        { "AgentHitByRocket", 5 },
-        { "MissileMissedAgent", 5 },
+        { "MissileHitAgent", -10 },
+        { "AgentHitByRocket", 10 },
+        { "MissileMissedAgent", 1 },
         { "SurvivalBonus", -50 },
         { "LastSurvivalBonus", -30 },
-        { "DeathPenalty", 20 },
-        { "AgentDestroyedBonus", -25 },
-        { "AgentExploredSector", -0.5f },
+        { "DeathPenalty", 100 },
+        { "AgentDestroyedBonus", -100 },
+        { "AgentExploredSector", -4f },
         { "AgentAimingOpponent", -1 },
-        { "AgentFiredMissile", -1 },
+        { "AgentFiredMissile", -2 },
         { "AgentNearWall", 1 },
         {"AgentPickedUpHealthBoxPowerUp", -5 },
         {"AgentPickedUpShieldBoxPowerUp", -5 },
-        {"AgentPickedUpAmmoBoxPowerUp", -10 }
+        {"AgentPickedUpAmmoBoxPowerUp", -6 }
     };
 
         public static string[] Keys = FitnessValues.Keys.ToArray();

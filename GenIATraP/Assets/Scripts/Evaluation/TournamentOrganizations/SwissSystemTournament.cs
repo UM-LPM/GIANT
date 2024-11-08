@@ -3,6 +3,7 @@ using Fitnesses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace Evaluators.TournamentOrganizations
 {
@@ -60,10 +61,11 @@ namespace Evaluators.TournamentOrganizations
                 TournamentTeam byeTeam = unpairedTeams.FirstOrDefault(p => !p.HasBye);
                 if (byeTeam != null)
                 {
+                    Debug.Log("Team " + byeTeam.TeamId + " got a bye.");
                     byeTeam.HasBye = true;
                     TeamsWhoGotBye++;
                     unpairedTeams.Remove(byeTeam);
-                    matches.Add(new Match(currentMatchID++, new Team[] { byeTeam, new Team(-1) })); // Add a bye pairing with dummy team
+                    matches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { byeTeam, ScriptableObject.CreateInstance<TournamentTeam>().Initialize(-1, "Dummy", new Individual[] { }) })); // Add a bye pairing with dummy team
                 }
             }
 
@@ -90,10 +92,12 @@ namespace Evaluators.TournamentOrganizations
                 }
                 unpairedTeams.Remove(t2);
 
+                Debug.Log("Pairing " + t1.TeamId + " vs " + t2.TeamId);
+
                 if (Coordinator.Instance.Random.NextDouble() > 0.5)
-                    matches.Add(new Match(currentMatchID++, new Team[] { t1, t2 }));
+                    matches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { t1, t2 }));
                 else
-                    matches.Add(new Match(currentMatchID++, new Team[] { t2, t1 }));
+                    matches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { t2, t1 }));
             }
 
             return matches.ToArray();

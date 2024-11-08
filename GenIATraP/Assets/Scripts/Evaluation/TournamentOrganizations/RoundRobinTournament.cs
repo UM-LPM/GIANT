@@ -2,6 +2,7 @@ using AgentOrganizations;
 using Fitnesses;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Evaluators.TournamentOrganizations
 {
@@ -36,15 +37,15 @@ namespace Evaluators.TournamentOrganizations
 
             tournamentMatches.Clear();
 
+            int counter = 0;
             for (int i = 0; i < Teams.Count; i++)
             {
                 for (int j = i + 1; j < Teams.Count; j++)
                 {
                     if (Coordinator.Instance.Random.NextDouble() > 0.5)
-                        tournamentMatches.Add(new Match(i + j, new Team[] { Teams[i], Teams[j] }));
+                        tournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(counter++, new Team[] { Teams[i], Teams[j] }));
                     else
-                        tournamentMatches.Add(new Match(i + j, new Team[] { Teams[j], Teams[i] }));
-
+                        tournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(counter++, new Team[] { Teams[j], Teams[i] }));
                 }
             }
 

@@ -32,11 +32,11 @@ namespace Evaluators.TournamentOrganizations
                 teamFitness1 = teamFitnessRes1.GetTeamFitness();
                 teamFitness2 = teamFitnessRes2.GetTeamFitness();
 
-                if (teamFitness1 > teamFitness2)
+                if (teamFitness1 < teamFitness2)
                 {
                     Teams.Find(team => team.TeamId == teamFitnessRes1.TeamID).Score += 2;
                 }
-                else if (teamFitness1 < teamFitness2)
+                else if (teamFitness1 > teamFitness2)
                 {
                     Teams.Find(team => team.TeamId == teamFitnessRes2.TeamID).Score += 2;
                 }
@@ -60,8 +60,11 @@ namespace Evaluators.TournamentOrganizations
 
         public void DisplayStandings()
         {
-            throw new System.NotImplementedException();
-            // TODO Add error reporting
+            UnityEngine.Debug.Log("Standings:");
+            foreach (var team in Teams)
+            {
+                UnityEngine.Debug.Log($"{team.GetTeamName()} - {team.Score} points");
+            }
         }
 
         public void ClearTeams()

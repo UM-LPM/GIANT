@@ -116,9 +116,11 @@ public Match[] GenerateMatches(Individual[] individuals)
 
             for (int i = 0; i < individuals.Length; i++)
             {
+                Team team = ScriptableObject.CreateInstance<Team>();
+                team.Initialize(i, "Team_" + i, new Individual[] { individuals[i] });
 
-                Team team = new Team(i, "Team_" + i, new Individual[] { individuals[i] });
-                matches[i] = new Match(i, new Team[] { team });
+                matches[i] = ScriptableObject.CreateInstance<Match>();
+                matches[i].Initialize(i, new Team[] { team });
             }
 
             return matches;
