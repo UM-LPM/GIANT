@@ -61,7 +61,6 @@ namespace Evaluators.TournamentOrganizations
                 TournamentTeam byeTeam = unpairedTeams.FirstOrDefault(p => !p.HasBye);
                 if (byeTeam != null)
                 {
-                    Debug.Log("Team " + byeTeam.TeamId + " got a bye.");
                     byeTeam.HasBye = true;
                     TeamsWhoGotBye++;
                     unpairedTeams.Remove(byeTeam);
@@ -92,8 +91,6 @@ namespace Evaluators.TournamentOrganizations
                 }
                 unpairedTeams.Remove(t2);
 
-                Debug.Log("Pairing " + t1.TeamId + " vs " + t2.TeamId);
-
                 if (Coordinator.Instance.Random.NextDouble() > 0.5)
                     matches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { t1, t2 }));
                 else
@@ -105,7 +102,6 @@ namespace Evaluators.TournamentOrganizations
 
         private void ResetTeamByes()
         {
-            UnityEngine.Debug.Log("All teams have received a bye, resetting byes.");
             foreach (var team in Teams)
             {
                 team.HasBye = false;

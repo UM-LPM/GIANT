@@ -1,6 +1,8 @@
 using Fitnesses;
 using System.Collections.Generic;
 using AgentOrganizations;
+using System.Linq;
+using Unity.VisualScripting;
 
 namespace Evaluators.TournamentOrganizations
 {
@@ -21,8 +23,8 @@ namespace Evaluators.TournamentOrganizations
 
         public virtual void UpdateTeamsScore(List<MatchFitness> tournamentMatchFitness)
         {
-            // Add played matches to the list of played matches
-            PlayedMatches.AddRange(tournamentMatchFitness);
+            // Add played matches to the list of played matches (add only matchFitnesses that are not dummy)
+            PlayedMatches.AddRange(tournamentMatchFitness.FindAll(matchFitness => !matchFitness.IsDummy));
 
             foreach (MatchFitness matchFitness in tournamentMatchFitness)
             {

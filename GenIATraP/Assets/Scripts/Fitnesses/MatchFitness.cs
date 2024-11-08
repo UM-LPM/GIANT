@@ -7,10 +7,12 @@ namespace Fitnesses
         public int MatchId { get; set; }
         public string MatchName { get; set; }
         public List<TeamFitness> TeamFitnesses { get; set; }
+        public bool IsDummy { get; set; }
 
         public MatchFitness()
         {
             TeamFitnesses = new List<TeamFitness>();
+            IsDummy = false;
         }
 
         public void AddAgentFitness(AgentComponent agent)

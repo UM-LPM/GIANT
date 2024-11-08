@@ -60,6 +60,10 @@ namespace Evaluators.RatingSystems
         {
             foreach (MatchFitness match in tournamentMatchFitnesses)
             {
+                // If the match is a dummy match, skip it (this match is used for teams who got bye on a tournament
+                if (match.IsDummy)
+                    continue;
+
                 if(match.TeamFitnesses.Count < 2)
                 {
                     throw new System.Exception("TrueSkillRatingSystem requires at least two teams in each match");
