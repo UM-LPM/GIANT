@@ -46,10 +46,10 @@ public class UnityAssetParser
         return individuals;
     }
 
-    public static void SaveIndividualsToFolder(Individual[] individuals, string folderPath)
+    public static void SaveSOIndividualsToSO(Individual[] individuals, string folderPath)
     {
 #if UNITY_EDITOR
-        // Save individuals to folder
+        // Save individuals to folder (.asset)
         foreach (Individual individual in individuals)
         {
             string individualName = individual.name;
@@ -64,6 +64,19 @@ public class UnityAssetParser
         }
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
+#endif
+    }
+
+    public static void SaveSOIndividualsToJSON(Individual[] individuals, string folderPath)
+    {
+#if UNITY_EDITOR
+        // Save individuals to folder (.json)
+        foreach (Individual individual in individuals)
+        {
+            string individualName = individual.name;
+            string individualSOPath = folderPath + "\\" + individualName + ".json";
+            System.IO.File.WriteAllText(individualSOPath, JsonConvert.SerializeObject(individual, MainConfiguration.JSON_SERIALIZATION_SETTINGS));
+        }
 #endif
     }
 }

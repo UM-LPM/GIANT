@@ -1,26 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-8960075739395284313
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 163c147d123e4a945b688eddc64e3ea5, type: 3}
-  m_Name: RootNode
-  m_EditorClassIdentifier: 
-  state: 0
-  started: 1
-  guid: fb407be014983bf4cb0283e90d5002c8
-  position: {x: 0, y: 0}
-  callFrequencyCount: 0
-  description: 
-  drawGizmos: 0
-  child: {fileID: -6642898456065193033}
---- !u!114 &-8040137399104699062
+--- !u!114 &-6362513566163211585
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -40,7 +20,22 @@ MonoBehaviour:
   description: 
   drawGizmos: 0
   moveForwardDirection: 1
---- !u!114 &-6642898456065193033
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c464887b28f2064aae3231f4da2c377, type: 3}
+  m_Name: DemoIndividual2
+  m_EditorClassIdentifier: 
+  IndividualId: 2
+  AgentControllers:
+  - {fileID: 7418362478580866225}
+--- !u!114 &1652667633612128250
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -59,25 +54,10 @@ MonoBehaviour:
   callFrequencyCount: 0
   description: 
   drawGizmos: 0
-  child: {fileID: 2791481391915632275}
+  child: {fileID: 2459382681598060589}
   restartOnSuccess: 1
   restartOnFailure: 1
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7c464887b28f2064aae3231f4da2c377, type: 3}
-  m_Name: DemoIndividual2
-  m_EditorClassIdentifier: 
-  IndividualId: 2
-  AgentControllers:
-  - {fileID: 8585563381091449288}
---- !u!114 &2791481391915632275
+--- !u!114 &2459382681598060589
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -97,9 +77,51 @@ MonoBehaviour:
   description: 
   drawGizmos: 0
   children:
-  - {fileID: -8040137399104699062}
-  - {fileID: 5438872575167351011}
---- !u!114 &5438872575167351011
+  - {fileID: -6362513566163211585}
+  - {fileID: 9090116844814130931}
+--- !u!114 &6694181719799170066
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 163c147d123e4a945b688eddc64e3ea5, type: 3}
+  m_Name: RootNode
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 1
+  guid: fb407be014983bf4cb0283e90d5002c8
+  position: {x: 0, y: 0}
+  callFrequencyCount: 0
+  description: 
+  drawGizmos: 0
+  child: {fileID: 1652667633612128250}
+--- !u!114 &7418362478580866225
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e7922a36c65b824f95d4e76c192add0, type: 3}
+  m_Name: DemoBT2
+  m_EditorClassIdentifier: 
+  AgentControllerId: 0
+  ControllerType: 0
+  RootNode: {fileID: 6694181719799170066}
+  TreeState: 0
+  Nodes:
+  - {fileID: 6694181719799170066}
+  - {fileID: 1652667633612128250}
+  - {fileID: 2459382681598060589}
+  - {fileID: -6362513566163211585}
+  - {fileID: 9090116844814130931}
+--- !u!114 &9090116844814130931
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -119,25 +141,3 @@ MonoBehaviour:
   description: 
   drawGizmos: 0
   rotateDirection: 2
---- !u!114 &8585563381091449288
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0e7922a36c65b824f95d4e76c192add0, type: 3}
-  m_Name: DemoBT2
-  m_EditorClassIdentifier: 
-  AgentControllerId: 0
-  ControllerType: 0
-  RootNode: {fileID: -8960075739395284313}
-  TreeState: 0
-  Nodes:
-  - {fileID: -8960075739395284313}
-  - {fileID: -6642898456065193033}
-  - {fileID: 2791481391915632275}
-  - {fileID: -8040137399104699062}
-  - {fileID: 5438872575167351011}

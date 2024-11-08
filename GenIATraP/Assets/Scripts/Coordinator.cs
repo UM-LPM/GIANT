@@ -26,6 +26,7 @@ public class Coordinator : MonoBehaviour
     [SerializeField] public ComponentSetupType CoordinatorSetup = ComponentSetupType.MOCK;
     [SerializeField] public string IndividualsSourceJSON;
     [SerializeField] public string IndividualsSourceSO;
+    [SerializeField] public bool ConvertSOToJSON = false;
 
     [Header("HTTP Server Configuration")]
     [SerializeField] public string CoordinatorURI = "http://localhost:4000/";
@@ -157,7 +158,11 @@ public class Coordinator : MonoBehaviour
         if(CoordinatorSetup == ComponentSetupType.REAL)
         {
             // Load Individuals from IndividualsSource
-            LoadIndividuals(evalRequestData.EvalRangeStart.HasValue ? evalRequestData.EvalRangeStart.Value : -1, evalRequestData.EvalRangeEnd.HasValue ? evalRequestData.EvalRangeEnd.Value : -1);
+            LoadIndividualsFromJSON(evalRequestData.EvalRangeStart.HasValue ? evalRequestData.EvalRangeStart.Value : -1, evalRequestData.EvalRangeEnd.HasValue ? evalRequestData.EvalRangeEnd.Value : -1);
+        }
+        else if(CoordinatorSetup == ComponentSetupType.MOCK && ConvertSOToJSON)
+        {
+            SaveIndividualsToJSON();
         }
 
         Evaluator evaluator;
@@ -241,7 +246,7 @@ public class Coordinator : MonoBehaviour
         }
     }
 
-    public void LoadIndividuals(int evalRangeStart, int evalRangeEnd)
+    public void LoadIndividualsFromJSON(int evalRangeStart, int evalRangeEnd)
     {
         if(IndividualsSourceJSON == null || IndividualsSourceJSON.Length == 0 || IndividualsSourceSO == null || IndividualsSourceSO.Length == 0)
         {
@@ -253,7 +258,18 @@ public class Coordinator : MonoBehaviour
         Individuals = UnityAssetParser.ParseIndividualsFromFolder(IndividualsSourceJSON, evalRangeStart, evalRangeEnd);
 
         // Save individuals to Scriptable Objects if in Editor mode
-        UnityAssetParser.SaveIndividualsToFolder(Individuals, IndividualsSourceSO);
+        UnityAssetParser.SaveSOIndividualsToSO(Individuals, IndividualsSourceSO);
+    }
+
+    public void SaveIndividualsToJSON()
+    {
+        if (IndividualsSourceJSON == null || IndividualsSourceJSON.Length == 0 || IndividualsSourceSO == null || IndividualsSourceSO.Length == 0)
+        {
+            throw new Exception("IndividualsSourceJSON or IndividualsSourceSO are not defined");
+            // TODO Add error reporting here
+        }
+
+        UnityAssetParser.SaveSOIndividualsToJSON(Individuals, IndividualsSourceJSON);
     }
 
     private RatingSystem getRatingSystem()
