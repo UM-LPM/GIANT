@@ -15,16 +15,15 @@ namespace Problems.Robostrike
         private void Start()
         {
             MissileHitTarget = false;
-            Destroy(this.gameObject, RobostrikeEnvironmentController.DestroyMissileAfter);
+            Destroy(gameObject, RobostrikeEnvironmentController.DestroyMissileAfter);
         }
 
         private void OnDestroy()
         {
             if (!MissileHitTarget)
             {
-                // TODO Implement (Trigger instance level event)
-                //RobostrikeEnvironmentController.ObstacleMissedAgent(this);
-                //RobostrikeEnvironmentController.getMissileController().RemoveMissile(this);
+                RobostrikeEnvironmentController.MissileMissedAgent(this);
+                RobostrikeEnvironmentController.MissileController.RemoveMissile(this);
             }
         }
     }

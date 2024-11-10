@@ -191,5 +191,11 @@ namespace Problems.Robostrike
             if (StatBars != null)
                 StatBars.SetStats(HealthComponent.Health, ShieldComponent.Shield, AmmoComponent.Ammo);
         }
+
+        public void SetEnvironmentColor(Color color)
+        {
+            if(StatBars != null)
+                StatBars.SetEnvironmentColor(color);
+        }
     }
 }

@@ -17,6 +17,7 @@ namespace Problems.Robostrike
         [SerializeField] Image HealthBar;
         [SerializeField] Image ShieldBar;
         [SerializeField] Image AmmoBar;
+        [SerializeField] Image EnvironmentColor;
 
         private void Awake()
         {
@@ -34,6 +35,11 @@ namespace Problems.Robostrike
             HealthBar.fillAmount = health / RobostrikeEnvironmentController.MAX_HEALTH;
             ShieldBar.fillAmount = shield / RobostrikeEnvironmentController.MAX_SHIELD;
             AmmoBar.fillAmount = ammo / RobostrikeEnvironmentController.MAX_AMMO;
+        }
+
+        public void SetEnvironmentColor(Color color)
+        {
+            EnvironmentColor.color = color;
         }
     }
 }

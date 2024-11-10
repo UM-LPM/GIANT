@@ -252,6 +252,8 @@ public abstract class EnvironmentControllerBase : MonoBehaviour {
                     ((BehaviorTreeAgentController)Agents[i].AgentController).Bind(BehaviorTreeAgentController.CreateBehaviourTreeContext(Agents[i].gameObject));
                     ((BehaviorTreeAgentController)Agents[i].AgentController).InitNodeCallFrequencyCounter();
                     break;
+                case ManualAgentController:
+                    break;
                 // TODO Implement other AgentController types
                 default:
                     throw new System.Exception("Unknown AgentController type!");
