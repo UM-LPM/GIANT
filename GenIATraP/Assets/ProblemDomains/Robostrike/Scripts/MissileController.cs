@@ -49,7 +49,7 @@ namespace Problems.Robostrike
                     }
                     else
                     {
-                        RobostrikeEnvironmentController.ObstacleMissedAgent(missileComponent);
+                        RobostrikeEnvironmentController.MissileMissedAgent(missileComponent);
                     }
 
                     missileComponent.MissileHitTarget = true;

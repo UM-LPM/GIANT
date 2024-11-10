@@ -89,12 +89,16 @@ namespace Problems.Robostrike
 
         protected override void DefineAdditionalDataOnPostStart()
         {
+            // Generate random color and assign it to the every agent stat bar
+            Color color = new Color(UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0.0f, 1f), UnityEngine.Random.Range(0f, 1f), 1);
+
             // Set Agent stats
             foreach (RobostrikeAgentComponent agent in Agents)
             {
                 agent.HealthComponent.Health = AgentStartHealth;
                 agent.ShieldComponent.Shield = AgentStartShield;
                 agent.AmmoComponent.Ammo = AgentStartAmmo;
+                agent.SetEnvironmentColor(color);
             }
 
             // Spawn powerUps
@@ -410,7 +414,7 @@ namespace Problems.Robostrike
             UpdateAgentHealth(missile, hitAgent as RobostrikeAgentComponent);
         }
 
-        public void ObstacleMissedAgent(MissileComponent missile)
+        public void MissileMissedAgent(MissileComponent missile)
         {
             missile.Parent.AgentFitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.MissileMissedAgent.ToString()], RobostrikeFitness.FitnessKeys.MissileMissedAgent.ToString());
         }
