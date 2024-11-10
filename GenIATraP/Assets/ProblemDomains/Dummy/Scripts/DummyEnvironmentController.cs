@@ -1,10 +1,10 @@
-using Fitnesses;
+using Base;
+using Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.UIElements;
-using static UnityEngine.GraphicsBuffer;
+using Utils;
 
 namespace Problems.Dummy
 {

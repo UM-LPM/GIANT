@@ -1,4 +1,6 @@
 using AgentOrganizations;
+using Base;
+using Configuration;
 using Evaluators.RatingSystems;
 using Evaluators.TournamentOrganizations;
 using Fitnesses;

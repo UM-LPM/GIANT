@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using AgentControllers;
 using AgentOrganizations;
+using Base;
 
 namespace Spawners
 {

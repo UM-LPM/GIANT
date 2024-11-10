@@ -1,4 +1,5 @@
 using AgentOrganizations;
+using Base;
 using Fitnesses;
 using System;
 using System.Collections.Generic;

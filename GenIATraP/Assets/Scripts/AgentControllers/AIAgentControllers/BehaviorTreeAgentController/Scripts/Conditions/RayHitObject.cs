@@ -1,11 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
-using Unity.VisualScripting;
-using System.Linq;
-using static EnvironmentControllerBase;
 using System;
+using Base;
 
 public enum AgentSideBasic {
     Center = 0,

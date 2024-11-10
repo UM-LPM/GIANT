@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using global::AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
+﻿using AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
+using Utils;
 
 public enum RotateDirection {
     Left = 1,
@@ -25,7 +22,7 @@ public class Rotate : ActionNode {
 
     protected override State OnUpdate() {
         var discreteActionsOut = blackboard.actionsOut.DiscreteActions;
-        blackboard.actionsOut.AddDiscreteAction("rotateDirection", rotateDirection == RotateDirection.Random ? Util.NextIntBt(3) : (int)rotateDirection);
+        blackboard.actionsOut.AddDiscreteAction("rotateDirection", rotateDirection == RotateDirection.Random ? Util.NextIntAC(3) : (int)rotateDirection);
 
         return State.Success;
     }

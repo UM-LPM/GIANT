@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using global::AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
+﻿using Utils;
+using AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
 
 public enum MoveSideDirection {
     Left = 1,
@@ -25,7 +22,7 @@ public class MoveSide : ActionNode {
 
     protected override State OnUpdate() {
         var discreteActionsOut = blackboard.actionsOut.DiscreteActions;
-        blackboard.actionsOut.AddDiscreteAction("moveSideDirection", moveSideDirection == MoveSideDirection.Random ? Util.NextIntBt(3) : (int)moveSideDirection);
+        blackboard.actionsOut.AddDiscreteAction("moveSideDirection", moveSideDirection == MoveSideDirection.Random ? Util.NextIntAC(3) : (int)moveSideDirection);
 
         return State.Success;
     }
