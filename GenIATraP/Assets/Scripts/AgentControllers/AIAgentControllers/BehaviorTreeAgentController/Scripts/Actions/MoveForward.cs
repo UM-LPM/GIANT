@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using global::AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
+﻿using Utils;
+using AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
 
 public enum MoveForwardDirection {
     Forward = 1,
@@ -26,7 +23,7 @@ public class MoveForward : ActionNode {
     protected override State OnUpdate() {
         var discreteActionsOut = blackboard.actionsOut.DiscreteActions;
 
-        blackboard.actionsOut.AddDiscreteAction("moveForwardDirection", moveForwardDirection == MoveForwardDirection.Random ? Util.NextIntBt(3) : (int)moveForwardDirection);
+        blackboard.actionsOut.AddDiscreteAction("moveForwardDirection", moveForwardDirection == MoveForwardDirection.Random ? Util.NextIntAC(3) : (int)moveForwardDirection);
 
         return State.Success;
     }

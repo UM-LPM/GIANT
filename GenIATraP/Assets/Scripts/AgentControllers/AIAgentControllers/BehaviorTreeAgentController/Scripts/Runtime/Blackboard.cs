@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
+namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
+{
 
     // This is the Blackboard container shared between all Nodes.
     // Use this to store temporary data that multiple Nodes need read and write access to.

@@ -1,9 +1,10 @@
-using Problems.Dummy;
+using Base;
+using Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
+using Utils;
 
 namespace Problems.Robostrike
 {
@@ -30,7 +31,7 @@ namespace Problems.Robostrike
         [SerializeField] public GameObject MissilePrefab;
         [SerializeField, Tooltip("Destroy Missile After X seconds")] public float DestroyMissileAfter = 3.0f;
         [SerializeField] public float MissileShootCooldown = 1.0f;
-        [SerializeField] public float MissleLaunchSpeed = 30f;
+        [SerializeField] public float MissleLaunchSpeed = 20f;
         [SerializeField] public static int MissileDamage = 2;
 
         [Header("Robostrike PowerUps Configuration")]
@@ -43,7 +44,7 @@ namespace Problems.Robostrike
         [SerializeField] public float MinPowerUpDistanceFromAgents = 8f;
         [SerializeField] public Vector3 PowerUpColliderExtendsMultiplier = new Vector3(0.505f, 0.495f, 0.505f);
         [SerializeField] public GameObject HealthBoxPrefab;
-        [SerializeField] public int HealthBoxSpawnAmount = 2;
+        [SerializeField] public int HealthBoxSpawnAmount = 1;
         [SerializeField] public GameObject ShieldBoxPrefab;
         [SerializeField] public int ShieldBoxSpawnAmount = 2;
         [SerializeField] public GameObject AmmoBoxPrefab;
@@ -231,6 +232,11 @@ namespace Problems.Robostrike
                 if (conf.ProblemConfiguration.ContainsKey("MinPowerUpDistance"))
                 {
                     MinPowerUpDistance = float.Parse(conf.ProblemConfiguration["MinPowerUpDistance"]);
+                }
+
+                if (conf.ProblemConfiguration.ContainsKey("MinPowerUpDistanceFromAgents"))
+                {
+                    MinPowerUpDistanceFromAgents = float.Parse(conf.ProblemConfiguration["MinPowerUpDistanceFromAgents"]);
                 }
 
                 if (conf.ProblemConfiguration.ContainsKey("HealthBoxSpawnAmount"))

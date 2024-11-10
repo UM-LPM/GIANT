@@ -6,6 +6,8 @@ using UnityEngine;
 using Spawners;
 using AgentControllers.AIAgentControllers;
 using System.Linq;
+using Base;
+using Problems.Dummy;
 
 namespace Problems.Robostrike
 {
@@ -23,6 +25,12 @@ namespace Problems.Robostrike
         // Respawn variables
         Vector3 respawnPos = Vector3.zero;
         Quaternion rotation = Quaternion.identity;
+
+        List<Vector3> agentPositions;
+
+        bool isFarEnough;
+        int counter = 0;
+        int maxSpawnPoints = 100;
 
         public override void validateSpawnConditions(EnvironmentControllerBase environmentController)
         {
@@ -115,6 +123,9 @@ namespace Problems.Robostrike
             RobostrikeEnvironmentController robostrikeEnvironmentController = environmentController as RobostrikeEnvironmentController;
             AgentComponent agent = respawnComponent as AgentComponent;
 
+            respawnPos = Vector3.zero;
+            rotation = Quaternion.identity;
+
             if (robostrikeEnvironmentController.AgentRespawnType == RobostrikeAgentRespawnType.StartPos)
             {
                 respawnPos = agent.StartPosition;
@@ -122,7 +133,7 @@ namespace Problems.Robostrike
             }
             else if(robostrikeEnvironmentController.AgentRespawnType == RobostrikeAgentRespawnType.RandomPos)
             {
-
+                GetRandomSpawnPositionAndRotation(robostrikeEnvironmentController, out respawnPos, out rotation);
             }
             else
             {
@@ -156,6 +167,55 @@ namespace Problems.Robostrike
                 trackGO.GetComponent<SpriteRenderer>().sprite = track;
             }
             gunGO.GetComponent<SpriteRenderer>().sprite = gun;
+        }
+    
+        void GetRandomSpawnPositionAndRotation(RobostrikeEnvironmentController environmentController, out Vector3 spawnPos, out Quaternion rotation)
+        {
+            counter = 0;
+            agentPositions = environmentController.Agents.Select(agent => agent.transform.position).ToList();
+            do
+            {
+                isFarEnough = true;
+                spawnPos = GetRandomSpawnPoint(
+                                environmentController.Util,
+                                environmentController.GameType,
+                                environmentController.ArenaSize,
+                                environmentController.ArenaRadius,
+                                environmentController.ArenaCenterPoint,
+                                environmentController.ArenaOffset);
+                if (environmentController.SceneLoadMode == SceneLoadMode.GridMode)
+                    spawnPos += environmentController.GridCell.GridCellPosition;
+
+                rotation = GetRandomRotation(environmentController.Util, environmentController.GameType);
+
+                if (!SpawnPointSuitable(environmentController.GameType,
+                            spawnPos,
+                            rotation,
+                            agentPositions,
+                            environmentController.AgentColliderExtendsMultiplier,
+                            environmentController.MinAgentDistance,
+                            true,
+                            environmentController.gameObject.layer,
+                            environmentController.DefaultLayer))
+                {
+                    isFarEnough = false;
+                }
+
+                // Check if current spawn point is far enough from the agents
+                foreach (AgentComponent agent in environmentController.Agents)
+                {
+                    if (Vector3.Distance(agent.transform.position, spawnPos) < environmentController.MinPowerUpDistanceFromAgents)
+                    {
+                        isFarEnough = false;
+                        break;
+                    }
+                }
+
+                if (counter >= maxSpawnPoints)
+                    break;
+
+                counter++;
+            } while (!isFarEnough);
         }
     }
 }

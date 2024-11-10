@@ -7,6 +7,8 @@ using UnityEngine;
 using System.Collections.Generic;
 using AgentOrganizations;
 using Fitnesses;
+using Configuration;
+using Base;
 
 namespace Evaluators
 {
