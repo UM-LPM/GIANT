@@ -99,7 +99,9 @@ namespace AgentControllers.AIAgentControllers.NeuralNetworkAgentController
 
         public override void AddAgentControllerToSO(ScriptableObject parent)
         {
+#if UNITY_EDITOR
             AssetDatabase.AddObjectToAsset(ModelAsset, parent);
+#endif
         }
     }
 }

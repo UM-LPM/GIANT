@@ -16,10 +16,13 @@ namespace Evaluators
 {
     public class ComplexEvaluator : Evaluator
     {
+        private List<MatchFitness> MatchFitnesses { get; set; }
+
         public ComplexEvaluator(RatingSystem ratingSystem, TournamentOrganization tournamentOrganization)
         {
             RatingSystem = ratingSystem;
             TournamentOrganization = tournamentOrganization;
+            MatchFitnesses = new List<MatchFitness>();
         }
 
         public override async Task<CoordinatorEvaluationResult> ExecuteEvaluation(CoordinatorEvalRequestData evalRequestData, Individual[] individuals)
@@ -48,6 +51,8 @@ namespace Evaluators
 
         public override async Task<List<MatchFitness>> EvaluateTournamentMatches(CoordinatorEvalRequestData evalRequestData, Match[] matches)
         {
+            MatchFitnesses.Clear();
+
             int numOfDistinctIndividualsInTournament = matches.SelectMany(match => match.Teams).Select(team => team.Individuals).SelectMany(individuals => individuals).Distinct().Count();
 
             int numOfMatches = matches.Length;
@@ -82,8 +87,6 @@ namespace Evaluators
                     // Wait for all tasks to complete
                     await Task.WhenAll(tasks);
 
-                    FinalIndividualFitnessWrapper finalIndividualFitnessWrapper = new FinalIndividualFitnessWrapper();
-
                     // Parse the responses from the EvalEnvInstances
                     foreach (Task<HttpResponseMessage> task in tasks)
                     {
@@ -99,7 +102,7 @@ namespace Evaluators
                                 // TODO Add error reporting here
                             }
 
-                            return communicatorEvalResponseData.MatchFitnesses;
+                            MatchFitnesses.AddRange(communicatorEvalResponseData.MatchFitnesses);
                         }
                         else
                         {
@@ -108,7 +111,7 @@ namespace Evaluators
                         }
                     }
 
-                    throw new Exception("No match fitnesses were returned");
+                    return MatchFitnesses;
                 }
             }
             catch (TaskCanceledException ex) when (ex.InnerException is TimeoutException)

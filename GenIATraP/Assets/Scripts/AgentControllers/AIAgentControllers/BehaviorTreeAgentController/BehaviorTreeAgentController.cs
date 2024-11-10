@@ -149,10 +149,12 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 
         public override void AddAgentControllerToSO(ScriptableObject parent)
         {
+#if UNITY_EDITOR
             foreach (var node in Nodes)
             {
                 AssetDatabase.AddObjectToAsset(node, parent);
             }
+#endif
         }
 
         #region Editor Compatibility
