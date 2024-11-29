@@ -3,7 +3,7 @@
 
         public long FileID { get; set; }
         public string Name { get; set; }
-        public Node? RootNode { get; set; }
+        public TreeModelNode? RootNode { get; set; }
 
         public List<BlackboardItem> BlackboardItems { get; set; }
 

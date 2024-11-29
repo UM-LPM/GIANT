@@ -1,55 +1,56 @@
-using System.Collections.Generic;
-using AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
 
-public enum ShieldLevel
+namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 {
-    Low,
-    Medium,
-    High
-}
-
-public class ShieldLevelBellow : ConditionNode
-{
-    public ShieldLevel shieldLevel;
-    // TODO: Support for raw value instead of enum ??? (public int healthLevel;)
-
-    protected override void OnStart()
+    public enum ShieldLevel
     {
+        Low,
+        Medium,
+        High
     }
 
-    protected override void OnStop()
+    public class ShieldLevelBellow : ConditionNode
     {
-    }
+        public ShieldLevel shieldLevel;
+        // TODO: Support for raw value instead of enum ??? (public int healthLevel;)
 
-
-    protected override bool CheckConditions()
-    {
-        // TODO Implement
-        /*ShieldComponent shieldComponent = context.gameObject.GetComponent<ShieldComponent>();
-
-        if (shieldComponent != null)
+        protected override void OnStart()
         {
-            if (shieldComponent.Shield <= ShieldLevelToValue(shieldLevel))
-            {
-                return true;
-            }
-        }*/
-
-        return false;
-    }
-    public static int ShieldLevelToValue(ShieldLevel ShieldLevel)
-    {
-        switch (ShieldLevel)
-        {
-            case ShieldLevel.Low:
-                return 4;
-            case ShieldLevel.Medium:
-                return 6;
-            case ShieldLevel.High:
-                return 8;
-            default:
-                return 0;
         }
-    }
 
+        protected override void OnStop()
+        {
+        }
+
+
+        protected override bool CheckConditions()
+        {
+            // TODO Implement
+            /*ShieldComponent shieldComponent = context.gameObject.GetComponent<ShieldComponent>();
+
+            if (shieldComponent != null)
+            {
+                if (shieldComponent.Shield <= ShieldLevelToValue(shieldLevel))
+                {
+                    return true;
+                }
+            }*/
+
+            return false;
+        }
+        public static int ShieldLevelToValue(ShieldLevel ShieldLevel)
+        {
+            switch (ShieldLevel)
+            {
+                case ShieldLevel.Low:
+                    return 4;
+                case ShieldLevel.Medium:
+                    return 6;
+                case ShieldLevel.High:
+                    return 8;
+                default:
+                    return 0;
+            }
+        }
+
+    }
 }
