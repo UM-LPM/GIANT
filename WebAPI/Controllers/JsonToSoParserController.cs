@@ -2,15 +2,65 @@
 using WebAPI.Models;
 using Newtonsoft.Json;
 using System.Text;
- 
+using AgentOrganizations;
+
 namespace WebAPI.Controllers {
     [Route("api/[controller]")]
     [ApiController]
     public class JsonToSoParserController : ControllerBase {
 
-        // POST api/<JsonToSoParserController>
         [HttpPost]
-        public async Task<IActionResult> ParseJson([FromBody] RequestBodyParams requestBodyParams) {
+        public async Task<IActionResult> ParseJson([FromBody] RequestBodyParams requestBodyParams)
+        {
+            try
+            {
+                string jsonString = System.IO.File.ReadAllText(requestBodyParams.SourceFilePath);
+
+                // Deserialize the JSON string to a dynamic object or a custom class
+
+                TreeModel[] treeModels = JsonConvert.DeserializeObject<TreeModel[]>(jsonString);
+
+                ClearFolder(requestBodyParams.DestinationFilePath);
+
+                if (treeModels.Length == 0)
+                {
+                    Util.WriteErrorToFile("Failed to parse JSON", "No behaviour trees sent in request", "1_JsonToSoParserControllerError");
+                    return BadRequest(new { Status = "Error", Message = "Failed to parse JSON.", Error = "No behaviour trees sent in request" });
+                }
+
+                if (requestBodyParams.CoordinatorURI == null || requestBodyParams.CoordinatorURI.Length == 0 || requestBodyParams.EvalEnvInstanceURIs == null || requestBodyParams.EvalEnvInstanceURIs.Length == 0)
+                {
+                    Util.WriteErrorToFile("Failed request", "CoordinatorInstanceURI or EvalEnvInstanceURIs are null", "2_JsonToSoParserControllerError");
+                    return BadRequest(new { Status = "Error", Message = "Failed to parse JSON.", Error = "CoordinatorInstanceURI or EvalEnvInstanceURIs are null" });
+                }
+
+                int currentIndex = 1;
+                Individual[] individuals = new Individual[treeModels.Length];
+
+                foreach (TreeModel treeModel in treeModels)
+                {
+                    // Update node IDs
+                    TreeModelNode.UpdateNoteIDs(treeModel.RootNode);
+
+                    // Update node positions
+                    TreeModelNode.UpdateNodePositions(treeModel.RootNode);
+
+                    individuals[currentIndex] = new Individual(currentIndex, treeModel);
+
+                    currentIndex++;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Util.WriteErrorToFile("Failed to parse JSON.", ex.Message, "XXX_JsonToSoParserControllerError");
+                return BadRequest(new { Status = "Error", Message = "Failed to parse JSON.", Error = ex.Message });
+            }
+        }
+
+            // POST api/<JsonToSoParserController>
+            [HttpPost]
+        public async Task<IActionResult> ParseJson2([FromBody] RequestBodyParams requestBodyParams) {
             try {
                 string jsonString = System.IO.File.ReadAllText(requestBodyParams.SourceFilePath);
 
@@ -34,10 +84,10 @@ namespace WebAPI.Controllers {
                 int currentIndex = 1;
                 foreach (TreeModel treeModel in treeModels) {
 
-                    Node.UpdateNoteIDs(treeModel.RootNode);
+                    TreeModelNode.UpdateNoteIDs(treeModel.RootNode);
 
                     // Update node positions OPTION 1
-                    Node.UpdateNodePositions(treeModel.RootNode);
+                    TreeModelNode.UpdateNodePositions(treeModel.RootNode);
 
                     // Update node positions OPTION 2
                     //int index = 0;
@@ -110,23 +160,23 @@ namespace WebAPI.Controllers {
 
             List<string> nodeFileIDs = new List<string>();
 
-            Queue<Node> nodeQueue = new Queue<Node>();
+            Queue<TreeModelNode> nodeQueue = new Queue<TreeModelNode>();
             if (treeModel.RootNode != null)
                 nodeQueue.Enqueue(treeModel.RootNode);
 
             while (nodeQueue.Count > 0) {
-                Node node = nodeQueue.Dequeue();
+                TreeModelNode node = nodeQueue.Dequeue();
                 nodeFileIDs.Add(node.FileID.ToString());
 
                 behaviourTreeString += NodeString(node, treeModel.BlackboardItems);
 
                 if (node.Children != null)
-                    foreach (Node child in node.Children) {
+                    foreach (TreeModelNode child in node.Children) {
                         nodeQueue.Enqueue(child);
                     }
             }
 
-            treeModel.FileID = Node.GenerateRandomFileID();
+            treeModel.FileID = TreeModelNode.GenerateRandomFileID();
 
             behaviourTreeString += BehaviourTreeString(treeModel.Name, treeModel.RootNode.FileID, nodeFileIDs, treeModel.BlackboardItems, treeModel.FileID, currentID);
 
@@ -156,7 +206,7 @@ namespace WebAPI.Controllers {
                 treeName, rootNodeFileID.ToString(), nodeFileIdsString, blackboardItemsString, fileID.ToString(), currentID);
         }
 
-        public static string NodeString(Node node, List<BlackboardItem> blackboardItems) {
+        public static string NodeString(TreeModelNode node, List<BlackboardItem> blackboardItems) {
             string blackboardItemsString = "";
             foreach (BlackboardItem blackboardItem in blackboardItems) {
                 blackboardItemsString += String.Format("\r\n  {0}: {1}", blackboardItem.Name, blackboardItem.Value);
@@ -173,7 +223,7 @@ namespace WebAPI.Controllers {
 
             bool childrenCond = node.Children?.Count > 1 || (node.Children?.Count == 1 && (node.Name == "Selector" || node.Name == "Sequencer"));
             if (node.Children != null) {
-                foreach (Node nodeChild in node.Children)
+                foreach (TreeModelNode nodeChild in node.Children)
                     if (childrenCond)
                         nodeChildrenString += String.Format("\r\n  - {{ fileID: {0} }}", nodeChild.FileID.ToString());
                     else
@@ -181,7 +231,7 @@ namespace WebAPI.Controllers {
             }
 
             return String.Format("\r\n--- !u!114 &{6}\r\nMonoBehaviour:\r\n  m_ObjectHideFlags: 0\r\n  m_CorrespondingSourceObject: {{fileID: 0}}\r\n  m_PrefabInstance: {{fileID: 0}}\r\n  m_PrefabAsset: {{fileID: 0}}\r\n  m_GameObject: {{fileID: 0}}\r\n  m_Enabled: 1\r\n  m_EditorHideFlags: 0\r\n  m_Script: {{fileID: 11500000, guid: {0}, type: 3}}\r\n  m_Name: {8}\r\n  m_EditorClassIdentifier: \r\n  state: 0\r\n  started: 0\r\n  guid: {1}\r\n  position: {2}\r\n  blackboard:{3}\r\n  description: \r\n  drawGizmos: 0{4}{7}{5}",
-                Node.GetNodeTypeGuid(Node.NodeTypeStringToNodeType(node.Name)), node.Guid.ToString(), String.Format("{{x: {0}, y: {1}}}", node.NodePosition.X.ToString(), node.NodePosition.Y), blackboardItemsString, nodePropertiesString, nodeChildrenString, node.FileID, childrenCond ? "\r\n  children:  " : node.Children?.Count == 1 ? "\r\n  child:  " : "", node.Name);
+                TreeModelNode.GetNodeTypeGuid(TreeModelNode.NodeTypeStringToNodeType(node.Name)), node.Guid.ToString(), String.Format("{{x: {0}, y: {1}}}", node.NodePosition.X.ToString(), node.NodePosition.Y), blackboardItemsString, nodePropertiesString, nodeChildrenString, node.FileID, childrenCond ? "\r\n  children:  " : node.Children?.Count == 1 ? "\r\n  child:  " : "", node.Name);
         }
         public static void ClearFolder(string path) {
             string[] files = System.IO.Directory.GetFiles(path);

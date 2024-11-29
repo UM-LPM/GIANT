@@ -2,31 +2,32 @@
 using WebAPI.Models.Enums;
 
 namespace WebAPI.Models {
-    public class Node {
+    public class TreeModelNode
+    {
         public long FileID { get; set; } // random value between [111111111111111111,999999999999999999]
         public Guid Guid { get; set; }
 
         [Required(ErrorMessage = "Node name (type) is required.")]
         public string? Name { get; set; }
-        public List<Node>? Children { get; set; }
+        public List<TreeModelNode>? Children { get; set; }
         public List<Property>? Properties { get; set; }
 
         public Position? NodePosition { get; set; }
 
 
-        public static void UpdateNoteIDs(Node rootNode) {
-            Queue<Node> nodeQueue = new Queue<Node>();
+        public static void UpdateNoteIDs(TreeModelNode rootNode) {
+            Queue<TreeModelNode> nodeQueue = new Queue<TreeModelNode>();
             if (rootNode != null)
                 nodeQueue.Enqueue(rootNode);
 
             while (nodeQueue.Count > 0) {
-                Node node = nodeQueue.Dequeue();
+                TreeModelNode node = nodeQueue.Dequeue();
 
                 node.FileID = GenerateRandomFileID();
                 node.Guid = Guid.NewGuid();
 
                 if (node.Children != null)
-                    foreach (Node child in node.Children) {
+                    foreach (TreeModelNode child in node.Children) {
                         nodeQueue.Enqueue(child);
                     }
             }
@@ -36,14 +37,14 @@ namespace WebAPI.Models {
             return new System.Random().NextInt64(100000000000000000, 999999999999999999);
         }
 
-        public static void UpdateNodePositions(Node rootNode) {
+        public static void UpdateNodePositions(TreeModelNode rootNode) {
             // Update Nodes' position so the nodes will be graphically represented as a organized tree, where root node is at the top and leaves are at the bottom
 
             int nodeHeight = 140;
             int nodeWidth = 170;
 
             var result = new Dictionary<int, int>();
-            var queue = new Queue<(Node node, int depth)>();
+            var queue = new Queue<(TreeModelNode node, int depth)>();
 
             if (rootNode != null) {
                 queue.Enqueue((rootNode, 0));
@@ -68,7 +69,7 @@ namespace WebAPI.Models {
             }
         }
 
-        public static int UpdateNodePositions(Node node, int depth, ref int index, int verticalSpacing, int horizontalSpacing) {
+        public static int UpdateNodePositions(TreeModelNode node, int depth, ref int index, int verticalSpacing, int horizontalSpacing) {
             if (node == null) {
                 return 0;
             }
