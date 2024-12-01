@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using Unity.VisualScripting;
 using UnityEngine;
+
 public class AntEnvironmentController1 : EnvironmentControllerBase
 {
     [Header("Ant Configuration")]
@@ -37,7 +38,7 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
 
     protected override void DefineAdditionalDataOnPreStart()
     {
-     
+
         for (int i = 0; i < numOfAnts; i++)
         {
             GameObject agent = Instantiate(AgentPrefab, hiveItems[0].transform.position, Quaternion.identity, this.gameObject.transform);
@@ -62,7 +63,7 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
             agent.hive = this.GetComponentsInChildren<Hive>()[0];
             agent.Rigidbody = agent.GetComponent<Rigidbody2D>();
         }
-       
+
     }
     void SpawnFood()
     {
@@ -76,25 +77,6 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
             GameObject foodItem = Instantiate(FoodPrefab, spawnPos, Quaternion.identity, this.gameObject.transform);
             foodItems.Add(foodItem);
         }
-    }
-    void SpawnWaterSource()
-    {
-
-
-        Vector2 spawnPos = this.GetRandomSpawnPoint();
-        float angle;
-        GameObject waterItem = Instantiate(WaterPrefab, spawnPos, Quaternion.identity, this.gameObject.transform);
-        waterItems.Add(waterItem);
-
-    }
-
-    void SpawnHives()
-    {
-
-        Vector2 spawnPos = GetRandomSpawnPoint();
-        GameObject hiveItem = Instantiate(HivePrefab, spawnPos, Quaternion.identity, this.gameObject.transform);
-        //hiveItems.Add(hiveItem);
-
     }
     public Vector2 GetRandomSpawnPoint()
     {
@@ -166,7 +148,6 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
             if (agent.gameObject.activeSelf)
             {
                 actionBuffer = new ActionBuffer(null, new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
-
                 agent.BehaviourTree.UpdateTree(actionBuffer);
                 MoveAgent(agent, actionBuffer);
 
@@ -175,9 +156,8 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
                     PickUpCarriableItem(agent, CarriableItemType.Food);
                 }
                 if (actionBuffer.DiscreteActions[4] == 1)
-                { 
+                {
                     agent.targetObject = agent.hive.GameObject();
-                   // MoveAgent(agent,actionBuffer);
                 }
                 if (actionBuffer.DiscreteActions[5] == 1)
                 {
@@ -276,8 +256,8 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
         {
             ant.activePheromoneTrail = null;
             ant.currentActiveNodePheromone = null;
-            ant.foodPheromoneTrailComponent= null;
-            ant.waterPheromoneTrailComponent=null;
+            ant.foodPheromoneTrailComponent = null;
+            ant.waterPheromoneTrailComponent = null;
         }
 
     }
@@ -390,7 +370,14 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
                 var pickedUpItemRepresentation = Instantiate(WaterPrefab, antAgent.transform);
                 antAgent.carriedItemObject = pickedUpItemRepresentation;
                 antAgent.detectCarriableItem.SetActive(false);
-
+                if (antAgent.carriedItemObject != null)
+                {
+                    antAgent.targetObject = antAgent.hive.GameObject();
+                    if (antAgent.carriedItemObject.TryGetComponent<Collider2D>(out Collider2D collider))
+                    {
+                        collider.enabled = false;
+                    }
+                }
 
             }
         }
@@ -408,6 +395,14 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
                 var pickedUpItemRepresentation = Instantiate(FoodPrefab, antAgent.transform);
                 antAgent.carriedItemObject = pickedUpItemRepresentation;
                 antAgent.detectCarriableItem.SetActive(false);
+                if (antAgent.carriedItemObject != null)
+                {
+                    antAgent.targetObject = antAgent.hive.GameObject();
+                    if (antAgent.carriedItemObject.TryGetComponent<Collider2D>(out Collider2D collider))
+                    {
+                        collider.enabled = false;
+                    }
+                }
             }
         }
     }
@@ -418,28 +413,28 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
         Vector2 antPosition = antAgent.transform.position;
 
         Vector2 direction = (hivePosition - antPosition).normalized;
-        antAgent.MoveDirection.Set(direction.x,direction.y);
+        antAgent.MoveDirection.Set(direction.x, direction.y);
 
         // Calculate the target rotation angle
         float targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         antAgent.Rigidbody.rotation = targetAngle;
-         float currentAngle = antAgent.transform.eulerAngles.z;
+        float currentAngle = antAgent.transform.eulerAngles.z;
 
-         float newAngle = Mathf.LerpAngle(currentAngle, targetAngle, AntRotationSpeed * Time.fixedDeltaTime);
-         antAgent.transform.rotation = Quaternion.Euler(0, 0, newAngle);
+        float newAngle = Mathf.LerpAngle(currentAngle, targetAngle, AntRotationSpeed * Time.fixedDeltaTime);
+        antAgent.transform.rotation = Quaternion.Euler(0, 0, newAngle);
 
-         RaycastHit2D hit = Physics2D.Raycast(antPosition, direction, AntMoveSpeed * Time.fixedDeltaTime);
+        RaycastHit2D hit = Physics2D.Raycast(antPosition, direction, AntMoveSpeed * Time.fixedDeltaTime);
 
-         if (hit.collider == null || (!hit.collider.CompareTag("food") && !hit.collider.CompareTag("food")))
-         {
-             antAgent.transform.position = Vector2.MoveTowards(antPosition, hivePosition, AntMoveSpeed * Time.fixedDeltaTime);
-         }
-         else
-         {
-             Vector2 avoidDirection = Vector2.Perpendicular(direction); 
-             avoidDirection *= (Random.value > 0.5f ? 1 : -1); 
-             antAgent.transform.position = Vector2.MoveTowards(antPosition, antPosition + avoidDirection, AntMoveSpeed * Time.fixedDeltaTime);
-         }
+        if (hit.collider == null || (!hit.collider.CompareTag("food") && !hit.collider.CompareTag("food")))
+        {
+            antAgent.transform.position = Vector2.MoveTowards(antPosition, hivePosition, AntMoveSpeed * Time.fixedDeltaTime);
+        }
+        else
+        {
+            Vector2 avoidDirection = Vector2.Perpendicular(direction);
+            avoidDirection *= (Random.value > 0.5f ? 1 : -1);
+            antAgent.transform.position = Vector2.MoveTowards(antPosition, antPosition + avoidDirection, AntMoveSpeed * Time.fixedDeltaTime);
+        }
 
     }
     void DropCarriableItem(AntAgentComponent antAgent, CarriableItemType itemType)
@@ -492,12 +487,12 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
             if (threat != null)
             {
                 threat.health -= 10;
-                break; 
+                break;
             }
         }
     }
 
-        public void MoveToNextPheromone(AntAgentComponent agent)
+    public void MoveToNextPheromone(AntAgentComponent agent)
     {
         PheromoneTrailComponent trailComponent = agent.activePheromoneTrail;
 
@@ -664,37 +659,44 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
         }
     }
 
-    // New method for moving towards a specific target object
     void MoveToObject(AntAgentComponent agent)
     {
-        Vector2 hivePosition = agent.hive.transform.position;
+        // Positions
+        Vector2 hivePosition = agent.targetObject.transform.position;
         Vector2 antPosition = agent.transform.position;
 
+        // Direction to target
         Vector2 direction = (hivePosition - antPosition).normalized;
-        agent.MoveDirection.Set(direction.x, direction.y);
 
-        // Calculate the target rotation angle
-        float targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        agent.Rigidbody.rotation = targetAngle;
-        float currentAngle = agent.transform.eulerAngles.z;
+        // Obstacle Detection (Raycast)
+        RaycastHit2D hit = Physics2D.Raycast(antPosition, direction, AntMoveSpeed * Time.fixedDeltaTime, agent.detectionLayerMask);
 
-        float newAngle = Mathf.LerpAngle(currentAngle, targetAngle, AntRotationSpeed * Time.fixedDeltaTime);
-        agent.transform.rotation = Quaternion.Euler(0, 0, newAngle);
-
-        RaycastHit2D hit = Physics2D.Raycast(antPosition, direction, AntMoveSpeed * Time.fixedDeltaTime);
-
-        if (hit.collider == null || (!hit.collider.CompareTag("food") && !hit.collider.CompareTag("food")))
+        if (hit.collider == null || hit.collider.gameObject == agent.gameObject || (agent.carriedItemObject != null && hit.collider.gameObject == agent.carriedItemObject)) // No obstacle
         {
+            // Move directly towards the hive
             agent.transform.position = Vector2.MoveTowards(antPosition, hivePosition, AntMoveSpeed * Time.fixedDeltaTime);
+
+            // Smooth rotation towards the hive
+            float targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            float currentAngle = agent.transform.eulerAngles.z;
+            float newAngle = Mathf.LerpAngle(currentAngle, targetAngle, AntRotationSpeed * Time.fixedDeltaTime);
+            agent.transform.rotation = Quaternion.Euler(0, 0, newAngle);
+            UnityEngine.Debug.DrawLine(antPosition, hit.point, Color.blue);
+
         }
-        else
+        else // Obstacle detected
         {
+            // Avoid obstacle
             Vector2 avoidDirection = Vector2.Perpendicular(direction);
             avoidDirection *= (Random.value > 0.5f ? 1 : -1);
-            agent.transform.position = Vector2.MoveTowards(antPosition, antPosition + avoidDirection, AntMoveSpeed * Time.fixedDeltaTime);
+            UnityEngine.Debug.DrawLine(antPosition, hit.point, Color.red);
+
+            Vector2 newTargetPosition = antPosition + avoidDirection * AntMoveSpeed * Time.fixedDeltaTime;
+
+            // Move towards avoid direction
+            agent.transform.position = Vector2.MoveTowards(antPosition, newTargetPosition, AntMoveSpeed * Time.fixedDeltaTime);
         }
     }
-
 
     public void MoveAgents(AgentComponent[] agents)
     {

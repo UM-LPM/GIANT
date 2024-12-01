@@ -65,8 +65,8 @@ public class DetectsObjectOfType : ConditionNode
 
     private bool DetectObject<T>(float radius) where T : Component
     {
-        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(agent.transform.position, radius);
-
+        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(agent.transform.position, radius, agent.detectionLayerMask);
+            
         foreach (Collider2D collider in hitColliders)
         {
             if (collider.GetComponent<T>() != null)

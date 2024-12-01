@@ -9,6 +9,8 @@ public class AntAgentComponent : AgentComponent
     public GameObject targetObject { get; set; }
     public GameObject detectCarriableItem { get; set; }
     public GameObject carriedItemObject { get; set; }
+   public  LayerMask detectionLayerMask = 65535;
+
 
     [Header("Controlls")]
     [SerializeField] public KeyCode dropPickUpKey = KeyCode.Space;
