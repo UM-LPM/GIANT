@@ -661,11 +661,9 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
 
     void MoveToObject(AntAgentComponent agent)
     {
-        // Positions
         Vector2 hivePosition = agent.targetObject.transform.position;
         Vector2 antPosition = agent.transform.position;
 
-        // Direction to target
         Vector2 direction = (hivePosition - antPosition).normalized;
 
         // Obstacle Detection (Raycast)
@@ -673,10 +671,8 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
 
         if (hit.collider == null || hit.collider.gameObject == agent.gameObject || (agent.carriedItemObject != null && hit.collider.gameObject == agent.carriedItemObject)) // No obstacle
         {
-            // Move directly towards the hive
             agent.transform.position = Vector2.MoveTowards(antPosition, hivePosition, AntMoveSpeed * Time.fixedDeltaTime);
 
-            // Smooth rotation towards the hive
             float targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
             float currentAngle = agent.transform.eulerAngles.z;
             float newAngle = Mathf.LerpAngle(currentAngle, targetAngle, AntRotationSpeed * Time.fixedDeltaTime);
@@ -684,16 +680,14 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
             UnityEngine.Debug.DrawLine(antPosition, hit.point, Color.blue);
 
         }
-        else // Obstacle detected
+        else 
         {
-            // Avoid obstacle
             Vector2 avoidDirection = Vector2.Perpendicular(direction);
             avoidDirection *= (Random.value > 0.5f ? 1 : -1);
             UnityEngine.Debug.DrawLine(antPosition, hit.point, Color.red);
 
             Vector2 newTargetPosition = antPosition + avoidDirection * AntMoveSpeed * Time.fixedDeltaTime;
 
-            // Move towards avoid direction
             agent.transform.position = Vector2.MoveTowards(antPosition, newTargetPosition, AntMoveSpeed * Time.fixedDeltaTime);
         }
     }
