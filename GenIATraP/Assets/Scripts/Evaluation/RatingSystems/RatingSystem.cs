@@ -21,11 +21,14 @@ namespace Evaluators.RatingSystems
         public double Mean { get; set; }
         public double StandardDeviation { get; set; }
 
-        public RatingSystemRating(int individualId, double mean, double standardDeviation)
+        public List<IndividualMatchResult> IndividualMatchResults { get; set; }
+
+        public RatingSystemRating(int individualId, double mean, double standardDeviation, List<IndividualMatchResult> individualMatchResults)
         {
             IndividualID = individualId;
             Mean = mean;
             StandardDeviation = standardDeviation;
+            IndividualMatchResults = individualMatchResults;
         }
 
     }

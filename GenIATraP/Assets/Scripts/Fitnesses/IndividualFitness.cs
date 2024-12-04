@@ -166,5 +166,10 @@ namespace Fitnesses
                 finalIndividualFitness.AddIndividualFitness(individualFitness, matchName);
             }
         }
+
+        public void AddFinalIndividualFitness(FinalIndividualFitness finalIndividualFitness)
+        {
+            FinalIndividualFitnesses.Add(finalIndividualFitness);
+        }
     }
 }
