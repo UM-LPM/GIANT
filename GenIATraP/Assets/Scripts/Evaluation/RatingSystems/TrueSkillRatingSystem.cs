@@ -98,12 +98,13 @@ namespace Evaluators.RatingSystems
                 var newRatings = SkillCalculator.CalculateNewRatings(GameInfo, teamsConcatinated, orderRanking);
 
                 // 4. Update ratings
-                // TODO Test this
                 for (int i = 0; i < match.TeamFitnesses.Count; i++)
                 {
                     for (int j = 0; j < match.TeamFitnesses[i].IndividualFitness.Count; j++)
                     {
-                        GetPlayer(match.TeamFitnesses[i].IndividualFitness[j].IndividualID).UpdateRating(newRatings[GetPlayer(match.TeamFitnesses[i].IndividualFitness[j].IndividualID).Player]);
+                        TrueSkillPlayer trueSkillPlayer = GetPlayer(match.TeamFitnesses[i].IndividualFitness[j].IndividualID);
+                        trueSkillPlayer.UpdateRating(newRatings[GetPlayer(match.TeamFitnesses[i].IndividualFitness[j].IndividualID).Player]);
+                        trueSkillPlayer.AddIndividualMatchResult(match.MatchName, match.TeamFitnesses[i].IndividualFitness[j]);
                     }
                 }
             }
@@ -177,7 +178,7 @@ namespace Evaluators.RatingSystems
             RatingSystemRating[] ratings = new RatingSystemRating[Players.Count];
             for (int i = 0; i < ratings.Length; i++)
             {
-                ratings[i] = new RatingSystemRating(Players[i].IndividualID, Players[i].Rating.Mean, Players[i].Rating.StandardDeviation);
+                ratings[i] = new RatingSystemRating(Players[i].IndividualID, Players[i].Rating.Mean, Players[i].Rating.StandardDeviation, Players[i].IndividualMatchResults);
             }
 
             return ratings;
@@ -190,16 +191,30 @@ namespace Evaluators.RatingSystems
         public Player Player { get; set; }
         public Rating Rating { get; set; }
 
+        public List<IndividualMatchResult> IndividualMatchResults { get; set; }
+
         public TrueSkillPlayer(int IndividualId, Player player, Rating rating)
         {
             IndividualID = IndividualId;
             Player = player;
             Rating = rating;
+            IndividualMatchResults = new List<IndividualMatchResult>();
         }
 
         public void UpdateRating(Rating newRating)
         {
             Rating = newRating;
+        }
+
+        public void AddIndividualMatchResult(string matchName, IndividualFitness individualFitness)
+        {
+            IndividualMatchResults.Add(new IndividualMatchResult()
+            {
+                MatchName = matchName,
+                Value = individualFitness.Value,
+                IndividualValues = individualFitness.IndividualValues,
+                OpponentsIDs = new int[] { } // TODO Add support in the future
+            });
         }
     }
 }

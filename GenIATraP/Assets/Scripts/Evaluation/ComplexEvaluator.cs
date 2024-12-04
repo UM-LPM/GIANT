@@ -45,7 +45,7 @@ namespace Evaluators
             // Return the final population fitnesses and BTS node call frequencies
             return new CoordinatorEvaluationResult()
             {
-                IndividualFitnesses = GetEvaluationResults(individuals)
+                IndividualFitnesses = GetEvaluationResults()
             };
         }
 
@@ -127,21 +127,23 @@ namespace Evaluators
             // TODO Add error reporting here
         }
 
-        public FinalIndividualFitness[] GetEvaluationResults(Individual[] individuals)
+        public FinalIndividualFitness[] GetEvaluationResults()
         {
             RatingSystemRating[] finalRaitings = RatingSystem.GetFinalRatings();
             FinalIndividualFitnessWrapper finalIndividualFitnessWrapper = new FinalIndividualFitnessWrapper();
 
             for (int i = 0; i < finalRaitings.Length; i++)
             {
-                IndividualFitness individualFitness = new IndividualFitness()
+                // New Version
+                FinalIndividualFitness finalIndividualFitness = new FinalIndividualFitness
                 {
                     IndividualID = finalRaitings[i].IndividualID,
                     Value = (float)-finalRaitings[i].Mean,
+                    IndividualMatchResults = finalRaitings[i].IndividualMatchResults,
                     AdditionalValues = new Dictionary<string, float>() { { "Rating", (float)-finalRaitings[i].Mean }, { "StdDeviation", (float)finalRaitings[i].StandardDeviation } }
                 };
 
-                finalIndividualFitnessWrapper.UpdateFinalIndividualFitnesses(individualFitness, "Final");
+                finalIndividualFitnessWrapper.AddFinalIndividualFitness(finalIndividualFitness);
             }
 
             return finalIndividualFitnessWrapper.FinalIndividualFitnesses.ToArray();
