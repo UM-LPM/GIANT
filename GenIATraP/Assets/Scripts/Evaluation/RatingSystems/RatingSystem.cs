@@ -23,6 +23,10 @@ namespace Evaluators.RatingSystems
 
         public List<IndividualMatchResult> IndividualMatchResults { get; set; }
 
+        public RatingSystemRating(int individualId, double mean, double standardDeviation)
+            : this(individualId, mean, standardDeviation, new List<IndividualMatchResult>())
+        { }
+
         public RatingSystemRating(int individualId, double mean, double standardDeviation, List<IndividualMatchResult> individualMatchResults)
         {
             IndividualID = individualId;
