@@ -4,7 +4,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 {
     public class Failure : DecoratorNode
     {
-        public Failure(Guid guid, string name, List<WebAPI.Models.Property>? properties, WebAPI.Models.Position? position)
+        public Failure(Guid guid, string name, List<WebAPI.Models.Property>? properties, Position? position)
             : base(guid, name, properties, position)
         {
 

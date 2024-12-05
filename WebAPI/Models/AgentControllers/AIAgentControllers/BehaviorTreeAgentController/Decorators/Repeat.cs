@@ -8,7 +8,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
         public bool restartOnSuccess = true;
         public bool restartOnFailure = false;
 
-        public Repeat(Guid guid, string name, List<WebAPI.Models.Property>? properties, WebAPI.Models.Position? position)
+        public Repeat(Guid guid, string name, List<WebAPI.Models.Property>? properties, Position? position)
             : base(guid, name, properties, position)
         {
 

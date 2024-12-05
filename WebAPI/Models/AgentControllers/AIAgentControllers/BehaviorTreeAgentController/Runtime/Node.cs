@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using UnityEngine;
 using WebAPI.Models;
 
 namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
@@ -15,7 +16,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
         public State state = State.Running;
         public bool started;
         public string guid;
-        public Position position;
+        public UnityEngine.Vector2 position;
         public object? context; // Always null
         public Blackboard blackboard;
         public int callFrequencyCount;
@@ -32,11 +33,13 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
             this.callFrequencyCount = 0;
             this.description = "";
             this.drawGizmos = false;
-            this.position = position != null ? position : new Position(0,0);
+            this.position = position != null ? new UnityEngine.Vector2(position.X, position.Y) : new UnityEngine.Vector2(0,0);
 
             MapProperties(properties);
         }
 
         protected abstract void MapProperties(List<Property>? properties);
+
+        public abstract void AddChild(Node child);
     }
 }

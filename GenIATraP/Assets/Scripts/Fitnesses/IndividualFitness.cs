@@ -99,7 +99,7 @@ namespace Fitnesses
             AdditionalValues = new Dictionary<string, float>();
         }
 
-        public void AddIndividualFitness(IndividualFitness individualFitness, string matchName)
+        public void AddIndividualFitness(IndividualFitness individualFitness, string matchName, int[] opponentIDs)
         {
             if (IndividualID == -1)
             {
@@ -117,7 +117,7 @@ namespace Fitnesses
                 MatchName = matchName,
                 Value = individualFitness.Value,
                 IndividualValues = individualFitness.IndividualValues,
-                OpponentsIDs = new int[] { } // TODO Add support in the future
+                OpponentsIDs = opponentIDs
             });
 
             // Update additional values
@@ -152,18 +152,18 @@ namespace Fitnesses
             FinalIndividualFitnesses = new List<FinalIndividualFitness>();
         }
 
-        public void UpdateFinalIndividualFitnesses(IndividualFitness individualFitness, string matchName)
+        public void UpdateFinalIndividualFitnesses(IndividualFitness individualFitness, string matchName, int[] opponentIDs)
         {
             FinalIndividualFitness finalIndividualFitness = FinalIndividualFitnesses.Find(x => x.IndividualID == individualFitness.IndividualID);
             if (finalIndividualFitness == null)
             {
                 finalIndividualFitness = new FinalIndividualFitness();
-                finalIndividualFitness.AddIndividualFitness(individualFitness, matchName);
+                finalIndividualFitness.AddIndividualFitness(individualFitness, matchName, opponentIDs);
                 FinalIndividualFitnesses.Add(finalIndividualFitness);
             }
             else
             {
-                finalIndividualFitness.AddIndividualFitness(individualFitness, matchName);
+                finalIndividualFitness.AddIndividualFitness(individualFitness, matchName, opponentIDs);
             }
         }
 

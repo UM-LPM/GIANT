@@ -14,7 +14,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
     {
         public MoveForwardDirection moveForwardDirection = MoveForwardDirection.Random;
 
-        public MoveForward(Guid guid, string name, List<WebAPI.Models.Property>? properties, WebAPI.Models.Position? position)
+        public MoveForward(Guid guid, string name, List<WebAPI.Models.Property>? properties, Position? position)
             : base(guid, name, properties, position)
         {
 

@@ -14,7 +14,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
     {
         public RotateDirection rotateDirection = RotateDirection.Random;
 
-        public Rotate(Guid guid, string name, List<WebAPI.Models.Property>? properties, WebAPI.Models.Position? position)
+        public Rotate(Guid guid, string name, List<WebAPI.Models.Property>? properties, Position? position)
             : base(guid, name, properties, position)
         {
 
