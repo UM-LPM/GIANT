@@ -14,7 +14,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
     {
         public MoveSideDirection moveSideDirection = MoveSideDirection.Random;
 
-        public MoveSide(Guid guid, string name, List<WebAPI.Models.Property>? properties, WebAPI.Models.Position? position)
+        public MoveSide(Guid guid, string name, List<WebAPI.Models.Property>? properties, Position? position)
             : base(guid, name, properties, position)
         {
 

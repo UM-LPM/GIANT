@@ -6,7 +6,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController.Robost
     {
         public RotateDirection rotateDirection = RotateDirection.Random;
 
-        public RotateTurret(Guid guid, string name, List<WebAPI.Models.Property>? properties, WebAPI.Models.Position? position)
+        public RotateTurret(Guid guid, string name, List<WebAPI.Models.Property>? properties, Position? position)
             : base(guid, name, properties, position)
         {
 

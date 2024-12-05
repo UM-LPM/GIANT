@@ -104,30 +104,26 @@ namespace Evaluators.RatingSystems
                     {
                         TrueSkillPlayer trueSkillPlayer = GetPlayer(match.TeamFitnesses[i].IndividualFitness[j].IndividualID);
                         trueSkillPlayer.UpdateRating(newRatings[GetPlayer(match.TeamFitnesses[i].IndividualFitness[j].IndividualID).Player]);
-                        trueSkillPlayer.AddIndividualMatchResult(match.MatchName, match.TeamFitnesses[i].IndividualFitness[j]);
+                        
+                        // Get opponentIDs
+                        List<int> opponentIDs = new List<int>();
+                        for (int k = 0; k < match.TeamFitnesses.Count; k++)
+                        {
+                            if (k != i)
+                            {
+                                foreach (IndividualFitness individualFitness in match.TeamFitnesses[k].IndividualFitness)
+                                {
+                                    if ((!opponentIDs.Contains(individualFitness.IndividualID)) && (individualFitness.IndividualID != match.TeamFitnesses[i].IndividualFitness[j].IndividualID))
+                                        opponentIDs.Add(individualFitness.IndividualID);
+                                }
+                            }
+                        }
+
+                        trueSkillPlayer.AddIndividualMatchResult(match.MatchName, match.TeamFitnesses[i].IndividualFitness[j], opponentIDs.ToArray());
                     }
                 }
             }
         }
-
-        /*public static int[] GetFitnessOrder(float[] fitnesses)
-        {
-            // Create an array of indices and sort them based on the fitness values
-            int[] indices = Enumerable.Range(0, fitnesses.Length)
-                                      .OrderBy(i => fitnesses[i]) // Ascending order
-                                      .ToArray();
-
-            int[] orders = new int[fitnesses.Length];
-
-            // Assign rank (1-based) to each index based on sorted order
-            for (int rank = 0; rank < indices.Length; rank++)
-            {
-                int originalIndex = indices[rank];
-                orders[originalIndex] = rank + 1;
-            }
-
-            return orders;
-        }*/
 
         public static int[] GetFitnessOrder(float[] fitnesses)
         {
@@ -206,15 +202,15 @@ namespace Evaluators.RatingSystems
             Rating = newRating;
         }
 
-        public void AddIndividualMatchResult(string matchName, IndividualFitness individualFitness)
+        public void AddIndividualMatchResult(string matchName, IndividualFitness individualFitness, int[] opponentIDs)
         {
             IndividualMatchResults.Add(new IndividualMatchResult()
             {
                 MatchName = matchName,
                 Value = individualFitness.Value,
                 IndividualValues = individualFitness.IndividualValues,
-                OpponentsIDs = new int[] { } // TODO Add support in the future
-            });
+                OpponentsIDs = opponentIDs
+            }); ;
         }
     }
 }

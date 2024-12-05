@@ -6,7 +6,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
     {
         public Node child;
 
-        public RootNode(Guid guid, string name, List<WebAPI.Models.Property>? properties, WebAPI.Models.Position? position)
+        public RootNode(Guid guid, string name, List<WebAPI.Models.Property>? properties, Position? position)
             : base(guid, name, properties, position)
         {
             child = null;
@@ -17,6 +17,11 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
             if (properties != null)
             {
             }
+        }
+
+        public override void AddChild(Node child)
+        {
+            this.child = child;
         }
     }
 }

@@ -25,41 +25,42 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
                 return;
             }
 
-            MapNodes(this.RootNode, treeModel.RootNode);
-
-            
-            /*this.RootNode = new RootNode(treeModel.RootNode.Guid, treeModel.RootNode.Name, treeModel.RootNode.Properties, treeModel.RootNode.NodePosition);
-
-            // Map all nodes to the BehaviorTreeAgentController
-            if(treeModel.RootNode.Children == null || treeModel.RootNode.Children.Count == 0)
-            {
-                throw new Exception("Root node has no children");
-            }
-
-            MapNodes(treeModel.RootNode.Children[0]);
-
-            // TODO Add Map Blackboard items*/
+            MapNodes(treeModel.RootNode);
         }
 
-        private void MapNodes(Node node, TreeModelNode treeModelNode)
+        private void MapNodes(TreeModelNode treeModelNode)
         {
             if (treeModelNode == null)
             {
                 return;
             }
 
-            node = CreateNode(treeModelNode);
-
-            if (treeModelNode.Children != null)
+            // Create a queue of nodes to process
+            Queue<NodeModelToProcess> nodeModelsToProcessQueue = new Queue<NodeModelToProcess>();
+            nodeModelsToProcessQueue.Enqueue(new NodeModelToProcess() { Node = null, TreeModelNode = treeModelNode});
+            
+            while(nodeModelsToProcessQueue.Count > 0)
             {
-                foreach (var child in treeModelNode.Children)
+                NodeModelToProcess nodesModelToProcess = nodeModelsToProcessQueue.Dequeue();
+
+                Node child = CreateNode(nodesModelToProcess.Node, nodesModelToProcess.TreeModelNode);
+
+                if(this.RootNode == null)
                 {
-                    MapNodes(node, child);
+                    this.RootNode = child;
+                }
+
+                if (nodesModelToProcess.TreeModelNode.Children != null)
+                {
+                    foreach (TreeModelNode childTreeModelNode in nodesModelToProcess.TreeModelNode.Children)
+                    {
+                        nodeModelsToProcessQueue.Enqueue(new NodeModelToProcess() { Node = child, TreeModelNode = childTreeModelNode });
+                    }
                 }
             }
         }
 
-        private Node CreateNode(TreeModelNode treeModelNode)
+        private Node CreateNode(Node parent, TreeModelNode treeModelNode)
         {
             Node node;
 
@@ -84,8 +85,11 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
                 case "Repeater":
                     node = new Repeat(treeModelNode.Guid, treeModelNode.Name, treeModelNode.Properties, treeModelNode.NodePosition);
                     break;
+                case "Encapsulator":
+                    node = new Encapsulator(treeModelNode.Guid, treeModelNode.Name, treeModelNode.Properties, treeModelNode.NodePosition);
+                    break;
                 // Composites
-                case "Sequence":
+                case "Sequencer":
                     node = new Sequencer(treeModelNode.Guid, treeModelNode.Name, treeModelNode.Properties, treeModelNode.NodePosition);
                     break;
                 case "Selector":
@@ -105,13 +109,13 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
                     node = new AmmoLevelBellow(treeModelNode.Guid, treeModelNode.Name, treeModelNode.Properties, treeModelNode.NodePosition);
                     break;
                 case "ShieldLevelBellow":
-                    node = new AmmoLevelBellow(treeModelNode.Guid, treeModelNode.Name, treeModelNode.Properties, treeModelNode.NodePosition);
+                    node = new ShieldLevelBellow(treeModelNode.Guid, treeModelNode.Name, treeModelNode.Properties, treeModelNode.NodePosition);
                     break;
                 case "HealthLevelBellow":
-                    node = new AmmoLevelBellow(treeModelNode.Guid, treeModelNode.Name, treeModelNode.Properties, treeModelNode.NodePosition);
+                    node = new HealthLevelBellow(treeModelNode.Guid, treeModelNode.Name, treeModelNode.Properties, treeModelNode.NodePosition);
                     break;
                 case "RayHitObject":
-                    node = new AmmoLevelBellow(treeModelNode.Guid, treeModelNode.Name, treeModelNode.Properties, treeModelNode.NodePosition);
+                    node = new RayHitObject(treeModelNode.Guid, treeModelNode.Name, treeModelNode.Properties, treeModelNode.NodePosition);
                     break;
                 case "GridCellContainsObject":
                     node = new GridCellContainsObject(treeModelNode.Guid, treeModelNode.Name, treeModelNode.Properties, treeModelNode.NodePosition);
@@ -121,7 +125,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
                     node = new MoveForward(treeModelNode.Guid, treeModelNode.Name, treeModelNode.Properties, treeModelNode.NodePosition);
                     break;
                 case "MoveSide":
-                    node = new MoveForward(treeModelNode.Guid, treeModelNode.Name, treeModelNode.Properties, treeModelNode.NodePosition);
+                    node = new MoveSide(treeModelNode.Guid, treeModelNode.Name, treeModelNode.Properties, treeModelNode.NodePosition);
                     break;
                 case "Rotate":
                     node = new Rotate(treeModelNode.Guid, treeModelNode.Name, treeModelNode.Properties, treeModelNode.NodePosition);
@@ -140,7 +144,18 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 
             Nodes.Add(node);
 
+            if(parent != null)
+            {
+                parent.AddChild(node);
+            }
+
             return node;
         }
+    }
+
+    class NodeModelToProcess
+    {
+        public Node Node { get; set; }
+        public TreeModelNode TreeModelNode { get; set; }
     }
 }

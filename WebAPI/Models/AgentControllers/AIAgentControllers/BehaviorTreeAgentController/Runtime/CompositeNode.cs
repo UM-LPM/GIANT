@@ -15,5 +15,10 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
         protected override void MapProperties(List<Property>? properties)
         {
         }
+
+        public override void AddChild(Node child)
+        {
+            children.Add(child);
+        }
     }
 }

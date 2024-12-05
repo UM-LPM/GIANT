@@ -5,7 +5,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 {
     public class Succeed : DecoratorNode
     {
-        public Succeed(Guid guid, string name, List<Property>? properties, Position position)
+        public Succeed(Guid guid, string name, List<Property>? properties, Position? position)
             : base(guid, name, properties, position)
         {
         }

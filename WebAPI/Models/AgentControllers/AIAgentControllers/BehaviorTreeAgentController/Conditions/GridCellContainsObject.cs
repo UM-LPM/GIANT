@@ -8,7 +8,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
         public int gridPositionX;
         public int gridPositionY;
 
-        public GridCellContainsObject(Guid guid, string name, List<WebAPI.Models.Property>? properties, WebAPI.Models.Position? position)
+        public GridCellContainsObject(Guid guid, string name, List<WebAPI.Models.Property>? properties, Position? position)
             : base(guid, name, properties, position)
         {
 

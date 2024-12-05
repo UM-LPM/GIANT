@@ -72,7 +72,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
         public AgentSideAdvanced side;
         public int rayIndex;
 
-        public RayHitObject(Guid guid, string name, List<WebAPI.Models.Property>? properties, WebAPI.Models.Position? position)
+        public RayHitObject(Guid guid, string name, List<WebAPI.Models.Property>? properties, Position? position)
             : base(guid, name, properties, position)
         {
 
