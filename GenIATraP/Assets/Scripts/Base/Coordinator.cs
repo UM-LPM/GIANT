@@ -308,21 +308,28 @@ namespace Base
         /// <returns>lastEvalPopRatings or NULL if every value in lastEvalPopRatings is 0</returns>
         private RatingSystemRating[] PrepareLastEvalPopRatings(IndividualFitness[] lastEvalIndividualFitnesses)
         {
-            if (lastEvalIndividualFitnesses == null)
+            if (lastEvalIndividualFitnesses == null || lastEvalIndividualFitnesses.Length == 0)
             {
                 return null;
             }
-
-            throw new NotImplementedException();
-            /*foreach (RatingSystemRating rating in lastEvalPopRatings)
+            
+            RatingSystemRating[] ratingSystemRatings = new RatingSystemRating[lastEvalIndividualFitnesses.Length];
+            for (int i = 0; i < lastEvalIndividualFitnesses.Length; i++)
             {
-                if (rating.Mean != 0)
-                {
-                    return lastEvalPopRatings;
-                }
-            }*/
+                float rating;
+                float stdDeviation;
 
-            return null;
+                if(lastEvalIndividualFitnesses[i].AdditionalValues == null 
+                    || !lastEvalIndividualFitnesses[i].AdditionalValues.TryGetValue("Rating", out rating) 
+                    || !lastEvalIndividualFitnesses[i].AdditionalValues.TryGetValue("StdDeviation", out stdDeviation))
+                {
+                    throw new Exception("Rating or StdDeviation not found in AdditionalValues");
+                }
+
+                ratingSystemRatings[i] = new RatingSystemRating(lastEvalIndividualFitnesses[i].IndividualID, rating, stdDeviation);
+            }
+
+            return ratingSystemRatings;
         }
     }
 
