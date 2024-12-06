@@ -14,13 +14,29 @@ namespace Problems.Robostrike
         public MissileSpawnPointComponent MissileSpawnPoint { get; set; }
         public float NextShootTime { get; set; }
 
-        public Vector3 LastSectorPosition { get; set; }
-
         public HealthComponent HealthComponent { get; set; }
         public ShieldComponent ShieldComponent { get; set; }
         public AmmoComponent AmmoComponent { get; set; }
 
         private AgentStatBars StatBars;
+
+        // Agent fitness variables
+        public int SectorsExplored { get; set; }
+
+        public int HealtPowerUpsCollected { get; set; }
+        public int ShieldPowerUpsCollected { get; set; }
+        public int AmmoPowerUpsCollected { get; set; }
+
+        public int MissilesFired { get; set; }
+        public int MissilesHitOpponent { get; set; }
+
+        public int HitByOpponentMissiles { get; set; }
+
+        public int MaxSurvivalTime { get; set; }
+        public int CurrentSurvivalTime { get; set; }
+        public int OpponentsDestroyed { get; set; }
+
+        public int NumOfSpawns { get; set; }
 
         protected override void DefineAdditionalDataOnAwake()
         {
@@ -160,6 +176,7 @@ namespace Problems.Robostrike
             if (AmmoComponent.Ammo > 0)
             {
                 AmmoComponent.Ammo--;
+                MissilesFired++;
                 UpdatetStatBars();
             }
         }
@@ -197,6 +214,25 @@ namespace Problems.Robostrike
         {
             if(StatBars != null)
                 StatBars.SetEnvironmentColor(color);
+        }
+
+        public void MissileHitOpponent()
+        {
+            MissilesHitOpponent++;
+        }
+
+        public void HitByOpponentMissile()
+        {
+            HitByOpponentMissiles++;
+        }
+
+        public void ResetSurvivalTime()
+        {
+            if(CurrentSurvivalTime > MaxSurvivalTime)
+            {
+                MaxSurvivalTime = CurrentSurvivalTime;
+            }
+            CurrentSurvivalTime = 0;
         }
     }
 }

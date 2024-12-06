@@ -105,6 +105,8 @@ namespace Problems.Robostrike
 
                         // Update list
                         agents.Add(agent);
+
+                        (agent as RobostrikeAgentComponent).NumOfSpawns++;
                     }
                 }
             }
@@ -143,6 +145,8 @@ namespace Problems.Robostrike
 
             agent.transform.position = respawnPos;
             agent.transform.rotation = rotation;
+
+            (agent as RobostrikeAgentComponent).NumOfSpawns++;
         }
 
         void ConfigureAgentSprites(EnvironmentControllerBase environmentController, GameObject agentGameObject)

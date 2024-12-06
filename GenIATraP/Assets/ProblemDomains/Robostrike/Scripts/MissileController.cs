@@ -51,7 +51,8 @@ namespace Problems.Robostrike
                     }
                     else
                     {
-                        RobostrikeEnvironmentController.MissileMissedAgent(missileComponent);
+                        // TODO Remove this
+                        //RobostrikeEnvironmentController.MissileMissedAgent(missileComponent);
                     }
 
                     missileComponent.MissileHitTarget = true;

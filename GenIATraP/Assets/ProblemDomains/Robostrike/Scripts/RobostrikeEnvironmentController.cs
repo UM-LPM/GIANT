@@ -56,7 +56,21 @@ namespace Problems.Robostrike
         private List<PowerUpComponent> PowerUps;
 
         // Sectors
-        SectorComponent[] Sectors;
+        private SectorComponent[] Sectors;
+
+        // Fitness calculation
+        private float sectorExplorationFitness;
+        private float healthPowerUpsFitness;
+        private float ammoPowerUpsFitness;
+        private float shieldPowerUpsFitness;
+        private float allPossibleMissilesFired;
+        private float missilesFired;
+        private float missilesFiredAccuracy;
+        private float survivalBonus;
+        private int numOfOpponents;
+        private float opponentsDestroyedBonus;
+        private int numOfFiredOpponentMissiles;
+        private float damageTakenPenalty;
 
         protected override void DefineAdditionalDataOnPostAwake()
         {
@@ -113,7 +127,13 @@ namespace Problems.Robostrike
                 CheckAgentsPickedPowerUps();
                 MissileController.UpdateMissilePosAndCheckForColls();
                 CheckAgentsExploration();
+                UpdateAgentsSurvivalTime();
             }
+        }
+
+        protected override void OnPreFinishGame()
+        {
+            SetAgentsFitness();
         }
 
         public void ReadParamsFromMainConfiguration()
@@ -299,14 +319,16 @@ namespace Problems.Robostrike
             bool operationSuccess = ((RobostrikeAgentComponent)agent).SetHealth(HealthPowerUpValue);
             if (operationSuccess)
             {
+                (agent as RobostrikeAgentComponent).HealtPowerUpsCollected++;
+                // TODO Remove this
                 //Update agent fitness
-                agent.AgentFitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.AgentPickedUpHealthBoxPowerUp.ToString()], RobostrikeFitness.FitnessKeys.AgentPickedUpHealthBoxPowerUp.ToString());
+                //agent.AgentFitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.AgentPickedUpHealthBoxPowerUp.ToString()], RobostrikeFitness.FitnessKeys.AgentPickedUpHealthBoxPowerUp.ToString());
 
                 // Spawn new health box
                 if (HealthBoxPrefab != null)
                 {
                     PowerUps.Remove(replacedPowerUpComponent);
-                    PowerUpSpawner.SpawnPowerUp<PowerUpComponent>(this, HealthBoxPrefab, PowerUps.Select(p => p.transform.position).ToList());
+                    PowerUps.Add(PowerUpSpawner.SpawnPowerUp<PowerUpComponent>(this, HealthBoxPrefab, PowerUps.Select(p => p.transform.position).ToList()));
                 }
                 (agent as RobostrikeAgentComponent).UpdatetStatBars();
             }
@@ -318,14 +340,16 @@ namespace Problems.Robostrike
             bool operationSuccess = ((RobostrikeAgentComponent)agent).SetShield(ShieldPowerUpValue);
             if (operationSuccess)
             {
+                (agent as RobostrikeAgentComponent).ShieldPowerUpsCollected++;
+                // TODO Remove this
                 //Update agent fitness
-                agent.AgentFitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.AgentPickedUpShieldBoxPowerUp.ToString()], RobostrikeFitness.FitnessKeys.AgentPickedUpShieldBoxPowerUp.ToString());
+                //agent.AgentFitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.AgentPickedUpShieldBoxPowerUp.ToString()], RobostrikeFitness.FitnessKeys.AgentPickedUpShieldBoxPowerUp.ToString());
 
                 // Spawn new shield box
                 if (ShieldBoxPrefab != null)
                 {
                     PowerUps.Remove(replacedPowerUpComponent);
-                    PowerUpSpawner.SpawnPowerUp<PowerUpComponent>(this, ShieldBoxPrefab, PowerUps.Select(p => p.transform.position).ToList());
+                    PowerUps.Add(PowerUpSpawner.SpawnPowerUp<PowerUpComponent>(this, ShieldBoxPrefab, PowerUps.Select(p => p.transform.position).ToList()));
                 }
                 (agent as RobostrikeAgentComponent).UpdatetStatBars();
             }
@@ -338,14 +362,16 @@ namespace Problems.Robostrike
             bool operationSuccess = ((RobostrikeAgentComponent)agent).SetAmmo(AmmoPowerUpValue);
             if (operationSuccess)
             {
+                (agent as RobostrikeAgentComponent).AmmoPowerUpsCollected++;
+                // TODO Remove this
                 //Update agent fitness
-                agent.AgentFitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.AgentPickedUpAmmoBoxPowerUp.ToString()], RobostrikeFitness.FitnessKeys.AgentPickedUpAmmoBoxPowerUp.ToString());
+                //agent.AgentFitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.AgentPickedUpAmmoBoxPowerUp.ToString()], RobostrikeFitness.FitnessKeys.AgentPickedUpAmmoBoxPowerUp.ToString());
 
                 // Spawn new ammo box
                 if (AmmoBoxPrefab != null)
                 {
                     PowerUps.Remove(replacedPowerUpComponent);
-                    PowerUpSpawner.SpawnPowerUp<PowerUpComponent>(this, AmmoBoxPrefab, PowerUps.Select(p => p.transform.position).ToList());
+                    PowerUps.Add(PowerUpSpawner.SpawnPowerUp<PowerUpComponent>(this, AmmoBoxPrefab, PowerUps.Select(p => p.transform.position).ToList()));
                 }
                 (agent as RobostrikeAgentComponent).UpdatetStatBars();
             }
@@ -366,40 +392,40 @@ namespace Problems.Robostrike
                         Vector3 sectorPosition = sector.transform.position;
                         if (IsAgentInSector(agent.transform.position, sector.gameObject.GetComponent<Collider2D>()))
                         {
-                            if (agent.LastSectorPosition == Vector3.zero)
+                            if (agent.LastSectorPosition == null || agent.LastSectorPosition != sectorPosition)
                             {
-                                // Agent explored new sector
-                                if (RobostrikeFitness.FitnessValues[RobostrikeFitness.Keys[(int)RobostrikeFitness.FitnessKeys.AgentExploredSector]] != 0)
+                                if (!agent.LastKnownSectorPositions.Contains(sectorPosition))
                                 {
-                                    agent.AgentFitness.UpdateFitness((RobostrikeFitness.FitnessValues[RobostrikeFitness.Keys[(int)RobostrikeFitness.FitnessKeys.AgentExploredSector]]), RobostrikeFitness.FitnessKeys.AgentExploredSector.ToString());
-                                }
-
-                                agent.LastKnownPositions.Add(sectorPosition);
-                                agent.LastSectorPosition = sector.transform.position;
-                            }
-                            else
-                            {
-                                if (agent.LastSectorPosition != sectorPosition)
-                                {
-                                    if (!agent.LastKnownPositions.Contains(sectorPosition))
+                                    // Agent explored new sector
+                                    agent.SectorsExplored++;
+                                    // TODO Remove
+                                    /*// Agent explored new sector
+                                    if (RobostrikeFitness.FitnessValues[RobostrikeFitness.Keys[(int)RobostrikeFitness.FitnessKeys.AgentExploredSector]] != 0)
                                     {
-                                        // Agent explored new sector
-                                        if (RobostrikeFitness.FitnessValues[RobostrikeFitness.Keys[(int)RobostrikeFitness.FitnessKeys.AgentExploredSector]] != 0)
-                                        {
-                                            agent.AgentFitness.UpdateFitness((RobostrikeFitness.FitnessValues[RobostrikeFitness.Keys[(int)RobostrikeFitness.FitnessKeys.AgentExploredSector]]), RobostrikeFitness.FitnessKeys.AgentExploredSector.ToString());
-                                        }
+                                        agent.AgentFitness.UpdateFitness((RobostrikeFitness.FitnessValues[RobostrikeFitness.Keys[(int)RobostrikeFitness.FitnessKeys.AgentExploredSector]]), RobostrikeFitness.FitnessKeys.AgentExploredSector.ToString());
+                                    }*/
 
-                                        agent.LastKnownPositions.Add(sectorPosition);
-                                    }
-
-                                    agent.LastSectorPosition = sector.transform.position;
+                                    agent.LastKnownSectorPositions.Add(sectorPosition);
                                 }
+
+                                agent.LastSectorPosition = sector.transform.position;
                             }
 
                             // Agent can only be in one sector at once
                             break;
                         }
                     }
+                }
+            }
+        }
+
+        private void UpdateAgentsSurvivalTime()
+        {
+            foreach (RobostrikeAgentComponent agent in Agents)
+            {
+                if (agent.gameObject.activeSelf)
+                {
+                    agent.CurrentSurvivalTime++;
                 }
             }
         }
@@ -416,7 +442,11 @@ namespace Problems.Robostrike
 
         public void TankHit(MissileComponent missile, AgentComponent hitAgent)
         {
-            UpdateFitnesses(missile, hitAgent);
+            (missile.Parent as RobostrikeAgentComponent).MissileHitOpponent();
+            (hitAgent as RobostrikeAgentComponent).HitByOpponentMissile();
+            // TODO Remove this
+            //UpdateFitnesses(missile, hitAgent);
+
             UpdateAgentHealth(missile, hitAgent as RobostrikeAgentComponent);
         }
 
@@ -449,13 +479,14 @@ namespace Problems.Robostrike
                         CheckEndingState();
                         break;
                     case RobostrikeGameScenarioType.Deathmatch:
-                        missile.Parent.AgentFitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.AgentDestroyedBonus.ToString()], RobostrikeFitness.FitnessKeys.AgentDestroyedBonus.ToString());
-                        hitAgent.AgentFitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.DeathPenalty.ToString()], RobostrikeFitness.FitnessKeys.DeathPenalty.ToString());
+                        // TODO Remove this
+                        //missile.Parent.AgentFitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.AgentDestroyedBonus.ToString()], RobostrikeFitness.FitnessKeys.AgentDestroyedBonus.ToString());
+                        //hitAgent.AgentFitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.DeathPenalty.ToString()], RobostrikeFitness.FitnessKeys.DeathPenalty.ToString());
+                        (missile.Parent as RobostrikeAgentComponent).OpponentsDestroyed++;
 
-                        hitAgent.LastKnownPositions.Clear(); 
-                        hitAgent.LastSectorPosition = Vector3.zero;
-                        missile.Parent.LastKnownPositions.Clear();
-                        (missile.Parent as RobostrikeAgentComponent).LastSectorPosition = Vector3.zero;
+                        hitAgent.LastSectorPosition = null;
+
+                        rba.ResetSurvivalTime();
 
                         ResetAgent(hitAgent);
 
@@ -513,6 +544,84 @@ namespace Problems.Robostrike
             if (GetNumOfActiveAgents() == 1)
             {
                 FinishGame();
+            }
+        }
+
+        private void SetAgentsFitness()
+        {
+            foreach (RobostrikeAgentComponent agent in Agents)
+            {
+                Debug.Log("========================================");
+                Debug.Log("Agent: " + agent.name);
+                // Sector exploration
+                Debug.Log("Sectors explored: " + agent.SectorsExplored + " / " + Sectors.Length + " =");
+                sectorExplorationFitness = agent.SectorsExplored / (float)Sectors.Length;
+                sectorExplorationFitness = (float)Math.Round(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.SectorExploration.ToString()] * sectorExplorationFitness, 4);
+                agent.AgentFitness.UpdateFitness(sectorExplorationFitness, RobostrikeFitness.FitnessKeys.SectorExploration.ToString());
+
+                // Health powerUps
+                Debug.Log("Health powerUps: " + agent.HealtPowerUpsCollected + " / " + PowerUpSpawner.HealthBoxSpawned + " =");
+                healthPowerUpsFitness = agent.HealtPowerUpsCollected / (float)PowerUpSpawner.HealthBoxSpawned;
+                healthPowerUpsFitness = (float)Math.Round(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.PowerUp_Pickup_Health.ToString()] * healthPowerUpsFitness, 4);
+                agent.AgentFitness.UpdateFitness(healthPowerUpsFitness, RobostrikeFitness.FitnessKeys.PowerUp_Pickup_Health.ToString());
+
+                // Ammo powerUps
+                Debug.Log("Ammo powerUps: " + agent.AmmoPowerUpsCollected + " / " + PowerUpSpawner.AmmoBoxSpawned + " =");
+                ammoPowerUpsFitness = agent.AmmoPowerUpsCollected / (float)PowerUpSpawner.AmmoBoxSpawned;
+                ammoPowerUpsFitness = (float)Math.Round(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.PowerUp_Pickup_Ammo.ToString()] * ammoPowerUpsFitness, 4);
+                agent.AgentFitness.UpdateFitness(ammoPowerUpsFitness, RobostrikeFitness.FitnessKeys.PowerUp_Pickup_Ammo.ToString());
+
+                // Shield powerUps
+                Debug.Log("Shield powerUps: " + agent.ShieldPowerUpsCollected + " / " + PowerUpSpawner.ShieldBoxSpawned + " =");
+                shieldPowerUpsFitness = agent.ShieldPowerUpsCollected / (float)PowerUpSpawner.ShieldBoxSpawned;
+                shieldPowerUpsFitness = (float)Math.Round(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.PowerUp_Pickup_Shield.ToString()] * shieldPowerUpsFitness, 4);
+                agent.AgentFitness.UpdateFitness(shieldPowerUpsFitness, RobostrikeFitness.FitnessKeys.PowerUp_Pickup_Shield.ToString());
+
+                // Missiles fired
+                allPossibleMissilesFired = (CurrentSimulationSteps * Time.fixedDeltaTime) / MissileShootCooldown;
+                Debug.Log("Missiles fired: " + agent.MissilesFired + " / " + allPossibleMissilesFired + " =");
+                missilesFired = agent.MissilesFired / allPossibleMissilesFired;
+                missilesFired = (float)Math.Round(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.MissilesFired.ToString()] * missilesFired, 4);
+                agent.AgentFitness.UpdateFitness(missilesFired, RobostrikeFitness.FitnessKeys.MissilesFired.ToString());
+
+                // Missiles fired accuracy
+                Debug.Log("Missiles fired accuracy: " + agent.MissilesHitOpponent + " / " + agent.MissilesFired + " =");
+                if (agent.MissilesFired > 0)
+                {
+                    missilesFiredAccuracy = agent.MissilesHitOpponent / (float)agent.MissilesFired;
+                    missilesFiredAccuracy = (float)Math.Round(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.MissilesFiredAccuracy.ToString()] * missilesFiredAccuracy, 4);
+                    agent.AgentFitness.UpdateFitness(missilesFiredAccuracy, RobostrikeFitness.FitnessKeys.MissilesFiredAccuracy.ToString());
+                }
+
+                // Survival bonus
+                agent.ResetSurvivalTime();
+
+                Debug.Log("Survival bonus: " + agent.MaxSurvivalTime + " / " + CurrentSimulationSteps + " =");
+                survivalBonus = agent.MaxSurvivalTime / (float)CurrentSimulationSteps;
+                survivalBonus = (float)Math.Round(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.SurvivalBonus.ToString()] * survivalBonus, 4);
+                agent.AgentFitness.UpdateFitness(survivalBonus, RobostrikeFitness.FitnessKeys.SurvivalBonus.ToString());
+
+                // Opponents destroyed
+                numOfOpponents = Agents.Where(a => a.TeamID != agent.TeamID).Select(a => (a as RobostrikeAgentComponent).NumOfSpawns).Sum();
+                Debug.Log("Opponents destroyed bonus: " + agent.OpponentsDestroyed + " / " + numOfOpponents + " =");
+                if (numOfOpponents > 0)
+                {
+                    opponentsDestroyedBonus = agent.OpponentsDestroyed / (float)numOfOpponents;
+                    opponentsDestroyedBonus = (float)Math.Round(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.OpponentDestroyedBonus.ToString()] * opponentsDestroyedBonus, 4);
+                    agent.AgentFitness.UpdateFitness(opponentsDestroyedBonus, RobostrikeFitness.FitnessKeys.OpponentDestroyedBonus.ToString());
+                }
+
+                // Damage taken
+                numOfFiredOpponentMissiles = Agents.Where(a => a.TeamID != agent.TeamID).Select(a => (a as RobostrikeAgentComponent).MissilesFired).Sum();
+                Debug.Log("Damage taken: " + agent.HitByOpponentMissiles + " / " + numOfFiredOpponentMissiles + " =");
+                if (numOfFiredOpponentMissiles > 0)
+                {
+                    float damageTakenPenalty = agent.HitByOpponentMissiles / (float)numOfFiredOpponentMissiles;
+                    damageTakenPenalty = (float)Math.Round(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.DamageTakenPenalty.ToString()] * damageTakenPenalty, 4);
+                    agent.AgentFitness.UpdateFitness(damageTakenPenalty, RobostrikeFitness.FitnessKeys.DamageTakenPenalty.ToString());
+                }
+
+                Debug.Log("========================================");
             }
         }
 

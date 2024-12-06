@@ -23,7 +23,8 @@ namespace Problems.Robostrike
         {
             if (!MissileHitTarget)
             {
-                RobostrikeEnvironmentController.MissileMissedAgent(this);
+                // TODO Remove this
+                //RobostrikeEnvironmentController.MissileMissedAgent(this);
                 RobostrikeEnvironmentController.MissileController.RemoveMissile(this);
             }
         }
