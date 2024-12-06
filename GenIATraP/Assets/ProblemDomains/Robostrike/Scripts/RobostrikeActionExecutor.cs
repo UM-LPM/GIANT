@@ -115,10 +115,6 @@ namespace Problems.Robostrike
 
                 agent.MissileFired();
 
-                // Update fitness
-                // TODO Remove this
-                //agent.AgentFitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.AgentFiredMissile.ToString()], RobostrikeFitness.FitnessKeys.AgentFiredMissile.ToString());
-
                 // Add missile to missile controller
                 RobostrikeEnvironmentController.MissileController.AddMissile(mc);
             }
