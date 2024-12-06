@@ -13,7 +13,8 @@ namespace Base
         public AgentFitness AgentFitness { get; set; }
         public Vector3 StartPosition { get; set; }
         public Quaternion StartRotation { get; set; }
-        public List<Vector3> LastKnownPositions { get; set; }
+        public Vector3? LastSectorPosition { get; set; }
+        public List<Vector3> LastKnownSectorPositions { get; set; }
         public ActionBuffer ActionBuffer { get; set; }
 
         // New properties
@@ -28,10 +29,12 @@ namespace Base
             AgentFitness = new AgentFitness();
             StartPosition = transform.position;
             StartRotation = transform.rotation;
-            LastKnownPositions = new List<Vector3>
-        {
-            transform.position
-        };
+
+            LastSectorPosition = null;
+            LastKnownSectorPositions = new List<Vector3>
+            {
+                transform.position
+            };
 
             DefineAdditionalDataOnAwake();
         }

@@ -93,7 +93,7 @@ namespace Problems.Dummy
                     }
 
                     // Reset last known positions
-                    agent.LastKnownPositions.Clear();
+                    agent.LastKnownSectorPositions.Clear();
 
                     Targets.Remove(component);
                     Destroy(component.gameObject);
@@ -119,7 +119,7 @@ namespace Problems.Dummy
                             }
 
                             // Add explored sector to the list of explored Sectors
-                            agent.LastKnownPositions.Add(sectorComponent.transform.position);
+                            agent.LastKnownSectorPositions.Add(sectorComponent.transform.position);
                             return;
                         }
                         // Re-explored Sector
@@ -137,7 +137,7 @@ namespace Problems.Dummy
 
         private bool AgentExploredNewSector(DummyAgentComponent agentComponent, SectorComponent sectorComponent)
         {
-            return !agentComponent.LastKnownPositions.Contains(sectorComponent.transform.position);
+            return !agentComponent.LastKnownSectorPositions.Contains(sectorComponent.transform.position);
         }
 
         void ReadParamsFromMainConfiguration()

@@ -17,6 +17,13 @@ namespace Problems.Robostrike
         int counter = 0;
         int maxSpawnPoints = 100;
 
+        public int HealthBoxSpawned { get; set; }
+        public int AmmoBoxSpawned { get; set; }
+        public int ShieldBoxSpawned { get; set; }
+
+        private GameObject obj;
+        PowerUpComponent powerUpComponent;
+
         public override void validateSpawnConditions(EnvironmentControllerBase environmentController)
         {
             RobostrikeEnvironmentController robostrikeEnvironmentController = environmentController as RobostrikeEnvironmentController;
@@ -117,8 +124,26 @@ namespace Problems.Robostrike
             } while (!isFarEnough);
 
             // Instantiate powerup and set layer
-            GameObject obj = Instantiate(powerUpPrefab, spawnPos, rotation, gameObject.transform);
+            obj = Instantiate(powerUpPrefab, spawnPos, rotation, gameObject.transform);
             obj.layer = gameObject.layer;
+
+            // Increase the count of the powerup type by getting the correct component
+            powerUpComponent = obj.GetComponent<PowerUpComponent>();
+            if(powerUpComponent != null)
+            {
+                switch (powerUpComponent.PowerUpType)
+                {
+                    case PowerUpType.Health:
+                        HealthBoxSpawned++;
+                        break;
+                    case PowerUpType.Ammo:
+                        AmmoBoxSpawned++;
+                        break;
+                    case PowerUpType.Shield:
+                        ShieldBoxSpawned++;
+                        break;
+                }
+            }
 
             return obj.GetComponent<T>();
         }
