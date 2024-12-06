@@ -49,11 +49,6 @@ namespace Problems.Robostrike
                     {
                         RobostrikeEnvironmentController.TankHit(missileComponent, otherAgent);
                     }
-                    else
-                    {
-                        // TODO Remove this
-                        //RobostrikeEnvironmentController.MissileMissedAgent(missileComponent);
-                    }
 
                     missileComponent.MissileHitTarget = true;
                     RemoveMissile(missileComponent);

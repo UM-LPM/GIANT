@@ -139,16 +139,6 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
         private void OnSelectionChange() {
             EditorApplication.delayCall += () => {
                 BehaviorTreeAgentController tree = Selection.activeObject as BehaviorTreeAgentController;
-                // TODO Remove this?
-                /*if (!behaviorTreeAgentController) {
-                    if (Selection.activeGameObject) {
-                        BehaviorTreeAgentController runner = Selection.activeGameObject.GetComponent<BehaviorTreeAgentController>();
-                        if (runner) {
-                            behaviorTreeAgentController = runner.Tree;
-                        }
-                    }
-                }*/
-
                 SelectTree(tree);
             };
         }

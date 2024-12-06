@@ -320,9 +320,6 @@ namespace Problems.Robostrike
             if (operationSuccess)
             {
                 (agent as RobostrikeAgentComponent).HealtPowerUpsCollected++;
-                // TODO Remove this
-                //Update agent fitness
-                //agent.AgentFitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.AgentPickedUpHealthBoxPowerUp.ToString()], RobostrikeFitness.FitnessKeys.AgentPickedUpHealthBoxPowerUp.ToString());
 
                 // Spawn new health box
                 if (HealthBoxPrefab != null)
@@ -341,9 +338,6 @@ namespace Problems.Robostrike
             if (operationSuccess)
             {
                 (agent as RobostrikeAgentComponent).ShieldPowerUpsCollected++;
-                // TODO Remove this
-                //Update agent fitness
-                //agent.AgentFitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.AgentPickedUpShieldBoxPowerUp.ToString()], RobostrikeFitness.FitnessKeys.AgentPickedUpShieldBoxPowerUp.ToString());
 
                 // Spawn new shield box
                 if (ShieldBoxPrefab != null)
@@ -363,9 +357,6 @@ namespace Problems.Robostrike
             if (operationSuccess)
             {
                 (agent as RobostrikeAgentComponent).AmmoPowerUpsCollected++;
-                // TODO Remove this
-                //Update agent fitness
-                //agent.AgentFitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.AgentPickedUpAmmoBoxPowerUp.ToString()], RobostrikeFitness.FitnessKeys.AgentPickedUpAmmoBoxPowerUp.ToString());
 
                 // Spawn new ammo box
                 if (AmmoBoxPrefab != null)
@@ -444,75 +435,30 @@ namespace Problems.Robostrike
         {
             (missile.Parent as RobostrikeAgentComponent).MissileHitOpponent();
             (hitAgent as RobostrikeAgentComponent).HitByOpponentMissile();
-            // TODO Remove this
-            //UpdateFitnesses(missile, hitAgent);
 
             UpdateAgentHealth(missile, hitAgent as RobostrikeAgentComponent);
         }
 
-        public void MissileMissedAgent(MissileComponent missile)
-        {
-            missile.Parent.AgentFitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.MissileMissedAgent.ToString()], RobostrikeFitness.FitnessKeys.MissileMissedAgent.ToString());
-        }
-
-        void UpdateFitnesses(MissileComponent missile, AgentComponent hitAgent)
-        {
-            // Update Agent whose missile hit the other tank
-            missile.Parent.AgentFitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.MissileHitAgent.ToString()], RobostrikeFitness.FitnessKeys.MissileHitAgent.ToString());
-
-            // Update Agent who got hit by a missile
-            hitAgent.AgentFitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.AgentHitByRocket.ToString()], RobostrikeFitness.FitnessKeys.AgentHitByRocket.ToString());
-        }
-
         void UpdateAgentHealth(MissileComponent missile, RobostrikeAgentComponent hitAgent)
         {
-            RobostrikeAgentComponent rba = hitAgent as RobostrikeAgentComponent;
-            rba.TakeDamage(MissileDamage);
+            hitAgent.TakeDamage(MissileDamage);
 
-            if (rba.HealthComponent.Health <= 0)
+            if (hitAgent.HealthComponent.Health <= 0)
             {
                 switch (GameScenarioType)
                 {
                     case RobostrikeGameScenarioType.Normal:
                         hitAgent.gameObject.SetActive(false);
-                        AddSurvivalFitnessBonus(Agents);
                         CheckEndingState();
                         break;
                     case RobostrikeGameScenarioType.Deathmatch:
-                        // TODO Remove this
-                        //missile.Parent.AgentFitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.AgentDestroyedBonus.ToString()], RobostrikeFitness.FitnessKeys.AgentDestroyedBonus.ToString());
-                        //hitAgent.AgentFitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.DeathPenalty.ToString()], RobostrikeFitness.FitnessKeys.DeathPenalty.ToString());
                         (missile.Parent as RobostrikeAgentComponent).OpponentsDestroyed++;
-
-                        hitAgent.LastSectorPosition = null;
-
-                        rba.ResetSurvivalTime();
 
                         ResetAgent(hitAgent);
 
                         break;
                 }
             }
-        }
-
-        public void AddSurvivalFitnessBonus(AgentComponent[] agents)
-        {
-            bool lastSurvival = GetNumOfActiveAgents() > 1 ? false : true;
-            // Survival bonus
-            foreach (RobostrikeAgentComponent agent in agents)
-            {
-                if (agent.gameObject.activeSelf)
-                {
-                    agent.AgentFitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.SurvivalBonus.ToString()], RobostrikeFitness.FitnessKeys.SurvivalBonus.ToString());
-
-                    // Last survival bonus
-                    if (lastSurvival)
-                    {
-                        agent.AgentFitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.LastSurvivalBonus.ToString()], RobostrikeFitness.FitnessKeys.LastSurvivalBonus.ToString());
-                    }
-                }
-            }
-
         }
 
         public int GetNumOfActiveAgents()
@@ -530,8 +476,18 @@ namespace Problems.Robostrike
 
         private void ResetAgent(RobostrikeAgentComponent agent)
         {
+            agent.LastSectorPosition = null;
+            agent.ResetSurvivalTime();
+
             // Restore health
             agent.HealthComponent.Health = AgentStartHealth;
+
+            // Restore shield
+            agent.ShieldComponent.Shield = AgentStartShield;
+
+            // Restore ammo
+            agent.AmmoComponent.Ammo = AgentStartAmmo;
+
             // Update Healthbar
             agent.UpdatetStatBars();
 

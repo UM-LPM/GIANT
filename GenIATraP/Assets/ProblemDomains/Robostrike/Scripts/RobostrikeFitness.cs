@@ -11,24 +11,10 @@ namespace Problems.Robostrike
              { "PowerUp_Pickup_Ammo", -0.10f },
              { "PowerUp_Pickup_Shield", -0.05f },
              { "MissilesFired", -0.1f },
-             { "MissilesFiredAccuracy", -0.1f },
+             { "MissilesFiredAccuracy", -0.05f },
              { "SurvivalBonus", -0.05f },
              { "OpponentDestroyedBonus", -0.3f },
-             { "DamageTakenPenalty", 0.1f },
-
-            { "AgentExploredSector", -4f },
-            { "MissileHitAgent", -10 },
-            { "AgentHitByRocket", 10 },
-            { "MissileMissedAgent", 1 },
-            { "LastSurvivalBonus", -30 },
-            { "DeathPenalty", 100 },
-            { "AgentDestroyedBonus", -100 },
-            { "AgentAimingOpponent", -1 },
-            { "AgentFiredMissile", -2 },
-            { "AgentNearWall", 1 },
-            {"AgentPickedUpHealthBoxPowerUp", -5 },
-            {"AgentPickedUpShieldBoxPowerUp", -5 },
-            {"AgentPickedUpAmmoBoxPowerUp", -6 }
+             { "DamageTakenPenalty", 0.15f }
         };
 
         public static string[] Keys = FitnessValues.Keys.ToArray();
@@ -43,21 +29,7 @@ namespace Problems.Robostrike
             MissilesFiredAccuracy,
             SurvivalBonus,
             OpponentDestroyedBonus,
-            DamageTakenPenalty,
-
-            AgentExploredSector,
-            MissileHitAgent,
-            AgentHitByRocket,
-            MissileMissedAgent,
-            LastSurvivalBonus,
-            DeathPenalty,
-            AgentDestroyedBonus,
-            AgentAimingOpponent,
-            AgentFiredMissile,
-            AgentNearWall,
-            AgentPickedUpHealthBoxPowerUp,
-            AgentPickedUpShieldBoxPowerUp,
-            AgentPickedUpAmmoBoxPowerUp
+            DamageTakenPenalty
         }
     }
 }
