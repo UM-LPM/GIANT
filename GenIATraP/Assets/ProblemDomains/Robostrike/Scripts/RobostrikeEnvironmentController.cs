@@ -508,7 +508,7 @@ namespace Problems.Robostrike
             foreach (RobostrikeAgentComponent agent in Agents)
             {
                 Debug.Log("========================================");
-                Debug.Log("Agent: " + agent.name);
+                Debug.Log("Agent: Team ID" + agent.TeamID + ", ID: " + agent.IndividualID);
                 // Sector exploration
                 Debug.Log("Sectors explored: " + agent.SectorsExplored + " / " + Sectors.Length + " =");
                 sectorExplorationFitness = agent.SectorsExplored / (float)Sectors.Length;
