@@ -43,9 +43,10 @@ namespace Evaluators.RatingSystems
                             throw new Exception("Initial individual rating array is not the same size as the number of individuals in the tournament");
                         }
 
-                        if (initialPlayerRaitings != null && initialPlayerRaitings[individuals.Count - 1].Mean != int.MaxValue)
+                        RatingSystemRating individualRating = initialPlayerRaitings?.FirstOrDefault(x => x.IndividualID == individual.IndividualId);
+                        if (initialPlayerRaitings != null && individualRating.Mean != double.MaxValue && !double.IsInfinity(individualRating.Mean))
                         {
-                            Players.Add(new TrueSkillPlayer(individual.IndividualId, new Player(individual.IndividualId), new Rating(math.abs(initialPlayerRaitings[individuals.Count - 1].Mean), initialPlayerRaitings[individuals.Count - 1].StandardDeviation)));
+                            Players.Add(new TrueSkillPlayer(individual.IndividualId, new Player(individual.IndividualId), new Rating(math.abs(individualRating.Mean), individualRating.StandardDeviation)));
                         }
                         else
                         {
