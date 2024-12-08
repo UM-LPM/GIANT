@@ -665,9 +665,10 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
         Vector2 antPosition = agent.transform.position;
 
         Vector2 direction = (hivePosition - antPosition).normalized;
+        float raycastDistance = AntMoveSpeed * Time.fixedDeltaTime;
 
         // Obstacle Detection (Raycast)
-        RaycastHit2D hit = Physics2D.Raycast(antPosition, direction, AntMoveSpeed * Time.fixedDeltaTime, agent.detectionLayerMask);
+        RaycastHit2D hit = Physics2D.Raycast(antPosition, direction, raycastDistance, agent.detectionLayerMask);
 
         if (hit.collider == null || hit.collider.gameObject == agent.gameObject || (agent.carriedItemObject != null && hit.collider.gameObject == agent.carriedItemObject)) // No obstacle
         {
@@ -680,15 +681,28 @@ public class AntEnvironmentController1 : EnvironmentControllerBase
             UnityEngine.Debug.DrawLine(antPosition, hit.point, Color.blue);
 
         }
-        else 
+        else
         {
-            Vector2 avoidDirection = Vector2.Perpendicular(direction);
-            avoidDirection *= (Random.value > 0.5f ? 1 : -1);
-            UnityEngine.Debug.DrawLine(antPosition, hit.point, Color.red);
+            Vector2 leftAvoidDirection = Quaternion.Euler(0, 0, -45) * direction;
+            Vector2 rightAvoidDirection = Quaternion.Euler(0, 0, 45) * direction;
 
-            Vector2 newTargetPosition = antPosition + avoidDirection * AntMoveSpeed * Time.fixedDeltaTime;
+            RaycastHit2D leftHit = Physics2D.Raycast(antPosition, leftAvoidDirection, raycastDistance, agent.detectionLayerMask);
+            RaycastHit2D rightHit = Physics2D.Raycast(antPosition, rightAvoidDirection, raycastDistance, agent.detectionLayerMask);
 
-            agent.transform.position = Vector2.MoveTowards(antPosition, newTargetPosition, AntMoveSpeed * Time.fixedDeltaTime);
+            if (leftHit.collider == null)
+            {
+                agent.transform.position = Vector2.MoveTowards(antPosition, antPosition + leftAvoidDirection, raycastDistance);
+            }
+            else if (rightHit.collider == null)
+            {
+                agent.transform.position = Vector2.MoveTowards(antPosition, antPosition + rightAvoidDirection, raycastDistance);
+            }
+            else
+            {
+                // Fallback: perpendicular direction
+                Vector2 avoidDirection = Vector2.Perpendicular(direction) * (Random.value > 0.5f ? 1 : -1);
+                agent.transform.position = Vector2.MoveTowards(antPosition, antPosition + avoidDirection, raycastDistance);
+            }
         }
     }
 
