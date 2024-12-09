@@ -1,3 +1,4 @@
+using AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
 using Base;
 using Configuration;
 using System;
@@ -71,6 +72,7 @@ namespace Problems.Robostrike
         private float opponentsDestroyedBonus;
         private int numOfFiredOpponentMissiles;
         private float damageTakenPenalty;
+        private float opponentTrackingBonus;
 
         protected override void DefineAdditionalDataOnPostAwake()
         {
@@ -118,6 +120,14 @@ namespace Problems.Robostrike
 
             // Spawn powerUps
             PowerUps = PowerUpSpawner.Spawn<PowerUpComponent>(this).ToList();
+
+            // Register event for Ray sensor
+            RayHitObject.OnTargetHit += RayHitObject_OnTargetHit;
+        }
+
+        private void OnDestroy()
+        {
+            RayHitObject.OnTargetHit -= RayHitObject_OnTargetHit;
         }
 
         protected override void OnPostFixedUpdate()
@@ -128,6 +138,7 @@ namespace Problems.Robostrike
                 MissileController.UpdateMissilePosAndCheckForColls();
                 CheckAgentsExploration();
                 UpdateAgentsSurvivalTime();
+                ResetAgentOpponentTracking();
             }
         }
 
@@ -421,6 +432,17 @@ namespace Problems.Robostrike
             }
         }
 
+        private void ResetAgentOpponentTracking()
+        {
+            foreach (RobostrikeAgentComponent agent in Agents)
+            {
+                if (agent.gameObject.activeSelf)
+                {
+                    agent.AlreadyTrackingOpponent = false;
+                }
+            }
+        }
+
         private bool IsAgentInSector(Vector3 agentPosition, Collider2D colliderComponent)
         {
             if (colliderComponent.bounds.Contains(agentPosition))
@@ -557,6 +579,12 @@ namespace Problems.Robostrike
                 survivalBonus = (float)Math.Round(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.SurvivalBonus.ToString()] * survivalBonus, 4);
                 agent.AgentFitness.UpdateFitness(survivalBonus, RobostrikeFitness.FitnessKeys.SurvivalBonus.ToString());
 
+                // Opponent tracking bonus
+                Debug.Log("Opponent tracking bonus: " + agent.OpponentTrackCounter + " / " + (CurrentSimulationSteps / (float)DecisionRequestInterval) + " =");
+                opponentTrackingBonus = agent.OpponentTrackCounter / (CurrentSimulationSteps / (float)DecisionRequestInterval);
+                opponentTrackingBonus = (float)Math.Round(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.OpponentTrackingBonus.ToString()] * opponentTrackingBonus, 4);
+                agent.AgentFitness.UpdateFitness(opponentTrackingBonus, RobostrikeFitness.FitnessKeys.OpponentTrackingBonus.ToString());
+
                 // Opponents destroyed
                 numOfOpponents = Agents.Where(a => a.TeamID != agent.TeamID).Select(a => (a as RobostrikeAgentComponent).NumOfSpawns).Sum();
                 Debug.Log("Opponents destroyed bonus: " + agent.OpponentsDestroyed + " / " + numOfOpponents + " =");
@@ -572,7 +600,7 @@ namespace Problems.Robostrike
                 Debug.Log("Damage taken: " + agent.HitByOpponentMissiles + " / " + numOfFiredOpponentMissiles + " =");
                 if (numOfFiredOpponentMissiles > 0)
                 {
-                    float damageTakenPenalty = agent.HitByOpponentMissiles / (float)numOfFiredOpponentMissiles;
+                    damageTakenPenalty = agent.HitByOpponentMissiles / (float)numOfFiredOpponentMissiles;
                     damageTakenPenalty = (float)Math.Round(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.DamageTakenPenalty.ToString()] * damageTakenPenalty, 4);
                     agent.AgentFitness.UpdateFitness(damageTakenPenalty, RobostrikeFitness.FitnessKeys.DamageTakenPenalty.ToString());
                 }
@@ -581,6 +609,20 @@ namespace Problems.Robostrike
             }
         }
 
+        private void RayHitObject_OnTargetHit(object sender, OnTargetHitEventargs e)
+        {
+            RobostrikeAgentComponent agent = e.TargetGameObject.GetComponent<RobostrikeAgentComponent>();
+            if (agent != null)
+            {
+                agent.OpponentTrackCounter++;
+                agent.AlreadyTrackingOpponent = true;
+            }
+        }
+
+        public void ResetAgentTrackingOpponent(RobostrikeAgentComponent agent)
+        {
+            agent.AlreadyTrackingOpponent = false;
+        }
     }
 
     public enum RobostrikeGameScenarioType

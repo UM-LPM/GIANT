@@ -13,7 +13,8 @@ namespace Problems.Robostrike
              { "MissilesFired", -0.1f },
              { "MissilesFiredAccuracy", -0.05f },
              { "SurvivalBonus", -0.05f },
-             { "OpponentDestroyedBonus", -0.3f },
+             { "OpponentTrackingBonus", -0.05f },
+             { "OpponentDestroyedBonus", -0.25f },
              { "DamageTakenPenalty", 0.15f }
         };
 
@@ -28,6 +29,7 @@ namespace Problems.Robostrike
             MissilesFired,
             MissilesFiredAccuracy,
             SurvivalBonus,
+            OpponentTrackingBonus,
             OpponentDestroyedBonus,
             DamageTakenPenalty
         }

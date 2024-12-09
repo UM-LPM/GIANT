@@ -38,6 +38,9 @@ namespace Problems.Robostrike
 
         public int NumOfSpawns { get; set; }
 
+        public int OpponentTrackCounter { get; set; }
+        public bool AlreadyTrackingOpponent { get; set; }
+
         protected override void DefineAdditionalDataOnAwake()
         {
             Hull = GetComponentInChildren<HullComponent>();
