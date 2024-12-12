@@ -215,6 +215,11 @@ namespace Base
                     DecisionRequestInterval = int.Parse(conf.ProblemConfiguration["DecisionRequestInterval"]);
                 }
 
+                if (conf.ProblemConfiguration.ContainsKey("RayHitObjectDetectionType"))
+                {
+                    RayHitObject.RAY_HIT_OBJECT_DETECTION_TYPE = (RayHitObjectDetectionType)Enum.Parse(typeof(RayHitObjectDetectionType), conf.ProblemConfiguration["RayHitObjectDetectionType"]);
+                }
+
                 // TODO Add support in the future
                 //IncludeEncapsulatedNodesToFreqCount = conf.IncludeEncapsulatedNodesToFreqCount;
             }
