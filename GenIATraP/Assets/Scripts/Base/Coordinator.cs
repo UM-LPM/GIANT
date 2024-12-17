@@ -264,7 +264,7 @@ namespace Base
 
         public void SaveIndividualsToJSON()
         {
-            if (IndividualsSourceJSON == null || IndividualsSourceJSON.Length == 0 || IndividualsSourceSO == null || IndividualsSourceSO.Length == 0)
+            if (IndividualsSourceJSON == null || IndividualsSourceJSON.Length == 0)
             {
                 throw new Exception("IndividualsSourceJSON or IndividualsSourceSO are not defined");
                 // TODO Add error reporting here

@@ -611,11 +611,11 @@ namespace Problems.Robostrike
 
         private void RayHitObject_OnTargetHit(object sender, OnTargetHitEventargs e)
         {
-            RobostrikeAgentComponent agent = e.TargetGameObject.GetComponent<RobostrikeAgentComponent>();
-            if (agent != null)
+            RobostrikeAgentComponent targetAgent = e.TargetGameObject.GetComponent<RobostrikeAgentComponent>();
+            if (targetAgent != null)
             {
-                agent.OpponentTrackCounter++;
-                agent.AlreadyTrackingOpponent = true;
+                (e.Agent as RobostrikeAgentComponent).OpponentTrackCounter++;
+                (e.Agent as RobostrikeAgentComponent).AlreadyTrackingOpponent = true;
             }
         }
 
