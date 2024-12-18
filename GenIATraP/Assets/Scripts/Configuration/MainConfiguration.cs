@@ -25,7 +25,8 @@ namespace Configuration
         {
             TypeNameHandling = TypeNameHandling.All,
             PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+            MaxDepth = 128
         };
 
         public bool AutoStart { get; set; }

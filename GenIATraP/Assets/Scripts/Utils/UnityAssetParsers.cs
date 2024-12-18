@@ -35,9 +35,10 @@ namespace Utils
 
             individuals = new Individual[evalRangeEnd - evalRangeStart];
 
+            int indx = 0;
             for (int i = evalRangeStart; i < evalRangeEnd; i++)
             {
-                individuals[i] = JsonConvert.DeserializeObject<Individual>(File.ReadAllText(files[i]), MainConfiguration.JSON_SERIALIZATION_SETTINGS);
+                individuals[indx++] = JsonConvert.DeserializeObject<Individual>(File.ReadAllText(files[i]), MainConfiguration.JSON_SERIALIZATION_SETTINGS);
             }
 
             if (individuals.Length == 0)
