@@ -149,6 +149,25 @@ namespace Problems.Robostrike
             (agent as RobostrikeAgentComponent).NumOfSpawns++;
         }
 
+        public override void SwitchSpawnPlaces<T>(EnvironmentControllerBase environmentController)
+        {
+            if(environmentController.Agents.Length != 2)
+            {
+                throw new System.Exception("Number of Agents must be 2");
+                // TODO add error reporting here
+            }
+
+            // Swtich agents start positions
+            Vector3 tempPos = environmentController.Agents[0].StartPosition;
+            Quaternion tempRot = environmentController.Agents[0].StartRotation;
+
+            environmentController.Agents[0].StartPosition = environmentController.Agents[1].StartPosition;
+            environmentController.Agents[0].StartRotation = environmentController.Agents[1].StartRotation;
+
+            environmentController.Agents[1].StartPosition = tempPos;
+            environmentController.Agents[1].StartRotation = tempRot;
+        }
+
         void ConfigureAgentSprites(EnvironmentControllerBase environmentController, GameObject agentGameObject)
         {
             // Get random hull, turret, track and gun sprites

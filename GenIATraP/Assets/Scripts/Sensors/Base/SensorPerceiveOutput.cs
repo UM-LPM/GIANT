@@ -13,4 +13,11 @@ public class SensorPerceiveOutput {
     public GameObject[] HitGameObjects;
     public Vector3 StartPositionWorld;
     public Vector3 EndPositionWorld;
+
+    public SensorPerceiveOutput()
+    {
+        HitGameObjects = new GameObject[1];
+        StartPositionWorld = Vector3.zero;
+        EndPositionWorld = Vector3.zero;
+    }
 }

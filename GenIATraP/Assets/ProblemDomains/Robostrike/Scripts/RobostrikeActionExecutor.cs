@@ -64,20 +64,20 @@ namespace Problems.Robostrike
             switch (rotateAxis)
             {
                 case 1:
-                    rotateDir = new Vector3(0, 0, RobostrikeEnvironmentController.ForwardSpeed);
+                    rotateDir.z = RobostrikeEnvironmentController.ForwardSpeed;
                     break;
                 case 2:
-                    rotateDir = new Vector3(0, 0, -RobostrikeEnvironmentController.ForwardSpeed);
+                    rotateDir.z = -RobostrikeEnvironmentController.ForwardSpeed;
                     break;
             }
 
             switch (rotateTurrentAxis)
             {
                 case 1:
-                    rotateTurrentDir = new Vector3(0, 0, RobostrikeEnvironmentController.ForwardSpeed);
+                    rotateTurrentDir.z = RobostrikeEnvironmentController.ForwardSpeed;
                     break;
                 case 2:
-                    rotateTurrentDir = new Vector3(0, 0, -RobostrikeEnvironmentController.ForwardSpeed);
+                    rotateTurrentDir.z = -RobostrikeEnvironmentController.ForwardSpeed;
                     break;
             }
 

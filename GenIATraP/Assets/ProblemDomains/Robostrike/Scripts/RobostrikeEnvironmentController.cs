@@ -51,6 +51,9 @@ namespace Problems.Robostrike
         [SerializeField] public GameObject AmmoBoxPrefab;
         [SerializeField] public int AmmoBoxSpawnAmount = 2;
 
+        [Header("Robostrike Agent Position Configuration")]
+        [SerializeField] public bool SwitchSpawnPlaces = false;
+
         public MissileController MissileController { get; set; }
 
         private RobostrikePowerUpSpawner PowerUpSpawner;
@@ -73,6 +76,14 @@ namespace Problems.Robostrike
         private int numOfFiredOpponentMissiles;
         private float damageTakenPenalty;
         private float opponentTrackingBonus;
+
+        private List<PowerUpComponent> pickedPowerUps;
+
+        private RobostrikeAgentComponent agent;
+        private Vector3 sectorPosition;
+
+        private RobostrikeAgentComponent targetAgent;
+        private RobostrikeAgentComponent senderAgent;
 
         protected override void DefineAdditionalDataOnPostAwake()
         {
@@ -139,6 +150,21 @@ namespace Problems.Robostrike
                 CheckAgentsExploration();
                 UpdateAgentsSurvivalTime();
                 ResetAgentOpponentTracking();
+
+                // Switch agent spawn places when simulation is at 50%
+                // TODO Also reset powerups !!!
+                /*if (SwitchSpawnPlaces && ((CurrentSimulationSteps >= SimulationSteps / 2 && SimulationSteps > 0) || (CurrentSimulationTime >= SimulationTime / 2 && SimulationTime > 0)))
+                {
+                    Debug.Log("Switching spawn places");
+                    SwitchSpawnPlaces = false;
+
+                    MatchSpawner.SwitchSpawnPlaces<AgentComponent>(this);
+
+                    foreach (RobostrikeAgentComponent agent in Agents)
+                    {
+                        ResetAgent(agent);
+                    }
+                }*/
             }
         }
 
@@ -284,6 +310,11 @@ namespace Problems.Robostrike
                 {
                     AmmoBoxSpawnAmount = int.Parse(conf.ProblemConfiguration["AmmoBoxSpawnAmount"]);
                 }
+
+                if(conf.ProblemConfiguration.ContainsKey("SwitchSpawnPlaces"))
+                {
+                    SwitchSpawnPlaces = bool.Parse(conf.ProblemConfiguration["SwitchSpawnPlaces"]);
+                }
             }
         }
 
@@ -293,7 +324,7 @@ namespace Problems.Robostrike
             {
                 if (agent.gameObject.activeSelf)
                 {
-                    List<PowerUpComponent> pickedPowerUps = PhysicsUtil.PhysicsOverlapTargetObjects<PowerUpComponent>(GameType, agent.gameObject, agent.transform.position, AgentColliderExtendsMultiplier.x, Vector3.zero, agent.transform.rotation, PhysicsOverlapType.OverlapSphere, false, gameObject.layer, DefaultLayer);
+                    pickedPowerUps = PhysicsUtil.PhysicsOverlapTargetObjects<PowerUpComponent>(GameType, agent.gameObject, agent.transform.position, AgentColliderExtendsMultiplier.x, Vector3.zero, agent.transform.rotation, PhysicsOverlapType.OverlapSphere, false, gameObject.layer, DefaultLayer);
 
                     if (pickedPowerUps != null && pickedPowerUps.Count > 0)
                     {
@@ -386,12 +417,12 @@ namespace Problems.Robostrike
             // Exploration bonus
             for(int i = 0; i < Agents.Length; i++)
             {
-                RobostrikeAgentComponent agent = Agents[i] as RobostrikeAgentComponent;
+                agent = Agents[i] as RobostrikeAgentComponent;
                 if (agent.gameObject.activeSelf)
                 {
                     foreach (SectorComponent sector in Sectors)
                     {
-                        Vector3 sectorPosition = sector.transform.position;
+                        sectorPosition = sector.transform.position;
                         if (IsAgentInSector(agent.transform.position, sector.gameObject.GetComponent<Collider2D>()))
                         {
                             if (agent.LastSectorPosition == null || agent.LastSectorPosition != sectorPosition)
@@ -611,11 +642,12 @@ namespace Problems.Robostrike
 
         private void RayHitObject_OnTargetHit(object sender, OnTargetHitEventargs e)
         {
-            RobostrikeAgentComponent targetAgent = e.TargetGameObject.GetComponent<RobostrikeAgentComponent>();
-            if (targetAgent != null)
+            targetAgent = e.TargetGameObject.GetComponent<RobostrikeAgentComponent>();
+            senderAgent = e.Agent as RobostrikeAgentComponent;
+            if (targetAgent != null && !senderAgent.AlreadyTrackingOpponent)
             {
-                (e.Agent as RobostrikeAgentComponent).OpponentTrackCounter++;
-                (e.Agent as RobostrikeAgentComponent).AlreadyTrackingOpponent = true;
+                senderAgent.OpponentTrackCounter++;
+                senderAgent.AlreadyTrackingOpponent = true;
             }
         }
 

@@ -55,7 +55,7 @@ public class GridSensor2D : Sensor<SensorPerceiveOutput[,]> {
         throw new NotImplementedException();
     }
 
-    public override SensorPerceiveOutput[,] PerceiveRange(int startIndex = -1, int endIndex = -1)
+    public override SensorPerceiveOutput[,] PerceiveRange(int startIndex = -1, int endIndex = -1, int step = 1)
     {
         throw new NotImplementedException();
     }

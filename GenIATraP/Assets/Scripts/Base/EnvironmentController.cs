@@ -59,9 +59,10 @@ namespace Base
         public LayerData LayerBTIndex { get; set; }
         public GridCell GridCell { get; set; }
 
-        public MatchSpawner MatchSpawner { get; set; }
+        protected MatchSpawner MatchSpawner { get; set; }
 
-        private ActionBuffer ActionBuffer;
+        protected ActionBuffer ActionBuffer;
+
 
         private void Awake()
         {
@@ -198,26 +199,26 @@ namespace Base
         {
             if (MenuManager.Instance != null && MenuManager.Instance.MainConfiguration != null)
             {
-                MainConfiguration conf = MenuManager.Instance.MainConfiguration;
-                if (conf.SimulationSteps > 0)
+                MainConfiguration MainConfiguration = MenuManager.Instance.MainConfiguration;
+                if (MainConfiguration.SimulationSteps > 0)
                 {
                     SimulationSteps = MenuManager.Instance.MainConfiguration.SimulationSteps;
                     SimulationTime = 0;
                 }
-                else if (conf.SimulationTime > 0)
+                else if (MainConfiguration.SimulationTime > 0)
                 {
                     SimulationTime = MenuManager.Instance.MainConfiguration.SimulationTime;
                     SimulationSteps = 0;
                 }
 
-                if (conf.ProblemConfiguration.ContainsKey("DecisionRequestInterval"))
+                if (MainConfiguration.ProblemConfiguration.ContainsKey("DecisionRequestInterval"))
                 {
-                    DecisionRequestInterval = int.Parse(conf.ProblemConfiguration["DecisionRequestInterval"]);
+                    DecisionRequestInterval = int.Parse(MainConfiguration.ProblemConfiguration["DecisionRequestInterval"]);
                 }
 
-                if (conf.ProblemConfiguration.ContainsKey("RayHitObjectDetectionType"))
+                if (MainConfiguration.ProblemConfiguration.ContainsKey("RayHitObjectDetectionType"))
                 {
-                    RayHitObject.RAY_HIT_OBJECT_DETECTION_TYPE = (RayHitObjectDetectionType)Enum.Parse(typeof(RayHitObjectDetectionType), conf.ProblemConfiguration["RayHitObjectDetectionType"]);
+                    RayHitObject.RAY_HIT_OBJECT_DETECTION_TYPE = (RayHitObjectDetectionType)Enum.Parse(typeof(RayHitObjectDetectionType), MainConfiguration.ProblemConfiguration["RayHitObjectDetectionType"]);
                 }
 
                 // TODO Add support in the future

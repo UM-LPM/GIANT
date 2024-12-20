@@ -182,5 +182,10 @@ namespace Spawners
         {
             throw new System.NotImplementedException();
         }
+
+        public override void SwitchSpawnPlaces<T>(EnvironmentControllerBase environmentController)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

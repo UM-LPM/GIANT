@@ -55,7 +55,7 @@ public class CameraSensor : Sensor<Texture> {
         throw new NotImplementedException();
     }
 
-    public override Texture PerceiveRange(int startIndex = -1, int endIndex = -1)
+    public override Texture PerceiveRange(int startIndex = -1, int endIndex = -1, int step = 1)
     {
         throw new NotImplementedException();
     }

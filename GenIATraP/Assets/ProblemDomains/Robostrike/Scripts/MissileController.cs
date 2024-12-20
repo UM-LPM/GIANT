@@ -12,6 +12,7 @@ namespace Problems.Robostrike
         private RobostrikeEnvironmentController RobostrikeEnvironmentController;
 
         private Collider2D[] MissileCollisions;
+        private AgentComponent otherAgent;
 
         void Start()
         {
@@ -42,7 +43,6 @@ namespace Problems.Robostrike
                     if (collision.gameObject == missileComponent.Parent.gameObject || collision.gameObject == missileComponent.gameObject || collision.isTrigger)
                         continue;
 
-                    AgentComponent otherAgent;
                     collision.gameObject.TryGetComponent(out otherAgent);
 
                     if (otherAgent != null)

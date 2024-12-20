@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.Windows;
 using Unity.Collections;
 using Unity.Jobs;
+using Unity.VisualScripting.Antlr3.Runtime.Collections;
 
 public abstract class RaySensorBase : Sensor<SensorPerceiveOutput[]> {
 
@@ -34,13 +35,42 @@ public abstract class RaySensorBase : Sensor<SensorPerceiveOutput[]> {
     RayPerceptionInput input;
     SensorPerceiveOutput[] rayOutputs;
 
-    public RaySensorBase(string name) : base(name) { }
+    // Private variables
+    float unscaledRayLength;
+    float unscaledCastRadius;
+    Vector3 startPositionWorld;
+    Vector3 endPositionWorld;
+    (Vector3 StartPositionWorld, Vector3 EndPositionWorld) extents;
+
+    bool castHit;
+    float hitFraction;
+    GameObject hitObject;
+    Vector3 rayDirection;
+    float scaledRayLength;
+    float scaledCastRadius;
+
+    RaycastHit rayHit;
+    RaycastHit2D rayHit2D;
+
+    int numTags;
+    bool tagsEqual;
+    string detectableTag;
+
+    RayPerceptionInput rayPerceptionInput;
+
+    public RaySensorBase(string name) : base(name) {
+    }
 
     public void SetLayerMask(int layerMask)
     {
         LayerMask = layerMask;
         input.LayerMask = LayerMask;
     }
+
+    NativeArray<RaycastHit> results;
+    NativeArray<SpherecastCommand> commands;
+    JobHandle jobHandle;
+    QueryParameters queryParameters;
 
     public override SensorPerceiveOutput[] PerceiveAll()
     {
@@ -50,96 +80,6 @@ public abstract class RaySensorBase : Sensor<SensorPerceiveOutput[]> {
         for (var rayIndex = 0; rayIndex < input.Angles.Count; rayIndex++) {
             rayOutputs[rayIndex] = PerceiveSingleRay(input, rayIndex);
         }
-
-        // Option 2: Perceive all rays in a batch job
-        /*var results = new NativeArray<RaycastHit>(input.Angles.Count, Allocator.TempJob);
-        var commands = new NativeArray<SpherecastCommand>(input.Angles.Count, Allocator.TempJob);
-
-        for (var rayIndex = 0; rayIndex < input.Angles.Count; rayIndex++)
-        {
-            var unscaledRayLength = input.RayLength;
-            var unscaledCastRadius = input.CastRadius;
-
-            var extents = input.RayExtents(rayIndex);
-            var startPositionWorld = extents.StartPositionWorld;
-            var endPositionWorld = extents.EndPositionWorld;
-
-            var rayDirection = endPositionWorld - startPositionWorld;
-            var scaledRayLength = rayDirection.magnitude;
-            // Avoid 0/0 if unscaledRayLength is 0
-            var scaledCastRadius = unscaledRayLength > 0 ?
-                unscaledCastRadius * scaledRayLength / unscaledRayLength :
-                unscaledCastRadius;
-
-            QueryParameters queryParameters = new QueryParameters
-            {
-                layerMask = input.LayerMask,
-                hitTriggers = QueryTriggerInteraction.Ignore,
-            };
-
-            commands[rayIndex] = new SpherecastCommand(startPositionWorld, scaledCastRadius, rayDirection, queryParameters, scaledRayLength);
-        }
-
-        // Execute batch 
-        JobHandle jobHandle = SpherecastCommand.ScheduleBatch(commands, results, 1, 1, default(JobHandle));
-        
-        // Wait for the batch to complete
-        jobHandle.Complete();
-
-        // Process the results
-        for (var rayIndex = 0; rayIndex < input.Angles.Count; rayIndex++)
-        {
-            var rayHit = results[rayIndex];
-            var castHit = rayHit.collider != null;
-            var hitFraction = castHit ? (rayHit.distance / input.RayLength) : 1.0f;
-            var hitObject = castHit ? rayHit.collider.gameObject : null;
-
-            SensorPerceiveOutput rayOutput = new SensorPerceiveOutput
-            {
-                HasHit = castHit,
-                HitFraction = hitFraction,
-                HasHitTaggedObject = false,
-                HitTagIndex = -1,
-                HitGameObjects = new GameObject[] { hitObject },
-                StartPositionWorld = commands[rayIndex].origin,
-                EndPositionWorld = commands[rayIndex].origin + commands[rayIndex].direction * hitFraction * input.RayLength,
-                //ScaledCastRadius = scaledCastRadius
-            };
-
-            if (castHit)
-            {
-                // Find the index of the tag of the object that was hit.
-                var numTags = input.DetectableTags?.Count ?? 0;
-                for (var i = 0; i < numTags; i++)
-                {
-                    var tagsEqual = false;
-                    try
-                    {
-                        var tag = input.DetectableTags[i];
-                        if (!string.IsNullOrEmpty(tag))
-                        {
-                            tagsEqual = hitObject.CompareTag(tag);
-                        }
-                    }
-                    catch (UnityException)
-                    {
-                        // If the tag is null, empty, or not a valid tag, just ignore it.
-                    }
-
-                    if (tagsEqual)
-                    {
-                        rayOutput.HasHitTaggedObject = true;
-                        rayOutput.HitTagIndex = i;
-                        break;
-                    }
-                }
-            }
-
-            rayOutputs[rayIndex] = rayOutput;
-        }  
-        
-        results.Dispose();
-        commands.Dispose();*/
 
         return rayOutputs;
     }
@@ -156,7 +96,7 @@ public abstract class RaySensorBase : Sensor<SensorPerceiveOutput[]> {
         return rayOutputs;
     }
 
-    public override SensorPerceiveOutput[] PerceiveRange(int startIndex = -1, int endIndex = -1)
+    public override SensorPerceiveOutput[] PerceiveRange(int startIndex = -1, int endIndex = -1, int step = 1)
     {
         ResetRayOutputs();
 
@@ -165,7 +105,7 @@ public abstract class RaySensorBase : Sensor<SensorPerceiveOutput[]> {
         }
 
         // Option 1: Perceive all rays in a single thread
-        for (var rayIndex = 0; rayIndex < endIndex; rayIndex++)
+        for (var rayIndex = startIndex; rayIndex < endIndex; rayIndex+=step)
         {
             rayOutputs[rayIndex] = PerceiveSingleRay(input, rayIndex);
         }
@@ -174,30 +114,30 @@ public abstract class RaySensorBase : Sensor<SensorPerceiveOutput[]> {
     }
 
     public virtual SensorPerceiveOutput PerceiveSingleRay(RayPerceptionInput input, int rayIndex) {
-        var unscaledRayLength = input.RayLength;
-        var unscaledCastRadius = input.CastRadius;
+        unscaledRayLength = input.RayLength;
+        unscaledCastRadius = input.CastRadius;
 
-        var extents = input.RayExtents(rayIndex);
-        var startPositionWorld = extents.StartPositionWorld;
-        var endPositionWorld = extents.EndPositionWorld;
+        extents = input.RayExtents(rayIndex);
+        startPositionWorld = extents.StartPositionWorld;
+        endPositionWorld = extents.EndPositionWorld;
 
-        var rayDirection = endPositionWorld - startPositionWorld;
+        rayDirection = endPositionWorld - startPositionWorld;
         // If there is non-unity scale, |rayDirection| will be different from rayLength.
         // We want to use this transformed ray length for determining cast length, hit fraction etc.
         // We also it to scale up or down the sphere or circle radii
-        var scaledRayLength = rayDirection.magnitude;
+        scaledRayLength = rayDirection.magnitude;
         // Avoid 0/0 if unscaledRayLength is 0
-        var scaledCastRadius = unscaledRayLength > 0 ?
+        scaledCastRadius = unscaledRayLength > 0 ?
             unscaledCastRadius * scaledRayLength / unscaledRayLength :
             unscaledCastRadius;
 
         // Do the cast and assign the hit information for each detectable tag.
-        var castHit = false;
-        var hitFraction = 1.0f;
-        GameObject hitObject = null;
+        castHit = false;
+        hitFraction = 1.0f;
+        hitObject = null;
+
 
         if (input.CastType == RayPerceptionCastType.Cast3D) {
-            RaycastHit rayHit;
             if (scaledCastRadius > 0f) {
                 castHit = Physics.SphereCast(startPositionWorld, scaledCastRadius, rayDirection, out rayHit,
                     scaledRayLength, input.LayerMask);
@@ -213,21 +153,32 @@ public abstract class RaySensorBase : Sensor<SensorPerceiveOutput[]> {
             hitObject = castHit ? rayHit.collider.gameObject : null;
         }
         else {
-            RaycastHit2D rayHit;
             if (scaledCastRadius > 0f) {
-                rayHit = Physics2D.CircleCast(startPositionWorld, scaledCastRadius, rayDirection,
+                rayHit2D = Physics2D.CircleCast(startPositionWorld, scaledCastRadius, rayDirection,
                     scaledRayLength, input.LayerMask);
             }
             else {
-                rayHit = Physics2D.Raycast(startPositionWorld, rayDirection, scaledRayLength, input.LayerMask);
+                rayHit2D = Physics2D.Raycast(startPositionWorld, rayDirection, scaledRayLength, input.LayerMask);
             }
 
-            castHit = rayHit;
-            hitFraction = castHit ? rayHit.fraction : 1.0f;
-            hitObject = castHit ? rayHit.collider.gameObject : null;
+            castHit = rayHit2D;
+            hitFraction = castHit ? rayHit2D.fraction : 1.0f;
+            hitObject = castHit ? rayHit2D.collider.gameObject : null;
         }
 
-        SensorPerceiveOutput rayOutput = new SensorPerceiveOutput {
+        if(rayOutputs[rayIndex] == null)
+            rayOutputs[rayIndex] = new SensorPerceiveOutput();
+
+        rayOutputs[rayIndex].HasHit = castHit;
+        rayOutputs[rayIndex].HitFraction = hitFraction;
+        rayOutputs[rayIndex].HasHitTaggedObject = false;
+        rayOutputs[rayIndex].HitTagIndex = -1;
+        rayOutputs[rayIndex].HitGameObjects[0] = hitObject;
+        rayOutputs[rayIndex].StartPositionWorld = startPositionWorld;
+        rayOutputs[rayIndex].EndPositionWorld = endPositionWorld;
+        
+        // TODO Remove this
+        /*rayOutput = new SensorPerceiveOutput {
             HasHit = castHit,
             HitFraction = hitFraction,
             HasHitTaggedObject = false,
@@ -235,17 +186,17 @@ public abstract class RaySensorBase : Sensor<SensorPerceiveOutput[]> {
             HitGameObjects = new GameObject[] { hitObject },
             StartPositionWorld = startPositionWorld,
             EndPositionWorld = endPositionWorld,
-        };
+        };*/
 
         if (castHit) {
             // Find the index of the tag of the object that was hit.
-            var numTags = input.DetectableTags?.Count ?? 0;
+            numTags = input.DetectableTags?.Count ?? 0;
             for (var i = 0; i < numTags; i++) {
-                var tagsEqual = false;
+                tagsEqual = false;
                 try {
-                    var tag = input.DetectableTags[i];
-                    if (!string.IsNullOrEmpty(tag)) {
-                        tagsEqual = hitObject.CompareTag(tag);
+                    detectableTag = input.DetectableTags[i];
+                    if (!string.IsNullOrEmpty(detectableTag)) {
+                        tagsEqual = hitObject.CompareTag(detectableTag);
                     }
                 }
                 catch (UnityException) {
@@ -253,15 +204,15 @@ public abstract class RaySensorBase : Sensor<SensorPerceiveOutput[]> {
                 }
 
                 if (tagsEqual) {
-                    rayOutput.HasHitTaggedObject = true;
-                    rayOutput.HitTagIndex = i;
+                    rayOutputs[rayIndex].HasHitTaggedObject = true;
+                    rayOutputs[rayIndex].HitTagIndex = i;
                     break;
                 }
             }
         }
 
 
-        return rayOutput;
+        return rayOutputs[rayIndex];
     }
 
     public override void Init()
@@ -283,7 +234,7 @@ public abstract class RaySensorBase : Sensor<SensorPerceiveOutput[]> {
     public RayPerceptionInput GetRayPerceptionInput() {
         var rayAngles = GetRayAngles(RaysPerDirection, MaxRayDegrees);
 
-        var rayPerceptionInput = new RayPerceptionInput();
+        rayPerceptionInput = new RayPerceptionInput();
         rayPerceptionInput.RayLength = RayLength;
         rayPerceptionInput.DetectableTags = DetectableTags;
         rayPerceptionInput.Angles = rayAngles;
