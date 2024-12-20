@@ -122,11 +122,12 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
             if (RAY_HIT_OBJECT_DETECTION_TYPE == RayHitObjectDetectionType.RaySide)
             {
                 // Option 2 : Check if the target game object is hit by any of the rays based on Side
-                sensorPerceiveOutputs = raySensor.PerceiveAll();
+                //sensorPerceiveOutputs = raySensor.PerceiveAll();
 
                 int hitIndex = -1;
                 if (side == AgentSideAdvanced.Center)
                 {
+                    sensorPerceiveOutputs = raySensor.PerceiveRange(0, 1, 2);
                     if (sensorPerceiveOutputs[0].HasHit && sensorPerceiveOutputs[0].HitGameObjects[0].name.Contains(TargetGameObjectsToString(targetGameObject)))
                     {
                         targetHit = true;
@@ -135,6 +136,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
                 }
                 else if (side == AgentSideAdvanced.Left)
                 {
+                    sensorPerceiveOutputs = raySensor.PerceiveRange(2, raySensor.GetRayPerceptionInput().Angles.Count, 2);
                     for (int i = 2; i < sensorPerceiveOutputs.Length; i += 2)
                     {
                         if (sensorPerceiveOutputs[i].HasHit && sensorPerceiveOutputs[i].HitGameObjects[0].name.Contains(TargetGameObjectsToString(targetGameObject)))
@@ -146,6 +148,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
                 }
                 else if (side == AgentSideAdvanced.Right)
                 {
+                    sensorPerceiveOutputs = raySensor.PerceiveRange(1, raySensor.GetRayPerceptionInput().Angles.Count, 2);
                     for (int i = 1; i < sensorPerceiveOutputs.Length; i += 2)
                     {
                         if (sensorPerceiveOutputs[i].HasHit && sensorPerceiveOutputs[i].HitGameObjects[0].name.Contains(TargetGameObjectsToString(targetGameObject)))

@@ -25,7 +25,7 @@ public abstract class Sensor<T> : MonoBehaviour {
     public abstract T PerceiveAll();
     public abstract T PerceiveSingle(int xPos = -1, int yPos = -1, int zPos = -1);
 
-    public abstract T PerceiveRange(int startIndex = -1, int endIndex = -1);
+    public abstract T PerceiveRange(int startIndex = -1, int endIndex = -1, int step = 1);
 
     public abstract void Init();
 
