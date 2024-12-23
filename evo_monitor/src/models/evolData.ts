@@ -1,5 +1,0 @@
-class EvolData {
-    
-}
-
-export  { EvolData };
