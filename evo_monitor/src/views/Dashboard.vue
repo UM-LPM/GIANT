@@ -4,37 +4,35 @@
   import RadarChart from "@/components/RadarChart.vue";
   import BarChart from "@/components/BarChart.vue";
   import type { ChartConfig } from "@/models/chartConfig";
-  import { onMounted, reactive } from "vue";
+  import { onMounted, reactive, ref } from "vue";
   import { useGpAlgorithProgressDataStore } from "../stores/gpAlgorithmProgressData";
+import { ChartComponentRef } from "vue-chartjs";
 
-  const options = reactive({
+  /*const options = reactive({
     configurationNum: 1,
     maxConfigurationNum: 0,
     runNum: 1,
     maxRunNum: 0
-  });
+  });*/
 
-  const lineChartConfig: ChartConfig = reactive({
+  const lineChartBestIndividualRef = ref<ChartComponentRef>(null)
+  const lineChartConfigBestIndividual: ChartConfig = reactive({
     id: 'line-chart-1',
     data: {
-      labels: ['0', '1', '2', '3', '4', '5', '6'],
-      datasets: [
-          {
-          label: 'Best Individual',
-          backgroundColor: '#00ff00',
-          data: [80, 39, 50, 70, 39, 25, 82]
-          },
-          {
-          label: 'Average Individual',
-          backgroundColor: '#00ffff',
-          data: [40, 12, 24, 50, 29, 20, 80]
-          },
-          {
-          label: 'Worst Individual',
-          backgroundColor: '#ff0000',
-          data: [30, 10, 12, 13, 23, 15, 60]
-          }
-      ],
+      labels: [],
+      datasets: [],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false
+    }
+  });
+
+  const lineChartConfigBestIndividualRank: ChartConfig = reactive({
+    id: 'line-chart-1',
+    data: {
+      labels: [],
+      datasets: [],
     },
     options: {
       responsive: true,
@@ -125,21 +123,21 @@
   const validationInputErrors = reactive({});
 
   const gpAlgorithProgressDataStore = useGpAlgorithProgressDataStore();
+
   onMounted(() => {
     // 1. Load evolutionary algorithm progress data from .json file -> Read data every X seconds (or just on load?)
     loadData();
-
-    // 2. fill chartConfig with data
-
-    // 3. Display data in the charts
   });
 
   const loadData = async () => {
     // Load data from .json file
     await gpAlgorithProgressDataStore.fetchGpAlgorithmProgressDataFromJsonFile();
     
-    options.maxConfigurationNum = gpAlgorithProgressDataStore.gpAlgorithProgressData.multiConfigurationProgressData.length;
-    options.maxRunNum = gpAlgorithProgressDataStore.gpAlgorithProgressData.multiConfigurationProgressData[options.configurationNum - 1].multiRunProgressData.length;
+    // 2. Update input fields
+    gpAlgorithProgressDataStore.setMaxConfigurationNum(gpAlgorithProgressDataStore.gpAlgorithProgressData.multiConfigurationProgressData.length);
+    gpAlgorithProgressDataStore.setMaxRunNum(gpAlgorithProgressDataStore.gpAlgorithProgressData.multiConfigurationProgressData[gpAlgorithProgressDataStore.configurationNum - 1].multiRunProgressData.length);
+    // 3. Reload chart data
+    reloadChartDatasets();
   }
 
   const validateInput = (val, min, max, key) => {
@@ -163,8 +161,13 @@
 
   const reloadChartDatasets = () => {
     // Reset chart data
-    lineChartConfig.data = gpAlgorithProgressDataStore.reloadLineChartDatasetBestIndividual(options.configurationNum - 1, options.runNum - 1);
+    console.log("Reloading chart data", gpAlgorithProgressDataStore.configurationNum, gpAlgorithProgressDataStore.runNum);
+    lineChartConfigBestIndividual.data = gpAlgorithProgressDataStore.reloadLineChartDatasetBestIndividual(gpAlgorithProgressDataStore.configurationNum - 1, gpAlgorithProgressDataStore.runNum - 1);
+    lineChartConfigBestIndividualRank.data = gpAlgorithProgressDataStore.reloadLineChartDatasetBestIndividualRank(gpAlgorithProgressDataStore.configurationNum - 1, gpAlgorithProgressDataStore.runNum - 1);
+  }
 
+  const lineChartBestIndividualClick = (event) => {
+    console.log(event);
   }
 </script>
 
@@ -187,8 +190,8 @@
       </div>
       <div class="col-4 col-md-1 q-pa-sm">
         <q-input filled type="number" label="" dense
-          v-model.number="options.configurationNum"
-          :rules="validateInputRules(1, options.maxConfigurationNum, 'configurationNum')"
+          v-model.number="gpAlgorithProgressDataStore._configurationNum"
+          :rules="validateInputRules(1, gpAlgorithProgressDataStore.maxConfigurationNum, 'configurationNum')"
           hide-bottom-space
         ></q-input>
       </div>
@@ -201,8 +204,8 @@
       </div>
       <div class="col-4 col-md-1 q-pa-sm">
         <q-input filled type="number" label="" dense
-          v-model.number="options.runNum"
-          :rules="validateInputRules(1, options.maxRunNum, 'runNum')"
+          v-model.number="gpAlgorithProgressDataStore._runNum"
+          :rules="validateInputRules(1, gpAlgorithProgressDataStore.maxRunNum, 'runNum')"
           hide-bottom-space
         ></q-input>
       </div>
@@ -216,15 +219,32 @@
       </div>
     </div>
 
-    <div><LineChart :chart-config="lineChartConfig"/></div>
+    <div class="row">
+      <div class="col-4 col-md-12 q-pa-sm">
+        <h5 class="q-pa-sm q-ma-xs">Progress based on individual fitness (For Individual Match)</h5>
+      </div>
+      <div class="col-4 col-md-12 q-pa-sm">
+        <LineChart :chart-config="lineChartConfigBestIndividual" @click="lineChartBestIndividualClick" ref="lineChartBestIndividualRef"/>       
+      </div>
+    </div>
 
-    <q-separator class="q-ma-sm"></q-separator>
+    <div class="row">
+      <div class="col-4 col-md-12 q-pa-sm">
+        <h5 class="q-pa-sm q-ma-xs">Progress based on individual Rating</h5>
+      </div>
+      <div class="col-4 col-md-12 q-pa-sm">
+        <LineChart :chart-config="lineChartConfigBestIndividualRank"/>
+      </div>
+    </div>
 
-    <div><RadarChart :chart-config="radarChartConfig" /></div>
-
-    <q-separator class="q-ma-sm"></q-separator>
-
-    <div><PieChart :chart-config="pieChartConfig" /></div>
+    <div class="row">
+      <div class="col-4 col-md-5 q-pa-sm">
+        <RadarChart :chart-config="radarChartConfig" />
+      </div>
+      <div class="col-4 col-md-5 q-pa-sm">
+        <PieChart :chart-config="pieChartConfig" />
+      </div>
+    </div>
 
     <q-separator class="q-ma-sm"></q-separator>
 
