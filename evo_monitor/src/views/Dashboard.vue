@@ -8,13 +8,6 @@
   import { useGpAlgorithProgressDataStore } from "../stores/gpAlgorithmProgressData";
 import { ChartComponentRef } from "vue-chartjs";
 
-  /*const options = reactive({
-    configurationNum: 1,
-    maxConfigurationNum: 0,
-    runNum: 1,
-    maxRunNum: 0
-  });*/
-
   const lineChartBestIndividualRef = ref<ChartComponentRef>(null)
   const lineChartConfigBestIndividual: ChartConfig = reactive({
     id: 'line-chart-1',
@@ -24,7 +17,11 @@ import { ChartComponentRef } from "vue-chartjs";
     },
     options: {
       responsive: true,
-      maintainAspectRatio: false
+      maintainAspectRatio: false,
+      parsing: {
+        xAxisKey: 'generation',
+        yAxisKey: 'fitness'
+      },
     }
   });
 
@@ -36,7 +33,11 @@ import { ChartComponentRef } from "vue-chartjs";
     },
     options: {
       responsive: true,
-      maintainAspectRatio: false
+      maintainAspectRatio: false,
+      parsing: {
+        xAxisKey: 'generation',
+        yAxisKey: 'fitness'
+      },
     }
   });
 
@@ -137,7 +138,7 @@ import { ChartComponentRef } from "vue-chartjs";
     gpAlgorithProgressDataStore.setMaxConfigurationNum(gpAlgorithProgressDataStore.gpAlgorithProgressData.multiConfigurationProgressData.length);
     gpAlgorithProgressDataStore.setMaxRunNum(gpAlgorithProgressDataStore.gpAlgorithProgressData.multiConfigurationProgressData[gpAlgorithProgressDataStore.configurationNum - 1].multiRunProgressData.length);
     // 3. Reload chart data
-    reloadChartDatasets();
+    reloadLineChartBestIndividualDatasets();
   }
 
   const validateInput = (val, min, max, key) => {
@@ -150,7 +151,7 @@ import { ChartComponentRef } from "vue-chartjs";
         // Remove the error message
         delete validationInputErrors[key];
 
-        reloadChartDatasets();
+        reloadLineChartBestIndividualDatasets();
         
         return true
   }
@@ -159,15 +160,50 @@ import { ChartComponentRef } from "vue-chartjs";
     (val) => validateInput(val, min, max, key)
   ];
 
-  const reloadChartDatasets = () => {
+  const reloadLineChartBestIndividualDatasets = () => {
     // Reset chart data
     console.log("Reloading chart data", gpAlgorithProgressDataStore.configurationNum, gpAlgorithProgressDataStore.runNum);
     lineChartConfigBestIndividual.data = gpAlgorithProgressDataStore.reloadLineChartDatasetBestIndividual(gpAlgorithProgressDataStore.configurationNum - 1, gpAlgorithProgressDataStore.runNum - 1);
     lineChartConfigBestIndividualRank.data = gpAlgorithProgressDataStore.reloadLineChartDatasetBestIndividualRank(gpAlgorithProgressDataStore.configurationNum - 1, gpAlgorithProgressDataStore.runNum - 1);
   }
 
-  const lineChartBestIndividualClick = (event) => {
-    console.log(event);
+  const reloadRadarChartSelectedIndividualsConfig = () => {
+    radarChartConfig.data = gpAlgorithProgressDataStore.reloadRadarChartSelectedIndividualsConfig();
+  }
+
+  const lineChartBestIndividualClick = (element) => {
+    console.log(element);
+    if(element != null) {
+      // Check if this element is already selected
+      let index = gpAlgorithProgressDataStore.selectedElements.findIndex((el) => el.generationNum == element.index && el.configurationNum == gpAlgorithProgressDataStore.configurationNum && el.runNum == gpAlgorithProgressDataStore.runNum && el.value == element.value);
+
+      if(index > -1) {
+        // Remove the element
+        gpAlgorithProgressDataStore._selectedElements.splice(index, 1);
+      } else {
+        // Add the element
+        gpAlgorithProgressDataStore._selectedElements.push({
+          configurationNum: gpAlgorithProgressDataStore.configurationNum,
+          runNum: gpAlgorithProgressDataStore.runNum,
+          generationNum: element.index,
+          label: element.label,
+          value: element.value
+        });
+      }
+
+      gpAlgorithProgressDataStore._lastSelectedElement = {
+        configurationNum: gpAlgorithProgressDataStore.configurationNum,
+        runNum: gpAlgorithProgressDataStore.runNum,
+        generationNum: element.index,
+        label: element.label,
+        value: element.value
+      }
+
+      // Reset RadarChart config
+      reloadRadarChartSelectedIndividualsConfig();
+
+      console.log(gpAlgorithProgressDataStore.selectedElements);
+    }
   }
 </script>
 
@@ -224,7 +260,7 @@ import { ChartComponentRef } from "vue-chartjs";
         <h5 class="q-pa-sm q-ma-xs">Progress based on individual fitness (For Individual Match)</h5>
       </div>
       <div class="col-4 col-md-12 q-pa-sm">
-        <LineChart :chart-config="lineChartConfigBestIndividual" @click="lineChartBestIndividualClick" ref="lineChartBestIndividualRef"/>       
+        <LineChart :chart-config="lineChartConfigBestIndividual" @lineChartClick="lineChartBestIndividualClick" ref="lineChartBestIndividualRef"/>       
       </div>
     </div>
 
