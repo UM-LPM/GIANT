@@ -5,7 +5,7 @@ const toast = useToast();
 
 const PROGRESS_DATA_SOURCE = import.meta.env.VITE_PROGRESS_DATA_SOURCE;
 
-const fetchGpAlgorithmProgressDataFromJsonFile = async () => {
+const fetchGpAlgorithmProgressDataFromJsonFile = async ()  =>  {
     try {
         const response = await fetch(PROGRESS_DATA_SOURCE);
         if (!response.ok) {
