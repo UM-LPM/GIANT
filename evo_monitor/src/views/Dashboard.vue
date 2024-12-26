@@ -6,9 +6,8 @@
   import type { ChartConfig } from "@/models/chartConfig";
   import { onMounted, reactive, ref } from "vue";
   import { useGpAlgorithProgressDataStore } from "../stores/gpAlgorithmProgressData";
-import { ChartComponentRef } from "vue-chartjs";
+  import { FinalIndividualFitness } from "../models/finalIndividualFitness";
 
-  const lineChartBestIndividualRef = ref<ChartComponentRef>(null)
   const lineChartConfigBestIndividual: ChartConfig = reactive({
     id: 'line-chart-1',
     data: {
@@ -63,40 +62,8 @@ import { ChartComponentRef } from "vue-chartjs";
   const radarChartConfig: ChartConfig = reactive({
     id: 'radar-chart-1',
     data: {
-      labels: [
-            'SectorExploration',
-            'PowerUp_Pickup_Health',
-            'PowerUp_Pickup_Ammo',
-            'PowerUp_Pickup_Shield',
-            'MissilesFired',
-            'MissilesFiredAccuracy',
-            'SurvivalBonus',
-            'OpponentTrackingBonus',
-            'OpponentDestroyedBonus',
-            'DamageTakenPenalty',
-        ],
-        datasets: [
-            {
-            label: 'My First dataset',
-            backgroundColor: 'rgba(179,181,198,0.2)',
-            borderColor: 'rgba(179,181,198,1)',
-            pointBackgroundColor: 'rgba(179,181,198,1)',
-            pointBorderColor: '#fff',
-            pointHoverBackgroundColor: '#fff',
-            pointHoverBorderColor: 'rgba(179,181,198,1)',
-            data: [65, 59, 90, 81, 56, 55, 40, 34, 53, 62],
-            },
-            {
-            label: 'My Second dataset',
-            backgroundColor: 'rgba(255,99,132,0.2)',
-            borderColor: 'rgba(255,99,132,1)',
-            pointBackgroundColor: 'rgba(255,99,132,1)',
-            pointBorderColor: '#fff',
-            pointHoverBackgroundColor: '#fff',
-            pointHoverBorderColor: 'rgba(255,99,132,1)',
-            data: [28, 48, 40, 19, 96, 27, 100, 34, 83, 22],
-            },
-        ],
+      labels: [],
+        datasets: [],
     },
     options: {
       responsive: true,
@@ -107,13 +74,8 @@ import { ChartComponentRef } from "vue-chartjs";
   const pieChartConfig: ChartConfig = reactive({
     id: 'pie-chart-1',
     data: {
-      labels: ['VueJs', 'EmberJs', 'ReactJs', 'AngularJs'],
-        datasets: [
-            {
-            backgroundColor: ['#41B883', '#E46651', '#00D8FF', '#DD1B16'],
-            data: [40, 20, 80, 10]
-            }
-        ]
+      labels: [],
+        datasets: []
     },
     options: {
       responsive: true,
@@ -139,6 +101,13 @@ import { ChartComponentRef } from "vue-chartjs";
     gpAlgorithProgressDataStore.setMaxRunNum(gpAlgorithProgressDataStore.gpAlgorithProgressData.multiConfigurationProgressData[gpAlgorithProgressDataStore.configurationNum - 1].multiRunProgressData.length);
     // 3. Reload chart data
     reloadLineChartBestIndividualDatasets();
+
+    // 4. Reload RadarChart config
+    gpAlgorithProgressDataStore._selectedElements = [];
+    gpAlgorithProgressDataStore._lastSelectedElement = null;
+    reloadRadarChartSelectedIndividualsConfig();
+
+    reloadPieChartSelectedIndividualsConfig();
   }
 
   const validateInput = (val, min, max, key) => {
@@ -165,15 +134,19 @@ import { ChartComponentRef } from "vue-chartjs";
     console.log("Reloading chart data", gpAlgorithProgressDataStore.configurationNum, gpAlgorithProgressDataStore.runNum);
     lineChartConfigBestIndividual.data = gpAlgorithProgressDataStore.reloadLineChartDatasetBestIndividual(gpAlgorithProgressDataStore.configurationNum - 1, gpAlgorithProgressDataStore.runNum - 1);
     lineChartConfigBestIndividualRank.data = gpAlgorithProgressDataStore.reloadLineChartDatasetBestIndividualRank(gpAlgorithProgressDataStore.configurationNum - 1, gpAlgorithProgressDataStore.runNum - 1);
-  }
+  };
 
   const reloadRadarChartSelectedIndividualsConfig = () => {
+    console.log(gpAlgorithProgressDataStore.selectedElements);
     radarChartConfig.data = gpAlgorithProgressDataStore.reloadRadarChartSelectedIndividualsConfig();
-  }
+  };
+
+  const reloadPieChartSelectedIndividualsConfig = () => {
+    pieChartConfig.data = gpAlgorithProgressDataStore.reloadPieChartSelectedIndividualsConfig();
+  };
 
   const lineChartBestIndividualClick = (element) => {
-    console.log(element);
-    if(element != null) {
+    if(element != null && element.value.individual != null) {
       // Check if this element is already selected
       let index = gpAlgorithProgressDataStore.selectedElements.findIndex((el) => el.generationNum == element.index && el.configurationNum == gpAlgorithProgressDataStore.configurationNum && el.runNum == gpAlgorithProgressDataStore.runNum && el.value == element.value);
 
@@ -202,9 +175,10 @@ import { ChartComponentRef } from "vue-chartjs";
       // Reset RadarChart config
       reloadRadarChartSelectedIndividualsConfig();
 
-      console.log(gpAlgorithProgressDataStore.selectedElements);
+      // Reset PieChart config
+      reloadPieChartSelectedIndividualsConfig();
     }
-  }
+  };
 </script>
 
 <template>
@@ -260,7 +234,7 @@ import { ChartComponentRef } from "vue-chartjs";
         <h5 class="q-pa-sm q-ma-xs">Progress based on individual fitness (For Individual Match)</h5>
       </div>
       <div class="col-4 col-md-12 q-pa-sm">
-        <LineChart :chart-config="lineChartConfigBestIndividual" @lineChartClick="lineChartBestIndividualClick" ref="lineChartBestIndividualRef"/>       
+        <LineChart :chart-config="lineChartConfigBestIndividual" @lineChartClick="lineChartBestIndividualClick"/>       
       </div>
     </div>
 
@@ -269,22 +243,33 @@ import { ChartComponentRef } from "vue-chartjs";
         <h5 class="q-pa-sm q-ma-xs">Progress based on individual Rating</h5>
       </div>
       <div class="col-4 col-md-12 q-pa-sm">
-        <LineChart :chart-config="lineChartConfigBestIndividualRank"/>
+        <LineChart :chart-config="lineChartConfigBestIndividualRank" @lineChartClick="lineChartBestIndividualClick"/>
       </div>
     </div>
 
     <div class="row">
-      <div class="col-4 col-md-5 q-pa-sm">
+      <div v-if="gpAlgorithProgressDataStore.selectedElements.length > 0" class="col-4 col-md-6 q-pa-sm">
         <RadarChart :chart-config="radarChartConfig" />
       </div>
-      <div class="col-4 col-md-5 q-pa-sm">
+      <div v-if="gpAlgorithProgressDataStore.lastSelectedElement != null" class="col-4 col-md-6 q-pa-sm">
+        <q-field>Individual ID: {{ gpAlgorithProgressDataStore.lastSelectedElement.value.individual.individualId }}</q-field>
+        <q-field>Changes count: {{ gpAlgorithProgressDataStore.lastSelectedElement.value.individual.changesCount }}</q-field>
+        <q-field>Function nodes: {{ gpAlgorithProgressDataStore.lastSelectedElement.value.individual.functionNodes }}</q-field>
+
+        <q-field>Terminal nodes: {{ gpAlgorithProgressDataStore.lastSelectedElement.value.individual.terminalNodes }}</q-field>
+        <q-field>Tree size: {{ gpAlgorithProgressDataStore.lastSelectedElement.value.individual.treeSize }}</q-field>
+        <q-field>Tree depth: {{ gpAlgorithProgressDataStore.lastSelectedElement.value.individual.treeDepth }}</q-field>
+        <q-field>Fitness: {{ gpAlgorithProgressDataStore.lastSelectedElement.value.individual.objectives[0] }}, {{ gpAlgorithProgressDataStore.lastSelectedElement.value.individual.finalIndividualFitness.additionalValues["StdDeviation"] }}</q-field>
+        <q-field>Avg raw fitness: {{ FinalIndividualFitness.avgIndividualMatchResultsString(gpAlgorithProgressDataStore.lastSelectedElement.value.individual.finalIndividualFitness.individualMatchResults) }}</q-field>
+      </div>
+      <div v-if="gpAlgorithProgressDataStore.lastSelectedElement != null" class="col-4 col-md-6 q-pa-sm">
         <PieChart :chart-config="pieChartConfig" />
       </div>
     </div>
 
-    <q-separator class="q-ma-sm"></q-separator>
+    <!--<q-separator class="q-ma-sm"></q-separator>
 
-    <div><BarChart :chart-config="barChartConfig" /></div>
+    <div><BarChart :chart-config="barChartConfig" /></div>-->
     
   </q-page>
 </template>

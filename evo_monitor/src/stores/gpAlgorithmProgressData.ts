@@ -2,6 +2,7 @@ import { defineStore, acceptHMRUpdate } from 'pinia';
 import { GPAlgorithmMultiConfigurationsProgressData, GPProgramSolutionSimple } from "../models/gpAlgorithmData";
 import { fetchGpAlgorithmProgressDataFromJsonFile } from '../services/gpAlgorithmProgressDataAPI';
 import { ChartData } from '../models/chartConfig';
+import { FinalIndividualFitness } from '../models/finalIndividualFitness';
 
 export const useGpAlgorithProgressDataStore = defineStore({
     id: 'gpAlgorithProgressData',
@@ -22,6 +23,19 @@ export const useGpAlgorithProgressDataStore = defineStore({
         maxRunNum: (state) => state._maxRunNum,
         selectedElements: (state) => state._selectedElements,
         lastSelectedElement: (state) => state._lastSelectedElement,
+        getSelectedIndividuals: (state) => () => {
+            let selectedIndividuals: GPProgramSolutionSimple[] = [];
+            for (let selectedElement of state._selectedElements) {
+                selectedIndividuals.push(selectedElement.value.individual);
+            }
+            return selectedIndividuals;
+        },
+        getLastSelectedIndividual: (state) => () => {
+            if(state._lastSelectedElement !== null) {
+                return state._lastSelectedElement.value.individual;
+            }
+            return null;
+        },
     },
     actions: {
         async fetchGpAlgorithmProgressDataFromJsonFile() {
@@ -185,13 +199,81 @@ export const useGpAlgorithProgressDataStore = defineStore({
         },
         reloadRadarChartSelectedIndividualsConfig(): ChartData {
             let data: ChartData = new ChartData([], []);
-            
-            let selectedIndividuals: GPProgramSolutionSimple[] = [];
+                        
+            let selectedIndividuals: GPProgramSolutionSimple[] = this.getSelectedIndividuals();
 
-            // TODO Implement
-            /*for (let selectedElement of this._selectedElements) {
-                selectedIndividuals.push(this._gpAlgorithProgressData.multiConfigurationProgressData[selectedElement.configurationNum].multiRunProgressData[selectedElement.runNum].gensProgressData[selectedElement.generationNum].population[selectedElement.value]);
-            }*/
+            let avgIndividualsValues: { [id: string] : number; }[] = [];
+
+            for (let selectedIndividual of selectedIndividuals) {
+                avgIndividualsValues.push(FinalIndividualFitness.avgIndividualMatchResults(selectedIndividual.finalIndividualFitness.individualMatchResults));
+            }
+
+            let labels: string[] = [];
+            let datasets: any[] = [];
+
+            for (let avgIndividualValues of avgIndividualsValues) {
+                for (let id in avgIndividualValues) {
+                    // Check if id already exists in labels
+                    if (!labels.includes(id)) {
+                        labels.push(id);
+                    } 
+                }
+            }
+
+            // Order labels alphabetically
+            labels = labels.sort();
+            
+            for(let i = 0; i < selectedIndividuals.length; i++) {
+                let color = '#'+(0x1000000+(Math.random())*0xffffff).toString(16).substr(1,6);
+                let dataset = {
+                    label: 'Individual_' + this._selectedElements[i].configurationNum + '_' + this._selectedElements[i].runNum + '_' + this._selectedElements[i].label,
+                    backgroundColor: 'rgba(179,181,198,0.2)',
+                    borderColor: color,
+                    pointBackgroundColor: color,
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgba(179,181,198,1)',
+                    data: []
+                };
+
+                for (let id in labels) {
+                    if(avgIndividualsValues[i][labels[id]] === undefined) {
+                        dataset.data.push(0);
+                    }else{
+                        dataset.data.push(Math.abs(avgIndividualsValues[i][labels[id]]));
+                    }
+                }
+                datasets.push(dataset);
+            }
+
+            data.labels = labels;
+            data.datasets = datasets;
+
+            return data;
+        },
+        reloadPieChartSelectedIndividualsConfig(): ChartData {
+            let data: ChartData = new ChartData([], []);
+
+            let selectedIndividuals: GPProgramSolutionSimple = this.getLastSelectedIndividual();
+
+            if(selectedIndividuals === null) {
+                return data;
+            }
+
+            // for each node count in the last selected individual
+            let dataset: any = {
+                backgroundColor: [],
+                data: []
+            };
+
+            for (let nodeCount in selectedIndividuals.nodeCounts) {
+                data.labels.push(nodeCount);
+                
+                dataset.backgroundColor.push('#'+(0x1000000+(Math.random())*0xffffff).toString(16).substr(1,6));
+                dataset.data.push(selectedIndividuals.nodeCounts[nodeCount]);
+            }
+
+            data.datasets.push(dataset);
 
             return data;
         },
