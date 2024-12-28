@@ -90,8 +90,9 @@ export const useGpAlgorithProgressDataStore = defineStore({
                     data.labels.push(genProgressData.generation.toString());
                 }
 
-                // Find the best individual in the generation (Sum of individualMatchResults.value)
-                let bestFitness = (genProgressData.population[0].finalIndividualFitness.individualMatchResults.reduce((sum, result) => sum + result.value, 0)) / genProgressData.population[0].finalIndividualFitness.individualMatchResults.length;
+                // Find the best individual in the generation (Sum of avgMatchResult.InidividualValues)
+                let bestFitness = FinalIndividualFitness.avgMatchResultSum(genProgressData.population[0].finalIndividualFitness.avgMatchResult);
+
                 let bestIndividual = genProgressData.population[0];
                 let avgFitness = 0;
                 let worstFitness = bestFitness;
@@ -99,7 +100,7 @@ export const useGpAlgorithProgressDataStore = defineStore({
                 
                 for (let individual of genProgressData.population) {
                     // Match results
-                    let currentIndividualFitness = (individual.finalIndividualFitness.individualMatchResults.reduce((sum, result) => sum + result.value, 0)) / individual.finalIndividualFitness.individualMatchResults.length;
+                    let currentIndividualFitness = FinalIndividualFitness.avgMatchResultSum(individual.finalIndividualFitness.avgMatchResult);
 
                     avgFitness += currentIndividualFitness;
 
@@ -205,7 +206,7 @@ export const useGpAlgorithProgressDataStore = defineStore({
             let avgIndividualsValues: { [id: string] : number; }[] = [];
 
             for (let selectedIndividual of selectedIndividuals) {
-                avgIndividualsValues.push(FinalIndividualFitness.avgIndividualMatchResults(selectedIndividual.finalIndividualFitness.individualMatchResults));
+                avgIndividualsValues.push(selectedIndividual.finalIndividualFitness.avgMatchResult.individualValues);
             }
 
             let labels: string[] = [];

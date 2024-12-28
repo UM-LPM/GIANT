@@ -44,7 +44,7 @@ namespace Evaluators.RatingSystems
                         }
 
                         RatingSystemRating individualRating = initialPlayerRaitings?.FirstOrDefault(x => x.IndividualID == individual.IndividualId);
-                        if (initialPlayerRaitings != null && individualRating.Mean != double.MaxValue && !double.IsInfinity(individualRating.Mean))
+                        if (initialPlayerRaitings != null && ((!double.IsInfinity(individualRating.Mean) && !double.IsInfinity(individualRating.StandardDeviation)) && (double.MaxValue != individualRating.Mean && double.MaxValue != individualRating.StandardDeviation)))
                         {
                             Players.Add(new TrueSkillPlayer(individual.IndividualId, new Player(individual.IndividualId), new Rating(math.abs(individualRating.Mean), individualRating.StandardDeviation)));
                         }

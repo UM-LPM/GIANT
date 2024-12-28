@@ -13,6 +13,7 @@
         public int IndividualID { get; set; }
         public float Value { get; set; }
         public List<IndividualMatchResult>? IndividualMatchResults { get; set; }
+        public IndividualMatchResult? AvgMatchResult { get; set; }
         public Dictionary<string, float>? AdditionalValues { get; set; }
     }
 

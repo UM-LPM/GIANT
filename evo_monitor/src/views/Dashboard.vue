@@ -260,7 +260,7 @@
         <q-field>Tree size: {{ gpAlgorithProgressDataStore.lastSelectedElement.value.individual.treeSize }}</q-field>
         <q-field>Tree depth: {{ gpAlgorithProgressDataStore.lastSelectedElement.value.individual.treeDepth }}</q-field>
         <q-field>Fitness: {{ gpAlgorithProgressDataStore.lastSelectedElement.value.individual.objectives[0] }}, {{ gpAlgorithProgressDataStore.lastSelectedElement.value.individual.finalIndividualFitness.additionalValues["StdDeviation"] }}</q-field>
-        <q-field>Avg raw fitness: {{ FinalIndividualFitness.avgIndividualMatchResultsString(gpAlgorithProgressDataStore.lastSelectedElement.value.individual.finalIndividualFitness.individualMatchResults) }}</q-field>
+        <q-field>Avg raw fitness: {{ FinalIndividualFitness.avgIndividualMatchResultsString(gpAlgorithProgressDataStore.lastSelectedElement.value.individual.finalIndividualFitness.avgMatchResult) }}</q-field>
       </div>
       <div v-if="gpAlgorithProgressDataStore.lastSelectedElement != null" class="col-4 col-md-6 q-pa-sm">
         <PieChart :chart-config="pieChartConfig" />
