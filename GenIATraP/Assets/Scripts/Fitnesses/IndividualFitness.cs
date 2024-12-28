@@ -89,6 +89,7 @@ namespace Fitnesses
         public int IndividualID { get; set; }
         public float Value { get; set; }
         public List<IndividualMatchResult> IndividualMatchResults { get; set; }
+        public IndividualMatchResult AvgMatchResult { get; set; }
         public Dictionary<string, float> AdditionalValues { get; set; }
 
         public FinalIndividualFitness()
@@ -96,6 +97,7 @@ namespace Fitnesses
             IndividualID = -1;
             Value = 0f;
             IndividualMatchResults = new List<IndividualMatchResult>();
+            AvgMatchResult = null;
             AdditionalValues = new Dictionary<string, float>();
         }
 
@@ -132,6 +134,46 @@ namespace Fitnesses
                     AdditionalValues.Add(additionalValue.Key, additionalValue.Value);
                 }
             }
+
+            
+        }
+
+        public void CalculateAvgMatchResultFitness()
+        {
+            if (IndividualMatchResults.Count == 0)
+            {
+                return;
+            }
+
+            AvgMatchResult = new IndividualMatchResult()
+            {
+                MatchName = "Avg Match Result",
+                Value = 0,
+                IndividualValues = new Dictionary<string, float>()
+            };
+
+            foreach (var individualMatchResult in IndividualMatchResults)
+            {
+                foreach (var individualValue in individualMatchResult.IndividualValues)
+                {
+                    if (AvgMatchResult.IndividualValues.ContainsKey(individualValue.Key))
+                    {
+                        AvgMatchResult.IndividualValues[individualValue.Key] += individualValue.Value;
+                    }
+                    else
+                    {
+                        AvgMatchResult.IndividualValues.Add(individualValue.Key, individualValue.Value);
+                    }
+                }
+            }
+
+            Dictionary<string, float> individualValues = new Dictionary<string, float>();
+            foreach (var individualValue in AvgMatchResult.IndividualValues)
+            {
+                individualValues.Add(individualValue.Key, individualValue.Value / IndividualMatchResults.Count);
+            }
+
+            AvgMatchResult.IndividualValues = individualValues;
         }
     }
 

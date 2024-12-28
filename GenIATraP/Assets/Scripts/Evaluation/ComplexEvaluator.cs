@@ -143,6 +143,8 @@ namespace Evaluators
                     AdditionalValues = new Dictionary<string, float>() { { "Rating", (float)-finalRaitings[i].Mean }, { "StdDeviation", (float)finalRaitings[i].StandardDeviation } }
                 };
 
+                finalIndividualFitness.CalculateAvgMatchResultFitness();
+
                 finalIndividualFitnessWrapper.AddFinalIndividualFitness(finalIndividualFitness);
             }
 
