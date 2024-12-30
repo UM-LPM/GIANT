@@ -1,11 +1,12 @@
 <script setup lang="ts">
-    import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+    import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js/auto';
     import { ChartComponentRef, getElementAtEvent, Line } from 'vue-chartjs';
     import { ChartConfig } from '../models/chartConfig';
-import { InteractionItem } from 'chart.js/dist/core/core.interaction';
-import { ref } from 'vue';
+    import { InteractionItem } from 'chart.js/dist/core/core.interaction';
+    import { ref } from 'vue';
+    import zoomPlugin from 'chartjs-plugin-zoom';
 
-    ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+    ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, zoomPlugin);
 
     const props = defineProps({
         chartConfig: ChartConfig,

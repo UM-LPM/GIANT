@@ -7,8 +7,9 @@
   import { onMounted, reactive, ref } from "vue";
   import { useGpAlgorithProgressDataStore } from "../stores/gpAlgorithmProgressData";
   import { FinalIndividualFitness } from "../models/finalIndividualFitness";
+  
 
-  const lineChartConfigBestIndividual: ChartConfig = reactive({
+  const lineChartConfigBestAvgFitnessIndividual: ChartConfig = reactive({
     id: 'line-chart-1',
     data: {
       labels: [],
@@ -21,6 +22,19 @@
         xAxisKey: 'generation',
         yAxisKey: 'fitness'
       },
+      plugins: {
+          zoom: {
+            zoom: {
+              wheel: {
+                enabled: true,
+              },
+              pinch: {
+                enabled: true
+              },
+              mode: 'x',
+            }
+          }
+        },
     }
   });
 
@@ -37,6 +51,48 @@
         xAxisKey: 'generation',
         yAxisKey: 'fitness'
       },
+      plugins: {
+          zoom: {
+            zoom: {
+              wheel: {
+                enabled: true,
+              },
+              pinch: {
+                enabled: true
+              },
+              mode: 'x',
+            }
+          }
+        },
+    }
+  });
+
+  const lineChartConfigBestIndividualAvgFitness: ChartConfig = reactive({
+    id: 'line-chart-1',
+    data: {
+      labels: [],
+      datasets: [],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      parsing: {
+        xAxisKey: 'generation',
+        yAxisKey: 'fitness'
+      },
+      plugins: {
+          zoom: {
+            zoom: {
+              wheel: {
+                enabled: true,
+              },
+              pinch: {
+                enabled: true
+              },
+              mode: 'x',
+            }
+          }
+        },
     }
   });
 
@@ -132,8 +188,10 @@
   const reloadLineChartBestIndividualDatasets = () => {
     // Reset chart data
     console.log("Reloading chart data", gpAlgorithProgressDataStore.configurationNum, gpAlgorithProgressDataStore.runNum);
-    lineChartConfigBestIndividual.data = gpAlgorithProgressDataStore.reloadLineChartDatasetBestIndividual(gpAlgorithProgressDataStore.configurationNum - 1, gpAlgorithProgressDataStore.runNum - 1);
+    lineChartConfigBestAvgFitnessIndividual.data = gpAlgorithProgressDataStore.reloadLineChartDatasetBestIndividual(gpAlgorithProgressDataStore.configurationNum - 1, gpAlgorithProgressDataStore.runNum - 1);
     lineChartConfigBestIndividualRank.data = gpAlgorithProgressDataStore.reloadLineChartDatasetBestIndividualRank(gpAlgorithProgressDataStore.configurationNum - 1, gpAlgorithProgressDataStore.runNum - 1);
+
+    lineChartConfigBestIndividualAvgFitness.data = gpAlgorithProgressDataStore.reloadLineChartDatasetBestIndividualAvgFitness(gpAlgorithProgressDataStore.configurationNum - 1, gpAlgorithProgressDataStore.runNum - 1);
   };
 
   const reloadRadarChartSelectedIndividualsConfig = () => {
@@ -231,19 +289,28 @@
 
     <div class="row">
       <div class="col-4 col-md-12 q-pa-sm">
-        <h5 class="q-pa-sm q-ma-xs">Progress based on individual fitness (For Individual Match)</h5>
+        <h5 class="q-pa-sm q-ma-xs">Progress based on individual avg best fitness</h5>
       </div>
       <div class="col-4 col-md-12 q-pa-sm">
-        <LineChart :chart-config="lineChartConfigBestIndividual" @lineChartClick="lineChartBestIndividualClick"/>       
+        <LineChart :chart-config="lineChartConfigBestAvgFitnessIndividual" @lineChartClick="lineChartBestIndividualClick"/>       
       </div>
     </div>
 
     <div class="row">
       <div class="col-4 col-md-12 q-pa-sm">
-        <h5 class="q-pa-sm q-ma-xs">Progress based on individual Rating</h5>
+        <h5 class="q-pa-sm q-ma-xs">Progress based on best individual Rating</h5>
       </div>
       <div class="col-4 col-md-12 q-pa-sm">
         <LineChart :chart-config="lineChartConfigBestIndividualRank" @lineChartClick="lineChartBestIndividualClick"/>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-4 col-md-12 q-pa-sm">
+        <h5 class="q-pa-sm q-ma-xs">Progress based on best individual avg Fitness</h5>
+      </div>
+      <div class="col-4 col-md-12 q-pa-sm">
+        <LineChart :chart-config="lineChartConfigBestIndividualAvgFitness" @lineChartClick="lineChartBestIndividualClick"/>
       </div>
     </div>
 
