@@ -198,6 +198,62 @@ export const useGpAlgorithProgressDataStore = defineStore({
             data.datasets.push(worstIndividualDataset);
             return data;    
         },
+        reloadLineChartDatasetBestIndividualAvgFitness(configurationNum: number, runNum: number): ChartData {
+            const runProgressData = this._gpAlgorithProgressData.multiConfigurationProgressData[configurationNum].multiRunProgressData[runNum];
+
+            // Create datasets for the line chart (Best individual for each generation in runProgressData)
+            let data: ChartData = new ChartData([], []);
+
+            let bestIndividualDataset = {
+                label: 'Best Individual',
+                backgroundColor: '#21BA45',
+                data: []
+            };
+
+            let lastPhase: string = "";
+            for (let genProgressData of runProgressData.gensProgressData) {
+                let dataLabel = genProgressData.generation.toString();
+                if(lastPhase !== genProgressData.executionPhaseName) {
+                    dataLabel = genProgressData.generation.toString() +"(" + genProgressData.executionPhaseName + ")";
+                    data.labels.push(dataLabel);
+                    lastPhase = genProgressData.executionPhaseName;
+
+                }
+                else{
+                    data.labels.push(genProgressData.generation.toString());
+                }
+
+                // Find the best individual in the generation (Sum of individualMatchResults.value)
+                let bestFitness = genProgressData.population[0].finalIndividualFitness.additionalValues["Rating"];
+                let bestIndividual = genProgressData.population[0];
+                let avgFitness = 0;
+                let worstFitness = bestFitness;
+                let worstIndividual = genProgressData.population[0];
+                
+                for (let individual of genProgressData.population) {                   
+                    // Rating
+                    let currentIndividualFitness = individual.finalIndividualFitness.additionalValues["Rating"];
+
+                    avgFitness += currentIndividualFitness;
+
+                    if(currentIndividualFitness < bestFitness) {
+                        bestFitness = currentIndividualFitness;
+                        bestIndividual = individual;
+                    }
+
+                    if(currentIndividualFitness > worstFitness) {
+                        worstFitness = currentIndividualFitness;
+                        worstIndividual = individual;
+                    }
+                }
+
+                // Add the best individual's fitness to the dataset
+                bestIndividualDataset.data.push({fitness: FinalIndividualFitness.avgMatchResultSum(bestIndividual.finalIndividualFitness.avgMatchResult), generation: dataLabel, individual: bestIndividual});
+            }
+
+            data.datasets.push(bestIndividualDataset);
+            return data;    
+        },
         reloadRadarChartSelectedIndividualsConfig(): ChartData {
             let data: ChartData = new ChartData([], []);
                         
