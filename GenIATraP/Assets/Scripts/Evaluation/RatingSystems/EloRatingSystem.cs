@@ -3,26 +3,26 @@ using Evaluators.TournamentOrganizations;
 using Fitnesses;
 using Moserware.Skills;
 using System.Collections.Generic;
-using Glicko2;
 
 namespace Evaluators.RatingSystems
 {
-    public class Glicko2RatingSystem : RatingSystem
+    public class EloRatingSystem : RatingSystem
     {
-        public List<Glicko2Player> Players;
+        public List<EloPlayer> Players;
 
-        public double DefaultRating;
-        public double DefaultRatingDeviation;
-        public double DefaultVolatility;
+        public decimal DefaultRating;
+        public int KFactorBellow2100;
+        public int KFactorBetween2100And2400;
+        public int KFactorAbove2400;
 
-        public Glicko2RatingSystem(double defaultRating = 1500, double defaultRatingDeviation = 350, double defaultVolatility = 0.06)
+        public EloRatingSystem(decimal defaultRating = 1000, int kFactorBellow2100 = 32, int kFactorBetween2100And2400 = 24, int kFactorAbove2400 = 16)
         {
-            Players = new List<Glicko2Player>();
+            Players = new List<EloPlayer>();
             DefaultRating = defaultRating;
-            DefaultRatingDeviation = defaultRatingDeviation;
-            DefaultVolatility = defaultVolatility;
+            KFactorBellow2100 = kFactorBellow2100;
+            KFactorBetween2100And2400 = kFactorBetween2100And2400;
+            KFactorAbove2400 = kFactorAbove2400;
         }
-
 
         public override void DefinePlayers(List<TournamentTeam> teams, RatingSystemRating[] initialPlayerRaiting)
         {
@@ -45,24 +45,25 @@ namespace Evaluators.RatingSystems
         }
     }
 
-    public class Glicko2Player
+    public class EloPlayer
     {
         public int IndividualID { get; set; }
-        public GlickoPlayer Player { get; set; }
-        public Rating Rating { get; set; }
+        public decimal Rating { get; set; }
+        public int KFactor { get; set; }
 
         public List<IndividualMatchResult> IndividualMatchResults { get; set; }
 
-        public Glicko2Player(int IndividualId, double rating, double ratingDeviation, double volatility)
+        public EloPlayer(int IndividualId, decimal initialRating, int kFactor)
         {
             IndividualID = IndividualId;
-            Player = new GlickoPlayer(rating, ratingDeviation, volatility);
+            Rating = initialRating;
+            KFactor = kFactor;
             IndividualMatchResults = new List<IndividualMatchResult>();
         }
 
-        public void UpdateRating(GlickoPlayer player)
+        public void UpdateRating(decimal newRating)
         {
-            Player = player;
+            Rating = newRating;
         }
 
         public void AddIndividualMatchResult(string matchName, IndividualFitness individualFitness, int[] opponentIDs)
