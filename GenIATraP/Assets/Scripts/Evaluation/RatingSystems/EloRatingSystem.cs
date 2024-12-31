@@ -98,14 +98,14 @@ namespace Evaluators.RatingSystems
                     throw new System.Exception("Elo requires exactly one individual in each team");
                 }
 
-                float[] teamFitnesses = match.GetTeamFitnesses();
+                decimal[] matchResult = GetMatchResult(match.GetTeamFitnesses());
 
                 // 1. Get players
                 EloPlayer playerA = GetPlayer(match.TeamFitnesses[0].IndividualFitness[0].IndividualID);
                 EloPlayer playerB = GetPlayer(match.TeamFitnesses[1].IndividualFitness[0].IndividualID);
 
                 // 2. Calculate new ratings
-                decimal[] result = EloCalculator.CalculateElo(playerA.Rating, playerB.Rating, -(decimal)teamFitnesses[0], -(decimal)teamFitnesses[1], playerA.KFactor, playerB.KFactor);
+                decimal[] result = EloCalculator.CalculateElo(playerA.Rating, playerB.Rating, matchResult[0], matchResult[1], playerA.KFactor, playerB.KFactor);
 
                 // 3. Update ratings
                 playerA.UpdateRating(result[0]);
@@ -146,6 +146,23 @@ namespace Evaluators.RatingSystems
         public EloPlayer GetPlayer(int id)
         {
             return Players.Find(player => player.IndividualID.Equals(id));
+        }
+
+        private decimal[] GetMatchResult(float[] teamFitnesses)
+        {
+            // 1 win, 0.5 draw, 0 loss
+            if (teamFitnesses[0] < teamFitnesses[1])
+            {
+                return new decimal[] { 1, 0 };
+            }
+            else if (teamFitnesses[0] > teamFitnesses[1])
+            {
+                return new decimal[] { 0, 1 };
+            }
+            else
+            {
+                return new decimal[] { 0.5m, 0.5m };
+            }
         }
 
         private void SetStartKFactor()

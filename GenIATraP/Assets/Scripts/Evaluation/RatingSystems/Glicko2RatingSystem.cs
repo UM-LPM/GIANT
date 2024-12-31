@@ -7,6 +7,7 @@ using Glicko2;
 using System.Linq;
 using System;
 using Unity.Mathematics;
+using Kezyma.EloRating;
 
 namespace Evaluators.RatingSystems
 {
@@ -73,17 +74,93 @@ namespace Evaluators.RatingSystems
 
         public override void UpdateRatings(List<MatchFitness> tournamentMatchFitnesses)
         {
-            throw new System.NotImplementedException();
+            foreach (MatchFitness match in tournamentMatchFitnesses)
+            {
+                // If the match is a dummy match, skip it (this match is used for teams who got bye on a tournament
+                if (match.IsDummy)
+                    continue;
+
+                if (match.TeamFitnesses.Count != 2)
+                {
+                    throw new System.Exception("Glicko2 requires exactly two teams with one individual in each match");
+                }
+
+                // Check if any match team has more than one individual
+                if (match.TeamFitnesses[0].IndividualFitness.Count != 1 || match.TeamFitnesses[1].IndividualFitness.Count != 1)
+                {
+                    throw new System.Exception("Glicko2 requires exactly one individual in each team");
+                }
+
+                // 1. Get players
+                Glicko2Player playerA = GetPlayer(match.TeamFitnesses[0].IndividualFitness[0].IndividualID);
+                Glicko2Player playerB = GetPlayer(match.TeamFitnesses[1].IndividualFitness[0].IndividualID);
+
+                // 2. Calculate new ratings & update players
+                float[] matchResult = GetMatchResult(match.GetTeamFitnesses());
+
+                var playerAOpponents = new List<GlickoOpponent>
+                {
+                    new GlickoOpponent(playerB.Player, matchResult[0])
+                };
+
+                playerA.Player = GlickoCalculator.CalculateRanking(playerA.Player, playerAOpponents);
+
+                var playerBOpponents = new List<GlickoOpponent>
+                {
+                    new GlickoOpponent(playerA.Player, matchResult[1])
+                };
+
+                playerB.Player = GlickoCalculator.CalculateRanking(playerB.Player, playerBOpponents);
+
+                // 3. Add match results
+                playerA.AddIndividualMatchResult(match.MatchName, match.TeamFitnesses[0].IndividualFitness[0], new int[] { match.TeamFitnesses[1].IndividualFitness[0].IndividualID });
+                playerB.AddIndividualMatchResult(match.MatchName, match.TeamFitnesses[1].IndividualFitness[0], new int[] { match.TeamFitnesses[0].IndividualFitness[0].IndividualID });
+            }
         }
 
         public override void DisplayRatings()
         {
-            throw new System.NotImplementedException();
+            List<Glicko2Player> playersSorted = new List<Glicko2Player>();
+            playersSorted.Sort((player1, player2) => player2.Player.Rating.CompareTo(player1.Player.Rating));
+
+            foreach (Glicko2Player player in playersSorted)
+            {
+                UnityEngine.Debug.Log("Player: " + player.IndividualID + " Rating: " + player.Player.Rating + " RD: " + player.Player.RatingDeviation + " Volatility: " + player.Player.Volatility);
+            }
         }
 
         public override RatingSystemRating[] GetFinalRatings()
         {
-            throw new System.NotImplementedException();
+            RatingSystemRating[] ratings = new RatingSystemRating[Players.Count];
+            for (int i = 0; i < ratings.Length; i++)
+            {
+                // TODO Here also volatility should be added
+                ratings[i] = new RatingSystemRating(Players[i].IndividualID, Players[i].Player.Rating, Players[i].Player.RatingDeviation, Players[i].IndividualMatchResults);
+            }
+
+            return ratings;
+        }
+
+        public Glicko2Player GetPlayer(int id)
+        {
+            return Players.Find(player => player.IndividualID.Equals(id));
+        }
+
+        private float[] GetMatchResult(float[] teamFitnesses)
+        {
+            // 1 win, 0.5 draw, 0 loss
+            if (teamFitnesses[0] < teamFitnesses[1])
+            {
+                return new float[] { 1, 0 };
+            }
+            else if (teamFitnesses[0] > teamFitnesses[1])
+            {
+                return new float[] { 0, 1 };
+            }
+            else
+            {
+                return new float[] { 0.5f, 0.5f };
+            }
         }
     }
 
