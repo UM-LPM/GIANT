@@ -1,8 +1,12 @@
 using AgentOrganizations;
 using Evaluators.TournamentOrganizations;
 using Fitnesses;
+using Kezyma.EloRating;
 using Moserware.Skills;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using Unity.Mathematics;
 
 namespace Evaluators.RatingSystems
 {
@@ -15,33 +19,149 @@ namespace Evaluators.RatingSystems
         public int KFactorBetween2100And2400;
         public int KFactorAbove2400;
 
-        public EloRatingSystem(decimal defaultRating = 1000, int kFactorBellow2100 = 32, int kFactorBetween2100And2400 = 24, int kFactorAbove2400 = 16)
+        private int startKFactor;
+
+        public EloRatingSystem(decimal defaultRating = 1000, int kFactorBellow2100 = 40, int kFactorBetween2100And2400 = 20, int kFactorAbove2400 = 10)
         {
             Players = new List<EloPlayer>();
             DefaultRating = defaultRating;
             KFactorBellow2100 = kFactorBellow2100;
             KFactorBetween2100And2400 = kFactorBetween2100And2400;
             KFactorAbove2400 = kFactorAbove2400;
+
+            // Set the start K factor
+            SetStartKFactor();
         }
 
-        public override void DefinePlayers(List<TournamentTeam> teams, RatingSystemRating[] initialPlayerRaiting)
+        public override void DefinePlayers(List<TournamentTeam> teams, RatingSystemRating[] initialPlayerRaitings)
         {
-            throw new System.NotImplementedException();
+            // Find unique tournament individuals in teams and add them to the list of individuals
+            List<Individual> individuals = new List<Individual>();
+            foreach (TournamentTeam team in teams)
+            {
+                foreach (Individual individual in team.Individuals)
+                {
+                    if (!individuals.Contains(individual))
+                    {
+                        individuals.Add(individual);
+                        if (initialPlayerRaitings != null && initialPlayerRaitings.Length < individuals.Count)
+                        {
+                            throw new Exception("Initial individual rating array is not the same size as the number of individuals in the tournament");
+                        }
+
+                        RatingSystemRating individualRating = initialPlayerRaitings?.FirstOrDefault(x => x.IndividualID == individual.IndividualId);
+
+                        if(individualRating != null)
+                        {
+                            // TODO Add support for initial ratings
+                            /*if (initialPlayerRaitings != null && ((!double.IsInfinity(individualRating.Mean)) && (double.MaxValue != individualRating.Mean)))
+                            {
+                                Players.Add(new EloPlayer(individual.IndividualId,(decimal)individualRating.Mean, 32));
+                                Players.Add(new TrueSkillPlayer(individual.IndividualId, new Player(individual.IndividualId), new Rating(math.abs(individualRating.Mean), individualRating.StandardDeviation)));
+                            }
+                            else if (initialPlayerRaitings != null && ((!double.IsInfinity(individualRating.Mean) && double.IsInfinity(individualRating.StandardDeviation))))
+                            {
+                                Players.Add(new TrueSkillPlayer(individual.IndividualId, new Player(individual.IndividualId), new Rating(math.abs(individualRating.Mean), GameInfo.DefaultRating.StandardDeviation)));
+                            }
+                            else
+                            {
+                                Players.Add(new TrueSkillPlayer(individual.IndividualId, new Player(individual.IndividualId), GameInfo.DefaultRating));
+                            }*/
+                            // TODO Also update previously Played matches
+                            throw new NotImplementedException();
+                        }
+                        else
+                        {
+                            Players.Add(new EloPlayer(individual.IndividualId, DefaultRating, startKFactor));
+                        }
+                    }
+                }
+            }
         }
 
         public override void UpdateRatings(List<MatchFitness> tournamentMatchFitnesses)
         {
-            throw new System.NotImplementedException();
+            foreach (MatchFitness match in tournamentMatchFitnesses)
+            {
+                // If the match is a dummy match, skip it (this match is used for teams who got bye on a tournament
+                if (match.IsDummy)
+                    continue;
+
+                if (match.TeamFitnesses.Count != 2)
+                {
+                    throw new System.Exception("Elo requires exactly two teams with one individual in each match");
+                }
+
+                // Check if any match team has more than one individual
+                if (match.TeamFitnesses[0].IndividualFitness.Count != 1 || match.TeamFitnesses[1].IndividualFitness.Count != 1)
+                {
+                    throw new System.Exception("Elo requires exactly one individual in each team");
+                }
+
+                float[] teamFitnesses = match.GetTeamFitnesses();
+
+                // 1. Get players
+                EloPlayer playerA = GetPlayer(match.TeamFitnesses[0].IndividualFitness[0].IndividualID);
+                EloPlayer playerB = GetPlayer(match.TeamFitnesses[1].IndividualFitness[0].IndividualID);
+
+                // 2. Calculate new ratings
+                decimal[] result = EloCalculator.CalculateElo(playerA.Rating, playerB.Rating, -(decimal)teamFitnesses[0], -(decimal)teamFitnesses[1], playerA.KFactor, playerB.KFactor);
+
+                // 3. Update ratings
+                playerA.UpdateRating(result[0]);
+                playerB.UpdateRating(result[1]);
+
+                // 4. Add match results
+                playerA.AddIndividualMatchResult(match.MatchName, match.TeamFitnesses[0].IndividualFitness[0], new int[] { match.TeamFitnesses[1].IndividualFitness[0].IndividualID });
+                playerB.AddIndividualMatchResult(match.MatchName, match.TeamFitnesses[1].IndividualFitness[0], new int[] { match.TeamFitnesses[0].IndividualFitness[0].IndividualID });
+
+                // 5. Update K factors
+                playerA.UpdateKFactor(KFactorBellow2100, KFactorBetween2100And2400, KFactorAbove2400);
+                playerB.UpdateKFactor(KFactorBellow2100, KFactorBetween2100And2400, KFactorAbove2400);
+            }
         }
 
         public override void DisplayRatings()
         {
-            throw new System.NotImplementedException();
+            List<EloPlayer> playersSorted = new List<EloPlayer>();
+            playersSorted.Sort((player1, player2) => player2.Rating.CompareTo(player1.Rating));
+
+            foreach (EloPlayer player in playersSorted)
+            {
+                UnityEngine.Debug.Log($"Player {player.IndividualID}: Rating: {player.Rating},  K Factor:{player.KFactor}");
+            }
         }
 
         public override RatingSystemRating[] GetFinalRatings()
         {
-            throw new System.NotImplementedException();
+            RatingSystemRating[] ratings = new RatingSystemRating[Players.Count];
+            for (int i = 0; i < ratings.Length; i++)
+            {
+                ratings[i] = new RatingSystemRating(Players[i].IndividualID, (double)Players[i].Rating, Players[i].KFactor, Players[i].IndividualMatchResults);
+            }
+
+            return ratings;
+        }
+
+        public EloPlayer GetPlayer(int id)
+        {
+            return Players.Find(player => player.IndividualID.Equals(id));
+        }
+
+        private void SetStartKFactor()
+        {
+            if (startKFactor < 2100)
+            {
+                startKFactor = KFactorBellow2100;
+            }
+            else if (startKFactor < 2400)
+            {
+                startKFactor = KFactorBetween2100And2400;
+            }
+            else
+            {
+                startKFactor = KFactorAbove2400;
+            }
         }
     }
 
@@ -50,20 +170,42 @@ namespace Evaluators.RatingSystems
         public int IndividualID { get; set; }
         public decimal Rating { get; set; }
         public int KFactor { get; set; }
-
         public List<IndividualMatchResult> IndividualMatchResults { get; set; }
+        public int PreviousMatchesPlayed{ get; set; }
 
-        public EloPlayer(int IndividualId, decimal initialRating, int kFactor)
+        public EloPlayer(int IndividualId, decimal initialRating, int kFactor, int previousMatchesPlayed = 0)
         {
             IndividualID = IndividualId;
             Rating = initialRating;
             KFactor = kFactor;
             IndividualMatchResults = new List<IndividualMatchResult>();
+            PreviousMatchesPlayed = previousMatchesPlayed;
         }
 
         public void UpdateRating(decimal newRating)
         {
             Rating = newRating;
+        }
+
+        /// <summary>
+        /// Update K factor based on FIDE rules
+        /// </summary>
+        public void UpdateKFactor(int KFactorBellow2100, int kFactorBetween2100And2400, int kFactorAbove2400)
+        {
+            if(Rating < 2100)
+            {
+                KFactor = KFactorBellow2100;
+            }
+            
+            if(Rating >= 2100 && Rating < 2400 || IndividualMatchResults.Count == 30)
+            {
+                KFactor = kFactorBetween2100And2400;
+            }
+
+            if(Rating > 2400)
+            {
+                KFactor = kFactorAbove2400;
+            }
         }
 
         public void AddIndividualMatchResult(string matchName, IndividualFitness individualFitness, int[] opponentIDs)

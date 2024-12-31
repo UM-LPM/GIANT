@@ -8,7 +8,7 @@ namespace Evaluators.RatingSystems
     {
         public abstract void UpdateRatings(List<MatchFitness> tournamentMatchFitnesses);
 
-        public abstract void DefinePlayers(List<TournamentTeam> teams, RatingSystemRating[] initialPlayerRaiting);
+        public abstract void DefinePlayers(List<TournamentTeam> teams, RatingSystemRating[] initialPlayerRaitings);
 
         public abstract void DisplayRatings();
 
@@ -20,6 +20,9 @@ namespace Evaluators.RatingSystems
         public int IndividualID { get; set; }
         public double Mean { get; set; }
         public double StandardDeviation { get; set; }
+
+        // TODO replace Mean and StandardDeviation with:
+        //public Dictionary<string, float> RatingValues { get; set; }
 
         public List<IndividualMatchResult> IndividualMatchResults { get; set; }
 

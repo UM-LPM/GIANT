@@ -69,7 +69,7 @@ namespace Evaluators.RatingSystems
                 if (match.IsDummy)
                     continue;
 
-                if(match.TeamFitnesses.Count < 2)
+                if(match.TeamFitnesses.Count < 2) // TODO Check if this is true !!
                 {
                     throw new System.Exception("TrueSkillRatingSystem requires at least two teams in each match");
                 }
