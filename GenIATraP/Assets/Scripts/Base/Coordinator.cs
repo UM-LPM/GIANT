@@ -281,6 +281,8 @@ namespace Base
                     return new TrueSkillRatingSystem();
                 case RatingSystemType.Glicko2:
                     return new Glicko2RatingSystem();
+                case RatingSystemType.Elo:
+                    return new EloRatingSystem();
                 default:
                     Debug.LogError("Invalid rating system type");
                     return null;
