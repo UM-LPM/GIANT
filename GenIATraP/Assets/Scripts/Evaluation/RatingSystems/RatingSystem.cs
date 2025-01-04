@@ -43,6 +43,7 @@ namespace Evaluators.RatingSystems
     public enum RatingSystemType
     {
         TrueSkill,
-        Glicko2
+        Glicko2,
+        Elo
     }
 }

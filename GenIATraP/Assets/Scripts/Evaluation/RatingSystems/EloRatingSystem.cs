@@ -123,7 +123,7 @@ namespace Evaluators.RatingSystems
 
         public override void DisplayRatings()
         {
-            List<EloPlayer> playersSorted = new List<EloPlayer>();
+            List<EloPlayer> playersSorted = new List<EloPlayer>(Players);
             playersSorted.Sort((player1, player2) => player2.Rating.CompareTo(player1.Rating));
 
             foreach (EloPlayer player in playersSorted)
@@ -214,7 +214,7 @@ namespace Evaluators.RatingSystems
                 KFactor = KFactorBellow2100;
             }
             
-            if(Rating >= 2100 && Rating < 2400 || IndividualMatchResults.Count == 30)
+            if((Rating >= 2100 && Rating < 2400) || IndividualMatchResults.Count == 30)
             {
                 KFactor = kFactorBetween2100And2400;
             }

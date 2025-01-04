@@ -120,7 +120,7 @@ namespace Evaluators.RatingSystems
 
         public override void DisplayRatings()
         {
-            List<Glicko2Player> playersSorted = new List<Glicko2Player>();
+            List<Glicko2Player> playersSorted = new List<Glicko2Player>(Players);
             playersSorted.Sort((player1, player2) => player2.Player.Rating.CompareTo(player1.Player.Rating));
 
             foreach (Glicko2Player player in playersSorted)
