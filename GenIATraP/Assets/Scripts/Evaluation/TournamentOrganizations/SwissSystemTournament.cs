@@ -98,6 +98,19 @@ namespace Evaluators.TournamentOrganizations
                     matches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { t2, t1 }));
             }
 
+            // If enabled: For each match that already exists, add another match with the teams swapped
+            if (Coordinator.Instance.SwapTournamentMatchTeams)
+            {
+                List<Match> matchesSwapped = new List<Match>();
+                for (int i = 0; i < matches.Count; i++)
+                {
+                    Match match = matches[i];
+                    matchesSwapped.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { match.Teams[1], match.Teams[0] }));
+                }
+
+                matches.AddRange(matchesSwapped);
+            }
+
             return matches.ToArray();
         }
 

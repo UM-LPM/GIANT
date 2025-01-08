@@ -58,6 +58,7 @@ namespace Configuration
         public RatingSystemType RatingSystemType { get; set; }
         public TournamentOrganizationType TournamentOrganizationType { get; set; }
         public int TournamentRounds { get; set; }
+        public bool SwapTournamentMatchTeams { get; set; }
 
         // Problem Specific Configuration
         public Dictionary<string, string> ProblemConfiguration { get; set; }

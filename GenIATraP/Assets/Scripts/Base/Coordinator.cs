@@ -37,6 +37,7 @@ namespace Base
         [SerializeField] public RatingSystemType RatingSystemType;
         [SerializeField] public TournamentOrganizationType TournamentOrganizationType;
         [SerializeField] public int TournamentRounds;
+        [SerializeField] public bool SwapTournamentMatchTeams = false; // Specific for games like (Robostrike, ...)
 
         [Header("Individuals Configuration")]
         [SerializeField] public Individual[] Individuals;
@@ -81,6 +82,7 @@ namespace Base
                     CoordinatorURI = MenuManager.Instance.MainConfiguration.CoordinatorURI;
                     EvaluatorType = MenuManager.Instance.MainConfiguration.EvaluatorType;
                     RatingSystemType = MenuManager.Instance.MainConfiguration.RatingSystemType;
+                    SwapTournamentMatchTeams = MenuManager.Instance.MainConfiguration.SwapTournamentMatchTeams;
                     TournamentOrganizationType = MenuManager.Instance.MainConfiguration.TournamentOrganizationType;
                     TournamentRounds = MenuManager.Instance.MainConfiguration.TournamentRounds;
                     IndividualsSourceJSON = MenuManager.Instance.MainConfiguration.IndividualsSourceJSON;
