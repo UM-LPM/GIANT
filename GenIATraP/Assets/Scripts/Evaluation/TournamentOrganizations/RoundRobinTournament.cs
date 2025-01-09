@@ -11,6 +11,7 @@ namespace Evaluators.TournamentOrganizations
     {
 
         List<Match> tournamentMatches;
+        int currentMatchID;
 
         public RoundRobinTournament(List<TournamentTeam> teams, int rounds = 1)
         {
@@ -37,20 +38,20 @@ namespace Evaluators.TournamentOrganizations
                 return new Match[] { };
 
             tournamentMatches.Clear();
+            currentMatchID = 0;
 
-            int counter = 0;
             for (int i = 0; i < Teams.Count; i++)
             {
                 for (int j = i + 1; j < Teams.Count; j++)
                 {
                     if (Coordinator.Instance.Random.NextDouble() > 0.5)
-                        tournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(counter++, new Team[] { Teams[i], Teams[j] }));
+                        tournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { Teams[i], Teams[j] }));
                     else
-                        tournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(counter++, new Team[] { Teams[j], Teams[i] }));
+                        tournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { Teams[j], Teams[i] }));
                 }
             }
 
-            // Shuffle the matches randomly
+            // Shuffle the tournamentMatches randomly
             for (int i = 0; i < tournamentMatches.Count; i++)
             {
                 int randomIndex = Coordinator.Instance.Random.Next(i, tournamentMatches.Count);

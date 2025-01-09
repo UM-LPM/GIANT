@@ -242,7 +242,7 @@ namespace Base
         }
 
         /// <summary>
-        /// Reads the request data and sets the matches that need to be executed
+        /// Reads the request data and sets the tournamentMatches that need to be executed
         /// </summary>
         private void SetEvalRequestMatches(HttpListenerContext context)
         {
@@ -269,14 +269,14 @@ namespace Base
 
             if (evalRequestData == null || evalRequestData.Matches == null || evalRequestData.Matches.Length == 0)
             {
-                throw new Exception("Empty request or no matches to execute");
+                throw new Exception("Empty request or no tournamentMatches to execute");
                 // TODO Add error reporting here
             }
 
-            // Check if any two matches have the same id and throw and exception if they do
+            // Check if any two tournamentMatches have the same id and throw and exception if they do
             if (evalRequestData.Matches.GroupBy(x => x.MatchId).Any(g => g.Count() > 1))
             {
-                throw new Exception("There are two or more matches with the same id");
+                throw new Exception("There are two or more tournamentMatches with the same id");
                 // TODO Add error reporting here
             }
 
@@ -284,7 +284,7 @@ namespace Base
         }
 
         /// <summary>
-        /// Sets predefined scores for the matches that have predefined scores (One of the teams has an ID of -1)
+        /// Sets predefined scores for the tournamentMatches that have predefined scores (One of the teams has an ID of -1)
         /// </summary>
         void SetMatchPredefinedScores()
         {
@@ -302,7 +302,7 @@ namespace Base
                 }
             }
 
-            // Set predefined scores for the predefined matches and remove them from the Matches list
+            // Set predefined scores for the predefined tournamentMatches and remove them from the Matches list
             for (int i = 0; i < predefinedMatches.Count; i++)
             {
                 matchFitness = new MatchFitness()

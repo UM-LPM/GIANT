@@ -23,7 +23,7 @@ namespace Evaluators.TournamentOrganizations
 
         public virtual void UpdateTeamsScore(List<MatchFitness> tournamentMatchFitness)
         {
-            // Add played matches to the list of played matches (add only matchFitnesses that are not dummy)
+            // Add played tournamentMatches to the list of played tournamentMatches (add only matchFitnesses that are not dummy)
             PlayedMatches.AddRange(tournamentMatchFitness.FindAll(matchFitness => !matchFitness.IsDummy));
 
             foreach (MatchFitness matchFitness in tournamentMatchFitness)
@@ -93,6 +93,7 @@ namespace Evaluators.TournamentOrganizations
     public enum TournamentOrganizationType
     {
         RoundRobin,
-        SwissSystem
+        SwissSystem,
+        LastVsAll // Special Tournament for the creation of convergence graph
     }
 }

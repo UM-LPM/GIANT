@@ -51,9 +51,6 @@ namespace Problems.Robostrike
         [SerializeField] public GameObject AmmoBoxPrefab;
         [SerializeField] public int AmmoBoxSpawnAmount = 2;
 
-        [Header("Robostrike Agent Position Configuration")]
-        [SerializeField] public bool SwitchSpawnPlaces = false;
-
         public MissileController MissileController { get; set; }
 
         private RobostrikePowerUpSpawner PowerUpSpawner;
@@ -150,21 +147,6 @@ namespace Problems.Robostrike
                 CheckAgentsExploration();
                 UpdateAgentsSurvivalTime();
                 ResetAgentOpponentTracking();
-
-                // Switch agent spawn places when simulation is at 50%
-                // TODO Also reset powerups !!!
-                /*if (SwitchSpawnPlaces && ((CurrentSimulationSteps >= SimulationSteps / 2 && SimulationSteps > 0) || (CurrentSimulationTime >= SimulationTime / 2 && SimulationTime > 0)))
-                {
-                    Debug.Log("Switching spawn places");
-                    SwitchSpawnPlaces = false;
-
-                    MatchSpawner.SwitchSpawnPlaces<AgentComponent>(this);
-
-                    foreach (RobostrikeAgentComponent agent in Agents)
-                    {
-                        ResetAgent(agent);
-                    }
-                }*/
             }
         }
 
@@ -309,11 +291,6 @@ namespace Problems.Robostrike
                 if (conf.ProblemConfiguration.ContainsKey("AmmoBoxSpawnAmount"))
                 {
                     AmmoBoxSpawnAmount = int.Parse(conf.ProblemConfiguration["AmmoBoxSpawnAmount"]);
-                }
-
-                if(conf.ProblemConfiguration.ContainsKey("SwitchSpawnPlaces"))
-                {
-                    SwitchSpawnPlaces = bool.Parse(conf.ProblemConfiguration["SwitchSpawnPlaces"]);
                 }
             }
         }

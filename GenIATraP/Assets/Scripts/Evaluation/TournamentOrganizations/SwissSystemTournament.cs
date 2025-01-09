@@ -12,7 +12,7 @@ namespace Evaluators.TournamentOrganizations
     {
         private int TeamsWhoGotBye;
 
-        List<Match> matches = new List<Match>();
+        List<Match> tournamentMatches = new List<Match>();
         List<TournamentTeam> unpairedTeams = new List<TournamentTeam>();
         int currentMatchID;
         List<int> opponentTeamIDs;
@@ -52,7 +52,7 @@ namespace Evaluators.TournamentOrganizations
 
         private Match[] PairTeams(List<TournamentTeam> teams)
         {
-            matches.Clear();
+            tournamentMatches.Clear();
             unpairedTeams = new List<TournamentTeam>(teams);
             currentMatchID = 0;
 
@@ -65,7 +65,7 @@ namespace Evaluators.TournamentOrganizations
                     byeTeam.HasBye = true;
                     TeamsWhoGotBye++;
                     unpairedTeams.Remove(byeTeam);
-                    matches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { byeTeam, ScriptableObject.CreateInstance<TournamentTeam>().Initialize(-1, "Dummy", new Individual[] { }) })); // Add a bye pairing with dummy team
+                    tournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { byeTeam, ScriptableObject.CreateInstance<TournamentTeam>().Initialize(-1, "Dummy", new Individual[] { }) })); // Add a bye pairing with dummy team
                 }
             }
 
@@ -93,25 +93,25 @@ namespace Evaluators.TournamentOrganizations
                 unpairedTeams.Remove(t2);
 
                 if (Coordinator.Instance.Random.NextDouble() > 0.5)
-                    matches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { t1, t2 }));
+                    tournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { t1, t2 }));
                 else
-                    matches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { t2, t1 }));
+                    tournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { t2, t1 }));
             }
 
             // If enabled: For each match that already exists, add another match with the teams swapped
             if (Coordinator.Instance.SwapTournamentMatchTeams)
             {
                 List<Match> matchesSwapped = new List<Match>();
-                for (int i = 0; i < matches.Count; i++)
+                for (int i = 0; i < tournamentMatches.Count; i++)
                 {
-                    Match match = matches[i];
+                    Match match = tournamentMatches[i];
                     matchesSwapped.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { match.Teams[1], match.Teams[0] }));
                 }
 
-                matches.AddRange(matchesSwapped);
+                tournamentMatches.AddRange(matchesSwapped);
             }
 
-            return matches.ToArray();
+            return tournamentMatches.ToArray();
         }
 
         private void ResetTeamByes()
