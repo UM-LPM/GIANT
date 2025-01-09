@@ -299,6 +299,8 @@ namespace Base
                     return new RoundRobinTournament(teams, TournamentRounds);
                 case TournamentOrganizationType.SwissSystem:
                     return new SwissSystemTournament(teams, TournamentRounds);
+                case TournamentOrganizationType.LastVsAll:
+                    return new LastVsAllTournament(teams, TournamentRounds);
                 default:
                     Debug.LogError("Invalid tournament organization type");
                     return null;

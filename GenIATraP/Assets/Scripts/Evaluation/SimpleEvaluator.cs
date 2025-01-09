@@ -37,7 +37,7 @@ namespace Evaluators
                     Task<HttpResponseMessage>[] tasks = new Task<HttpResponseMessage>[numOfInstances];
                     for (int i = 0; i < numOfInstances; i++)
                     {
-                        // To Each EvalEnvInstance, send a request with the specified range of the matches that need to be evaluated
+                        // To Each EvalEnvInstance, send a request with the specified range of the tournamentMatches that need to be evaluated
                         int start = i * numOfMatchesPerInstance;
                         int end = start + numOfMatchesPerInstance + (i == numOfInstances - 1 ? remainder : 0);
 

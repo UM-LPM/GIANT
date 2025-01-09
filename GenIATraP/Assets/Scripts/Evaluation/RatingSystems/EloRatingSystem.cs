@@ -67,7 +67,7 @@ namespace Evaluators.RatingSystems
                             {
                                 Players.Add(new TrueSkillPlayer(individual.IndividualId, new Player(individual.IndividualId), GameInfo.DefaultRating));
                             }*/
-                            // TODO Also update previously Played matches
+                            // TODO Also update previously Played tournamentMatches
                             throw new NotImplementedException();
                         }
                         else
