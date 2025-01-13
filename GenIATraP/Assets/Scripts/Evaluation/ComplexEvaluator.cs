@@ -138,9 +138,9 @@ namespace Evaluators
                 FinalIndividualFitness finalIndividualFitness = new FinalIndividualFitness
                 {
                     IndividualID = finalRaitings[i].IndividualID,
-                    Value = (float)-finalRaitings[i].Mean,
+                    Value = (float)-finalRaitings[i].AdditionalValues["Rating"],
                     IndividualMatchResults = finalRaitings[i].IndividualMatchResults,
-                    AdditionalValues = new Dictionary<string, float>() { { "Rating", (float)-finalRaitings[i].Mean }, { "StdDeviation", (float)finalRaitings[i].StandardDeviation } }
+                    AdditionalValues = finalRaitings[i].GetAdditionalValues()
                 };
 
                 finalIndividualFitness.CalculateAvgMatchResultFitness();

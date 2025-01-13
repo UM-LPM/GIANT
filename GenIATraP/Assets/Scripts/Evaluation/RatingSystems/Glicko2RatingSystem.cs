@@ -48,20 +48,20 @@ namespace Evaluators.RatingSystems
 
                         if (individualRating != null)
                         {
-                            // TODO Add support for initial ratings
-                            /*if (initialPlayerRaitings != null && ((!double.IsInfinity(individualRating.Mean) && !double.IsInfinity(individualRating.StandardDeviation)) && (double.MaxValue != individualRating.Mean && double.MaxValue != individualRating.StandardDeviation)))
-                            {
-                                Players.Add(new TrueSkillPlayer(individual.IndividualId, new Player(individual.IndividualId), new Rating(math.abs(individualRating.Mean), individualRating.StandardDeviation)));
-                            }
-                            else if (initialPlayerRaitings != null && ((!double.IsInfinity(individualRating.Mean) && double.IsInfinity(individualRating.StandardDeviation))))
-                            {
-                                Players.Add(new TrueSkillPlayer(individual.IndividualId, new Player(individual.IndividualId), new Rating(math.abs(individualRating.Mean), GameInfo.DefaultRating.StandardDeviation)));
-                            }
-                            else
-                            {
-                                Players.Add(new TrueSkillPlayer(individual.IndividualId, new Player(individual.IndividualId), GameInfo.DefaultRating));
-                            }*/
-                            throw new NotImplementedException();
+                            double rating;
+                            double ratingDeviation;
+                            double volatility;
+
+                            if (!individualRating.AdditionalValues.TryGetValue("Rating", out rating))
+                                rating = DefaultRating;
+
+                            if (!individualRating.AdditionalValues.TryGetValue("RatingDeviation", out ratingDeviation))
+                                ratingDeviation = DefaultRatingDeviation;
+
+                            if (!individualRating.AdditionalValues.TryGetValue("Volatility", out volatility))
+                                volatility = DefaultVolatility;
+
+                            Players.Add(new Glicko2Player(individual.IndividualId, rating, ratingDeviation, volatility));
                         }
                         else
                         {
@@ -135,7 +135,7 @@ namespace Evaluators.RatingSystems
             for (int i = 0; i < ratings.Length; i++)
             {
                 // TODO Here also volatility should be added
-                ratings[i] = new RatingSystemRating(Players[i].IndividualID, Players[i].Player.Rating, Players[i].Player.RatingDeviation, Players[i].IndividualMatchResults);
+                ratings[i] = new RatingSystemRating(Players[i].IndividualID, Players[i].IndividualMatchResults, new Dictionary<string, double> { { "Rating", Players[i].Player.Rating }, { "RatingDeviation", Players[i].Player.RatingDeviation }, { "Volatility", Players[i].Player.Volatility} });
             }
 
             return ratings;
