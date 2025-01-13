@@ -10,14 +10,14 @@ namespace Fitnesses
         public float Value { get; set; }
         public Dictionary<string, float> IndividualValues { get; set; }
 
-        public Dictionary<string, float> AdditionalValues { get; set; }
+        public Dictionary<string, double> AdditionalValues { get; set; }
 
         public IndividualFitness()
         {
             IndividualID = -1;
             Value = 0f;
             IndividualValues = new Dictionary<string, float>();
-            AdditionalValues = new Dictionary<string, float>();
+            AdditionalValues = new Dictionary<string, double>();
         }
 
         public void AddAgentFitness(AgentComponent agent)
@@ -90,7 +90,7 @@ namespace Fitnesses
         public float Value { get; set; }
         public List<IndividualMatchResult> IndividualMatchResults { get; set; }
         public IndividualMatchResult AvgMatchResult { get; set; }
-        public Dictionary<string, float> AdditionalValues { get; set; }
+        public Dictionary<string, double> AdditionalValues { get; set; }
 
         public FinalIndividualFitness()
         {
@@ -98,7 +98,7 @@ namespace Fitnesses
             Value = 0f;
             IndividualMatchResults = new List<IndividualMatchResult>();
             AvgMatchResult = null;
-            AdditionalValues = new Dictionary<string, float>();
+            AdditionalValues = new Dictionary<string, double>();
         }
 
         public void AddIndividualFitness(IndividualFitness individualFitness, string matchName, int[] opponentIDs)

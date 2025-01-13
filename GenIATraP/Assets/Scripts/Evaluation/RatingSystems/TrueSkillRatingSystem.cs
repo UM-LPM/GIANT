@@ -44,13 +44,19 @@ namespace Evaluators.RatingSystems
                         }
 
                         RatingSystemRating individualRating = initialPlayerRaitings?.FirstOrDefault(x => x.IndividualID == individual.IndividualId);
-                        if (initialPlayerRaitings != null && ((!double.IsInfinity(individualRating.Mean) && !double.IsInfinity(individualRating.StandardDeviation)) && (double.MaxValue != individualRating.Mean && double.MaxValue != individualRating.StandardDeviation)))
+                        
+                        if(individualRating != null && individualRating.AdditionalValues != null)
                         {
-                            Players.Add(new TrueSkillPlayer(individual.IndividualId, new Player(individual.IndividualId), new Rating(math.abs(individualRating.Mean), individualRating.StandardDeviation)));
-                        }
-                        else if (initialPlayerRaitings != null && ((!double.IsInfinity(individualRating.Mean) && double.IsInfinity(individualRating.StandardDeviation))))
-                        {
-                            Players.Add(new TrueSkillPlayer(individual.IndividualId, new Player(individual.IndividualId), new Rating(math.abs(individualRating.Mean), GameInfo.DefaultRating.StandardDeviation)));
+                            double rating;
+                            double stdDeviation;
+
+                            if(!individualRating.AdditionalValues.TryGetValue("Rating", out rating))
+                                rating = GameInfo.DefaultRating.Mean;
+
+                            if(!individualRating.AdditionalValues.TryGetValue("StdDeviation", out stdDeviation))
+                                stdDeviation = GameInfo.DefaultRating.StandardDeviation;
+
+                            Players.Add(new TrueSkillPlayer(individual.IndividualId, new Player(individual.IndividualId), new Rating(math.abs(rating), stdDeviation)));
                         }
                         else
                         {
@@ -179,7 +185,7 @@ namespace Evaluators.RatingSystems
             RatingSystemRating[] ratings = new RatingSystemRating[Players.Count];
             for (int i = 0; i < ratings.Length; i++)
             {
-                ratings[i] = new RatingSystemRating(Players[i].IndividualID, Players[i].Rating.Mean, Players[i].Rating.StandardDeviation, Players[i].IndividualMatchResults);
+                ratings[i] = new RatingSystemRating(Players[i].IndividualID, Players[i].IndividualMatchResults, new Dictionary<string, double> { { "Rating", Players[i].Rating.Mean }, { "StdDeviation", Players[i].Rating.StandardDeviation } });
             }
 
             return ratings;

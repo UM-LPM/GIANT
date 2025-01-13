@@ -191,7 +191,7 @@ namespace Base
                         }
                     }
                     evaluator = new ComplexEvaluator(getRatingSystem(), getTournamentOrganizator(TeamOrganizator.OrganizeTeams(Individuals)));
-                    evaluator.RatingSystem.DefinePlayers(evaluator.TournamentOrganization.Teams, PrepareLastEvalPopRatings(evalRequestData.LastEvalIndividualFitnesses));
+                    evaluator.RatingSystem.DefinePlayers(evaluator.TournamentOrganization.Teams, evaluator.RatingSystem.PrepareLastEvalPopRatings(evalRequestData.LastEvalIndividualFitnesses));
                     evaluationResultTask = evaluator.ExecuteEvaluation(evalRequestData, Individuals);
                     break;
                 default:
@@ -305,37 +305,6 @@ namespace Base
                     Debug.LogError("Invalid tournament organization type");
                     return null;
             }
-        }
-
-        /// <summary>
-        /// Checks if every value in lastEvalPopRatings is set to 0 to see if the last evaluation population fitnesses were not set or provided.
-        /// </summary>
-        /// <param name="lastEvalPopRatings"></param>
-        /// <returns>lastEvalPopRatings or NULL if every value in lastEvalPopRatings is 0</returns>
-        private RatingSystemRating[] PrepareLastEvalPopRatings(IndividualFitness[] lastEvalIndividualFitnesses)
-        {
-            if (lastEvalIndividualFitnesses == null || lastEvalIndividualFitnesses.Length == 0)
-            {
-                return null;
-            }
-            
-            RatingSystemRating[] ratingSystemRatings = new RatingSystemRating[lastEvalIndividualFitnesses.Length];
-            for (int i = 0; i < lastEvalIndividualFitnesses.Length; i++)
-            {
-                float rating;
-                float stdDeviation;
-
-                if(lastEvalIndividualFitnesses[i].AdditionalValues == null 
-                    || !lastEvalIndividualFitnesses[i].AdditionalValues.TryGetValue("Rating", out rating) 
-                    || !lastEvalIndividualFitnesses[i].AdditionalValues.TryGetValue("StdDeviation", out stdDeviation))
-                {
-                    throw new Exception("Rating or StdDeviation not found in AdditionalValues");
-                }
-
-                ratingSystemRatings[i] = new RatingSystemRating(lastEvalIndividualFitnesses[i].IndividualID, rating, stdDeviation);
-            }
-
-            return ratingSystemRatings;
         }
     }
 

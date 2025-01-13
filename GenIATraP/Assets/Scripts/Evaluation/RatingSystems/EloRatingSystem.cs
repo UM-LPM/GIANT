@@ -53,22 +53,16 @@ namespace Evaluators.RatingSystems
 
                         if(individualRating != null)
                         {
-                            // TODO Add support for initial ratings
-                            /*if (initialPlayerRaitings != null && ((!double.IsInfinity(individualRating.Mean)) && (double.MaxValue != individualRating.Mean)))
-                            {
-                                Players.Add(new EloPlayer(individual.IndividualId,(decimal)individualRating.Mean, 32));
-                                Players.Add(new TrueSkillPlayer(individual.IndividualId, new Player(individual.IndividualId), new Rating(math.abs(individualRating.Mean), individualRating.StandardDeviation)));
-                            }
-                            else if (initialPlayerRaitings != null && ((!double.IsInfinity(individualRating.Mean) && double.IsInfinity(individualRating.StandardDeviation))))
-                            {
-                                Players.Add(new TrueSkillPlayer(individual.IndividualId, new Player(individual.IndividualId), new Rating(math.abs(individualRating.Mean), GameInfo.DefaultRating.StandardDeviation)));
-                            }
-                            else
-                            {
-                                Players.Add(new TrueSkillPlayer(individual.IndividualId, new Player(individual.IndividualId), GameInfo.DefaultRating));
-                            }*/
-                            // TODO Also update previously Played tournamentMatches
-                            throw new NotImplementedException();
+                            double rating;
+                            double kFactor;
+
+                            if (!individualRating.AdditionalValues.TryGetValue("Rating", out rating))
+                                rating = (double)DefaultRating;
+
+                            if (!individualRating.AdditionalValues.TryGetValue("KFactor", out kFactor))
+                                kFactor = GetKFactor(rating);
+
+                            Players.Add(new EloPlayer(individual.IndividualId, (decimal)rating, (int)kFactor));
                         }
                         else
                         {
@@ -137,7 +131,7 @@ namespace Evaluators.RatingSystems
             RatingSystemRating[] ratings = new RatingSystemRating[Players.Count];
             for (int i = 0; i < ratings.Length; i++)
             {
-                ratings[i] = new RatingSystemRating(Players[i].IndividualID, (double)Players[i].Rating, Players[i].KFactor, Players[i].IndividualMatchResults);
+                ratings[i] = new RatingSystemRating(Players[i].IndividualID, Players[i].IndividualMatchResults, new Dictionary<string, double> { { "Rating", (double)Players[i].Rating }, { "KFactor", Players[i].KFactor } });
             }
 
             return ratings;
@@ -167,17 +161,33 @@ namespace Evaluators.RatingSystems
 
         private void SetStartKFactor()
         {
-            if (startKFactor < 2100)
+            if (DefaultRating < 2100)
             {
                 startKFactor = KFactorBellow2100;
             }
-            else if (startKFactor < 2400)
+            else if (DefaultRating < 2400)
             {
                 startKFactor = KFactorBetween2100And2400;
             }
             else
             {
                 startKFactor = KFactorAbove2400;
+            }
+        }
+
+        private int GetKFactor(double rating)
+        {
+            if (rating < 2100)
+            {
+                return KFactorBellow2100;
+            }
+            else if (rating < 2400)
+            {
+                return KFactorBetween2100And2400;
+            }
+            else
+            {
+                return KFactorAbove2400;
             }
         }
     }
