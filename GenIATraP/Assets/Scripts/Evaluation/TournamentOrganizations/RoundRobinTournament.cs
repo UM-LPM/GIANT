@@ -60,6 +60,19 @@ namespace Evaluators.TournamentOrganizations
                 tournamentMatches[randomIndex] = temp;
             }
 
+            // If enabled: For each match that already exists, add another match with the teams swapped
+            if (Coordinator.Instance.SwapTournamentMatchTeams)
+            {
+                List<Match> matchesSwapped = new List<Match>();
+                for (int i = 0; i < tournamentMatches.Count; i++)
+                {
+                    Match match = tournamentMatches[i];
+                    matchesSwapped.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { match.Teams[1], match.Teams[0] }));
+                }
+
+                tournamentMatches.AddRange(matchesSwapped);
+            }
+
             return tournamentMatches.ToArray();
         }
     }

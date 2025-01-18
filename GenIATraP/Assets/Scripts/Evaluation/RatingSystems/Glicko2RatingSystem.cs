@@ -46,7 +46,7 @@ namespace Evaluators.RatingSystems
 
                         RatingSystemRating individualRating = initialPlayerRaitings?.FirstOrDefault(x => x.IndividualID == individual.IndividualId);
 
-                        if (individualRating != null)
+                        if (individualRating != null && individualRating.AdditionalValues != null)
                         {
                             double rating;
                             double ratingDeviation;
