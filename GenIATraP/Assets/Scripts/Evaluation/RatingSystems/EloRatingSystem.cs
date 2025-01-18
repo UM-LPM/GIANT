@@ -51,7 +51,7 @@ namespace Evaluators.RatingSystems
 
                         RatingSystemRating individualRating = initialPlayerRaitings?.FirstOrDefault(x => x.IndividualID == individual.IndividualId);
 
-                        if(individualRating != null)
+                        if(individualRating != null && individualRating.AdditionalValues != null)
                         {
                             double rating;
                             double kFactor;
@@ -219,17 +219,17 @@ namespace Evaluators.RatingSystems
         /// </summary>
         public void UpdateKFactor(int KFactorBellow2100, int kFactorBetween2100And2400, int kFactorAbove2400)
         {
-            if(Rating < 2100)
+            if(Math.Abs(Rating) < 2100)
             {
                 KFactor = KFactorBellow2100;
             }
             
-            if((Rating >= 2100 && Rating < 2400) || IndividualMatchResults.Count == 30)
+            if((Math.Abs(Rating) >= 2100 && Math.Abs(Rating) < 2400) || IndividualMatchResults.Count == 30)
             {
                 KFactor = kFactorBetween2100And2400;
             }
 
-            if(Rating > 2400)
+            if(Math.Abs(Rating) > 2400)
             {
                 KFactor = kFactorAbove2400;
             }
