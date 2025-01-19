@@ -274,6 +274,11 @@ public abstract class RaySensorBase : Sensor<SensorPerceiveOutput[]> {
 
     void OnDrawGizmosSelected() {
         if (DrawGizmos) {
+            if (rayOutputs == null)
+            {
+                Init();
+            }
+
             var rayInput = GetRayPerceptionInput();
             rayInput.DetectableTags = null;
             for (var rayIndex = 0; rayIndex < rayInput.Angles.Count; rayIndex++) {
