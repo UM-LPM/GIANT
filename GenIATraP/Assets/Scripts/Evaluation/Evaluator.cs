@@ -10,8 +10,6 @@ namespace Evaluators
 {
     public abstract class Evaluator
     {
-        public RatingSystem RatingSystem { get; set; }
-        public TournamentOrganization TournamentOrganization { get; set; }
 
         public virtual async Task<CoordinatorEvaluationResult> ExecuteEvaluation(CoordinatorEvalRequestData evalRequestData, Individual[] individuals)
         {
@@ -27,6 +25,7 @@ namespace Evaluators
     public enum EvaluatiorType
     {
         Simple,
-        Complex
+        Tournament,
+        Rating
     }
 }

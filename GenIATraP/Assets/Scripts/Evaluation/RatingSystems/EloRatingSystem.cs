@@ -1,4 +1,5 @@
 using AgentOrganizations;
+using Base;
 using Evaluators.TournamentOrganizations;
 using Fitnesses;
 using Kezyma.EloRating;
@@ -75,28 +76,42 @@ namespace Evaluators.RatingSystems
 
         public override void UpdateRatings(List<MatchFitness> tournamentMatchFitnesses)
         {
-            foreach (MatchFitness match in tournamentMatchFitnesses)
-            {
-                // If the match is a dummy match, skip it (this match is used for teams who got bye on a tournament
-                if (match.IsDummy)
-                    continue;
+            List<MatchFitness> tournamentMatchFitnessesCopy = new List<MatchFitness>(tournamentMatchFitnesses);
 
-                if (match.TeamFitnesses.Count != 2)
+            MatchFitness matchFitness;
+            List<MatchFitness> matchFitnesses = new List<MatchFitness>();
+            List<MatchFitness> matchFitnessesSwaped = new List<MatchFitness>();
+            while (tournamentMatchFitnessesCopy.Count > 0)
+            {
+                // 1. Get all matchFitness data
+                matchFitness = new MatchFitness();
+                MatchFitness.GetMatchFitness(tournamentMatchFitnessesCopy, matchFitness, matchFitnesses, matchFitnessesSwaped, Coordinator.Instance.SwapTournamentMatchTeams);
+
+                if (matchFitness.IsDummy)
                 {
-                    throw new System.Exception("Elo requires exactly two teams with one individual in each match");
+                    continue;
                 }
 
-                // Check if any match team has more than one individual
-                if (match.TeamFitnesses[0].IndividualFitness.Count != 1 || match.TeamFitnesses[1].IndividualFitness.Count != 1)
+                // If the matchFitness is a dummy matchFitness, skip it (this matchFitness is used for teams who got bye on a tournament
+                if (matchFitness.IsDummy)
+                    continue;
+
+                if (matchFitness.TeamFitnesses.Count != 2)
+                {
+                    throw new System.Exception("Elo requires exactly two teams with one individual in each matchFitness");
+                }
+
+                // Check if any matchFitness team has more than one individual
+                if (matchFitness.TeamFitnesses[0].IndividualFitness.Select(x => x.IndividualID).Distinct().ToList().Count != 1 || matchFitness.TeamFitnesses[1].IndividualFitness.Select(x => x.IndividualID).Distinct().ToList().Count != 1)
                 {
                     throw new System.Exception("Elo requires exactly one individual in each team");
                 }
 
-                decimal[] matchResult = GetMatchResult(match.GetTeamFitnesses());
+                decimal[] matchResult = GetMatchResult(matchFitness.GetTeamFitnesses());
 
                 // 1. Get players
-                EloPlayer playerA = GetPlayer(match.TeamFitnesses[0].IndividualFitness[0].IndividualID);
-                EloPlayer playerB = GetPlayer(match.TeamFitnesses[1].IndividualFitness[0].IndividualID);
+                EloPlayer playerA = GetPlayer(matchFitness.TeamFitnesses[0].IndividualFitness[0].IndividualID);
+                EloPlayer playerB = GetPlayer(matchFitness.TeamFitnesses[1].IndividualFitness[0].IndividualID);
 
                 // 2. Calculate new ratings
                 decimal[] result = EloCalculator.CalculateElo(playerA.Rating, playerB.Rating, matchResult[0], matchResult[1], playerA.KFactor, playerB.KFactor);
@@ -105,9 +120,9 @@ namespace Evaluators.RatingSystems
                 playerA.UpdateRating(result[0]);
                 playerB.UpdateRating(result[1]);
 
-                // 4. Add match results
-                playerA.AddIndividualMatchResult(match.MatchName, match.TeamFitnesses[0].IndividualFitness[0], new int[] { match.TeamFitnesses[1].IndividualFitness[0].IndividualID });
-                playerB.AddIndividualMatchResult(match.MatchName, match.TeamFitnesses[1].IndividualFitness[0], new int[] { match.TeamFitnesses[0].IndividualFitness[0].IndividualID });
+                // 4. Add matchFitness results
+                playerA.AddIndividualMatchResult(matchFitness.MatchName, matchFitness.TeamFitnesses[0].IndividualFitness[0], new int[] { matchFitness.TeamFitnesses[1].IndividualFitness[0].IndividualID });
+                playerB.AddIndividualMatchResult(matchFitness.MatchName, matchFitness.TeamFitnesses[1].IndividualFitness[0], new int[] { matchFitness.TeamFitnesses[0].IndividualFitness[0].IndividualID });
 
                 // 5. Update K factors
                 playerA.UpdateKFactor(KFactorBellow2100, KFactorBetween2100And2400, KFactorAbove2400);

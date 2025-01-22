@@ -170,6 +170,10 @@ namespace Base
 
             Evaluator evaluator;
             Task<CoordinatorEvaluationResult> evaluationResultTask = null;
+
+            RatingSystem ratingSystem;
+            TournamentOrganization tournamentOrganizator;
+
             switch (EvaluatorType)
             {
                 case EvaluatiorType.Simple:
@@ -177,9 +181,8 @@ namespace Base
                     evaluator = new SimpleEvaluator();
                     evaluationResultTask = evaluator.ExecuteEvaluation(evalRequestData, Individuals);
                     break;
-                case EvaluatiorType.Complex:
-                    // Complex evaluation
-                    // Somwhere should Last fitnesses be loaded
+                case EvaluatiorType.Tournament:
+                    // Tournament evaluator
                     if (TeamOrganizator == null)
                     {
                         TeamOrganizator = gameObject.GetComponent<TournamentTeamOrganizator>();
@@ -190,8 +193,29 @@ namespace Base
                             // TODO Add error reporting here
                         }
                     }
-                    evaluator = new ComplexEvaluator(getRatingSystem(), getTournamentOrganizator(TeamOrganizator.OrganizeTeams(Individuals)));
-                    evaluator.RatingSystem.DefinePlayers(evaluator.TournamentOrganization.Teams, evaluator.RatingSystem.PrepareLastEvalPopRatings(evalRequestData.LastEvalIndividualFitnesses));
+                    tournamentOrganizator = getTournamentOrganizator(TeamOrganizator.OrganizeTeams(Individuals));
+
+                    evaluator = new TournamentEvaluator(tournamentOrganizator);
+                    // TODO Include LastEvalPopRatings?
+                    evaluationResultTask = evaluator.ExecuteEvaluation(evalRequestData, Individuals);
+                    break;
+                case EvaluatiorType.Rating:
+                    // Rating evaluator
+                    if (TeamOrganizator == null)
+                    {
+                        TeamOrganizator = gameObject.GetComponent<TournamentTeamOrganizator>();
+
+                        if (TeamOrganizator == null)
+                        {
+                            throw new Exception("TournamentTeamOrganizator is not defined");
+                            // TODO Add error reporting here
+                        }
+                    }
+                    ratingSystem = getRatingSystem();
+                    tournamentOrganizator = getTournamentOrganizator(TeamOrganizator.OrganizeTeams(Individuals));
+
+                    evaluator = new RatingEvaluator(ratingSystem, tournamentOrganizator);
+                    ratingSystem.DefinePlayers(tournamentOrganizator.Teams, ratingSystem.PrepareLastEvalPopRatings(evalRequestData.LastEvalIndividualFitnesses));
                     evaluationResultTask = evaluator.ExecuteEvaluation(evalRequestData, Individuals);
                     break;
                 default:
@@ -301,6 +325,10 @@ namespace Base
                     return new SwissSystemTournament(teams, TournamentRounds);
                 case TournamentOrganizationType.LastVsAll:
                     return new LastVsAllTournament(teams, TournamentRounds);
+                case TournamentOrganizationType.SingleElimination:  
+                    return new SingleEliminationTournament(teams, TournamentRounds);
+                case TournamentOrganizationType.DoubleElimination:
+                    return new DoubleEliminationTournament(teams, TournamentRounds);
                 default:
                     Debug.LogError("Invalid tournament organization type");
                     return null;

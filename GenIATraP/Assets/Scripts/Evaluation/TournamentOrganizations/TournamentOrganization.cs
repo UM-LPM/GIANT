@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using AgentOrganizations;
 using System.Linq;
 using Unity.VisualScripting;
+using Google.Protobuf.WellKnownTypes;
+using System;
+using Base;
 
 namespace Evaluators.TournamentOrganizations
 {
@@ -13,40 +16,75 @@ namespace Evaluators.TournamentOrganizations
         public int ExecutedRounds { get; set; }
         public List<MatchFitness> PlayedMatches { get; set; }
 
-        TeamFitness teamFitnessRes1;
-        TeamFitness teamFitnessRes2;
+        protected TeamFitness teamFitnessRes1;
+        protected TeamFitness teamFitnessRes2;
 
-        float teamFitness1;
-        float teamFitness2;
+        protected float teamFitness1;
+        protected float teamFitness2;
 
         public abstract Match[] GenerateTournamentMatches();
 
-        public virtual void UpdateTeamsScore(List<MatchFitness> tournamentMatchFitness)
+        public virtual void UpdateTeamsScore(List<MatchFitness> tournamentMatchFitnesses)
         {
-            // Add played tournamentMatches to the list of played tournamentMatches (add only matchFitnesses that are not dummy)
-            PlayedMatches.AddRange(tournamentMatchFitness.FindAll(matchFitness => !matchFitness.IsDummy));
+            List<MatchFitness> tournamentMatchFitnessesCopy = new List<MatchFitness>(tournamentMatchFitnesses);
+            // Add played TournamentMatches to the list of played TournamentMatches (add only matchFitnesses that are not dummy)
+            PlayedMatches.AddRange(tournamentMatchFitnessesCopy.FindAll(matchFitness => !matchFitness.IsDummy));
 
-            foreach (MatchFitness matchFitness in tournamentMatchFitness)
+            MatchFitness matchFitness;
+            List<MatchFitness> matchFitnesses = new List<MatchFitness>();
+            List<MatchFitness> matchFitnessesSwaped = new List<MatchFitness>();
+            while (tournamentMatchFitnessesCopy.Count > 0)
             {
+                // 1. Get all match data
+                matchFitness = new MatchFitness();
+                MatchFitness.GetMatchFitness(tournamentMatchFitnessesCopy, matchFitness, matchFitnesses, matchFitnessesSwaped, Coordinator.Instance.SwapTournamentMatchTeams);
+
+                // 2. Update teams score
                 teamFitnessRes1 = matchFitness.TeamFitnesses[0];
                 teamFitnessRes2 = matchFitness.TeamFitnesses[1];
 
                 teamFitness1 = teamFitnessRes1.GetTeamFitness();
                 teamFitness2 = teamFitnessRes2.GetTeamFitness();
 
+                var team1 = Teams.Find(team => team.TeamId == teamFitnessRes1.TeamID);
+                var team2 = Teams.Find(team => team.TeamId == teamFitnessRes2.TeamID);
+
+                if (matchFitness.IsDummy)
+                {
+                    team1.Score += 2;
+                    continue;
+                }
+
                 if (teamFitness1 < teamFitness2)
                 {
-                    Teams.Find(team => team.TeamId == teamFitnessRes1.TeamID).Score += 2;
+                    team1.Score += 2;
                 }
                 else if (teamFitness1 > teamFitness2)
                 {
-                    Teams.Find(team => team.TeamId == teamFitnessRes2.TeamID).Score += 2;
+                    team2.Score += 2;
                 }
                 else
                 {
-                    Teams.Find(team => team.TeamId == teamFitnessRes1.TeamID).Score += 1;
-                    Teams.Find(team => team.TeamId == teamFitnessRes2.TeamID).Score += 1;
+                    team1.Score += 1;
+                    team2.Score += 1;
                 }
+
+                // 3. Add individual match results to the teams
+                team1.IndividualMatchResults.Add(new IndividualMatchResult()
+                {
+                    MatchName = matchFitness.MatchName,
+                    OpponentsIDs = team2.Individuals.Select(individual => individual.IndividualId).ToArray(),
+                    Value = teamFitness1,
+                    IndividualValues = teamFitnessRes1.GetTeamIndividualValues()
+                });
+
+                team2.IndividualMatchResults.Add(new IndividualMatchResult()
+                {
+                    MatchName = matchFitness.MatchName,
+                    OpponentsIDs = team1.Individuals.Select(individual => individual.IndividualId).ToArray(),
+                    Value = teamFitness2,
+                    IndividualValues = teamFitnessRes2.GetTeamIndividualValues()
+                });
             }
 
             // Increment the number of executed rounds
@@ -55,7 +93,7 @@ namespace Evaluators.TournamentOrganizations
 
         public abstract void ResetTournament();
 
-        public bool IsTournamentFinished()
+        public virtual bool IsTournamentFinished()
         {
             return ExecutedRounds >= Rounds;
         }
@@ -94,6 +132,8 @@ namespace Evaluators.TournamentOrganizations
     {
         RoundRobin,
         SwissSystem,
-        LastVsAll // Special Tournament for the creation of convergence graph
+        LastVsAll, // Special Tournament for the creation of convergence graph
+        SingleElimination,
+        DoubleElimination
     }
 }

@@ -7,6 +7,7 @@ using System;
 using AgentOrganizations;
 using Fitnesses;
 using System.Linq;
+using Base;
 
 namespace Evaluators.RatingSystems
 {
@@ -69,25 +70,31 @@ namespace Evaluators.RatingSystems
 
         public override void UpdateRatings(List<MatchFitness> tournamentMatchFitnesses)
         {
-            foreach (MatchFitness match in tournamentMatchFitnesses)
-            {
-                // If the match is a dummy match, skip it (this match is used for teams who got bye on a tournament
-                if (match.IsDummy)
-                    continue;
+            List<MatchFitness> tournamentMatchFitnessesCopy = new List<MatchFitness>(tournamentMatchFitnesses);
 
-                if(match.TeamFitnesses.Count < 2) // TODO Check if this is true !!
+            MatchFitness matchFitness;
+            List<MatchFitness> matchFitnesses = new List<MatchFitness>();
+            List<MatchFitness> matchFitnessesSwaped = new List<MatchFitness>();
+            while (tournamentMatchFitnessesCopy.Count > 0)
+            {
+                // 1. Get all match data
+                matchFitness = new MatchFitness();
+                MatchFitness.GetMatchFitness(tournamentMatchFitnessesCopy, matchFitness, matchFitnesses, matchFitnessesSwaped, Coordinator.Instance.SwapTournamentMatchTeams);
+
+                if (matchFitness.IsDummy)
                 {
-                    throw new System.Exception("TrueSkillRatingSystem requires at least two teams in each match");
+                    continue;
                 }
 
-                // 1. Create teams 
-                Moserware.Skills.Team[] teams = new Moserware.Skills.Team[match.TeamFitnesses.Count];
+                // 2. Calculate new ratings
+                // 2.1. Create teams 
+                Moserware.Skills.Team[] teams = new Moserware.Skills.Team[matchFitness.TeamFitnesses.Count];
 
-                for (int i = 0; i < match.TeamFitnesses.Count; i++)
+                for (int i = 0; i < matchFitness.TeamFitnesses.Count; i++)
                 {
                     List<TrueSkillPlayer> teamPlayers = new List<TrueSkillPlayer>();
 
-                    foreach (IndividualFitness player in match.TeamFitnesses[i].IndividualFitness)
+                    foreach (IndividualFitness player in matchFitness.TeamFitnesses[i].IndividualFitness)
                     {
                         teamPlayers.Add(GetPlayer(player.IndividualID));
                     }
@@ -101,36 +108,36 @@ namespace Evaluators.RatingSystems
                     teams[i] = team;
                 }
 
-                // 2. Define order ranking
-                int[] orderRanking = GetFitnessOrder(match.GetTeamFitnesses());
+                // 2.2 Define order ranking
+                int[] orderRanking = GetFitnessOrder(matchFitness.GetTeamFitnesses());
 
-                // 3. Calculate new ratings
+                // 2.3 Calculate new ratings
                 var teamsConcatinated = Teams.Concat(teams);
                 var newRatings = SkillCalculator.CalculateNewRatings(GameInfo, teamsConcatinated, orderRanking);
 
-                // 4. Update ratings
-                for (int i = 0; i < match.TeamFitnesses.Count; i++)
+                // 2.4 Update ratings
+                for (int i = 0; i < matchFitness.TeamFitnesses.Count; i++)
                 {
-                    for (int j = 0; j < match.TeamFitnesses[i].IndividualFitness.Count; j++)
+                    for (int j = 0; j < matchFitness.TeamFitnesses[i].IndividualFitness.Count; j++)
                     {
-                        TrueSkillPlayer trueSkillPlayer = GetPlayer(match.TeamFitnesses[i].IndividualFitness[j].IndividualID);
-                        trueSkillPlayer.UpdateRating(newRatings[GetPlayer(match.TeamFitnesses[i].IndividualFitness[j].IndividualID).Player]);
-                        
+                        TrueSkillPlayer trueSkillPlayer = GetPlayer(matchFitness.TeamFitnesses[i].IndividualFitness[j].IndividualID);
+                        trueSkillPlayer.UpdateRating(newRatings[GetPlayer(matchFitness.TeamFitnesses[i].IndividualFitness[j].IndividualID).Player]);
+
                         // Get opponentIDs
                         List<int> opponentIDs = new List<int>();
-                        for (int k = 0; k < match.TeamFitnesses.Count; k++)
+                        for (int k = 0; k < matchFitness.TeamFitnesses.Count; k++)
                         {
                             if (k != i)
                             {
-                                foreach (IndividualFitness individualFitness in match.TeamFitnesses[k].IndividualFitness)
+                                foreach (IndividualFitness individualFitness in matchFitness.TeamFitnesses[k].IndividualFitness)
                                 {
-                                    if ((!opponentIDs.Contains(individualFitness.IndividualID)) && (individualFitness.IndividualID != match.TeamFitnesses[i].IndividualFitness[j].IndividualID))
+                                    if ((!opponentIDs.Contains(individualFitness.IndividualID)) && (individualFitness.IndividualID != matchFitness.TeamFitnesses[i].IndividualFitness[j].IndividualID))
                                         opponentIDs.Add(individualFitness.IndividualID);
                                 }
                             }
                         }
 
-                        trueSkillPlayer.AddIndividualMatchResult(match.MatchName, match.TeamFitnesses[i].IndividualFitness[j], opponentIDs.ToArray());
+                        trueSkillPlayer.AddIndividualMatchResult(matchFitness.MatchName, matchFitness.TeamFitnesses[i].IndividualFitness[j], opponentIDs.ToArray());
                     }
                 }
             }
