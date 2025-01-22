@@ -537,41 +537,33 @@ namespace Problems.Robostrike
         {
             foreach (RobostrikeAgentComponent agent in Agents)
             {
-                Debug.Log("========================================");
-                Debug.Log("Agent: Team ID" + agent.TeamID + ", ID: " + agent.IndividualID);
                 // Sector exploration
-                Debug.Log("Sectors explored: " + agent.SectorsExplored + " / " + Sectors.Length + " =");
                 sectorExplorationFitness = agent.SectorsExplored / (float)Sectors.Length;
                 sectorExplorationFitness = (float)Math.Round(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.SectorExploration.ToString()] * sectorExplorationFitness, 4);
                 agent.AgentFitness.UpdateFitness(sectorExplorationFitness, RobostrikeFitness.FitnessKeys.SectorExploration.ToString());
 
                 // Health powerUps
-                Debug.Log("Health powerUps: " + agent.HealtPowerUpsCollected + " / " + PowerUpSpawner.HealthBoxSpawned + " =");
                 healthPowerUpsFitness = agent.HealtPowerUpsCollected / (float)PowerUpSpawner.HealthBoxSpawned;
                 healthPowerUpsFitness = (float)Math.Round(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.PowerUp_Pickup_Health.ToString()] * healthPowerUpsFitness, 4);
                 agent.AgentFitness.UpdateFitness(healthPowerUpsFitness, RobostrikeFitness.FitnessKeys.PowerUp_Pickup_Health.ToString());
 
                 // Ammo powerUps
-                Debug.Log("Ammo powerUps: " + agent.AmmoPowerUpsCollected + " / " + PowerUpSpawner.AmmoBoxSpawned + " =");
                 ammoPowerUpsFitness = agent.AmmoPowerUpsCollected / (float)PowerUpSpawner.AmmoBoxSpawned;
                 ammoPowerUpsFitness = (float)Math.Round(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.PowerUp_Pickup_Ammo.ToString()] * ammoPowerUpsFitness, 4);
                 agent.AgentFitness.UpdateFitness(ammoPowerUpsFitness, RobostrikeFitness.FitnessKeys.PowerUp_Pickup_Ammo.ToString());
 
                 // Shield powerUps
-                Debug.Log("Shield powerUps: " + agent.ShieldPowerUpsCollected + " / " + PowerUpSpawner.ShieldBoxSpawned + " =");
                 shieldPowerUpsFitness = agent.ShieldPowerUpsCollected / (float)PowerUpSpawner.ShieldBoxSpawned;
                 shieldPowerUpsFitness = (float)Math.Round(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.PowerUp_Pickup_Shield.ToString()] * shieldPowerUpsFitness, 4);
                 agent.AgentFitness.UpdateFitness(shieldPowerUpsFitness, RobostrikeFitness.FitnessKeys.PowerUp_Pickup_Shield.ToString());
 
                 // Missiles fired
                 allPossibleMissilesFired = (CurrentSimulationSteps * Time.fixedDeltaTime) / MissileShootCooldown;
-                Debug.Log("Missiles fired: " + agent.MissilesFired + " / " + allPossibleMissilesFired + " =");
                 missilesFired = agent.MissilesFired / allPossibleMissilesFired;
                 missilesFired = (float)Math.Round(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.MissilesFired.ToString()] * missilesFired, 4);
                 agent.AgentFitness.UpdateFitness(missilesFired, RobostrikeFitness.FitnessKeys.MissilesFired.ToString());
 
                 // Missiles fired accuracy
-                Debug.Log("Missiles fired accuracy: " + agent.MissilesHitOpponent + " / " + agent.MissilesFired + " =");
                 if (agent.MissilesFired > 0)
                 {
                     missilesFiredAccuracy = agent.MissilesHitOpponent / (float)agent.MissilesFired;
@@ -582,20 +574,17 @@ namespace Problems.Robostrike
                 // Survival bonus
                 agent.ResetSurvivalTime();
 
-                Debug.Log("Survival bonus: " + agent.MaxSurvivalTime + " / " + CurrentSimulationSteps + " =");
                 survivalBonus = agent.MaxSurvivalTime / (float)CurrentSimulationSteps;
                 survivalBonus = (float)Math.Round(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.SurvivalBonus.ToString()] * survivalBonus, 4);
                 agent.AgentFitness.UpdateFitness(survivalBonus, RobostrikeFitness.FitnessKeys.SurvivalBonus.ToString());
 
                 // Opponent tracking bonus
-                Debug.Log("Opponent tracking bonus: " + agent.OpponentTrackCounter + " / " + (CurrentSimulationSteps / (float)DecisionRequestInterval) + " =");
                 opponentTrackingBonus = agent.OpponentTrackCounter / (CurrentSimulationSteps / (float)DecisionRequestInterval);
                 opponentTrackingBonus = (float)Math.Round(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.OpponentTrackingBonus.ToString()] * opponentTrackingBonus, 4);
                 agent.AgentFitness.UpdateFitness(opponentTrackingBonus, RobostrikeFitness.FitnessKeys.OpponentTrackingBonus.ToString());
 
                 // Opponents destroyed
                 numOfOpponents = Agents.Where(a => a.TeamID != agent.TeamID).Select(a => (a as RobostrikeAgentComponent).NumOfSpawns).Sum();
-                Debug.Log("Opponents destroyed bonus: " + agent.OpponentsDestroyed + " / " + numOfOpponents + " =");
                 if (numOfOpponents > 0)
                 {
                     opponentsDestroyedBonus = agent.OpponentsDestroyed / (float)numOfOpponents;
@@ -605,7 +594,6 @@ namespace Problems.Robostrike
 
                 // Damage taken
                 numOfFiredOpponentMissiles = Agents.Where(a => a.TeamID != agent.TeamID).Select(a => (a as RobostrikeAgentComponent).MissilesFired).Sum();
-                Debug.Log("Damage taken: " + agent.HitByOpponentMissiles + " / " + numOfFiredOpponentMissiles + " =");
                 if (numOfFiredOpponentMissiles > 0)
                 {
                     damageTakenPenalty = agent.HitByOpponentMissiles / (float)numOfFiredOpponentMissiles;
@@ -613,7 +601,21 @@ namespace Problems.Robostrike
                     agent.AgentFitness.UpdateFitness(damageTakenPenalty, RobostrikeFitness.FitnessKeys.DamageTakenPenalty.ToString());
                 }
 
+                /*
                 Debug.Log("========================================");
+                Debug.Log("Agent: Team ID" + agent.TeamID + ", ID: " + agent.IndividualID);
+                Debug.Log("Sectors explored: " + agent.SectorsExplored + " / " + Sectors.Length + " =");
+                Debug.Log("Health powerUps: " + agent.HealtPowerUpsCollected + " / " + PowerUpSpawner.HealthBoxSpawned + " =");
+                Debug.Log("Ammo powerUps: " + agent.AmmoPowerUpsCollected + " / " + PowerUpSpawner.AmmoBoxSpawned + " =");
+                Debug.Log("Shield powerUps: " + agent.ShieldPowerUpsCollected + " / " + PowerUpSpawner.ShieldBoxSpawned + " =");
+                Debug.Log("Missiles fired: " + agent.MissilesFired + " / " + allPossibleMissilesFired + " =");
+                Debug.Log("Missiles fired accuracy: " + agent.MissilesHitOpponent + " / " + agent.MissilesFired + " =");
+                Debug.Log("Survival bonus: " + agent.MaxSurvivalTime + " / " + CurrentSimulationSteps + " =");
+                Debug.Log("Opponent tracking bonus: " + agent.OpponentTrackCounter + " / " + (CurrentSimulationSteps / (float)DecisionRequestInterval) + " =");
+                Debug.Log("Opponents destroyed bonus: " + agent.OpponentsDestroyed + " / " + numOfOpponents + " =");
+                Debug.Log("Damage taken: " + agent.HitByOpponentMissiles + " / " + numOfFiredOpponentMissiles + " =");
+                Debug.Log("========================================");
+                */
             }
         }
 

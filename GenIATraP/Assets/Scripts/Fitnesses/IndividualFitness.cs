@@ -1,5 +1,6 @@
 using Base;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Fitnesses
@@ -207,6 +208,11 @@ namespace Fitnesses
             {
                 finalIndividualFitness.AddIndividualFitness(individualFitness, matchName, opponentIDs);
             }
+        }
+
+        public bool IndividualAlreadyAdded(int individualId)
+        {
+            return FinalIndividualFitnesses.Where(x => x.IndividualID == individualId).ToList().Count() > 0;
         }
 
         public void AddFinalIndividualFitness(FinalIndividualFitness finalIndividualFitness)

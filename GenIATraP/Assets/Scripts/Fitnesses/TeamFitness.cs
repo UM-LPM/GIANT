@@ -26,6 +26,26 @@ namespace Fitnesses
             individualFitness.AddAgentFitness(agent);
         }
 
+        public Dictionary<string, float> GetTeamIndividualValues()
+        {
+            Dictionary<string, float> teamIndividualValues = new Dictionary<string, float>();
+            foreach (var individualFitness in IndividualFitness)
+            {
+                foreach (var individualValue in individualFitness.IndividualValues)
+                {
+                    if (teamIndividualValues.ContainsKey(individualValue.Key))
+                    {
+                        teamIndividualValues[individualValue.Key] += individualValue.Value;
+                    }
+                    else
+                    {
+                        teamIndividualValues.Add(individualValue.Key, individualValue.Value);
+                    }
+                }
+            }
+            return teamIndividualValues;
+        }
+
         public float GetTeamFitness()
         {
             float teamFitness = 0.0f;

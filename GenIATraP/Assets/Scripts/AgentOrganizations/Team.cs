@@ -1,5 +1,7 @@
+using Fitnesses;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace AgentOrganizations
@@ -11,11 +13,10 @@ namespace AgentOrganizations
         public int TeamId;
         public Individual[] Individuals;
 
-        public Team(int teamId)
+        public List<IndividualMatchResult> IndividualMatchResults { get; set; }
+
+        public Team(int teamId) : this (teamId, "dummyTeam", null)
         {
-            TeamId = teamId;
-            name = "dummyTeam";
-            Individuals = null;
         }
 
         [JsonConstructor]
@@ -24,6 +25,7 @@ namespace AgentOrganizations
             TeamId = teamId;
             name = teamName;
             Individuals = individuals;
+            IndividualMatchResults = new List<IndividualMatchResult>();
         }
 
         public virtual Team Initialize(int teamId, string teamName, Individual[] individuals)
@@ -31,6 +33,7 @@ namespace AgentOrganizations
             TeamId = teamId;
             name = teamName;
             Individuals = individuals;
+            IndividualMatchResults = new List<IndividualMatchResult>();
             return this;
         }
 

@@ -1,5 +1,7 @@
 using AgentOrganizations;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 
 namespace Evaluators.TournamentOrganizations
 {
@@ -26,6 +28,11 @@ namespace Evaluators.TournamentOrganizations
             HasBye = false;
 
             return this;
+        }
+
+        public static implicit operator List<object>(TournamentTeam v)
+        {
+            throw new NotImplementedException();
         }
     }
 }

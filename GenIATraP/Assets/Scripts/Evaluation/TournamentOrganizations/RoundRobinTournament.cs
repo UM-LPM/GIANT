@@ -51,7 +51,7 @@ namespace Evaluators.TournamentOrganizations
                 }
             }
 
-            // Shuffle the tournamentMatches randomly
+            // Shuffle the TournamentMatches randomly
             for (int i = 0; i < tournamentMatches.Count; i++)
             {
                 int randomIndex = Coordinator.Instance.Random.Next(i, tournamentMatches.Count);

@@ -14,13 +14,13 @@ using System.Threading.Tasks;
 
 namespace Evaluators
 {
-    public class ComplexEvaluator : Evaluator
+    public class TournamentEvaluator : Evaluator
     {
-        private List<MatchFitness> MatchFitnesses { get; set; }
+        protected TournamentOrganization TournamentOrganization { get; set; }
+        protected List<MatchFitness> MatchFitnesses { get; set; }
 
-        public ComplexEvaluator(RatingSystem ratingSystem, TournamentOrganization tournamentOrganization)
+        public TournamentEvaluator(TournamentOrganization tournamentOrganization)
         {
-            RatingSystem = ratingSystem;
             TournamentOrganization = tournamentOrganization;
             MatchFitnesses = new List<MatchFitness>();
         }
@@ -35,12 +35,9 @@ namespace Evaluators
 
                 List<MatchFitness> matchesFitnesses = await EvaluateTournamentMatches(evalRequestData, tournamentMatches);
                 TournamentOrganization.UpdateTeamsScore(matchesFitnesses);
-
-                RatingSystem.UpdateRatings(matchesFitnesses);
             }
 
             TournamentOrganization.DisplayStandings();
-            RatingSystem.DisplayRatings();
 
             // Return the final population fitnesses and BTS node call frequencies
             return new CoordinatorEvaluationResult()
@@ -71,7 +68,7 @@ namespace Evaluators
                     Task<HttpResponseMessage>[] tasks = new Task<HttpResponseMessage>[numOfInstances];
                     for (int i = 0; i < numOfInstances; i++)
                     {
-                        // To Each EvalEnvInstance, send a request with the specified range of the tournamentMatches that need to be evaluated
+                        // To Each EvalEnvInstance, send a request with the specified range of the TournamentMatches that need to be evaluated
                         int start = i * numOfMatchesPerInstance;
                         int end = start + numOfMatchesPerInstance + (i == numOfInstances - 1 ? remainder : 0);
 
@@ -127,25 +124,33 @@ namespace Evaluators
             // TODO Add error reporting here
         }
 
-        public FinalIndividualFitness[] GetEvaluationResults()
+        public virtual FinalIndividualFitness[] GetEvaluationResults()
         {
-            RatingSystemRating[] finalRaitings = RatingSystem.GetFinalRatings();
             FinalIndividualFitnessWrapper finalIndividualFitnessWrapper = new FinalIndividualFitnessWrapper();
 
-            for (int i = 0; i < finalRaitings.Length; i++)
+            foreach(TournamentTeam team in TournamentOrganization.Teams)
             {
-                // New Version
-                FinalIndividualFitness finalIndividualFitness = new FinalIndividualFitness
+                foreach(Individual individual in team.Individuals)
                 {
-                    IndividualID = finalRaitings[i].IndividualID,
-                    Value = (float)-finalRaitings[i].AdditionalValues["Rating"],
-                    IndividualMatchResults = finalRaitings[i].IndividualMatchResults,
-                    AdditionalValues = finalRaitings[i].GetAdditionalValues()
-                };
+                    // Check if individual already exist in finalIndividualFitnessWrapper
+                    if (finalIndividualFitnessWrapper.IndividualAlreadyAdded(individual.IndividualId))
+                    {
+                        throw new Exception("Duplicate individual Id in finalIndividualFitnessWrapper!");
+                    }
 
-                finalIndividualFitness.CalculateAvgMatchResultFitness();
+                    // If no add new individual
+                    FinalIndividualFitness finalIndividualFitness = new FinalIndividualFitness
+                    {
+                        IndividualID = individual.IndividualId,
+                        Value = -(float)team.Score,
+                        IndividualMatchResults = team.IndividualMatchResults,
+                        AdditionalValues = null
+                    };
 
-                finalIndividualFitnessWrapper.AddFinalIndividualFitness(finalIndividualFitness);
+                    finalIndividualFitness.CalculateAvgMatchResultFitness();
+
+                    finalIndividualFitnessWrapper.AddFinalIndividualFitness(finalIndividualFitness);
+                }
             }
 
             return finalIndividualFitnessWrapper.FinalIndividualFitnesses.ToArray();
