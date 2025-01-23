@@ -13,7 +13,8 @@ namespace Evaluators.TournamentOrganizations
         Init,
         WinnersBracket,
         LosersBracket,
-        GrandFinals
+        GrandFinals,
+        Finished
     }
 
     public class DoubleEliminationTournament : TournamentOrganization
@@ -21,7 +22,7 @@ namespace Evaluators.TournamentOrganizations
         private DoubleEliminationTournamentStep TournamentStep;
 
         private int TeamsWhoGotBye;
-        public List<TournamentTeam> EliminatedTeams = new List<TournamentTeam>(); // TODO Remove this?
+        public List<TournamentTeam> EliminatedTeams = new List<TournamentTeam>();
         public List<TournamentTeam> WinnersBracket = new List<TournamentTeam>();
         public List<TournamentTeam> LosersBracket = new List<TournamentTeam>();
 
@@ -30,6 +31,7 @@ namespace Evaluators.TournamentOrganizations
         public List<Match> TournamentMatches = new List<Match>();
         List<TournamentTeam> UnpairedTeams = new List<TournamentTeam>();
         int CurrentMatchID;
+        int CurrentScore = 0;
 
         public DoubleEliminationTournament(List<TournamentTeam> teams, int rounds)
         {
@@ -43,6 +45,7 @@ namespace Evaluators.TournamentOrganizations
             WinnersBracket = new List<TournamentTeam>();
             LosersBracket = new List<TournamentTeam>();
             LoserTeams = new List<TournamentTeam>();
+            CurrentScore = 0;
         }
 
         public override void ResetTournament()
@@ -55,6 +58,7 @@ namespace Evaluators.TournamentOrganizations
             EliminatedTeams.Clear();
             WinnersBracket.Clear();
             LosersBracket.Clear();
+            CurrentScore = 0;
         }
 
         public override Match[] GenerateTournamentMatches()
@@ -111,18 +115,15 @@ namespace Evaluators.TournamentOrganizations
 
                 if (matchFitness.IsDummy)
                 {
-                    team1.Score += 2;
                     continue;
                 }
 
                 if (teamFitness1 < teamFitness2)
                 {
-                    team1.Score += 2;
                     LoserTeams.Add(team2);
                 }
                 else if (teamFitness1 > teamFitness2)
                 {
-                    team2.Score += 2;
                     LoserTeams.Add(team1);
                 }
                 else
@@ -130,12 +131,10 @@ namespace Evaluators.TournamentOrganizations
                     // Random choose the winner if the scores are equal
                     if (Coordinator.Instance.Random.NextDouble() > 0.5)
                     {
-                        team1.Score += 2;
                         LoserTeams.Add(team2);
                     }
                     else
                     {
-                        team2.Score += 2;
                         LoserTeams.Add(team1);
                     }
                 }
@@ -158,7 +157,7 @@ namespace Evaluators.TournamentOrganizations
                 });
             }
 
-            UpdateLoserTeamsPosition();
+            UpdateWinnerLoserBrackets();
 
             UpdateTournamentStep();
 
@@ -166,28 +165,39 @@ namespace Evaluators.TournamentOrganizations
             ExecutedRounds++;
         }
 
-        public void UpdateLoserTeamsPosition()
+        public void UpdateWinnerLoserBrackets()
         {
             if (LoserTeams.Count == 0)
             {
-                throw new Exception("No loser teams to update position for");
+                throw new Exception("No loser teams to update bracket for");
             }
 
-            // TODO test this
             int counter = 0;
+            bool teamsEliminated = false;
             for (int i = 0; i < LoserTeams.Count; i++)
             {
                 if (LosersBracket.Contains(LoserTeams[i]))
                 {
                     LosersBracket.Remove(LoserTeams[i]);
                     EliminatedTeams.Add(LoserTeams[i]);
+                    LoserTeams[i].Score = CurrentScore;
+                    teamsEliminated = true;
                 }
                 else
                 {
                     WinnersBracket.Remove(LoserTeams[i]);
-                    LosersBracket.Insert(counter, LoserTeams[i]);
+                    if(counter > LosersBracket.Count)
+                        LosersBracket.Add(LoserTeams[i]);
+                    else
+                        LosersBracket.Insert(counter, LoserTeams[i]);
+                    
+                    counter += 2;
                 }
-                counter += 2;
+            }
+
+            if(teamsEliminated)
+            {
+                CurrentScore += 1;
             }
 
             LoserTeams.Clear();
@@ -200,11 +210,16 @@ namespace Evaluators.TournamentOrganizations
                 TournamentStep = DoubleEliminationTournamentStep.GrandFinals;
                 return;
             }
+            else if(WinnersBracket.Count == 1 && LosersBracket.Count > 1)
+            {
+                TournamentStep = DoubleEliminationTournamentStep.LosersBracket;
+                return;
+            }
 
             switch (TournamentStep)
             {
                 case DoubleEliminationTournamentStep.Init:
-                    TournamentStep = DoubleEliminationTournamentStep.WinnersBracket;
+                    TournamentStep = DoubleEliminationTournamentStep.LosersBracket;
                     break;
                 case DoubleEliminationTournamentStep.WinnersBracket:
                     TournamentStep = DoubleEliminationTournamentStep.LosersBracket;
@@ -213,13 +228,19 @@ namespace Evaluators.TournamentOrganizations
                     TournamentStep = DoubleEliminationTournamentStep.WinnersBracket;
                     break;
                 case DoubleEliminationTournamentStep.GrandFinals:
+                    TournamentStep = DoubleEliminationTournamentStep.Finished;
+                    WinnersBracket[0].Score = CurrentScore;
                     break;
             }
         }
 
         public override bool IsTournamentFinished()
         {
-            throw new NotImplementedException();
+            if(TournamentStep == DoubleEliminationTournamentStep.Finished)
+            {
+                return true;
+            }
+            return false;
         }
 
         private void ResetTeamByes()
@@ -234,6 +255,7 @@ namespace Evaluators.TournamentOrganizations
         private void InitTournamentMatches()
         {
             PairTeams(Teams);
+            WinnersBracket.AddRange(Teams);
         }
 
         private void GenerateWinnersBracketMatches()
@@ -300,5 +322,6 @@ namespace Evaluators.TournamentOrganizations
 
             return TournamentMatches.ToArray();
         }
+
     }
 }
