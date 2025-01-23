@@ -329,6 +329,8 @@ namespace Base
                     return new SingleEliminationTournament(teams, TournamentRounds);
                 case TournamentOrganizationType.DoubleElimination:
                     return new DoubleEliminationTournament(teams, TournamentRounds);
+                case TournamentOrganizationType.KRandomOpponents:
+                    return new KRandomOpponentsTournament(teams, TournamentRounds);
                 default:
                     Debug.LogError("Invalid tournament organization type");
                     return null;

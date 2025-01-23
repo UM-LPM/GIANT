@@ -134,6 +134,7 @@ namespace Evaluators.TournamentOrganizations
         SwissSystem,
         LastVsAll, // Special Tournament for the creation of convergence graph
         SingleElimination,
-        DoubleElimination
+        DoubleElimination,
+        KRandomOpponents
     }
 }
