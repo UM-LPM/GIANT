@@ -69,14 +69,14 @@ namespace Evaluators.TournamentOrganizations
                 }
             }
 
-            // Pair remaining players by closest score difference
+            // Pair remaining teams by closest score difference
             while (unpairedTeams.Count > 1)
             {
                 TournamentTeam t1 = unpairedTeams[0];
                 unpairedTeams.RemoveAt(0);
 
                 opponentTeamIDs = PlayedMatches.Where(match => match.TeamFitnesses.Any(team => team.TeamID == t1.TeamId))
-                    .Select(PlayedMatches => PlayedMatches.TeamFitnesses.First(team => team.TeamID != t1.TeamId).TeamID)
+                    .Select(PlayedMatches => PlayedMatches.TeamFitnesses.First(team => team.TeamID != t1.TeamId).TeamID).Distinct()
                     .ToList();
 
                 // Try to find an opponent who hasn't played with t1 yet and has a similar score
