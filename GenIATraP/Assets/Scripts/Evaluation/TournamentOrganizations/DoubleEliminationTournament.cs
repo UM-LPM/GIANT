@@ -176,7 +176,14 @@ namespace Evaluators.TournamentOrganizations
             bool teamsEliminated = false;
             for (int i = 0; i < LoserTeams.Count; i++)
             {
-                if (LosersBracket.Contains(LoserTeams[i]))
+                if(!LosersBracket.Contains(LoserTeams[i]) && WinnersBracket.Count == 1 && LosersBracket.Count == 1)
+                {
+                    WinnersBracket.Remove(LoserTeams[i]);
+                    EliminatedTeams.Add(LoserTeams[i]);
+                    LoserTeams[i].Score = CurrentScore;
+                    teamsEliminated = true;
+                }
+                else if (LosersBracket.Contains(LoserTeams[i]))
                 {
                     LosersBracket.Remove(LoserTeams[i]);
                     EliminatedTeams.Add(LoserTeams[i]);
@@ -186,11 +193,11 @@ namespace Evaluators.TournamentOrganizations
                 else
                 {
                     WinnersBracket.Remove(LoserTeams[i]);
-                    if(counter > LosersBracket.Count)
+                    if (counter > LosersBracket.Count)
                         LosersBracket.Add(LoserTeams[i]);
                     else
                         LosersBracket.Insert(counter, LoserTeams[i]);
-                    
+
                     counter += 2;
                 }
             }
@@ -228,8 +235,8 @@ namespace Evaluators.TournamentOrganizations
                     TournamentStep = DoubleEliminationTournamentStep.WinnersBracket;
                     break;
                 case DoubleEliminationTournamentStep.GrandFinals:
+                    UpdateTournamentWinnerScore();
                     TournamentStep = DoubleEliminationTournamentStep.Finished;
-                    WinnersBracket[0].Score = CurrentScore;
                     break;
             }
         }
@@ -321,6 +328,22 @@ namespace Evaluators.TournamentOrganizations
             }
 
             return TournamentMatches.ToArray();
+        }
+
+        private void UpdateTournamentWinnerScore()
+        {
+            if(WinnersBracket.Count == 1)
+            {
+                WinnersBracket[0].Score = CurrentScore;
+            }
+            else if(LosersBracket.Count == 1)
+            {
+                LosersBracket[0].Score = CurrentScore;
+            }
+            else
+            {
+                throw new Exception("No winner of the tournament is defined"); 
+            }
         }
 
     }

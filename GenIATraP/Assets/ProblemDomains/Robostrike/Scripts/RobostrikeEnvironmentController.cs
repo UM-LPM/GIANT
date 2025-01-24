@@ -163,21 +163,6 @@ namespace Problems.Robostrike
 
                 RobostrikeFitness.FitnessValues = conf.FitnessValues;
 
-                if (conf.ProblemConfiguration.ContainsKey("ArenaSizeX"))
-                {
-                    ArenaSize.x = float.Parse(conf.ProblemConfiguration["ArenaSizeX"]);
-                }
-
-                if (conf.ProblemConfiguration.ContainsKey("ArenaSizeZ"))
-                {
-                    ArenaSize.z = float.Parse(conf.ProblemConfiguration["ArenaSizeZ"]);
-                }
-
-                if (conf.ProblemConfiguration.ContainsKey("ArenaOffset"))
-                {
-                    ArenaOffset = float.Parse(conf.ProblemConfiguration["ArenaOffset"]);
-                }
-
                 if (conf.ProblemConfiguration.ContainsKey("AgentMoveSpeed"))
                 {
                     AgentMoveSpeed = float.Parse(conf.ProblemConfiguration["AgentMoveSpeed"]);
