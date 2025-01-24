@@ -221,6 +221,21 @@ namespace Base
                     RayHitObject.RAY_HIT_OBJECT_DETECTION_TYPE = (RayHitObjectDetectionType)Enum.Parse(typeof(RayHitObjectDetectionType), MainConfiguration.ProblemConfiguration["RayHitObjectDetectionType"]);
                 }
 
+                if (MainConfiguration.ProblemConfiguration.ContainsKey("ArenaSizeX"))
+                {
+                    ArenaSize.x = float.Parse(MainConfiguration.ProblemConfiguration["ArenaSizeX"]);
+                }
+
+                if (MainConfiguration.ProblemConfiguration.ContainsKey("ArenaSizeZ"))
+                {
+                    ArenaSize.z = float.Parse(MainConfiguration.ProblemConfiguration["ArenaSizeZ"]);
+                }
+
+                if (MainConfiguration.ProblemConfiguration.ContainsKey("ArenaOffset"))
+                {
+                    ArenaOffset = float.Parse(MainConfiguration.ProblemConfiguration["ArenaOffset"]);
+                }
+
                 // TODO Add support in the future
                 //IncludeEncapsulatedNodesToFreqCount = conf.IncludeEncapsulatedNodesToFreqCount;
             }

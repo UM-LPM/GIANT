@@ -95,5 +95,10 @@ namespace Problems.Dummy
 
             return obj.GetComponent<T>();
         }
+
+        public override void Respawn<T>(EnvironmentControllerBase environmentController, T respawnComponent)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

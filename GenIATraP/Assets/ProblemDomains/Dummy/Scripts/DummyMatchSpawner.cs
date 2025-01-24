@@ -182,5 +182,10 @@ namespace Spawners
         {
             throw new System.NotImplementedException();
         }
+
+        public override void Respawn<T>(EnvironmentControllerBase environmentController, T[] respawnComponents)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

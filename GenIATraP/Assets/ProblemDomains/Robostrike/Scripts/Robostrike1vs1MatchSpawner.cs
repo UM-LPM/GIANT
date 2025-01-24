@@ -221,5 +221,10 @@ namespace Problems.Robostrike
                 counter++;
             } while (!isFarEnough);
         }
+
+        public override void Respawn<T>(EnvironmentControllerBase environmentController, T[] respawnComponents)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
