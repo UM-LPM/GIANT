@@ -105,7 +105,9 @@ namespace Fitnesses
             }
             else
             {
-                matchFitness = matchFitnesses[0];
+                matchFitness.MatchName = matchFitnesses[0].MatchName;
+                matchFitness.IsDummy = matchFitnesses[0].IsDummy;
+                matchFitness.TeamFitnesses = matchFitnesses[0].TeamFitnesses;
             }
 
             // Clear current data
