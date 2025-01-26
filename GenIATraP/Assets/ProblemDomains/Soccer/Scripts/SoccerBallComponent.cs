@@ -30,7 +30,7 @@ namespace Problems.Soccer
             GoalComponent goal = collision.gameObject.GetComponent<GoalComponent>();
             if (goal != null)
             {
-                SoccerEnvironmentController.GoalScored(LastTouchedAgent, goal.Team);
+                SoccerEnvironmentController.GoalScored(LastTouchedAgent, goal);
             }
         }
     }

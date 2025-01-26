@@ -80,10 +80,11 @@ namespace Problems.Soccer
 
                             // Configure agent
                             T agent = agentGameObject.GetComponent<T>();
-                            AgentComponent agentComponent = agent as AgentComponent;
+                            SoccerAgentComponent agentComponent = agent as SoccerAgentComponent;
                             agentComponent.AgentController = agentController.Clone(); // Clone the agent controller to prevent shared state between agents
                             agentComponent.IndividualID = individual.IndividualId;
                             agentComponent.TeamID = environmentController.Match.Teams[i].TeamId;
+                            agentComponent.Team = i == 0 ? SoccerUtils.SoccerTeam.Blue : SoccerUtils.SoccerTeam.Purple;
 
                             // Configure agent material
                             if (i == 0)

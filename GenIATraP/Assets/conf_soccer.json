@@ -2,25 +2,31 @@
 				"AutoStart": true,
 				"ProblemDomain": "Soccer",
 				"CoordinatorURI": "http://localhost:4000/",
+				"IndividualsSourceJSON": "C:\\Users\\marko\\UnityProjects\\GenIATraP_refactor\\GeneralTrainingEnvironmentForMAS\\GenIATraP\\Assets\\Resources\\JSONs\\Soccer\\",
+				"IndividualsSourceSO": "Assets\\Resources\\SOs\\Soccer",
+				"ConvertSOToJSON": false,
 				"StartCommunicatorURI": "http://localhost:4444/",
-				"BtSource": "SoccerBts",
-				"TimeScale": 5,
+				"TimeScale": 2,
 				"FixedTimeStep": 0.02,
 				"RerunTimes": 1,
 				"InitialSeed": 963852,
 				"Render": true,
 				"RandomSeedMode": 1,
-				"SimulationSteps": 10000,
+				"SimulationSteps": 2000,
 				"SimulationTime": 0,
 				"IncludeEncapsulatedNodesToFreqCount": false,
+				"EvaluatorType": 1, 
+				"RatingSystemType": -1,
+				"TournamentOrganizationType": 3,
+				"TournamentRounds": -1,
+				"SwapTournamentMatchTeams": false,
 				"GameScenarios": [
 					{"GameSceneName": "SoccerGameScene"}
 					
 				],
 				"AgentScenarios": [
 					{
-						"AgentSceneName": "SoccerAgentScene1", 
-						"BTLoadMode": 0,
+						"AgentSceneName": "SoccerAgentScene", 
 						"GameScenarios": [
 							{"GameSceneName": "SoccerGameScene"}
 						]
@@ -28,25 +34,26 @@
 				],
 				"ProblemConfiguration": {
 					"DecisionRequestInterval": 2,
-					"AgentRunSpeed": 2,
-					"AgentRotationSpeed": 100,
-					"KickPower": 1500,
+					"ArenaSizeX": 30,
+					"ArenaSizeY": 15,
+					"ArenaSizeZ": 0.5,
+					"ArenaOffset": 4.0,
+					"AgentRunSpeed": 1,
+					"AgentRotationSpeed": 90,
+					"KickPower": 1000,
 					"GameScenarioType": 1,
-					"PassTolerance": 0.4
+					"PassTolerance": 0.3,
+					"MaxGoals": 10,
+					"RayHitObjectDetectionType": 1
 				},
 				"FitnessValues": 
 				{ 
-					"GoalScored": -100,
-					"GoalReceived": 100,
-					"AutoGoal": 150,
-					"PassToOponentGoal": -5,
-					"PassToOwnGoal": -1,
-					"Pass": -2,
-					"TouchOtherAgent": 5,
-					"PositionCloseToBall": 1,
-					"WallTouch": 1,
-					"GoalTouch": 1,
-					"Move": -1,
-					"LookBall": -1
+					"SectorExploration": -20,
+					"GoalsScored": -500,
+					"GoalsReceived": 250,
+					"AutoGoals": 250,
+					"PassesToOponentGoal": -50,
+					"PassesToOwnGoal": -30,
+					"Passes": -40
 				}
 			}

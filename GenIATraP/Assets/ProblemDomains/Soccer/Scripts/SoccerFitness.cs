@@ -6,13 +6,13 @@ namespace Problems.Soccer
     public class SoccerFitness
     {
         public static Dictionary<string, float> FitnessValues = new Dictionary<string, float> {
-             { "SectorExploration", -30f },
-             { "GoalScored", -500f },
-             { "GoalReceived", 250f },
+             { "SectorExploration", -20f },
+             { "GoalsScored", -500f },
+             { "GoalsReceived", 250f },
              { "AutoGoals", 250f },
              { "PassesToOponentGoal", -50f },
-             { "PassesToOwnGoal", -10f },
-             { "Passes", -25f },
+             { "PassesToOwnGoal", -30f },
+             { "Passes", -40f },
         };
 
         public static string[] Keys = FitnessValues.Keys.ToArray();
@@ -20,12 +20,12 @@ namespace Problems.Soccer
         public enum FitnessKeys
         {
             SectorExploration,
-            GoalScored,
-            GoalReceived,
+            GoalsScored,
+            GoalsReceived,
             AutoGoals,
-            PassToOponentGoal,
-            PassToOwnGoal,
-            Pass
+            PassesToOponentGoal,
+            PassesToOwnGoal,
+            Passes
         }
     }
 }
