@@ -22,11 +22,21 @@ namespace Evaluators
         {
             Match[] matches = GenerateMatches(individuals);
 
-            int numOfIndividuals = matches.Length;
+            int numOfMatches = matches.Length;
             int numOfInstances = evalRequestData.EvalEnvInstances.Length;
 
-            int numOfMatchesPerInstance = numOfIndividuals / numOfInstances;
-            int remainder = numOfIndividuals % numOfInstances;
+            int numOfMatchesPerInstance = numOfMatches / numOfInstances;
+            int remainder = numOfMatches % numOfInstances;
+
+            int numOfRequiredInstances = numOfInstances;
+
+            while (numOfMatchesPerInstance == 0)
+            {
+                numOfRequiredInstances--;
+
+                numOfMatchesPerInstance = numOfMatches / numOfRequiredInstances;
+                remainder = numOfMatches % numOfRequiredInstances;
+            }
             try
             {
                 using (HttpClient client = new HttpClient())
@@ -34,12 +44,12 @@ namespace Evaluators
                     client.Timeout = TimeSpan.FromMinutes(120); // Set timeout to 120 minutes
 
                     // Send request to the EvalEnvInstances
-                    Task<HttpResponseMessage>[] tasks = new Task<HttpResponseMessage>[numOfInstances];
-                    for (int i = 0; i < numOfInstances; i++)
+                    Task<HttpResponseMessage>[] tasks = new Task<HttpResponseMessage>[numOfRequiredInstances];
+                    for (int i = 0; i < numOfRequiredInstances; i++)
                     {
                         // To Each EvalEnvInstance, send a request with the specified range of the TournamentMatches that need to be evaluated
                         int start = i * numOfMatchesPerInstance;
-                        int end = start + numOfMatchesPerInstance + (i == numOfInstances - 1 ? remainder : 0);
+                        int end = start + numOfMatchesPerInstance + (i == numOfRequiredInstances - 1 ? remainder : 0);
 
                         string json = JsonConvert.SerializeObject(new
                         CommunicatorEvalRequestData()
