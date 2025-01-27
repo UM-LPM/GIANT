@@ -3,7 +3,7 @@ using Base;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Problems.Dummy
+namespace Problems.Collector
 {
     public class DummyAgentComponent : AgentComponent
     {

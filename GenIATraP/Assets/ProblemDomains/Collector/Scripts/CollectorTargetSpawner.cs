@@ -3,7 +3,7 @@ using UnityEngine;
 using Spawners;
 using Base;
 
-namespace Problems.Dummy
+namespace Problems.Collector
 {
     [DisallowMultipleComponent]
     public class DummyTargetSpawner : Spawner

@@ -4,10 +4,8 @@ using System.Collections.Generic;
 using System.Data;
 using UnityEngine;
 using Spawners;
-using AgentControllers.AIAgentControllers;
 using System.Linq;
 using Base;
-using Problems.Dummy;
 
 namespace Problems.Robostrike
 {

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Problems.Dummy
+namespace Problems.Collector
 {
     public class DummyFitness
     {

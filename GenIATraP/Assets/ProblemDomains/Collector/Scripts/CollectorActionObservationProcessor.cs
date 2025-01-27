@@ -3,7 +3,7 @@ using AgentControllers.AIAgentControllers.NeuralNetworkAgentController.ActionObs
 using Unity.Barracuda;
 using UnityEngine;
 
-namespace Problems.Dummy
+namespace Problems.Collector
 {
     /// <summary>
     /// Dummy observation collector for testing purposes. It randomly generates dummy observation and action masks data.
