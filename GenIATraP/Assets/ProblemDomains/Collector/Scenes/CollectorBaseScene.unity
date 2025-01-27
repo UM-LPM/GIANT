@@ -6398,7 +6398,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CommunicatorSetup: 1
-  IndividualsSource: C:\Users\marko\UnityProjects\GenIATraP_refactor\GeneralTrainingEnvironmentForMAS\GenIATraP\Assets\Resources\Dummy\
   CommunicatorURI: http://localhost:4444/
   SceneLoadMode: 0
   MinLayerId: 6
@@ -6407,20 +6406,19 @@ MonoBehaviour:
   GridSize: {x: 10, y: 0, z: 10}
   GridSpacing: {x: 50, y: 0, z: 50}
   GameScenarios:
-  - GameSceneName: DummyGameScene
+  - GameSceneName: CollectorGameScene
   AgentScenarios:
-  - AgentSceneName: DummyAgentScene
+  - AgentSceneName: CollectorAgentScene
     GameScenarios:
-    - GameSceneName: DummyGameScene
+    - GameSceneName: CollectorGameScene
   TimeScale: 1
   FixedTimeStep: 0.02
   RerunTimes: 1
+  PredefinedMatchFitnessWinner: -1000
+  PredefinedMatchFitnessLoser: 1000
   InitialSeed: 316227711
   RandomSeedMode: 1
-  Matches:
-  - {fileID: 11400000, guid: 7f2c48598c0bdc741a3ccc4c608c2890, type: 2}
-  - {fileID: 11400000, guid: 776b71e69c27fd9439e5aa89654ee1c7, type: 2}
-  - {fileID: 11400000, guid: e523ef4f0f7c3c840b97040307e4012a, type: 2}
+  Matches: []
 --- !u!114 &1798691732
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6446,18 +6444,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CoordinatorSetup: 1
-  IndividualsSourceJSON: C:\\Users\\marko\\UnityProjects\\GenIATraP_refactor\\GeneralTrainingEnvironmentForMAS\\GenIATraP\\Assets\\Resources\\JSONs\\Dummy
-  IndividualsSourceSO: Assets\\Resources\\SOs\\Dummy
+  IndividualsSourceJSON: C:\\Users\\marko\\UnityProjects\\GenIATraP_refactor\\GeneralTrainingEnvironmentForMAS\\GenIATraP\\Assets\\Resources\\JSONs\\Collector
+  IndividualsSourceSO: Assets\\Resources\\SOs\\Collector
+  ConvertSOToJSON: 0
   CoordinatorURI: http://localhost:4000/
   InitialSeed: 316227711
   EvaluatorType: 0
   RatingSystemType: 0
   TournamentOrganizationType: 0
   TournamentRounds: 0
-  Individuals:
-  - {fileID: 11400000, guid: 6867b1751e9aac642b9644e6fd216c40, type: 2}
-  - {fileID: 11400000, guid: a56e5732321a8584aa4530b0e88025d0, type: 2}
-  - {fileID: 11400000, guid: 3fbb847ba0d11c444b76e50795073a58, type: 2}
+  SwapTournamentMatchTeams: 0
+  Individuals: []
 --- !u!1 &1850808320
 GameObject:
   m_ObjectHideFlags: 0
@@ -6573,6 +6570,7 @@ MonoBehaviour:
   RndSeedModeDropdown: {fileID: 142498663}
   RndSeedInputField: {fileID: 854705470}
   RenderToggle: {fileID: 1624267320}
+  RenderToggleInGameCanvas: {fileID: 0}
   RenderToggleGameObjectList:
   - {fileID: 761679441804085278, guid: 434bf2c994950c64699b7cf9a58ecdfa, type: 3}
   UriText: {fileID: 1681533918}
