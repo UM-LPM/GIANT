@@ -2,7 +2,7 @@ using AgentControllers;
 using Base;
 using UnityEngine;
 
-namespace Problems.Dummy
+namespace Problems.Collector
 {
     public class DummyActionExecutor: ActionExecutor
     {

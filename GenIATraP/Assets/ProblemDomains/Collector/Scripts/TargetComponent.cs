@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Problems.Dummy
+namespace Problems.Collector
 {
     public class TargetComponent: MonoBehaviour
     {

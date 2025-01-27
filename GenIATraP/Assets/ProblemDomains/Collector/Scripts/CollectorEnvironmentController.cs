@@ -6,7 +6,7 @@ using System.Linq;
 using UnityEngine;
 using Utils;
 
-namespace Problems.Dummy
+namespace Problems.Collector
 {
     [RequireComponent(typeof(DummyTargetSpawner))]
     public class DummyEnvironmentController : EnvironmentControllerBase
