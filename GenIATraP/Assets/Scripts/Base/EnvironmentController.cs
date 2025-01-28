@@ -382,6 +382,19 @@ namespace Base
                 }
             }
         }
+
+        public int GetNumOfActiveAgents()
+        {
+            int counter = 0;
+
+            foreach (var agent in Agents)
+            {
+                if (agent.gameObject.activeSelf)
+                    counter++;
+            }
+
+            return counter;
+        }
     }
 
     public enum GameState
