@@ -56,6 +56,7 @@ namespace Problems.Bomberman
                     agent.transform.Translate(new Vector3(agent.MoveDirection.x, agent.MoveDirection.y, 0));
                     agent.NextAgentUpdateTime = BombermanEnvironmentController.CurrentSimulationTime + BombermanEnvironmentController.AgentUpdateinterval;
                     BombermanEnvironmentController.CheckIfAgentOverPowerUp(agent);
+                    agent.CheckIfNewSectorExplored();
                 }
                 else
                 {

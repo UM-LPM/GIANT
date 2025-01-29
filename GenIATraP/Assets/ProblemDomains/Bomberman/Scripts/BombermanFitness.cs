@@ -7,9 +7,9 @@ namespace Problems.Bomberman
     {
         public static Dictionary<string, float> FitnessValues = new Dictionary<string, float> {
         { "SectorExploration", -20 },
-        { "BombPlaced", -30 },
+        { "BombsPlaced", -30 },
         { "BlockDestroyed", -50 },
-        { "PowerUpCollected", -20 },
+        { "PowerUpsCollected", -20 },
         { "BombsHitAgent", -100 },
         { "AgentsKilled", -500},
         { "AgentHitByBombs", 50 },
@@ -24,9 +24,9 @@ namespace Problems.Bomberman
         public enum FitnessKeys
         {
             SectorExploration,
-            BombPlaced,
+            BombsPlaced,
             BlockDestroyed,
-            PowerUpCollected,
+            PowerUpsCollected,
             BombsHitAgent,
             AgentsKilled,
             AgentHitByBombs,
