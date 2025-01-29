@@ -2,52 +2,60 @@
 				"AutoStart": true,
 				"ProblemDomain": "Bomberman",
 				"CoordinatorURI": "http://localhost:4000/",
+				"IndividualsSourceJSON": "C:\\Users\\marko\\UnityProjects\\GenIATraP_refactor\\GeneralTrainingEnvironmentForMAS\\GenIATraP\\Assets\\Resources\\JSONs\\Bomberman\\",
+				"IndividualsSourceSO": "Assets\\Resources\\SOs\\Bomberman",
+				"ConvertSOToJSON": false,
 				"StartCommunicatorURI": "http://localhost:4444/",
-				"BtSource": "BombermanBts",
-				"TimeScale": 1,
+				"TimeScale": 2,
 				"FixedTimeStep": 0.02,
 				"RerunTimes": 1,
 				"InitialSeed": 963852,
 				"Render": true,
 				"RandomSeedMode": 1,
-				"SimulationSteps": 10000,
+				"SimulationSteps": 2000,
 				"SimulationTime": 0,
 				"IncludeEncapsulatedNodesToFreqCount": false,
+				"EvaluatorType": 1, 
+				"RatingSystemType": -1,
+				"TournamentOrganizationType": 3,
+				"TournamentRounds": -1,
+				"SwapTournamentMatchTeams": false,
 				"GameScenarios": [
 					{"GameSceneName": "BombermanGameScene"}
 					
 				],
 				"AgentScenarios": [
 					{
-						"AgentSceneName": "BombermanAgentScene1", 
-						"BTLoadMode": 0,
+						"AgentSceneName": "BombermanAgentScene", 
 						"GameScenarios": [
 							{"GameSceneName": "BombermanGameScene"}
 						]
 					}
 				],
 				"ProblemConfiguration": {
-					"DecisionRequestInterval": 4,
+					"DecisionRequestInterval": 2,
 					"AgentStartMoveSpeed": 5,
 					"StartAgentBombAmount": 1,
 					"StartExplosionRadius": 1,
 					"StartHealth": 2,
 					"ExplosionDamageCooldown": 1,
 					"DestructibleDestructionTime": 1,
-					"PowerUpSpawnChance": 0.4
+					"PowerUpSpawnChance": 0.4,
+					"BombFuseTime": 3.0,
+					"ExplosionDuration" : 1.0
 				},
 				"FitnessValues": 
 				{ 
-					"AgentMove": -1,
-					"BombPlaced": -5,
-					"BlockDestroyed": -2,
-					"PowerUpCollected": -5,
-					"AgentHitByBomb": 20,
-					"AgentHitByOwnBomb": 30,
-					"AgentHealthZero": 100,
-					"BombHitAgent": -10,
-					"AgentKilled": -100,
-					"SurvivalBonus": -8,
-					"LastSurvivalBonus": -10
+					"SectorExploration": -20,
+					"BombsPlaced": -30,
+					"BlockDestroyed": -50,
+					"PowerUpsCollected": -20,
+					"BombsHitAgent": -100,
+					"AgentsKilled": -500,
+					"AgentHitByBombs": 0
+					"AgentHitByOwnBombs": 0
+					"AgentDeath": 0
+					"SurvivalBonus": -100
+					"LastSurvivalBonus": -100
 				}
 			}

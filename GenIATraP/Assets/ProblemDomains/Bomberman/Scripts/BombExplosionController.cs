@@ -11,14 +11,12 @@ namespace Problems.Bomberman
     {
         [Header("Bomb")]
         [SerializeField] BombComponent BombPrefab;
-        [SerializeField] float BombFuseTime = 3f;
 
         [Header("Explosion")]
         [SerializeField] ExplosionComponent ExplosionPrefab;
-        [SerializeField] float ExplosionDuration = 1f;
 
         [Header("Destructible")]
-        [SerializeField] Tilemap DestructibleTiles;
+        [SerializeField] public Tilemap DestructibleTiles;
         [SerializeField] DestructibleComponent DestructiblePrefab;
 
         Util Util;
@@ -43,7 +41,7 @@ namespace Problems.Bomberman
             EnvironmentControllerBase.SetLayerRecursively(bomb.gameObject, gameObject.layer);
             agent.BombsRemaining--;
 
-            yield return new WaitForSeconds(BombFuseTime);
+            yield return new WaitForSeconds(BombermanEnvironmentController.BombFuseTime);
 
             position = bomb.transform.position;
             position.x = Mathf.Round(position.x);
@@ -55,7 +53,7 @@ namespace Problems.Bomberman
             EnvironmentControllerBase.SetLayerRecursively(explosion.gameObject, gameObject.layer);
 
             explosion.SetActiveRenderer(explosion.Start);
-            Destroy(explosion.gameObject, ExplosionDuration);
+            Destroy(explosion.gameObject, BombermanEnvironmentController.ExplosionDuration);
 
             Explode(position, Vector2.up, agent.ExplosionRadius, agent);
             Explode(position, Vector2.down, agent.ExplosionRadius, agent);
@@ -92,7 +90,7 @@ namespace Problems.Bomberman
 
             explosion.SetActiveRenderer(length > 1 ? explosion.Middle : explosion.End);
             explosion.SetDirection(direction);
-            Destroy(explosion.gameObject, ExplosionDuration);
+            Destroy(explosion.gameObject, BombermanEnvironmentController.ExplosionDuration);
 
             Explode(position, direction, length - 1, agent);
         }
