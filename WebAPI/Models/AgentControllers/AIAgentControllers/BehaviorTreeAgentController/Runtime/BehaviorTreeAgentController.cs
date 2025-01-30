@@ -1,5 +1,6 @@
 ﻿
 using AgentControllers.AIAgentControllers.BehaviorTreeAgentController.Robostrike;
+using AgentControllers.AIAgentControllers.BehaviorTreeAgentController.Bomberman;
 using WebAPI.Models;
 
 namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
@@ -137,7 +138,10 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
                 case "RotateTurret":
                     node = new RotateTurret(treeModelNode.Guid, treeModelNode.Name, treeModelNode.Properties, treeModelNode.NodePosition);
                     break;
-                // TODO Add more node definitions
+                // Actions - Bomberman
+                case "PlaceBomb":
+                    node = new PlaceBomb(treeModelNode.Guid, treeModelNode.Name, treeModelNode.Properties, treeModelNode.NodePosition);
+                    break;
                 default:
                     throw new Exception("Node type not recognized");
             }
