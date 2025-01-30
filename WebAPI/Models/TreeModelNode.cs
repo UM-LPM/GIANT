@@ -204,6 +204,10 @@ namespace WebAPI.Models {
                     return "ShieldLevelBellow";
                 case NodeType.AmmoLevelBellow:
                     return "AmmoLevelBellow";
+                case NodeType.GridCellContainsObject:
+                    return "GridCellContainsObject";
+                case NodeType.PlaceBomb:
+                    return "PlaceBomb";
             }
             throw new Exception("Invalid NodeType");
         }
