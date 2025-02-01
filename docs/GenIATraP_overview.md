@@ -6,7 +6,7 @@ Agents can be trained in both **Single** and **Multi-Agent** scenarios, leveragi
 
 GenIATraP bridges AI research and game development, providing a structured environment where new AI techniques can be tested, benchmarked, and refined within interactive and dynamic simulations.
 
-So if you are an AI researcher, game developer, or hobbyist—you may have different goals when using GenIATraP. To ease your transition, we provide background materials covering key concepts in **[machine learning]()**, **[metaheuristic optimization]()**, and **[Unity] game engine]()**. If you're new to any of these topics, we highly recommend reviewing these resources before getting started.
+So if you are an AI researcher, game developer, or hobbyist—you may have different goals when using GenIATraP. To ease your transition, we provide background materials covering key concepts in **[machine learning]()**, **[metaheuristic optimization]()**, and **[Unity game engine]()**. If you're new to any of these topics, we highly recommend reviewing these resources before getting started.
 
 The rest of this documentation provides a deep dive into GenIATraP, including its core components, training methodologies, and implementation details. By the end, you’ll have a clear understanding of how to use the platform effectively. Subsequent sections will walk you through setting up and using GenIATraP for your projects.
 
