@@ -22,4 +22,4 @@ Functioning as a pivotal intermediary, the **Web API** serves to effectively bri
 ![Platform General Idea](/docs/images/platform_general_idea.png)
 
 # Next Step
-[Platform Setup](https://github.com/UM-LPM/GeneralTrainingEnvironmentForMAS/blob/platform_refactor/docs/GenIATraP_platform_setup.md)
+By following these [instructions](https://github.com/UM-LPM/GeneralTrainingEnvironmentForMAS/blob/platform_refactor/docs/GenIATraP_platform_setup.md), the platform can be set up in just a few simple steps.
