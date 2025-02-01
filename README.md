@@ -15,7 +15,7 @@ GenIATraP is designed with a highly modular structure, ensuring that each compon
 - Manual solution testing, allowing human players to compete against AI agents
 - Visualization tools for comparing different methods
 
-For a detailed description of these functionalities see [GenIATrap overview]().
+For a detailed description of these functionalities see [GenIATraP overview](https://github.com/UM-LPM/GeneralTrainingEnvironmentForMAS/blob/platform_refactor/docs/GenIATraP_overview.md).
 
 # Releases & Documentation
 
