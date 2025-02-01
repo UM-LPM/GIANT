@@ -15,10 +15,16 @@ GenIATraP is designed with a highly modular structure, ensuring that each compon
 - Manual solution testing, allowing human players to compete against AI agents
 - Visualization tools for comparing different methods
 
-For a detailed description of these functionalities see [GenIATraP overview](https://github.com/UM-LPM/GeneralTrainingEnvironmentForMAS/blob/platform_refactor/docs/GenIATraP_overview.md).
+For a detailed description of these functionalities see [GenIATraP overview](https://github.com/UM-LPM/GeneralTrainingEnvironmentForMAS/blob/platform_refactor/docs/GenIATraP_overview.md) docs.
 
 # Releases & Documentation
 
+| Version | Release Date | Source (Git branch) | Docs | Download|
+|----------|----------|----------|----------|----------|
+| Beta | Oktober 8, 2024 | [branch]() | [docs]() | [download](https://github.com/UM-LPM/GeneralTrainingEnvironmentForMAS/releases/tag/v1.0.0) | 
+| Release 1 | Insert date | [branch]() | [docs]() | [download]() | 
+
+For older releases refer to the [Releases page](https://github.com/UM-LPM/GeneralTrainingEnvironmentForMAS/releases).
 
 # Publications
 If you use GenIATrap, please include this citation as a reference to the platform.
