@@ -43,7 +43,7 @@ The optimization process initiates within the **EARS framework**, where the init
 - The **Communicator** receives and saves the match result data and continues with the evaluation of a new match. 
 
 ## 4. Response
-Following the completion of the evaluation process, the **Coordinator** forwards the response to the Web API, which subsequently relays it back to EARS, where the optimization process continues.
+- Following the completion of the evaluation process, the **Coordinator** forwards the response to the Web API, which subsequently relays it back to EARS, where the optimization process continues.
 
 # Next Step
 By following these [instructions](https://github.com/UM-LPM/GeneralTrainingEnvironmentForMAS/blob/platform_refactor/docs/GenIATraP_platform_setup.md), the platform can be set up in just a few simple steps.
