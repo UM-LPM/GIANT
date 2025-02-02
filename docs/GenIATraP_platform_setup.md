@@ -12,7 +12,7 @@ The platform consists of three parts: Unity, Web API, and EARS framework. To set
    ![Unity Editor Configuration](/docs/images/unity_editor_config.png)
 6. To test run the Unity setup, navigate to **Assets -> Problem Domains -> Robostrike** and open **RobostrikeBaseScene** and in your API platform of choice create the following request:
    
-   ```
+   ```json
     POST request to: http://localhost:4000
     {
       "EvalEnvInstances": ["http://localhost:4444/"],
@@ -22,7 +22,7 @@ The platform consists of three parts: Unity, Web API, and EARS framework. To set
    ```
 7. The response from the request should look something like this:
 
-   ```
+   ```json
      {
         "IndividualFitnesses": [
             {
@@ -110,7 +110,85 @@ The platform consists of three parts: Unity, Web API, and EARS framework. To set
         ]
     }
    ```
+8. Build the project by navigating to File -> Build Settings, select the correct platform and press **Build**.
 
 ## Web API Setup
 
-## Machine Learning framework (EARS) Setup
+1. Install [MS VisualStudio](https://visualstudio.microsoft.com/downloads/).
+2. In the cloned repository navigate to the WebAPI folder, open WebAPI.sln, and start the API.
+3. Navigate to **`http://localhost:5016/swagger/index.html`** to see if the API ran successfully.
+4. API can be tested with a POST request to the http://localhost:5016/api/JsonToSoParser with the following request body:
+
+   ```json
+      {
+          "CoordinatorURI": "http://localhost:4000",
+          "EvalEnvInstanceURIs": ["http://localhost:4444"],
+          "SourceFilePath": "your path...\\jsonBody.json",
+          "DestinationFilePath": "your path...\\GenIATraP\\Assets\\Resources\\JSONs\\problem domain\\",
+          "LastEvalIndividualFitnesses": null
+      }
+   ```
+
+## Machine Learning Framework (EARS) Setup
+
+1. Install [IntelliJ IDEA](https://www.jetbrains.com/idea/) on your machine.
+2. Clone [EARS repository](https://github.com/UM-LPM/EARS.git) from GitHub.
+3. Open the cloned project in IntelliJ IDEA
+4. Create a run configuration (If not already defined).
+   ![EARS Run Configuration](/docs/images/ears_run_configuration.png)
+5. Update file ./.idea/gradle.xml.
+
+   ```xml
+      <?xml version="1.0" encoding="UTF-8"?>
+      <project version="4">
+         <component name="GradleSettings">
+            <option name="linkedExternalProjectsSettings">
+               <GradleProjectSettings>
+               <option name="delegatedBuild" value="false" /> <!--Add this line of code-->
+               <option name="distributionType" value="DEFAULT_WRAPPED" />
+               <option name="externalProjectPath" value="$PROJECT_DIR$" />
+               <option name="gradleJvm" value="#JAVA_HOME" />
+               <option name="modules">
+                  <set>
+                     <option value="$PROJECT_DIR$" />
+                  </set>
+               </option>
+               </GradleProjectSettings>
+            </option>
+         </component>
+      </project>
+   ```
+   
+6. Update ./.idea/misc.xml.
+
+   ```xml
+   <component name="ProjectRootManager" version="2" languageLevel="JDK_16" project-jdk-name="17" project-jdk-type="JavaSDK" >
+    <output url="file://$PROJECT_DIR$/out" /> <!--Add this line of code-->
+   </component>
+   ```
+   
+7. Install Swing UI Designer
+8. Start WebAPI and run GPInterface configuration. 
+9. Load **`ears_config_robostrike.json`** in the **Configuration** tab.
+10. Press **Run** to start the evolution process. After the process is successfully executed the result should be displayed in the UI.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
