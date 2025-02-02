@@ -172,8 +172,11 @@ The platform consists of three parts: Unity, Web API, and EARS framework. To set
 9. Load **`ears_config_robostrike.json`** in the **Configuration** tab.
 10. Press **Run** to start the evolution process. After the process is successfully executed the result should be displayed in the UI.
 
+# Next Steps
 
+Read the following documentation to learn more about [Unity's Evaluation Environment](/docs/GenIATraP_unity_overview.md), [Web API](/docs/GenIATraP_webapi_overview.md), and [EARS framework](/docs/GenIATraP_ears_overview.md).
 
+If you're already familiar with these, you can continue by [adding a new problem domain to the platform](/docs/GenIATraP_add_new_problem_domain.md).
 
 
 
