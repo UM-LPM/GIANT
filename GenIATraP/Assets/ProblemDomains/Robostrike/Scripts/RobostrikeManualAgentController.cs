@@ -8,8 +8,9 @@ namespace Problems.Robostrike
     {
         public override void GetActions(in ActionBuffer actionsOut)
         {
-            if (Input.GetKey(KeyCode.W))
+            if (Input.GetKey(KeyCode.W)){
                 actionsOut.AddDiscreteAction("moveForwardDirection", 1);
+                Debug.Log("robostrike");}
             else if (Input.GetKey(KeyCode.S))
                 actionsOut.AddDiscreteAction("moveForwardDirection", 2);
 

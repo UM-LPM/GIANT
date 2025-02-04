@@ -17,7 +17,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController.Robost
         {
             var discreteActionsOut = blackboard.actionsOut.DiscreteActions;
             blackboard.actionsOut.AddDiscreteAction("shootMissile", shoot);
-
+            
             return State.Success;
         }
     }

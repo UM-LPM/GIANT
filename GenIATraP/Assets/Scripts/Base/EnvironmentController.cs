@@ -81,7 +81,7 @@ namespace Base
             ActionObservationProcessor = gameObject.GetComponent<ActionObservationProcessor>();
             if (ActionObservationProcessor == null)
             {
-                Debug.LogWarning("ActionObservationProcessor is not set!");
+                Debug.Log("ActionObservationProcessor is not set!");
                 // TODO Add error reporting here
             }
 

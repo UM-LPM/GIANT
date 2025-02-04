@@ -37,6 +37,7 @@ public class AgentMovementNoPhysics : MonoBehaviour
         ActionBufferManual = new ActionBuffer(); // Forward,  Rotate
         //forward
         if (Input.GetKey(KeyCode.W)) {
+            Debug.Log("Experimental");
             ActionBufferManual.AddDiscreteAction("moveForwardDirection", 1);
         }
         if (Input.GetKey(KeyCode.S)) {

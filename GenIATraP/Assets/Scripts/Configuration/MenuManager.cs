@@ -108,6 +108,9 @@ namespace Configuration
                 case "DodgeBall":
                     UnityEngine.SceneManagement.SceneManager.LoadScene("DodgeBallBaseScene");
                     break;
+                case "Moba_game":
+                    UnityEngine.SceneManagement.SceneManager.LoadScene("Moba_gameBaseScene");
+                    break;
                 default:
                     Debug.LogError("Problem domain not found");
                     break;

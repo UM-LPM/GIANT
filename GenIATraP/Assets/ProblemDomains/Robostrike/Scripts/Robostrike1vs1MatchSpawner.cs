@@ -84,9 +84,9 @@ namespace Problems.Robostrike
             // Spawn agents
             for (int i = 0; i < environmentController.Match.Teams.Length; i++)
             {
-                foreach(Individual individual in environmentController.Match.Teams[i].Individuals)
+                foreach (Individual individual in environmentController.Match.Teams[i].Individuals)
                 {
-                    foreach(AgentController agentController in individual.AgentControllers)
+                    foreach (AgentController agentController in individual.AgentControllers)
                     {
                         // Instantiate and configure agent
                         GameObject agentGameObject = Instantiate(environmentController.AgentPrefab, SpawnPoints[i].position, SpawnPoints[i].rotation, gameObject.transform);
@@ -114,7 +114,7 @@ namespace Problems.Robostrike
 
         public override void Respawn<T>(EnvironmentControllerBase environmentController, T respawnComponent)
         {
-            if(!(respawnComponent is AgentComponent))
+            if (!(respawnComponent is AgentComponent))
             {
                 throw new System.Exception("Invalid respawn component");
                 // TODO add error reporting here
@@ -131,7 +131,7 @@ namespace Problems.Robostrike
                 respawnPos = agent.StartPosition;
                 rotation = agent.StartRotation;
             }
-            else if(robostrikeEnvironmentController.AgentRespawnType == RobostrikeAgentRespawnType.RandomPos)
+            else if (robostrikeEnvironmentController.AgentRespawnType == RobostrikeAgentRespawnType.RandomPos)
             {
                 GetRandomSpawnPositionAndRotation(robostrikeEnvironmentController, out respawnPos, out rotation);
             }
@@ -154,10 +154,10 @@ namespace Problems.Robostrike
             Sprite turret = Turrets[environmentController.Util.NextInt(0, Turrets.Length)];
             Sprite track = Tracks[environmentController.Util.NextInt(0, Tracks.Length)];
             Sprite gun = Guns[environmentController.Util.NextInt(0, Guns.Length)];
-
+        
             GameObject hullGO = agentGameObject.GetComponentInChildren<HullComponent>().gameObject;
             GameObject turretGO = agentGameObject.GetComponentInChildren<TurretComponent>().gameObject;
-            GameObject[] tracksGO = agentGameObject.GetComponentsInChildren<TrackComponent>().Select(x=> x.gameObject).ToArray();
+            GameObject[] tracksGO = agentGameObject.GetComponentsInChildren<TrackComponent>().Select(x => x.gameObject).ToArray();
             GameObject gunGO = agentGameObject.GetComponentInChildren<GunComponent>().gameObject;
 
             // Set sprites
@@ -170,7 +170,7 @@ namespace Problems.Robostrike
             }
             gunGO.GetComponent<SpriteRenderer>().sprite = gun;
         }
-    
+
         void GetRandomSpawnPositionAndRotation(RobostrikeEnvironmentController environmentController, out Vector3 spawnPos, out Quaternion rotation)
         {
             counter = 0;
