@@ -8,9 +8,8 @@ namespace Problems.Bomberman
     {
         public override void GetActions(in ActionBuffer actionsOut)
         {
-            if (Input.GetKey(KeyCode.W)){
+            if (Input.GetKey(KeyCode.W))
                 actionsOut.AddDiscreteAction("moveUpDirection", 1);
-                Debug.Log("bomberman");}
             else if (Input.GetKey(KeyCode.S))
                 actionsOut.AddDiscreteAction("moveUpDirection", 2);
 

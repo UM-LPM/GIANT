@@ -11,6 +11,7 @@ using Spawners;
 using Utils;
 using AgentControllers;
 using Configuration;
+using Problems.Moba_game;
 
 namespace Base
 {
@@ -49,6 +50,7 @@ namespace Base
         [SerializeField] public Match Match;
 
         public AgentComponent[] Agents { get; set; }
+        public BaseComponent[] Bases { get; set; }
         public int CurrentSimulationSteps { get; set; }
         public float CurrentSimulationTime { get; set; }
         public GameState GameState { get; set; }
@@ -324,6 +326,7 @@ namespace Base
 
             // Unload scene asynchronously when game is finished
             SceneManager.UnloadSceneAsync(gameObject.scene);
+            UnityEditor.EditorApplication.isPlaying = false;
         }
 
         private MatchFitness MapAgentFitnessesToMatchFitness()

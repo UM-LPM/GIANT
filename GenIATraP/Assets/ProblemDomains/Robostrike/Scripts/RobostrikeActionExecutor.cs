@@ -96,7 +96,6 @@ namespace Problems.Robostrike
 
         private void ShootMissile(RobostrikeAgentComponent agent)
         {
-            Debug.Log("PEW!");
             if (agent.ActionBuffer.GetDiscreteAction("shootMissile") == 1 && agent.NextShootTime <= RobostrikeEnvironmentController.CurrentSimulationTime && agent.AmmoComponent.Ammo > 0)
             {
                 spawnPosition = agent.MissileSpawnPoint.transform.position;

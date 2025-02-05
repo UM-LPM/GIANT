@@ -13,6 +13,7 @@ namespace Problems.Moba_game
 
         private Collider2D[] MissileCollisions;
         private AgentComponent otherAgent;
+        private BaseComponent otherBase;
 
         void Start()
         {
@@ -44,10 +45,16 @@ namespace Problems.Moba_game
                         continue;
 
                     collision.gameObject.TryGetComponent(out otherAgent);
+                    collision.gameObject.TryGetComponent(out otherBase);
 
                     if (otherAgent != null)
                     {
                         Moba_gameEnvironmentController.TankHit(missileComponent, otherAgent);
+                    }
+                    
+                    if (otherBase != null)
+                    {
+                        Moba_gameEnvironmentController.BaseHit(missileComponent, otherBase);
                     }
 
                     missileComponent.MissileHitTarget = true;

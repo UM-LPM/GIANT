@@ -17,10 +17,14 @@ namespace Problems.Moba_game
 
         [Header("Moba_game General Configuration")]
         [SerializeField] int AgentStartHealth = 10;
+        [SerializeField] int BaseStartHealth = 20;
         [SerializeField] int AgentStartShield = 0;
         [SerializeField] int AgentStartAmmo = 0;
         [SerializeField] public Moba_gameAgentRespawnType AgentRespawnType = Moba_gameAgentRespawnType.StartPos;
         [SerializeField] public Moba_gameGameScenarioType GameScenarioType = Moba_gameGameScenarioType.Normal;
+
+        [Header("Moba_game Base Configuration")]
+        [SerializeField] public GameObject BasePrefab;
 
         [Header("Moba_game Movement Configuration")]
         [SerializeField] public float AgentMoveSpeed = 5f;
@@ -82,6 +86,8 @@ namespace Problems.Moba_game
         private Moba_gameAgentComponent targetAgent;
         private Moba_gameAgentComponent senderAgent;
 
+        protected BaseSpawner BaseSpawner;
+
         protected override void DefineAdditionalDataOnPostAwake()
         {
             ReadParamsFromMainConfiguration();
@@ -92,8 +98,14 @@ namespace Problems.Moba_game
                 throw new Exception("Moba_gamePowerUpSpawner is not defined");
                 // TODO Add error reporting here
             }
+            BaseSpawner = gameObject.GetComponent<BaseSpawner>();
+            if (BaseSpawner == null)
+            {
+                throw new Exception("BaseSpawner is not defined");
+                // TODO Add error reporting here
+            }
 
-            if(SceneLoadMode == SceneLoadMode.LayerMode)
+            if (SceneLoadMode == SceneLoadMode.LayerMode)
             {
                 // Only one problem environment exists
                 Sectors = FindObjectsOfType<SectorComponent>();
@@ -126,8 +138,17 @@ namespace Problems.Moba_game
                 agent.SetEnvironmentColor(color);
             }
 
+            Bases = BaseSpawner.Spawn<BaseComponent>(this);
+            Moba_gameBaseComponent m = Bases[0] as Moba_gameBaseComponent;
+
+            // Set Base stats
+            foreach (Moba_gameBaseComponent _base in Bases)
+            {
+                _base.HealthComponent.Health = BaseStartHealth;
+            }
+
             // Spawn powerUps
-            PowerUps = PowerUpSpawner.Spawn<PowerUpComponent>(this).ToList();
+            //PowerUps = PowerUpSpawner.Spawn<PowerUpComponent>(this).ToList();
 
             // Register event for Ray sensor
             RayHitObject.OnTargetHit += RayHitObject_OnTargetHit;
@@ -377,7 +398,7 @@ namespace Problems.Moba_game
         private void CheckAgentsExploration()
         {
             // Exploration bonus
-            for(int i = 0; i < Agents.Length; i++)
+            for (int i = 0; i < Agents.Length; i++)
             {
                 agent = Agents[i] as Moba_gameAgentComponent;
                 if (agent.gameObject.activeSelf)
@@ -454,6 +475,14 @@ namespace Problems.Moba_game
             UpdateAgentHealth(missile, hitAgent as Moba_gameAgentComponent);
         }
 
+        public void BaseHit(MissileComponent missile, BaseComponent hitBase)
+        {
+            (missile.Parent as Moba_gameAgentComponent).MissileHitOpponent();
+            (hitBase as Moba_gameBaseComponent).HitByOpponentMissile();
+
+            UpdateBaseHealth(missile, hitBase as Moba_gameBaseComponent);
+        }
+
         void UpdateAgentHealth(MissileComponent missile, Moba_gameAgentComponent hitAgent)
         {
             hitAgent.TakeDamage(MissileDamage);
@@ -470,6 +499,31 @@ namespace Problems.Moba_game
                         (missile.Parent as Moba_gameAgentComponent).OpponentsDestroyed++;
 
                         ResetAgent(hitAgent);
+
+                        break;
+                }
+            }
+        }
+
+        void UpdateBaseHealth(MissileComponent missile, Moba_gameBaseComponent hitBase)
+        {
+            if (hitBase == null)
+            {
+                Debug.LogError("hitBase je null v UpdateBaseHealth!");
+                return;
+            }
+            hitBase.TakeDamage(MissileDamage);
+
+            if (hitBase.HealthComponent.Health <= 0)
+            {
+                switch (GameScenarioType)
+                {
+                    case Moba_gameGameScenarioType.Normal:
+                        hitBase.gameObject.SetActive(false);
+                        CheckEndingState();
+                        break;
+                    case Moba_gameGameScenarioType.Deathmatch:
+                        (missile.Parent as Moba_gameAgentComponent).OpponentsDestroyed++;
 
                         break;
                 }

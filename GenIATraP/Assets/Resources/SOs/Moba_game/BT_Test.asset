@@ -1,0 +1,84 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-4736042126788254707
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 163c147d123e4a945b688eddc64e3ea5, type: 3}
+  m_Name: RootNode
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 927e72c41d78cdb48b207ebb497b8e82
+  position: {x: 0, y: 0}
+  callFrequencyCount: 0
+  description: 
+  drawGizmos: 0
+  child: {fileID: -2564966270347086663}
+--- !u!114 &-2564966270347086663
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afb5496e8cd973748a10b3e3ef436ebd, type: 3}
+  m_Name: Repeat
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 10738220bb9a35f4880da808c0083f96
+  position: {x: -0.000011444092, y: 103.64851}
+  callFrequencyCount: 0
+  description: 
+  drawGizmos: 0
+  child: {fileID: 184093347600399906}
+  restartOnSuccess: 1
+  restartOnFailure: 0
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e7922a36c65b824f95d4e76c192add0, type: 3}
+  m_Name: BT_Test
+  m_EditorClassIdentifier: 
+  AgentControllerId: 0
+  ControllerType: 0
+  RootNode: {fileID: -4736042126788254707}
+  TreeState: 0
+  Nodes:
+  - {fileID: -4736042126788254707}
+  - {fileID: -2564966270347086663}
+  - {fileID: 184093347600399906}
+--- !u!114 &184093347600399906
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fd1e85f30abba2499f6834e124b1450, type: 3}
+  m_Name: MoveForward
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 7735bd8f06af2fb4fb377c439cb8d416
+  position: {x: -0.00005925598, y: 229.9165}
+  callFrequencyCount: 0
+  description: 
+  drawGizmos: 0
+  moveForwardDirection: 1
