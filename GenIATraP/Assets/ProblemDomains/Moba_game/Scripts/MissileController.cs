@@ -14,6 +14,7 @@ namespace Problems.Moba_game
         private Collider2D[] MissileCollisions;
         private AgentComponent otherAgent;
         private BaseComponent otherBase;
+        private GoldComponent otherGold;
 
         void Start()
         {
@@ -46,6 +47,8 @@ namespace Problems.Moba_game
 
                     collision.gameObject.TryGetComponent(out otherAgent);
                     collision.gameObject.TryGetComponent(out otherBase);
+                    collision.gameObject.TryGetComponent(out otherGold);
+
 
                     if (otherAgent != null)
                     {
@@ -55,6 +58,11 @@ namespace Problems.Moba_game
                     if (otherBase != null)
                     {
                         Moba_gameEnvironmentController.BaseHit(missileComponent, otherBase);
+                    }
+
+                    if (otherGold != null)
+                    {
+                        Moba_gameEnvironmentController.GoldHit(missileComponent, otherGold);
                     }
 
                     missileComponent.MissileHitTarget = true;

@@ -50,7 +50,6 @@ namespace Base
         [SerializeField] public Match Match;
 
         public AgentComponent[] Agents { get; set; }
-        public BaseComponent[] Bases { get; set; }
         public int CurrentSimulationSteps { get; set; }
         public float CurrentSimulationTime { get; set; }
         public GameState GameState { get; set; }

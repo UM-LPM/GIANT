@@ -35,7 +35,8 @@ namespace Problems.Moba_game
                 GameObject baseGameObject = Instantiate(Moba_gameEnvironmentController.BasePrefab, BaseSpawnPoints[i].position, BaseSpawnPoints[i].rotation, gameObject.transform);
 
                 T _base = baseGameObject.GetComponent<T>();
-                        
+                BaseComponent baseComponent = _base as BaseComponent;
+                baseComponent.TeamID = environmentController.Match.Teams[i].TeamId;
 
                 // Assign base sprite
                 SpriteRenderer baseRenderer = baseGameObject.GetComponent<SpriteRenderer>();
