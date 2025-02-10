@@ -26,6 +26,7 @@ namespace Problems.Moba_game
         [SerializeField] public Moba_gameAgentRespawnType AgentRespawnType = Moba_gameAgentRespawnType.StartPos;
         [SerializeField] public Moba_gameGameScenarioType GameScenarioType = Moba_gameGameScenarioType.Normal;
         private Moba_game1vs1MatchSpawner Match1v1Spawner;
+        private EnvironmentControllerBase envBase;
 
 
         [Header("Moba_game Base Configuration")]
@@ -88,15 +89,17 @@ namespace Problems.Moba_game
 
         // Fitness calculation
         private float sectorExplorationFitness;
-        private float healthPowerUpsFitness;
-        private float ammoPowerUpsFitness;
-        private float shieldPowerUpsFitness;
+        // private float healthPowerUpsFitness;
+        // private float ammoPowerUpsFitness;
+        // private float shieldPowerUpsFitness;
         private float allPossibleMissilesFired;
         private float missilesFired;
         private float missilesFiredAccuracy;
         private float survivalBonus;
         private float goldHitsBonus;
         private float baseHitsBonus;
+        private float teammateHitsPenatly;
+        private float ownBaseHitsPenalty;
         private int numOfOpponents;
         private float opponentsDestroyedBonus;
         private int numOfFiredOpponentMissiles;
@@ -169,12 +172,6 @@ namespace Problems.Moba_game
 
         protected override void DefineAdditionalDataOnPostStart()
         {
-            // Set starting Health text for bases
-            // Base0HealthText.text = MAX_BASE_HEALTH.ToString();
-            // Base1HealthText.text = MAX_BASE_HEALTH.ToString();
-            // Base0MoneyText.text = BaseStartMoney.ToString();
-            // Base1MoneyText.text = BaseStartMoney.ToString();
-
             // Generate random color and assign it to the every agent stat bar
             Color color = new Color(UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0.0f, 1f), UnityEngine.Random.Range(0f, 1f), 1);
 
@@ -223,6 +220,7 @@ namespace Problems.Moba_game
                 UpdateAgentsSurvivalTime();
                 ResetAgentOpponentTracking();
                 UpdateBaseUI();
+                SpawnNewAgents();
             }
         }
 
@@ -241,21 +239,6 @@ namespace Problems.Moba_game
                     {
                         Base0MoneyText.text = money.ToString();
                         lastBase0Money = (int)money;
-                        if (money >= 5)
-                        {
-                            Moba_gameAgentComponent obj = (Moba_gameAgentComponent)Match1v1Spawner.SpawnAgent<AgentComponent>(this, baseComponent.TeamID);
-                            Color color = new Color(UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0.0f, 1f), UnityEngine.Random.Range(0f, 1f), 1);
-
-                            obj.HealthComponent.Health = AgentStartHealth;
-                            obj.ShieldComponent.Shield = AgentStartShield;
-                            obj.AmmoComponent.Ammo = AgentStartAmmo;
-                            obj.SetEnvironmentColor(color);
-
-                            List<AgentComponent> agentList = Agents.ToList();
-                            agentList.Add(obj);
-                            Agents = agentList.ToArray();
-                            baseComponent.MoneyComponent.Money -= 5;
-                        }
                     }
                     if (health != lastBase0Health)
                     {
@@ -269,26 +252,51 @@ namespace Problems.Moba_game
                     {
                         Base1MoneyText.text = money.ToString();
                         lastBase1Money = (int)money;
-                        if (money >= 5)
-                        {
-                            Moba_gameAgentComponent obj = (Moba_gameAgentComponent)Match1v1Spawner.SpawnAgent<AgentComponent>(this, baseComponent.TeamID);
-                            Color color = new Color(UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0.0f, 1f), UnityEngine.Random.Range(0f, 1f), 1);
-
-                            obj.HealthComponent.Health = AgentStartHealth;
-                            obj.ShieldComponent.Shield = AgentStartShield;
-                            obj.AmmoComponent.Ammo = AgentStartAmmo;
-                            obj.SetEnvironmentColor(color);
-
-                            List<AgentComponent> agentList = Agents.ToList();
-                            agentList.Add(obj);
-                            Agents = agentList.ToArray();
-                            baseComponent.MoneyComponent.Money -= 5;
-                        }
                     }
                     if (health != lastBase1Health)
                     {
                         Base1HealthText.text = health.ToString();
                         lastBase1Health = health;
+                    }
+                }
+            }
+        }
+
+        private void SpawnNewAgents()
+        {
+            float money;
+            bool canSpawn = true;
+            foreach (Moba_gameBaseComponent baseComponent in Bases)
+            {
+                money = baseComponent.MoneyComponent.Money;
+                if (money >= 5)
+                {
+                    if (Agents != null)
+                    {
+                        foreach (Moba_gameAgentComponent agent in Agents)
+                        {
+                            if (Vector3.Distance(agent.transform.position, Match1v1Spawner.SpawnPoints[baseComponent.TeamID].position) < 1.5f)
+                            {
+                                canSpawn = false;
+                                break;
+                            }
+                        }
+                    }
+                    if (canSpawn)
+                    {
+                        Moba_gameAgentComponent obj = (Moba_gameAgentComponent)Match1v1Spawner.SpawnAgent<AgentComponent>(this, baseComponent.TeamID);
+                        Color color = new Color(UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0.0f, 1f), UnityEngine.Random.Range(0f, 1f), 1);
+
+                        obj.HealthComponent.Health = AgentStartHealth;
+                        obj.ShieldComponent.Shield = AgentStartShield;
+                        obj.AmmoComponent.Ammo = AgentStartAmmo;
+                        obj.SetEnvironmentColor(color);
+
+                        List<AgentComponent> agentList = Agents.ToList();
+                        agentList.Add(obj);
+                        Agents = agentList.ToArray();
+                        //envBase.InitializeAgents();
+                        baseComponent.MoneyComponent.Money -= 5;
                     }
                 }
             }
@@ -593,7 +601,16 @@ namespace Problems.Moba_game
 
         public void TankHit(MissileComponent missile, AgentComponent hitAgent)
         {
-            (missile.Parent as Moba_gameAgentComponent).MissileHitOpponent();
+            if (hitAgent.TeamID == missile.Parent.TeamID)
+            {
+                (missile.Parent as Moba_gameAgentComponent).MissileHitTeammate();
+
+            }
+            else
+            {
+                (missile.Parent as Moba_gameAgentComponent).MissileHitOpponent();
+
+            }
             (hitAgent as Moba_gameAgentComponent).HitByOpponentMissile();
             UpdateAgentHealth(missile, hitAgent as Moba_gameAgentComponent);
 
@@ -601,7 +618,16 @@ namespace Problems.Moba_game
 
         public void BaseHit(MissileComponent missile, BaseComponent hitBase)
         {
-            (missile.Parent as Moba_gameAgentComponent).MissileHitBase();
+            if (hitBase.TeamID == missile.Parent.TeamID)
+            {
+                (missile.Parent as Moba_gameAgentComponent).MissileHitOwnBase();
+
+            }
+            else
+            {
+                (missile.Parent as Moba_gameAgentComponent).MissileHitBase();
+
+            }
             UpdateBaseHealth(missile, hitBase as Moba_gameBaseComponent);
         }
 
@@ -667,10 +693,10 @@ namespace Problems.Moba_game
 
             hitGold.TakeDamage(MissileDamage);
             foreach (Moba_gameBaseComponent _base in Bases.Cast<Moba_gameBaseComponent>())
-                {
-                    if (_base.TeamID == missile.Parent.TeamID)
-                        _base.MoneyComponent.Money += 2;
-                }
+            {
+                if (_base.TeamID == missile.Parent.TeamID)
+                    _base.MoneyComponent.Money += 2;
+            }
             if (hitGold.HealthComponent.Health <= 0)
             {
                 Golds.Remove(hitGold);
@@ -679,7 +705,7 @@ namespace Problems.Moba_game
                 Golds.Add(obj);
                 Destroy(hitGold.gameObject);
 
-                
+
             }
 
         }
@@ -810,6 +836,15 @@ namespace Problems.Moba_game
                     agent.AgentFitness.UpdateFitness(damageTakenPenalty, Moba_gameFitness.FitnessKeys.DamageTakenPenalty.ToString());
                 }
 
+                teammateHitsPenatly = agent.MissilesHitTeammate;
+                teammateHitsPenatly = (float)Math.Round(Moba_gameFitness.FitnessValues[Moba_gameFitness.FitnessKeys.TeammateHitsPenalty.ToString()] * goldHitsBonus, 4);
+                agent.AgentFitness.UpdateFitness(teammateHitsPenatly, Moba_gameFitness.FitnessKeys.TeammateHitsPenalty.ToString());
+
+                ownBaseHitsPenalty = agent.MissilesHitOwnBase;
+                ownBaseHitsPenalty = (float)Math.Round(Moba_gameFitness.FitnessValues[Moba_gameFitness.FitnessKeys.OwnBaseHitsPenalty.ToString()] * goldHitsBonus, 4);
+                agent.AgentFitness.UpdateFitness(ownBaseHitsPenalty, Moba_gameFitness.FitnessKeys.OwnBaseHitsPenalty.ToString());
+
+
                 /*
                 Debug.Log("========================================");
                 Debug.Log("Agent: Team ID" + agent.TeamID + ", ID: " + agent.IndividualID);
@@ -825,6 +860,9 @@ namespace Problems.Moba_game
                 Debug.Log("Opponent tracking bonus: " + agent.OpponentTrackCounter + " / " + (CurrentSimulationSteps / (float)DecisionRequestInterval) + " =");
                 Debug.Log("Opponents destroyed bonus: " + agent.OpponentsDestroyed + " / " + numOfOpponents + " =");
                 Debug.Log("Damage taken: " + agent.HitByOpponentMissiles + " / " + numOfFiredOpponentMissiles + " =");
+                Debug.Log("Teammate hits penalty: " + agent.MissilesHitTeammate " =");
+                Debug.Log("Own base hits penalty: " + agent.MissilesHitOwnBase " =");
+
                 Debug.Log("========================================");
                 */
             }

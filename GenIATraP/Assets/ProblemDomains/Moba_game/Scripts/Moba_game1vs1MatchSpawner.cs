@@ -104,12 +104,10 @@ namespace Problems.Moba_game
                         T agent = SpawnAgent<T>(environmentController, teamID);
                         // Update list
                         agents.Add(agent);
-
                         (agent as Moba_gameAgentComponent).NumOfSpawns++;
                     }
                 }
             }
-
             return agents.ToArray();
         }
 
@@ -133,7 +131,6 @@ namespace Problems.Moba_game
             ConfigureAgentSprites(environmentController, agentGameObject, teamID);
 
             return agent;
-            //return agents.ToArray();
         }
 
         public override void Respawn<T>(EnvironmentControllerBase environmentController, T respawnComponent)

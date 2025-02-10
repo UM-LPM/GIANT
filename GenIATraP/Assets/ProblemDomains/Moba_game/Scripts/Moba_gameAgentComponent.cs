@@ -27,7 +27,9 @@ namespace Problems.Moba_game
         public int AmmoPowerUpsCollected { get; set; }
         public int MissilesFired { get; set; }
         public int MissilesHitOpponent { get; set; }
+        public int MissilesHitTeammate { get; set; }
         public int MissilesHitBase { get; set; }
+        public int MissilesHitOwnBase { get; set; }
         public int MissilesHitGold { get; set; }
 
         public int HitByOpponentMissiles { get; set; }
@@ -224,9 +226,19 @@ namespace Problems.Moba_game
             MissilesHitOpponent++;
         }
 
+        public void MissileHitTeammate()
+        {
+            MissilesHitTeammate++;
+        }
+
         public void MissileHitBase()
         {
             MissilesHitBase++;
+        }
+
+        public void MissileHitOwnBase()
+        {
+            MissilesHitOwnBase++;
         }
 
         public void MissileHitGold()

@@ -253,7 +253,7 @@ namespace Base
             }
         }
 
-        void InitializeAgents()
+        public void InitializeAgents()
         {
             for (int i = 0; i < Agents.Length; i++)
             {

@@ -18,6 +18,8 @@ namespace Problems.Moba_game
              { "DamageTakenPenalty", 0.15f },
              { "GoldHitsBonus", -0.05f },
              { "BaseHitsBonus", -0.1f },
+             { "TeammateHitsPenalty", 0.1f },
+             { "OwnBaseHitsPenalty", 0.1f },
         };
 
         public static string[] Keys = FitnessValues.Keys.ToArray();
@@ -35,7 +37,9 @@ namespace Problems.Moba_game
             OpponentDestroyedBonus,
             DamageTakenPenalty,
             GoldHitsBonus,
-            BaseHitsBonus
+            BaseHitsBonus,
+            TeammateHitsPenalty,
+            OwnBaseHitsPenalty
         }
     }
 }

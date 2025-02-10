@@ -22,14 +22,15 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 
         public override AgentController Clone()
         {
-            BehaviorTreeAgentController tree = Instantiate(this);
-            tree.RootNode = tree.RootNode.Clone();
-            tree.Nodes = new List<Node>();
-            Traverse(tree.RootNode, (n) => {
-                tree.Nodes.Add(n);
-            });
+            // BehaviorTreeAgentController tree = Instantiate(this);
+            // tree.RootNode = tree.RootNode.Clone();
+            // tree.Nodes = new List<Node>();
+            // Traverse(tree.RootNode, (n) => {
+            //     tree.Nodes.Add(n);
+            // });
 
-            return tree;
+            // return tree;
+            return this;
         }
 
         public Node.State Update()
