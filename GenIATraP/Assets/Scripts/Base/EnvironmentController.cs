@@ -154,7 +154,8 @@ namespace Base
                 }
                 else
                 {
-                    UpdateAgents(false);
+                    //UpdateAgents(false);
+                    UpdateAgents(true);
                 }
             }
 

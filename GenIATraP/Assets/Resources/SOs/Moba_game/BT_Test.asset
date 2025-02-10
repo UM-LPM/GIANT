@@ -1,5 +1,25 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-5714817240003551350
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1191a1255814faa47b52cc65d43e6285, type: 3}
+  m_Name: RotateTurret
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: 7827c838a56341446a6a81eaa79a89aa
+  position: {x: 120.000015, y: -312.80002}
+  callFrequencyCount: 0
+  description: 
+  drawGizmos: 0
+  rotateDirection: 2
 --- !u!114 &-4736042126788254707
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15,11 +35,33 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 927e72c41d78cdb48b207ebb497b8e82
-  position: {x: 0, y: 0}
+  position: {x: -30.399996, y: -688.24805}
   callFrequencyCount: 0
   description: 
   drawGizmos: 0
   child: {fileID: -2564966270347086663}
+--- !u!114 &-2666745444292615840
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
+  m_Name: Sequencer
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: d3981cfda17a0904ba7b7c1666a07679
+  position: {x: -96.00001, y: -312.80002}
+  callFrequencyCount: 0
+  description: 
+  drawGizmos: 0
+  children:
+  - {fileID: 9083096920049185156}
+  - {fileID: 1194744869814548535}
 --- !u!114 &-2564966270347086663
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35,11 +77,11 @@ MonoBehaviour:
   state: 0
   started: 0
   guid: 10738220bb9a35f4880da808c0083f96
-  position: {x: -0.000011444092, y: 103.64851}
+  position: {x: -30.400011, y: -584.8}
   callFrequencyCount: 0
   description: 
   drawGizmos: 0
-  child: {fileID: 184093347600399906}
+  child: {fileID: 3705352887823215424}
   restartOnSuccess: 1
   restartOnFailure: 0
 --- !u!114 &11400000
@@ -61,8 +103,12 @@ MonoBehaviour:
   Nodes:
   - {fileID: -4736042126788254707}
   - {fileID: -2564966270347086663}
-  - {fileID: 184093347600399906}
---- !u!114 &184093347600399906
+  - {fileID: 1194744869814548535}
+  - {fileID: -5714817240003551350}
+  - {fileID: -2666745444292615840}
+  - {fileID: 9083096920049185156}
+  - {fileID: 3705352887823215424}
+--- !u!114 &1194744869814548535
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -71,14 +117,59 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1fd1e85f30abba2499f6834e124b1450, type: 3}
-  m_Name: MoveForward
+  m_Script: {fileID: 11500000, guid: a3dc491c3b458a945b4bd32e24ed7627, type: 3}
+  m_Name: Shoot
   m_EditorClassIdentifier: 
   state: 0
   started: 0
-  guid: 7735bd8f06af2fb4fb377c439cb8d416
-  position: {x: -0.00005925598, y: 229.9165}
+  guid: 74284c292ecccb64098bd970c82846d7
+  position: {x: -5.757889, y: -186.40009}
   callFrequencyCount: 0
   description: 
   drawGizmos: 0
-  moveForwardDirection: 1
+  shoot: 1
+--- !u!114 &3705352887823215424
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 460be9e34c566ea45b9e282b1adcb028, type: 3}
+  m_Name: Selector
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: cd3eef0cfb6b6eb4098116d735935d16
+  position: {x: -30.400024, y: -458.80408}
+  callFrequencyCount: 0
+  description: 
+  drawGizmos: 0
+  children:
+  - {fileID: -2666745444292615840}
+  - {fileID: -5714817240003551350}
+--- !u!114 &9083096920049185156
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2896f3e48c4d62d40be88fb007bb6361, type: 3}
+  m_Name: RayHitObject
+  m_EditorClassIdentifier: 
+  state: 0
+  started: 0
+  guid: a904cfae68aea2e40946546486b0421e
+  position: {x: -171.20007, y: -185.9075}
+  callFrequencyCount: 0
+  description: 
+  drawGizmos: 0
+  targetGameObject: 8
+  side: 0
+  rayIndex: 0
+  raySensor: {fileID: 0}

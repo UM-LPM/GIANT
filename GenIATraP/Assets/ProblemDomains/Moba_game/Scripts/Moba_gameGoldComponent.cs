@@ -6,7 +6,6 @@ namespace Problems.Moba_game
     public class Moba_gameGoldComponent : GoldComponent
     {
         public HealthComponent HealthComponent { get; set; }
-        public int HitByOpponentMissiles { get; set; }
 
         protected override void DefineAdditionalDataOnAwake()
         {
@@ -21,11 +20,6 @@ namespace Problems.Moba_game
         public void TakeDamage(int value)
         {
             HealthComponent.Health -= value;
-        }
-
-        public void HitByOpponentMissile()
-        {
-            HitByOpponentMissiles++;
         }
 
     }

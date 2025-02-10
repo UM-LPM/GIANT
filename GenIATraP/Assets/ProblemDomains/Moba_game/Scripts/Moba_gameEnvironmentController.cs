@@ -25,6 +25,8 @@ namespace Problems.Moba_game
         [SerializeField] int AgentStartAmmo = 0;
         [SerializeField] public Moba_gameAgentRespawnType AgentRespawnType = Moba_gameAgentRespawnType.StartPos;
         [SerializeField] public Moba_gameGameScenarioType GameScenarioType = Moba_gameGameScenarioType.Normal;
+        private Moba_game1vs1MatchSpawner Match1v1Spawner;
+
 
         [Header("Moba_game Base Configuration")]
         [SerializeField] public GameObject BasePrefab;
@@ -93,6 +95,8 @@ namespace Problems.Moba_game
         private float missilesFired;
         private float missilesFiredAccuracy;
         private float survivalBonus;
+        private float goldHitsBonus;
+        private float baseHitsBonus;
         private int numOfOpponents;
         private float opponentsDestroyedBonus;
         private int numOfFiredOpponentMissiles;
@@ -118,10 +122,17 @@ namespace Problems.Moba_game
         {
             ReadParamsFromMainConfiguration();
 
+            Match1v1Spawner = GetComponent<Moba_game1vs1MatchSpawner>();
+            if (Match1v1Spawner == null)
+            {
+                throw new Exception("Match1v1Spawner is not defined");
+                // TODO Add error reporting here
+            }
+
             PowerUpSpawner = GetComponent<Moba_gamePowerUpSpawner>();
             if (PowerUpSpawner == null)
             {
-                throw new Exception("Moba_gamePowerUpSpawner is not defined");
+                throw new Exception("PowerUpSpawner is not defined");
                 // TODO Add error reporting here
             }
             baseSpawner = gameObject.GetComponent<BaseSpawner>();
@@ -133,7 +144,7 @@ namespace Problems.Moba_game
             GoldSpawner = GetComponent<Moba_gameGoldSpawner>();
             if (GoldSpawner == null)
             {
-                throw new Exception("Moba_gameGoldSpawner is not defined");
+                throw new Exception("GoldSpawner is not defined");
                 // TODO Add error reporting here
             }
 
@@ -217,10 +228,12 @@ namespace Problems.Moba_game
 
         private void UpdateBaseUI()
         {
+            float money;
+            float health;
             foreach (Moba_gameBaseComponent baseComponent in Bases)
             {
-                float money = baseComponent.MoneyComponent.Money;
-                float health = baseComponent.HealthComponent.Health;
+                money = baseComponent.MoneyComponent.Money;
+                health = baseComponent.HealthComponent.Health;
 
                 if (baseComponent.TeamID == 0)
                 {
@@ -228,6 +241,21 @@ namespace Problems.Moba_game
                     {
                         Base0MoneyText.text = money.ToString();
                         lastBase0Money = (int)money;
+                        if (money >= 5)
+                        {
+                            Moba_gameAgentComponent obj = (Moba_gameAgentComponent)Match1v1Spawner.SpawnAgent<AgentComponent>(this, baseComponent.TeamID);
+                            Color color = new Color(UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0.0f, 1f), UnityEngine.Random.Range(0f, 1f), 1);
+
+                            obj.HealthComponent.Health = AgentStartHealth;
+                            obj.ShieldComponent.Shield = AgentStartShield;
+                            obj.AmmoComponent.Ammo = AgentStartAmmo;
+                            obj.SetEnvironmentColor(color);
+
+                            List<AgentComponent> agentList = Agents.ToList();
+                            agentList.Add(obj);
+                            Agents = agentList.ToArray();
+                            baseComponent.MoneyComponent.Money -= 5;
+                        }
                     }
                     if (health != lastBase0Health)
                     {
@@ -241,6 +269,21 @@ namespace Problems.Moba_game
                     {
                         Base1MoneyText.text = money.ToString();
                         lastBase1Money = (int)money;
+                        if (money >= 5)
+                        {
+                            Moba_gameAgentComponent obj = (Moba_gameAgentComponent)Match1v1Spawner.SpawnAgent<AgentComponent>(this, baseComponent.TeamID);
+                            Color color = new Color(UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0.0f, 1f), UnityEngine.Random.Range(0f, 1f), 1);
+
+                            obj.HealthComponent.Health = AgentStartHealth;
+                            obj.ShieldComponent.Shield = AgentStartShield;
+                            obj.AmmoComponent.Ammo = AgentStartAmmo;
+                            obj.SetEnvironmentColor(color);
+
+                            List<AgentComponent> agentList = Agents.ToList();
+                            agentList.Add(obj);
+                            Agents = agentList.ToArray();
+                            baseComponent.MoneyComponent.Money -= 5;
+                        }
                     }
                     if (health != lastBase1Health)
                     {
@@ -251,37 +294,6 @@ namespace Problems.Moba_game
             }
         }
 
-
-        private void SpawnNewAgent()
-        {
-            foreach (Moba_gameBaseComponent _base in Bases)
-            {
-                if (_base.TeamID == 0)
-                {
-                    Base0MoneyText.text = _base.MoneyComponent.Money.ToString();
-                }
-                else if (_base.TeamID == 1)
-                {
-                    Base1MoneyText.text = _base.MoneyComponent.Money.ToString();
-                }
-                // if (_base.MoneyComponent.Money >= 5)
-                // {
-                //     _base.SpawnAgent();
-                //     if (_base.TeamID == 0)
-                //     {
-                //         Base0MoneyText.text = _base.MoneyComponent.Money.ToString();
-                //     }
-                //     else if (_base.TeamID == 1)
-                //     {
-                //         Base1MoneyText.text = _base.MoneyComponent.Money.ToString();
-                //     }
-                //     else
-                //     {
-
-                //     }
-                // }
-            }
-        }
 
         protected override void OnPreFinishGame()
         {
@@ -583,24 +595,19 @@ namespace Problems.Moba_game
         {
             (missile.Parent as Moba_gameAgentComponent).MissileHitOpponent();
             (hitAgent as Moba_gameAgentComponent).HitByOpponentMissile();
-
             UpdateAgentHealth(missile, hitAgent as Moba_gameAgentComponent);
 
         }
 
         public void BaseHit(MissileComponent missile, BaseComponent hitBase)
         {
-            //(missile.Parent as Moba_gameAgentComponent).MissileHitOpponent();
-            (hitBase as Moba_gameBaseComponent).HitByOpponentMissile();
-
+            (missile.Parent as Moba_gameAgentComponent).MissileHitBase();
             UpdateBaseHealth(missile, hitBase as Moba_gameBaseComponent);
         }
 
         public void GoldHit(MissileComponent missile, GoldComponent hitGold)
         {
-            //(missile.Parent as Moba_gameAgentComponent).MissileHitOpponent();
-            (hitGold as Moba_gameGoldComponent).HitByOpponentMissile();
-
+            (missile.Parent as Moba_gameAgentComponent).MissileHitGold();
             UpdateGoldHealth(missile, hitGold as Moba_gameGoldComponent);
         }
 
@@ -614,13 +621,12 @@ namespace Problems.Moba_game
                 {
                     case Moba_gameGameScenarioType.Normal:
                         hitAgent.gameObject.SetActive(false);
-                        CheckEndingState();
+                        //CheckEndingState();
                         break;
                     case Moba_gameGameScenarioType.Deathmatch:
                         (missile.Parent as Moba_gameAgentComponent).OpponentsDestroyed++;
 
                         ResetAgent(hitAgent);
-
                         break;
                 }
             }
@@ -660,7 +666,11 @@ namespace Problems.Moba_game
             }
 
             hitGold.TakeDamage(MissileDamage);
-
+            foreach (Moba_gameBaseComponent _base in Bases.Cast<Moba_gameBaseComponent>())
+                {
+                    if (_base.TeamID == missile.Parent.TeamID)
+                        _base.MoneyComponent.Money += 2;
+                }
             if (hitGold.HealthComponent.Health <= 0)
             {
                 Golds.Remove(hitGold);
@@ -669,11 +679,7 @@ namespace Problems.Moba_game
                 Golds.Add(obj);
                 Destroy(hitGold.gameObject);
 
-                foreach (Moba_gameBaseComponent _base in Bases.Cast<Moba_gameBaseComponent>())
-                {
-                    if (_base.TeamID == missile.Parent.TeamID)
-                        _base.MoneyComponent.Money += 5;
-                }
+                
             }
 
         }
@@ -736,20 +742,20 @@ namespace Problems.Moba_game
                 sectorExplorationFitness = (float)Math.Round(Moba_gameFitness.FitnessValues[Moba_gameFitness.FitnessKeys.SectorExploration.ToString()] * sectorExplorationFitness, 4);
                 agent.AgentFitness.UpdateFitness(sectorExplorationFitness, Moba_gameFitness.FitnessKeys.SectorExploration.ToString());
 
-                // Health powerUps
-                healthPowerUpsFitness = agent.HealtPowerUpsCollected / (float)PowerUpSpawner.HealthBoxSpawned;
-                healthPowerUpsFitness = (float)Math.Round(Moba_gameFitness.FitnessValues[Moba_gameFitness.FitnessKeys.PowerUp_Pickup_Health.ToString()] * healthPowerUpsFitness, 4);
-                agent.AgentFitness.UpdateFitness(healthPowerUpsFitness, Moba_gameFitness.FitnessKeys.PowerUp_Pickup_Health.ToString());
+                // // Health powerUps
+                // healthPowerUpsFitness = agent.HealtPowerUpsCollected / (float)PowerUpSpawner.HealthBoxSpawned;
+                // healthPowerUpsFitness = (float)Math.Round(Moba_gameFitness.FitnessValues[Moba_gameFitness.FitnessKeys.PowerUp_Pickup_Health.ToString()] * healthPowerUpsFitness, 4);
+                // agent.AgentFitness.UpdateFitness(healthPowerUpsFitness, Moba_gameFitness.FitnessKeys.PowerUp_Pickup_Health.ToString());
 
-                // Ammo powerUps
-                ammoPowerUpsFitness = agent.AmmoPowerUpsCollected / (float)PowerUpSpawner.AmmoBoxSpawned;
-                ammoPowerUpsFitness = (float)Math.Round(Moba_gameFitness.FitnessValues[Moba_gameFitness.FitnessKeys.PowerUp_Pickup_Ammo.ToString()] * ammoPowerUpsFitness, 4);
-                agent.AgentFitness.UpdateFitness(ammoPowerUpsFitness, Moba_gameFitness.FitnessKeys.PowerUp_Pickup_Ammo.ToString());
+                // // Ammo powerUps
+                // ammoPowerUpsFitness = agent.AmmoPowerUpsCollected / (float)PowerUpSpawner.AmmoBoxSpawned;
+                // ammoPowerUpsFitness = (float)Math.Round(Moba_gameFitness.FitnessValues[Moba_gameFitness.FitnessKeys.PowerUp_Pickup_Ammo.ToString()] * ammoPowerUpsFitness, 4);
+                // agent.AgentFitness.UpdateFitness(ammoPowerUpsFitness, Moba_gameFitness.FitnessKeys.PowerUp_Pickup_Ammo.ToString());
 
-                // Shield powerUps
-                shieldPowerUpsFitness = agent.ShieldPowerUpsCollected / (float)PowerUpSpawner.ShieldBoxSpawned;
-                shieldPowerUpsFitness = (float)Math.Round(Moba_gameFitness.FitnessValues[Moba_gameFitness.FitnessKeys.PowerUp_Pickup_Shield.ToString()] * shieldPowerUpsFitness, 4);
-                agent.AgentFitness.UpdateFitness(shieldPowerUpsFitness, Moba_gameFitness.FitnessKeys.PowerUp_Pickup_Shield.ToString());
+                // // Shield powerUps
+                // shieldPowerUpsFitness = agent.ShieldPowerUpsCollected / (float)PowerUpSpawner.ShieldBoxSpawned;
+                // shieldPowerUpsFitness = (float)Math.Round(Moba_gameFitness.FitnessValues[Moba_gameFitness.FitnessKeys.PowerUp_Pickup_Shield.ToString()] * shieldPowerUpsFitness, 4);
+                // agent.AgentFitness.UpdateFitness(shieldPowerUpsFitness, Moba_gameFitness.FitnessKeys.PowerUp_Pickup_Shield.ToString());
 
                 // Missiles fired
                 allPossibleMissilesFired = (CurrentSimulationSteps * Time.fixedDeltaTime) / MissileShootCooldown;
@@ -766,11 +772,20 @@ namespace Problems.Moba_game
                 }
 
                 // Survival bonus
-                agent.ResetSurvivalTime();
-
                 survivalBonus = agent.MaxSurvivalTime / (float)CurrentSimulationSteps;
                 survivalBonus = (float)Math.Round(Moba_gameFitness.FitnessValues[Moba_gameFitness.FitnessKeys.SurvivalBonus.ToString()] * survivalBonus, 4);
                 agent.AgentFitness.UpdateFitness(survivalBonus, Moba_gameFitness.FitnessKeys.SurvivalBonus.ToString());
+                agent.ResetSurvivalTime();
+
+                // Gold hits bonus
+                goldHitsBonus = agent.MissilesHitGold;
+                goldHitsBonus = (float)Math.Round(Moba_gameFitness.FitnessValues[Moba_gameFitness.FitnessKeys.GoldHitsBonus.ToString()] * goldHitsBonus, 4);
+                agent.AgentFitness.UpdateFitness(goldHitsBonus, Moba_gameFitness.FitnessKeys.GoldHitsBonus.ToString());
+
+                // Base hits bonus
+                baseHitsBonus = agent.MissilesHitBase;
+                baseHitsBonus = (float)Math.Round(Moba_gameFitness.FitnessValues[Moba_gameFitness.FitnessKeys.BaseHitsBonus.ToString()] * goldHitsBonus, 4);
+                agent.AgentFitness.UpdateFitness(baseHitsBonus, Moba_gameFitness.FitnessKeys.BaseHitsBonus.ToString());
 
                 // Opponent tracking bonus
                 opponentTrackingBonus = agent.OpponentTrackCounter / (CurrentSimulationSteps / (float)DecisionRequestInterval);
@@ -805,6 +820,8 @@ namespace Problems.Moba_game
                 Debug.Log("Missiles fired: " + agent.MissilesFired + " / " + allPossibleMissilesFired + " =");
                 Debug.Log("Missiles fired accuracy: " + agent.MissilesHitOpponent + " / " + agent.MissilesFired + " =");
                 Debug.Log("Survival bonus: " + agent.MaxSurvivalTime + " / " + CurrentSimulationSteps + " =");
+                Debug.Log("Gold hits bonus: " + agent.GoldHitsBonus " =");
+                Debug.Log("Base hits bonus: " + agent.BaseHitsBonus " =");
                 Debug.Log("Opponent tracking bonus: " + agent.OpponentTrackCounter + " / " + (CurrentSimulationSteps / (float)DecisionRequestInterval) + " =");
                 Debug.Log("Opponents destroyed bonus: " + agent.OpponentsDestroyed + " / " + numOfOpponents + " =");
                 Debug.Log("Damage taken: " + agent.HitByOpponentMissiles + " / " + numOfFiredOpponentMissiles + " =");

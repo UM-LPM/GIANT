@@ -15,7 +15,9 @@ namespace Problems.Moba_game
              { "SurvivalBonus", -0.05f },
              { "OpponentTrackingBonus", -0.05f },
              { "OpponentDestroyedBonus", -0.25f },
-             { "DamageTakenPenalty", 0.15f }
+             { "DamageTakenPenalty", 0.15f },
+             { "GoldHitsBonus", -0.05f },
+             { "BaseHitsBonus", -0.1f },
         };
 
         public static string[] Keys = FitnessValues.Keys.ToArray();
@@ -31,7 +33,9 @@ namespace Problems.Moba_game
             SurvivalBonus,
             OpponentTrackingBonus,
             OpponentDestroyedBonus,
-            DamageTakenPenalty
+            DamageTakenPenalty,
+            GoldHitsBonus,
+            BaseHitsBonus
         }
     }
 }

@@ -88,19 +88,20 @@ namespace Problems.Moba_game
                 {
                     foreach (AgentController agentController in individual.AgentControllers)
                     {
-                        // Instantiate and configure agent
-                        GameObject agentGameObject = Instantiate(environmentController.AgentPrefab, SpawnPoints[i].position, SpawnPoints[i].rotation, gameObject.transform);
+                        // // Instantiate and configure agent
+                        // GameObject agentGameObject = Instantiate(environmentController.AgentPrefab, SpawnPoints[i].position, SpawnPoints[i].rotation, gameObject.transform);
 
-                        // Configure agent
-                        T agent = agentGameObject.GetComponent<T>();
-                        AgentComponent agentComponent = agent as AgentComponent;
-                        agentComponent.AgentController = agentController.Clone(); // Clone the agent controller to prevent shared state between agents
-                        agentComponent.IndividualID = individual.IndividualId;
-                        agentComponent.TeamID = environmentController.Match.Teams[i].TeamId;
+                        // // Configure agent
+                        // T agent = agentGameObject.GetComponent<T>();
+                        // AgentComponent agentComponent = agent as AgentComponent;
+                        // agentComponent.AgentController = agentController.Clone(); // Clone the agent controller to prevent shared state between agents
+                        // agentComponent.IndividualID = individual.IndividualId;
+                        // agentComponent.TeamID = environmentController.Match.Teams[i].TeamId;
 
-                        // Configure agent sprites
-                        ConfigureAgentSprites(environmentController, agentGameObject);
-
+                        // // Configure agent sprites
+                        // ConfigureAgentSprites(environmentController, agentGameObject, environmentController.Match.Teams[i].TeamId);
+                        int teamID = environmentController.Match.Teams[i].TeamId;
+                        T agent = SpawnAgent<T>(environmentController, teamID);
                         // Update list
                         agents.Add(agent);
 
@@ -110,6 +111,29 @@ namespace Problems.Moba_game
             }
 
             return agents.ToArray();
+        }
+
+        public T SpawnAgent<T>(EnvironmentControllerBase environmentController, int teamID)
+        {
+            validateSpawnConditions(environmentController);
+
+            Individual individual = environmentController.Match.Teams[teamID].Individuals[0];
+            AgentController agentController = individual.AgentControllers[0];
+
+            GameObject agentGameObject = Instantiate(environmentController.AgentPrefab, SpawnPoints[teamID].position, SpawnPoints[teamID].rotation, gameObject.transform);
+
+            // Configure agent
+            T agent = agentGameObject.GetComponent<T>();
+            AgentComponent agentComponent = agent as AgentComponent;
+            agentComponent.AgentController = agentController.Clone(); // Clone the agent controller to prevent shared state between agents
+            agentComponent.IndividualID = individual.IndividualId;
+            agentComponent.TeamID = teamID;
+
+            // Configure agent sprites
+            ConfigureAgentSprites(environmentController, agentGameObject, teamID);
+
+            return agent;
+            //return agents.ToArray();
         }
 
         public override void Respawn<T>(EnvironmentControllerBase environmentController, T respawnComponent)
@@ -147,10 +171,10 @@ namespace Problems.Moba_game
             (agent as Moba_gameAgentComponent).NumOfSpawns++;
         }
 
-        void ConfigureAgentSprites(EnvironmentControllerBase environmentController, GameObject agentGameObject)
+        void ConfigureAgentSprites(EnvironmentControllerBase environmentController, GameObject agentGameObject, int teamID)
         {
             // Get random hull, turret, track and gun sprites
-            Sprite hull = Hulls[environmentController.Util.NextInt(0, Hulls.Length)];
+            Sprite hull = Hulls[teamID];
             Sprite turret = Turrets[environmentController.Util.NextInt(0, Turrets.Length)];
             Sprite track = Tracks[environmentController.Util.NextInt(0, Tracks.Length)];
             Sprite gun = Guns[environmentController.Util.NextInt(0, Guns.Length)];

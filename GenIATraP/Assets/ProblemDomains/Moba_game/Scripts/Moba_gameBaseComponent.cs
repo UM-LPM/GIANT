@@ -7,7 +7,6 @@ namespace Problems.Moba_game
     {
         public HealthComponent HealthComponent { get; set; }
         public MoneyComponent MoneyComponent { get; set; }
-        public int HitByOpponentMissiles { get; set; }
 
         protected override void DefineAdditionalDataOnAwake()
         {
@@ -48,16 +47,5 @@ namespace Problems.Moba_game
         {
             HealthComponent.Health -= value;
         }
-
-        public void HitByOpponentMissile()
-        {
-            HitByOpponentMissiles++;
-        }
-
-        public void SpawnAgent()
-        {
-            MoneyComponent.Money-=5;
-        }
-
     }
 }

@@ -109,7 +109,6 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
             {
                 // Option 1 : Check if the target game object is hit by the single ray based on RayIndex
                 sensorPerceiveOutputs = raySensor.PerceiveSingle(xPos: rayIndex);
-
                 if (sensorPerceiveOutputs[rayIndex].HasHit && sensorPerceiveOutputs[rayIndex].HitGameObjects[0].tag.Contains(TargetGameObjectsToString(targetGameObject)))
                 {
                     targetHit = true;
@@ -165,7 +164,6 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
                     OnTargetHit?.Invoke(this, new OnTargetHitEventargs { TargetGameObject = sensorPerceiveOutputs[hitIndex].HitGameObjects[0], Agent = context.gameObject.GetComponent<AgentComponent>() });
                 }
             }
-
             return targetHit;
         }
 
