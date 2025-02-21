@@ -301,6 +301,7 @@ GameObject:
   - component: {fileID: 253094004}
   - component: {fileID: 253094003}
   - component: {fileID: 253094009}
+  - component: {fileID: 253094010}
   m_Layer: 0
   m_Name: EnvironmentController
   m_TagString: Untagged
@@ -392,16 +393,14 @@ MonoBehaviour:
   - {fileID: 105846538}
   - {fileID: 674073069}
   Hulls:
-  - {fileID: 21300000, guid: d2c57d83b9354c6438c215fd33ca564a, type: 3}
-  - {fileID: 21300000, guid: b348cd69287174e498423155b5f76a7f, type: 3}
+  - {fileID: 21300000, guid: a06276238b67fe843b783e1d399ef63d, type: 3}
+  - {fileID: 21300000, guid: e1f17cdaa203d644cac86c3f4fca14a7, type: 3}
   Turrets:
   - {fileID: 21300000, guid: 9bbd6266427446e468df693b94be1a8c, type: 3}
   Tracks:
   - {fileID: 21300000, guid: 04807fd8b5443ad4f8d6f1c9c2e293d6, type: 3}
   Guns:
   - {fileID: 21300000, guid: 0280c38b00b84a54bb69b988d0bbc496, type: 3}
-  pushForce: 50
-  overlapCheckRadius: 1
 --- !u!114 &253094007
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -423,7 +422,7 @@ MonoBehaviour:
     m_Bits: 1
   Environment: {fileID: 1651248462}
   SceneLoadMode: 0
-  AgentPrefab: {fileID: 726593963373549367, guid: 7f48a6296f0292c4580001b3ffd71d78, type: 3}
+  AgentPrefab: {fileID: 726593963373549367, guid: fafaf9883da001840bafa6e4993d2442, type: 3}
   ArenaSize: {x: 30, y: 30, z: 0}
   ArenaRadius: 0
   ArenaCenterPoint: {x: 0, y: 0, z: 0}
@@ -436,18 +435,24 @@ MonoBehaviour:
   AgentStartHealth: 10
   BaseStartHealth: 20
   AgentStartShield: 0
-  AgentStartAmmo: 20
+  AgentStartAmmo: 50
   AgentRespawnType: 0
   GameScenarioType: 0
   BasePrefab: {fileID: 472220407532831056, guid: 2cd06a3c030c820478eacf9355d99e62, type: 3}
   BaseStartMoney: 0
-  GoldPrefab: {fileID: 3925929529766172192, guid: 451e04b1776035d4bbfa98e06feb8522, type: 3}
+  GoldPrefab: {fileID: 3925929529766172192, guid: 12c641177613d5c40a7591bb35c21df6, type: 3}
   GoldSpawnAmount: 5
   GoldStartHealth: 6
+  LavaPlanetPrefab: {fileID: 3925929529766172192, guid: 451e04b1776035d4bbfa98e06feb8522, type: 3}
+  LavaPlanetSpawnAmount: 3
+  IcePlanetPrefab: {fileID: 3925929529766172192, guid: 5ef53d0e21a3d79438dd681c626d8251, type: 3}
+  IcePlanetSpawnAmount: 3
   AgentMoveSpeed: 10
   AgentRotationSpeed: 180
   AgentTurrentRotationSpeed: 90
   ForwardSpeed: 1
+  ForwardThrust: 3
+  Tourque: 1
   MissilePrefab: {fileID: 5049200600163564288, guid: 742a577b28b30d7458f3661d26cf2089, type: 3}
   DestroyMissileAfter: 1
   MissileShootCooldown: 1
@@ -496,6 +501,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6b6e3c229a7b2244e916e054a83247f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &253094010
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 253093999}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 458b89a4d98870c469432067603b1de6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &268784700
@@ -661,7 +678,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: -5
-  m_Sprite: {fileID: 21300000, guid: 350f54274b8e1e447942291f8004af8d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 344325a8f1dfb2d42a08c372dea4f1dd, type: 3}
   m_Color: {r: 0.5471698, g: 0.5471698, b: 0.5471698, a: 1}
   m_FlipX: 0
   m_FlipY: 0

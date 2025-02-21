@@ -42,12 +42,22 @@ namespace Problems.Moba_game
         private Moba_gameGoldSpawner GoldSpawner;
         private List<GoldComponent> Golds;
 
+        [Header("Moba_game Planets Configuration")]
+
+        [SerializeField] public GameObject LavaPlanetPrefab;
+        [SerializeField] public int LavaPlanetSpawnAmount = 3;
+        [SerializeField] public GameObject IcePlanetPrefab;
+        [SerializeField] public int IcePlanetSpawnAmount = 3;
+        private Moba_gamePlanetSpawner PlanetSpawner;
+        private List<PlanetComponent> Planets;
 
         [Header("Moba_game Movement Configuration")]
         [SerializeField] public float AgentMoveSpeed = 5f;
         [SerializeField] public float AgentRotationSpeed = 80f;
         [SerializeField] public float AgentTurrentRotationSpeed = 90f;
         [HideInInspector] public float ForwardSpeed = 1f;
+        [SerializeField] public float ForwardThrust = 5f;
+        [SerializeField] public float Tourque = 1f;
 
         [Header("Moba_game Missile Configuration")]
         [SerializeField] public GameObject MissilePrefab;
@@ -150,6 +160,12 @@ namespace Problems.Moba_game
                 throw new Exception("GoldSpawner is not defined");
                 // TODO Add error reporting here
             }
+            PlanetSpawner = GetComponent<Moba_gamePlanetSpawner>();
+            if (PlanetSpawner == null)
+            {
+                throw new Exception("PlanetSpawner is not defined");
+                // TODO Add error reporting here
+            }
 
             if (SceneLoadMode == SceneLoadMode.LayerMode)
             {
@@ -195,11 +211,14 @@ namespace Problems.Moba_game
             // PowerUps = PowerUpSpawner.Spawn<PowerUpComponent>(this).ToList();
 
             // Spawn golds
-            Golds = GoldSpawner.Spawn<GoldComponent>(this).ToList();
-            foreach (Moba_gameGoldComponent gold in Golds.Cast<Moba_gameGoldComponent>())
-            {
-                gold.HealthComponent.Health = GoldStartHealth;
-            }
+            // Golds = GoldSpawner.Spawn<GoldComponent>(this).ToList();
+            // foreach (Moba_gameGoldComponent gold in Golds.Cast<Moba_gameGoldComponent>())
+            // {
+            //     gold.HealthComponent.Health = GoldStartHealth;
+            // }
+
+            // Spawn planets
+            Planets = PlanetSpawner.Spawn<PlanetComponent>(this).ToList();
 
             // Register event for Ray sensor
             RayHitObject.OnTargetHit += RayHitObject_OnTargetHit;
@@ -209,25 +228,40 @@ namespace Problems.Moba_game
         {
             RayHitObject.OnTargetHit -= RayHitObject_OnTargetHit;
         }
-
+        private float timer = 0f;
         protected override void OnPostFixedUpdate()
         {
             if (GameState == GameState.RUNNING)
             {
-                CheckAgentsPickedPowerUps();
+                //CheckAgentsPickedPowerUps();
                 MissileController.UpdateMissilePosAndCheckForColls();
                 CheckAgentsExploration();
                 UpdateAgentsSurvivalTime();
                 ResetAgentOpponentTracking();
                 UpdateBaseUI();
                 SpawnNewAgents();
+
+                timer += Time.deltaTime;
+                if (timer >= 1f)
+                {
+
+                    UpdateBaseMoney();
+                    timer = 0f;
+                }
             }
         }
-
+        private int i= 0;
+        private void UpdateBaseMoney()
+        {
+            // preštej kolko planetov je zasedeno od posameznega teama.... countTeamID*3ssilicij | countTeamID*železo
+            //i++;
+            //Base0MoneyText.text = i.ToString();
+        }
         private void UpdateBaseUI()
         {
             float money;
             float health;
+
             foreach (Moba_gameBaseComponent baseComponent in Bases)
             {
                 money = baseComponent.MoneyComponent.Money;
@@ -763,11 +797,6 @@ namespace Problems.Moba_game
         {
             foreach (Moba_gameAgentComponent agent in Agents)
             {
-                // Sector exploration
-                sectorExplorationFitness = agent.SectorsExplored / (float)Sectors.Length;
-                sectorExplorationFitness = (float)Math.Round(Moba_gameFitness.FitnessValues[Moba_gameFitness.FitnessKeys.SectorExploration.ToString()] * sectorExplorationFitness, 4);
-                agent.AgentFitness.UpdateFitness(sectorExplorationFitness, Moba_gameFitness.FitnessKeys.SectorExploration.ToString());
-
                 // // Health powerUps
                 // healthPowerUpsFitness = agent.HealtPowerUpsCollected / (float)PowerUpSpawner.HealthBoxSpawned;
                 // healthPowerUpsFitness = (float)Math.Round(Moba_gameFitness.FitnessValues[Moba_gameFitness.FitnessKeys.PowerUp_Pickup_Health.ToString()] * healthPowerUpsFitness, 4);
@@ -782,6 +811,11 @@ namespace Problems.Moba_game
                 // shieldPowerUpsFitness = agent.ShieldPowerUpsCollected / (float)PowerUpSpawner.ShieldBoxSpawned;
                 // shieldPowerUpsFitness = (float)Math.Round(Moba_gameFitness.FitnessValues[Moba_gameFitness.FitnessKeys.PowerUp_Pickup_Shield.ToString()] * shieldPowerUpsFitness, 4);
                 // agent.AgentFitness.UpdateFitness(shieldPowerUpsFitness, Moba_gameFitness.FitnessKeys.PowerUp_Pickup_Shield.ToString());
+
+                // Sector exploration
+                sectorExplorationFitness = agent.SectorsExplored / (float)Sectors.Length;
+                sectorExplorationFitness = (float)Math.Round(Moba_gameFitness.FitnessValues[Moba_gameFitness.FitnessKeys.SectorExploration.ToString()] * sectorExplorationFitness, 4);
+                agent.AgentFitness.UpdateFitness(sectorExplorationFitness, Moba_gameFitness.FitnessKeys.SectorExploration.ToString());
 
                 // Missiles fired
                 allPossibleMissilesFired = (CurrentSimulationSteps * Time.fixedDeltaTime) / MissileShootCooldown;

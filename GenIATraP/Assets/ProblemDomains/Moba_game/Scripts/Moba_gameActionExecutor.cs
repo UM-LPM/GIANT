@@ -1,3 +1,4 @@
+using System;
 using AgentControllers;
 using Base;
 using UnityEngine;
@@ -37,8 +38,32 @@ namespace Problems.Moba_game
 
         public override void ExecuteActions(AgentComponent agent)
         {
-            MoveAgent(agent as Moba_gameAgentComponent);
+            //MoveAgent(agent as Moba_gameAgentComponent);
             ShootMissile(agent as Moba_gameAgentComponent);
+            HandleMovement(agent as Moba_gameAgentComponent);
+        }
+
+        void HandleMovement(Moba_gameAgentComponent agent)
+        {
+            rotateDir = Vector3.zero;
+            Rigidbody2D rigidbodi = agent.GetComponent<Rigidbody2D>();
+            forwardAxis = agent.ActionBuffer.GetDiscreteAction("moveForwardDirection");
+            switch (forwardAxis)
+            {
+                case 1:
+                    rigidbodi.AddRelativeForce(new Vector2(0, Moba_gameEnvironmentController.ForwardThrust));
+                    break;
+            }
+            rotateAxis = agent.ActionBuffer.GetDiscreteAction("rotateDirection");
+            switch (rotateAxis)
+            {
+                case 1:
+                    rigidbodi.AddTorque(Moba_gameEnvironmentController.Tourque);
+                    break;
+                case 2:
+                    rigidbodi.AddTorque(-Moba_gameEnvironmentController.Tourque);
+                    break;
+            }
         }
 
         private void MoveAgent(Moba_gameAgentComponent agent)
@@ -85,7 +110,8 @@ namespace Problems.Moba_game
             newAgentRotation = Quaternion.Euler(0, 0, agent.transform.rotation.eulerAngles.z + UnityUtils.RoundToDecimals(rotateDir.z * Time.fixedDeltaTime * Moba_gameEnvironmentController.AgentRotationSpeed, 2));
 
             // Check if agent can be moved and rotated without colliding to other objects
-            if (!PhysicsUtil.PhysicsOverlapObject(Moba_gameEnvironmentController.GameType, agent.gameObject, newAgentPos, Moba_gameEnvironmentController.AgentColliderExtendsMultiplier.x, Vector3.zero, newAgentRotation, PhysicsOverlapType.OverlapSphere, true, gameObject.layer, Moba_gameEnvironmentController.DefaultLayer)){
+            if (!PhysicsUtil.PhysicsOverlapObject(Moba_gameEnvironmentController.GameType, agent.gameObject, newAgentPos, Moba_gameEnvironmentController.AgentColliderExtendsMultiplier.x, Vector3.zero, newAgentRotation, PhysicsOverlapType.OverlapSphere, true, gameObject.layer, Moba_gameEnvironmentController.DefaultLayer))
+            {
                 agent.transform.position = newAgentPos;
                 agent.transform.rotation = newAgentRotation;
             }

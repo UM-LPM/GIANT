@@ -172,25 +172,25 @@ namespace Problems.Moba_game
         {
             // Get random hull, turret, track and gun sprites
             Sprite hull = Hulls[teamID];
-            Sprite turret = Turrets[environmentController.Util.NextInt(0, Turrets.Length)];
-            Sprite track = Tracks[environmentController.Util.NextInt(0, Tracks.Length)];
-            Sprite gun = Guns[environmentController.Util.NextInt(0, Guns.Length)];
+            // Sprite turret = Turrets[environmentController.Util.NextInt(0, Turrets.Length)];
+            // Sprite track = Tracks[environmentController.Util.NextInt(0, Tracks.Length)];
+            // Sprite gun = Guns[environmentController.Util.NextInt(0, Guns.Length)];
 
 
             GameObject hullGO = agentGameObject.GetComponentInChildren<HullComponent>().gameObject;
-            GameObject turretGO = agentGameObject.GetComponentInChildren<TurretComponent>().gameObject;
-            GameObject[] tracksGO = agentGameObject.GetComponentsInChildren<TrackComponent>().Select(x => x.gameObject).ToArray();
-            GameObject gunGO = agentGameObject.GetComponentInChildren<GunComponent>().gameObject;
+            // GameObject turretGO = agentGameObject.GetComponentInChildren<TurretComponent>().gameObject;
+            // GameObject[] tracksGO = agentGameObject.GetComponentsInChildren<TrackComponent>().Select(x => x.gameObject).ToArray();
+            // GameObject gunGO = agentGameObject.GetComponentInChildren<GunComponent>().gameObject;
 
             // Set sprites
 
             hullGO.GetComponent<SpriteRenderer>().sprite = hull;
-            turretGO.GetComponent<SpriteRenderer>().sprite = turret;
-            foreach (GameObject trackGO in tracksGO)
-            {
-                trackGO.GetComponent<SpriteRenderer>().sprite = track;
-            }
-            gunGO.GetComponent<SpriteRenderer>().sprite = gun;
+            // turretGO.GetComponent<SpriteRenderer>().sprite = turret;
+            // foreach (GameObject trackGO in tracksGO)
+            // {
+            //     trackGO.GetComponent<SpriteRenderer>().sprite = track;
+            // }
+            // gunGO.GetComponent<SpriteRenderer>().sprite = gun;
         }
 
         void GetRandomSpawnPositionAndRotation(Moba_gameEnvironmentController environmentController, out Vector3 spawnPos, out Quaternion rotation)
