@@ -1,1 +1,118 @@
 # Robostrike Problem Domain
+
+## Overview
+RoboStrike is a competitive multi-agent environment designed for evaluating agents in strategic combat scenarios. Agents control autonomous tanks that engage in battles using decision-making policies evolved through the GenIATraP platform.
+
+## Objective
+RoboStrike aims to develop AI agents capable of efficient movement, target tracking, and attack strategies. Agents are evaluated based on their performance in battles against other agents in a dynamic environment.
+
+## Environment Details
+- **Arena**: A bounded 2D space with obstacles.
+- **Agents**: Each agent controls a tank with movement, aiming, and shooting capabilities.
+- **Actions**:
+   - Move (Forward/Backward)
+   - Rotate (Left/Right)
+   - Fire projectile
+- **Observations**:
+  - Position and orientation of self
+  - Distance to opponents
+  - Remaining health
+  - Cooldown status of weapons
+
+## Fitness Evaluation
+Agents can be evaluated using various strategies, including different tournament structures, rating systems, and custom evaluation methods. Each agent's fitness is determined based on its relative performance in battles, with key metrics including:
+- Number of fired missiles
+- Damage dealt to opponents
+- Number of opponents eliminated
+- Damage taken
+- Survival time
+
+## Problem Domain Configuration File
+The problem configuration file includes various settings that define how the simulation is executed. It specifies general parameters such as auto-start behavior, the problem domain, and coordinator communication. It also configures agent sources, allowing the system to load individuals from JSON files or ScriptableObjects, with an option to convert between these formats. The simulation behavior is controlled through time settings, including time scale, fixed time step, and random seed handling for reproducibility. It also defines tournament settings, such as the tournament organization type, rating system, and number of rounds. The problem-specific configuration details the arena size, agent movement parameters, power-up mechanics, and missile properties. Finally, a fitness function assigns rewards or penalties based on agent actions, such as exploration, power-up collection, shooting accuracy, and opponent elimination, ensuring agents are evaluated based on strategic behavior and combat effectiveness.
+
+
+```json5
+{
+	"AutoStart": true,  // Automatically starts the simulation without manual intervention.
+	"ProblemDomain": "Robostrike",  // Specifies the problem domain (RoboStrike).
+	"CoordinatorURI": "http://localhost:4000/",  // URL of the central coordinator for managing simulations.
+	"IndividualsSourceJSON": "...\\GenIATraP\\Assets\\Resources\\JSONs\\Robostrike\\",  // Path to JSON files storing agent configurations.
+	"IndividualsSourceSO": "Assets\\Resources\\SOs\\Robostrike",  // Path to ScriptableObjects (SO) storing agent configurations.
+	"ConvertSOToJSON": false,  // If true, converts ScriptableObjects to JSON format for easier processing.
+	"StartCommunicatorURI": "http://localhost:4444/",  // URL for the communicator service.
+	"TimeScale": 10,  // Controls the speed of simulation (higher values speed up the simulation).
+	"FixedTimeStep": 0.02,  // Fixed update interval for physics calculations.
+	"RerunTimes": 1,  // Number of times to repeat the same simulation run for consistency.
+	"InitialSeed": 963852,  // Initial random seed for reproducibility.
+	"Render": true,  // If true, renders the simulation visually; otherwise, it runs headless.
+	"RandomSeedMode": 1,  // Determines how random seeds are handled
+	"SimulationSteps": 3000,  // Total number of simulation steps per episode.
+	"SimulationTime": 0,  // Total simulation time (overridden if set to 0).
+	"IncludeEncapsulatedNodesToFreqCount": false,  // If true, includes encapsulated nodes in frequency calculations.
+	"EvaluatorType": 1,  // Specifies the evaluation method for agent performance.
+	"RatingSystemType": -1,  // Defines which rating system is used.
+	"TournamentOrganizationType": 1,  // Defines the tournament organization method (e.g., Swiss, round-robin).
+	"TournamentRounds": -1,  // Number of tournament rounds (-1 for auto-calculated rounds).
+	"SwapTournamentMatchTeams": true,  // If true, swaps teams in tournaments for balanced evaluation if the evaluation environment is not simetrical.
+	
+	"GameScenarios": [  // Defines different game scenarios.
+		{"GameSceneName": "RobostrikeGameScene"}
+	],
+	
+	"AgentScenarios": [  // Defines different agent scenarios.
+		{
+			"AgentSceneName": "RobostrikeAgentScene",  // Name of the scene for agent evaluation.
+			"GameScenarios": [
+				{"GameSceneName": "RobostrikeGameScene"}
+			]
+		}
+	],
+
+	"ProblemConfiguration": {  // Defines the specific settings for the RoboStrike environment.
+		"DecisionRequestInterval": 2,  // Number of steps between decision requests.
+		"ArenaSizeX": 30,  // Width of the battle arena.
+		"ArenaSizeY": 18,  // Height of the battle arena.
+		"ArenaSizeZ": 0,  // Depth (not used in 2D environments).
+		"ArenaOffset": 4.0,  // Offset to ensure proper agent spawning.
+		"AgentMoveSpeed": 8,  // Movement speed of agents.
+		"AgentRespawnType": 0,  // Determines how agents respawn.
+		"AgentRotationSpeed": 150,  // Rotation speed of the agent's body.
+		"AgentStartAmmo": 0,  // Initial ammo count for agents.
+		"AgentStartHealth": 10,  // Initial health value for agents.
+		"AgentStartShield": 0,  // Initial shield value for agents.
+		"AgentTurrentRotationSpeed": 180,  // Rotation speed of the agent's turret.
+		"AmmoBoxSpawnAmount": 2,  // Number of ammo power-ups spawned.
+		"AmmoPowerUpValue": 10,  // Amount of ammo gained from a power-up.
+		"DestroyMissileAfter": 1,  // Time (in seconds) before a fired missile is destroyed.
+		"GameMode": 0,  // Specifies the game mode.
+		"GameScenarioType": 1,  // Type of game scenario used.
+		"HealthBoxSpawnAmount": 1,  // Number of health power-ups spawned.
+		"HealthPowerUpValue": 5,  // Amount of health restored by a power-up.
+		"MaxAmmo": 20,  // Maximum ammo capacity for an agent.
+		"MaxHealth": 10,  // Maximum health value for an agent.
+		"MaxShield": 10,  // Maximum shield capacity for an agent.
+		"MinPowerUpDistance": 8,  // Minimum distance between spawned power-ups.
+		"MinPowerUpDistanceFromAgents": 8.0,  // Minimum distance between agents and spawned power-ups.
+		"MissileDamage": 2,  // Damage dealt by a missile hit.
+		"MissileShootCooldown": 1,  // Cooldown time before firing another missile.
+		"MissleLaunchSpeed": 20,  // Speed at which missiles are launched.
+		"ShieldBoxSpawnAmount": 1,  // Number of shield power-ups spawned.
+		"ShieldPowerUpValue": 5,  // Amount of shield restored by a power-up.
+		"RayHitObjectDetectionType": 1  // Type of object detection for raycasts.
+	},
+
+	"FitnessValues": {  // Defines how different actions impact agent fitness.
+		"SectorExploration": -5,  // Reward for exploring new sectors.
+		"PowerUp_Pickup_Health": -10,  // Reward for picking up a health power-up.
+		"PowerUp_Pickup_Ammo": -15,  // Reward for picking up an ammo power-up.
+		"PowerUp_Pickup_Shield": -5,  // Reward for picking up a shield power-up.
+		"MissilesFired": -20,  // Reward for each missile fired.
+		"MissilesFiredAccuracy": -50,  // Reward to encourage accuracy.
+		"SurvivalBonus": -5,  // Small reward per step for surviving (can be adjusted to encourage aggression).
+		"OpponentTrackingBonus": -5,  // Reward for tracking opponents.
+		"OpponentDestroyedBonus": -500,  // Large reward for successfully eliminating an opponent.
+		"DamageTakenPenalty": 50  // Penalty for receiving damage.
+	}
+}
+
+```
