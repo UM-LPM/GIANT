@@ -1,6 +1,5 @@
 # Collector Problem Domain
 
-## Overview
 The Collector problem domain is a single-agent environment where an agent navigates a bounded arena to collect scattered objects. This problem is designed to test an agent’s ability to efficiently explore the environment, optimize movement, and maximize the number of collected objects within a given time frame.
 
 ## Objective
