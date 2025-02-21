@@ -1,35 +1,32 @@
 # Robostrike Problem Domain
 
-## Overview
-RoboStrike is a competitive multi-agent environment designed for evaluating agents in strategic combat scenarios. Agents control autonomous tanks that engage in battles using decision-making policies evolved through the GenIATraP platform.
+The Robostrike problem domain is a dynamic, multi-agent simulation where robots compete in a combat environment. Agents, in the form of robots, are equipped with various abilities like shooting, moving, and interacting with the environment. The goal is to destroy enemy robots while avoiding damage from opponents and environmental hazards. This problem domain is ideal for evaluating agents that need to exhibit strategic thinking, resource management, and tactical combat decision-making in a real-time environment.
 
 ## Objective
-RoboStrike aims to develop AI agents capable of efficient movement, target tracking, and attack strategies. Agents are evaluated based on their performance in battles against other agents in a dynamic environment.
+The primary objective for agents in the Robostrike domain is to survive and defeat enemy robots by managing their health, ammunition, and positioning in the arena. Agents should aim to be the last one standing while strategically using their resources to eliminate opponents. The problem domain tests agents' ability to prioritize survival, make tactical decisions under pressure, and react quickly to changing circumstances.
 
 ## Environment Details
-- **Arena**: A bounded 2D space with obstacles.
-- **Agents**: Each agent controls a tank with movement, aiming, and shooting capabilities.
-- **Actions**:
-   - Move (Forward/Backward)
-   - Rotate (Left/Right)
-   - Fire projectile
-- **Observations**:
-  - Position and orientation of self
-  - Distance to opponents
-  - Remaining health
-  - Cooldown status of weapons
+The Robostrike environment consists of a battlefield where robots compete in combat. Here are the core elements that make up the environment:
+
+- Arena: The arena is a bounded, 2D or 3D space where robots can move, hide, and interact. The layout may include obstacles and cover for strategic positioning.
+- Robots: Each robot is controlled by an agent and has capabilities such as movement, aiming, shooting, and health management. Robots start with a fixed amount of health and ammunition.
+- Weaponry: Robots can use weapons to attack other robots. These weapons may have limited ammo, and robots must manage their usage effectively.
+- Health: Robots start with a set amount of health, and their health decreases when they take damage from enemy attacks or environmental hazards.
+- Power-ups: Power-ups in the arena can replenish health, ammo, or shield.
 
 ## Fitness Evaluation
-Agents can be evaluated using various strategies, including different tournament structures, rating systems, and custom evaluation methods. Each agent's fitness is determined based on its relative performance in battles, with key metrics including:
-- Number of fired missiles
-- Damage dealt to opponents
-- Number of opponents eliminated
-- Damage taken
-- Survival time
+Fitness evaluation in the Robostrike problem domain is designed to measure the success of an agent in achieving its objectives, focusing on strategic behavior and combat performance. Here are some key fitness components:
+
+- RobotsKilled: A significant reward is given for successfully eliminating enemy robots, rewarding combat effectiveness.
+- Survival: A major fitness component is survival, with agents receiving a large bonus for being the last robot alive.
+- DamageTaken: A penalty is applied for taking damage, encouraging robots to avoid unnecessary risks and be more strategic in their movements.
+- AmmoManagement: A penalty or reward can be given based on how well the robot manages its ammo, encouraging resource conservation.
+- HealthManagement: A penalty is applied for losing health quickly, promoting careful positioning and evasion.
+- ArenaControl: A reward for controlling central or strategic areas of the arena, where robots can have better control over the combat.
+- PowerUpCollection: A small reward for collecting power-ups, promoting resource gathering and enhancing robot capabilities.
 
 ## Problem Domain Configuration File
 The problem configuration file includes various settings that define how the simulation is executed. It specifies general parameters such as auto-start behavior, the problem domain, and coordinator communication. It also configures agent sources, allowing the system to load individuals from JSON files or ScriptableObjects, with an option to convert between these formats. The simulation behavior is controlled through time settings, including time scale, fixed time step, and random seed handling for reproducibility. It also defines tournament settings, such as the tournament organization type, rating system, and number of rounds. The problem-specific configuration details the arena size, agent movement parameters, power-up mechanics, and missile properties. Finally, a fitness function assigns rewards or penalties based on agent actions, such as exploration, power-up collection, shooting accuracy, and opponent elimination, ensuring agents are evaluated based on strategic behavior and combat effectiveness.
-
 
 ```json5
 {
