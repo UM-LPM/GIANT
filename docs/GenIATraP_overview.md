@@ -46,4 +46,12 @@ The optimization process initiates within the **EARS framework**, where the init
 - Following the completion of the evaluation process, the **Coordinator** forwards the response to the Web API, which subsequently relays it back to EARS, where the optimization process continues.
 
 # Next Step
+Before jumping to platform setup, the following concepts should be known to you:
+- Introduction to [Machine Learning](/docs/introduction_to_machine_learning.md)
+- Understanding [Single-Agent & Multi-Agent](/docs/single_and_multi_agent_systems.md) Optimization
+- Basics of [Game Design](/docs/basics_of_game_design.md)
+- Introduction to [AI Controllers](/docs/AI_controllers.md)
+- [3D Modeling](/docs/3d_modeling.md) for Game Development
+- [Game Testing and Debugging](/docs/game_testing_and_debugging.md)
+
 By following these [instructions](https://github.com/UM-LPM/GeneralTrainingEnvironmentForMAS/blob/platform_refactor/docs/GenIATraP_platform_setup.md), the platform can be set up in just a few simple steps.
