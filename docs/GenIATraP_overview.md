@@ -13,15 +13,15 @@ The rest of this documentation provides a deep dive into GenIATraP, including it
 # General Idea
 The conceptual platform comprises three fundamental components: a Machine Learning (ML) framework, an Evaluation Environment, and a Web API intended to facilitate seamless integration between these two components.
 
-The **Machine Learning framework** encompasses a sophisticated suite of algorithms tailored to optimize Single and Multi-agent Systems. Noteworthy among these frameworks is EARS, which offers genetic programming algorithms finely tuned for Multi-agent optimization tasks.
+The **Machine Learning framework** encompasses a sophisticated suite of algorithms tailored to optimize Single-agent and Multi-agent Systems. Currently among these frameworks is only EARS, which offers genetic programming algorithms tuned for Single-agent and Multi-agent optimization tasks.
 
-**Evaluation Environments** contain a diverse set of problems that replicate real-world challenges encountered in Single and Multi-agent Systems.
+**Evaluation Environments** contain a diverse set of problems that replicate real-world challenges encountered in Single-Agent and Multi-Agent Systems.
 
-Functioning as a pivotal intermediary, the **Web API** serves to effectively bridge the ML frameworks and Evaluation Environments. Its primary objective is to translate individual representations of solutions within the ML framework into formats (such as programs or trees) that can be interpreted and evaluated by the Evaluation Environment. Subsequently, it relays pertinent information concerning the success of these solutions back to the ML framework.
+Functioning as an intermediary, the **Web API** serves to effectively bridge the ML frameworks and Evaluation Environments. Its primary objective is to translate individual representations of solutions within the ML framework into formats (such as programs or trees) that can be interpreted and evaluated by the Evaluation Environment. Subsequently, it relays pertinent information concerning the success of these solutions back to the ML framework.
 
 ![Platform General Idea](/docs/images/platform_general_idea.png)
 
-# Optimization Process (EARS framework and Unity game engine)
+# Optimization Process (Example with EARS framework and Unity Game engine)
 
 The optimization process initiates within the **EARS framework**, where the initial population is generated, and the optimization begins. During the evaluation process, a **POST** request is triggered via an HTTP call to the **Web API**. The entire population with extra parameters is encapsulated in JSON format within the request body.
 
