@@ -6,22 +6,22 @@ Agents can be trained in both **Single** and **Multi-Agent** scenarios, leveragi
 
 GenIATraP bridges AI research and game development, providing a structured environment where new AI techniques can be tested, benchmarked, and refined within interactive and dynamic simulations.
 
-So if you are an AI researcher, game developer, or hobbyist—you may have different goals when using GenIATraP. To ease your transition, we provide background materials covering key concepts in **[machine learning]()**, **[metaheuristic optimization]()**, and **[Unity game engine]()**. If you're new to any of these topics, we highly recommend reviewing these resources before getting started.
+So if you are an AI researcher, game developer, or hobbyist—you may have different goals when using GenIATraP. To ease your transition, we provide background materials covering key concepts in **[machine learning](/docs/introduction_to_machine_learning.md)**, **[game design](/docs/basics_of_game_design.md)**, **[AI controllers](/docs/AI_controllers.md)** and more. If you're new to any of these topics, we highly recommend reviewing these resources before getting started.
 
 The rest of this documentation provides a deep dive into GenIATraP, including its core components, training methodologies, and implementation details. By the end, you’ll have a clear understanding of how to use the platform effectively. Subsequent sections will walk you through setting up and using GenIATraP for your projects.
 
 # General Idea
 The conceptual platform comprises three fundamental components: a Machine Learning (ML) framework, an Evaluation Environment, and a Web API intended to facilitate seamless integration between these two components.
 
-The **Machine Learning framework** encompasses a sophisticated suite of algorithms tailored to optimize Single and Multi-agent Systems. Noteworthy among these frameworks is EARS, which offers genetic programming algorithms finely tuned for Multi-agent optimization tasks.
+The **Machine Learning framework** encompasses a sophisticated suite of algorithms tailored to optimize Single-agent and Multi-agent Systems. Currently among these frameworks is only EARS, which offers genetic programming algorithms tuned for Single-agent and Multi-agent optimization tasks.
 
-**Evaluation Environments** contain a diverse set of problems that replicate real-world challenges encountered in Single and Multi-agent Systems.
+**Evaluation Environments** contain a diverse set of problems that replicate real-world challenges encountered in Single-Agent and Multi-Agent Systems.
 
-Functioning as a pivotal intermediary, the **Web API** serves to effectively bridge the ML frameworks and Evaluation Environments. Its primary objective is to translate individual representations of solutions within the ML framework into formats (such as programs or trees) that can be interpreted and evaluated by the Evaluation Environment. Subsequently, it relays pertinent information concerning the success of these solutions back to the ML framework.
+Functioning as an intermediary, the **Web API** serves to effectively bridge the ML frameworks and Evaluation Environments. Its primary objective is to translate individual representations of solutions within the ML framework into formats (such as programs or trees) that can be interpreted and evaluated by the Evaluation Environment. Subsequently, it relays pertinent information concerning the success of these solutions back to the ML framework.
 
 ![Platform General Idea](/docs/images/platform_general_idea.png)
 
-# Optimization Process (EARS framework and Unity game engine)
+# Optimization Process (Example with EARS framework and Unity Game engine)
 
 The optimization process initiates within the **EARS framework**, where the initial population is generated, and the optimization begins. During the evaluation process, a **POST** request is triggered via an HTTP call to the **Web API**. The entire population with extra parameters is encapsulated in JSON format within the request body.
 
@@ -46,4 +46,12 @@ The optimization process initiates within the **EARS framework**, where the init
 - Following the completion of the evaluation process, the **Coordinator** forwards the response to the Web API, which subsequently relays it back to EARS, where the optimization process continues.
 
 # Next Step
+Before jumping to platform setup, the following concepts should be known to you:
+- Introduction to [Machine Learning](/docs/introduction_to_machine_learning.md)
+- Understanding [Single-Agent & Multi-Agent](/docs/single_and_multi_agent_systems.md) Optimization
+- Basics of [Game Design](/docs/basics_of_game_design.md)
+- Introduction to [AI Controllers](/docs/AI_controllers.md)
+- [3D Modeling](/docs/3d_modeling.md) for Game Development
+- [Game Testing and Debugging](/docs/game_testing_and_debugging.md)
+
 By following these [instructions](https://github.com/UM-LPM/GeneralTrainingEnvironmentForMAS/blob/platform_refactor/docs/GenIATraP_platform_setup.md), the platform can be set up in just a few simple steps.
