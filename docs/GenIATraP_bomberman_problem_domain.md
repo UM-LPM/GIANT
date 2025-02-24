@@ -11,6 +11,7 @@ The Bomberman environment is a grid-based arena where agents are positioned alon
 - Explosions: The explosion affects the surrounding area in the form of a blast radius. The explosion destroys blocks, damages agents, and may trigger chain reactions.
 - Power-Ups: Randomly spawned items that enhance the agents' abilities, such as increasing bomb power, health, or the number of bombs they can place at once.
 - Agents: Agents can move within the arena, avoid bomb explosions, place bombs, and collect power-ups. They begin with a set amount of health, bombs, and movement speed.
+- Ray Sensors - Agents can only perceive the environment using ray sensors that can be shot in multiple directions. Rays can detect other agents, walls, obstacles, power-ups, etc.
 
 ## Fitness Evaluation
 Fitness evaluation in the Bomberman problem domain is used to measure an agent's performance in the simulation. The fitness values are based on the agent's behavior and achievements throughout the game. Here are some key fitness components:
