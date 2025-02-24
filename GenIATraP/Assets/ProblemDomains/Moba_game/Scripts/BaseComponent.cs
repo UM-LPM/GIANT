@@ -13,13 +13,6 @@ namespace Problems.Moba_game
         public Quaternion StartRotation { get; set; }
         public Vector3? LastSectorPosition { get; set; }
         public List<Vector3> LastKnownSectorPositions { get; set; }
-        // public ActionBuffer ActionBuffer { get; set; }
-
-        // // New properties
-        // [field: SerializeField]
-        // public AgentController AgentController { get; set; }
-
-        // public int IndividualID { get; set; }
         public int TeamID { get; set; }
 
         private void Awake()

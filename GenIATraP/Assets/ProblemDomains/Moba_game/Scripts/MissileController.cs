@@ -60,11 +60,6 @@ namespace Problems.Moba_game
                         Moba_gameEnvironmentController.BaseHit(missileComponent, otherBase);
                     }
 
-                    if (otherGold != null)
-                    {
-                        Moba_gameEnvironmentController.GoldHit(missileComponent, otherGold);
-                    }
-
                     missileComponent.MissileHitTarget = true;
                     RemoveMissile(missileComponent);
                     Destroy(missileComponent.gameObject);

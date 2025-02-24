@@ -7,7 +7,6 @@ namespace Problems.Moba_game
     {
         public HullComponent Hull { get; set; }
         public TurretComponent Turret { get; set; }
-        public TrackComponent[] Tracks { get; set; }
         public GunComponent Gun { get; set; }
 
         public MissileSpawnPointComponent MissileSpawnPoint { get; set; }
@@ -15,7 +14,6 @@ namespace Problems.Moba_game
         public float NextShootTime { get; set; }
 
         public HealthComponent HealthComponent { get; set; }
-        public ShieldComponent ShieldComponent { get; set; }
         public AmmoComponent AmmoComponent { get; set; }
 
         private AgentStatBars StatBars;
@@ -49,7 +47,6 @@ namespace Problems.Moba_game
         {
             Hull = GetComponentInChildren<HullComponent>();
             Turret = GetComponentInChildren<TurretComponent>();
-            Tracks = GetComponentsInChildren<TrackComponent>();
             Gun = GetComponentInChildren<GunComponent>();
 
             MissileSpawnPointComponent[] missileSpawnPoints = GetComponentsInChildren<MissileSpawnPointComponent>();
@@ -67,7 +64,7 @@ namespace Problems.Moba_game
             StatBars = GetComponent<AgentStatBars>();
 
             HealthComponent = GetComponent<HealthComponent>();
-            ShieldComponent = GetComponent<ShieldComponent>();
+            // ShieldComponent = GetComponent<ShieldComponent>();
             AmmoComponent = GetComponent<AmmoComponent>();
 
             CheckComponentValidity();
@@ -92,12 +89,6 @@ namespace Problems.Moba_game
                 // TODO Add error reporting here
             }
 
-            if (Tracks == null)
-            {
-                throw new System.Exception("TrackComponent component is missing");
-                // TODO Add error reporting here
-            }
-
             if (Gun == null)
             {
                 throw new System.Exception("GunComponent component is missing");
@@ -113,12 +104,6 @@ namespace Problems.Moba_game
             if (HealthComponent == null)
             {
                 throw new System.Exception("HealthComponent component is missing");
-                // TODO Add error reporting here
-            }
-
-            if (ShieldComponent == null)
-            {
-                throw new System.Exception("ShieldComponent component is missing");
                 // TODO Add error reporting here
             }
 
@@ -145,24 +130,6 @@ namespace Problems.Moba_game
             else if (HealthComponent.Health < Moba_gameEnvironmentController.MAX_HEALTH && HealthComponent.Health + value > Moba_gameEnvironmentController.MAX_HEALTH)
             {
                 HealthComponent.Health = Moba_gameEnvironmentController.MAX_HEALTH;
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        public bool SetShield(int value)
-        {
-            if (ShieldComponent.Shield + value <= Moba_gameEnvironmentController.MAX_SHIELD)
-            {
-                ShieldComponent.Shield += value;
-                return true;
-            }
-            else if (ShieldComponent.Shield < Moba_gameEnvironmentController.MAX_SHIELD && ShieldComponent.Shield + value > Moba_gameEnvironmentController.MAX_SHIELD)
-            {
-                ShieldComponent.Shield = Moba_gameEnvironmentController.MAX_SHIELD;
                 return true;
             }
             else
@@ -201,31 +168,14 @@ namespace Problems.Moba_game
 
         public void TakeDamage(int value)
         {
-            if (ShieldComponent.Shield > 0)
-            {
-                if (ShieldComponent.Shield - (value * 2) < 0)
-                {
-                    ShieldComponent.Shield = 0;
-                }
-                else
-                {
-                    ShieldComponent.Shield -= value;
-                }
-                HealthComponent.Health -= value * 0.5f;
-            }
-            else
-            {
-                HealthComponent.Health -= value;
-            }
-
-            // Update Stat Bars 
+            HealthComponent.Health -= value;
             UpdatetStatBars();
         }
 
         public void UpdatetStatBars()
         {
             if (StatBars != null)
-                StatBars.SetStats(HealthComponent.Health, ShieldComponent.Shield, AmmoComponent.Ammo);
+                StatBars.SetStats(HealthComponent.Health, 0, AmmoComponent.Ammo);
         }
 
         public void SetEnvironmentColor(Color color)
