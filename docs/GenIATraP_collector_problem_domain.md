@@ -9,6 +9,7 @@ The main objective of the Collector environment is for the agent to collect as m
 - Arena – Bounded environment where objects spawn randomly.
 - Collectibles – Objects that appear at different locations and must be collected by the agent.
 - Agent Movement – The agent can move freely within the arena to reach and collect objects.
+- Ray Sensors -  Agents can only perceive the environment using ray sensors that can be shot in multiple directions. Rays can detect other agents, walls, obstacles, and targets.
 - Simulation Duration – The environment runs for a fixed number of simulation steps.
 - Collision Handling – The agent may receive penalties for colliding with walls or other obstacles (if enabled).
 
