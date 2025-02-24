@@ -5,12 +5,13 @@ namespace Problems.Moba_game
 {
     public class Moba_gameAgentComponent : AgentComponent
     {
-        public HullComponent Hull{ get; set; }
+        public HullComponent Hull { get; set; }
         public TurretComponent Turret { get; set; }
         public TrackComponent[] Tracks { get; set; }
         public GunComponent Gun { get; set; }
 
         public MissileSpawnPointComponent MissileSpawnPoint { get; set; }
+        public MissileSpawnPointComponent MissileSpawnPoint1 { get; set; }
         public float NextShootTime { get; set; }
 
         public HealthComponent HealthComponent { get; set; }
@@ -42,6 +43,7 @@ namespace Problems.Moba_game
 
         public int OpponentTrackCounter { get; set; }
         public bool AlreadyTrackingOpponent { get; set; }
+        public string AgentType { get; set; }
 
         protected override void DefineAdditionalDataOnAwake()
         {
@@ -50,7 +52,18 @@ namespace Problems.Moba_game
             Tracks = GetComponentsInChildren<TrackComponent>();
             Gun = GetComponentInChildren<GunComponent>();
 
-            MissileSpawnPoint = GetComponentInChildren<MissileSpawnPointComponent>();
+            MissileSpawnPointComponent[] missileSpawnPoints = GetComponentsInChildren<MissileSpawnPointComponent>();
+            if (missileSpawnPoints.Length >= 2)
+            {
+                MissileSpawnPoint = missileSpawnPoints[0];  // First spawn point
+                MissileSpawnPoint1 = missileSpawnPoints[1]; // Second spawn point
+            }
+            else
+            {
+                MissileSpawnPoint = GetComponentInChildren<MissileSpawnPointComponent>();
+
+            }
+
             StatBars = GetComponent<AgentStatBars>();
 
             HealthComponent = GetComponent<HealthComponent>();
@@ -67,7 +80,7 @@ namespace Problems.Moba_game
 
         void CheckComponentValidity()
         {
-            if(Hull == null)
+            if (Hull == null)
             {
                 throw new System.Exception("HullComponent component is missing");
                 // TODO Add error reporting here
@@ -217,7 +230,7 @@ namespace Problems.Moba_game
 
         public void SetEnvironmentColor(Color color)
         {
-            if(StatBars != null)
+            if (StatBars != null)
                 StatBars.SetEnvironmentColor(color);
         }
 
@@ -253,7 +266,7 @@ namespace Problems.Moba_game
 
         public void ResetSurvivalTime()
         {
-            if(CurrentSurvivalTime > MaxSurvivalTime)
+            if (CurrentSurvivalTime > MaxSurvivalTime)
             {
                 MaxSurvivalTime = CurrentSurvivalTime;
             }

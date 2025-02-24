@@ -111,21 +111,29 @@ namespace Problems.Moba_game
             return agents.ToArray();
         }
 
-        public T SpawnAgent<T>(EnvironmentControllerBase environmentController, int teamID)
+        public T SpawnAgent<T>(EnvironmentControllerBase environmentController, int teamID, string agentType = "lava")
         {
             validateSpawnConditions(environmentController);
 
             Individual individual = environmentController.Match.Teams[teamID].Individuals[0];
             AgentController agentController = individual.AgentControllers[0];
-
-            GameObject agentGameObject = Instantiate(environmentController.AgentPrefab, SpawnPoints[teamID].position, SpawnPoints[teamID].rotation, gameObject.transform);
+            GameObject agentGameObject;
+            if (agentType == "ice")
+            {
+                agentGameObject = Instantiate(environmentController.Agent2Prefab, SpawnPoints[teamID].position, SpawnPoints[teamID].rotation, gameObject.transform);
+            }
+            else
+            {
+                agentGameObject = Instantiate(environmentController.AgentPrefab, SpawnPoints[teamID].position, SpawnPoints[teamID].rotation, gameObject.transform);
+            }
 
             // Configure agent
             T agent = agentGameObject.GetComponent<T>();
-            AgentComponent agentComponent = agent as AgentComponent;
+            Moba_gameAgentComponent agentComponent = agent as Moba_gameAgentComponent;
             agentComponent.AgentController = agentController.Clone(); // Clone the agent controller to prevent shared state between agents
             agentComponent.IndividualID = individual.IndividualId;
             agentComponent.TeamID = teamID;
+            agentComponent.AgentType = agentType;
 
             // Configure agent sprites
             ConfigureAgentSprites(environmentController, agentGameObject, teamID);

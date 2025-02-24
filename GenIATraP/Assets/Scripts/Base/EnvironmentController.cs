@@ -33,6 +33,7 @@ namespace Base
 
         [Header("Agent Initializaion Configuration")]
         [SerializeField] public GameObject AgentPrefab;
+        [SerializeField] public GameObject Agent2Prefab;
         [SerializeField] public Vector3 ArenaSize; // For square arena
         [SerializeField] public float ArenaRadius; // For square arena
         [SerializeField] public Vector3 ArenaCenterPoint; // For circular arena

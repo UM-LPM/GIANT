@@ -7,6 +7,9 @@ namespace Problems.Moba_game
     {
         public HealthComponent HealthComponent { get; set; }
         public MoneyComponent MoneyComponent { get; set; }
+        public int LavaAmount;
+        public int IceAmount;
+
 
         protected override void DefineAdditionalDataOnAwake()
         {

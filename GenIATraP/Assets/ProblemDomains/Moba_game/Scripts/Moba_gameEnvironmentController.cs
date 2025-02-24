@@ -26,7 +26,6 @@ namespace Problems.Moba_game
         [SerializeField] public Moba_gameAgentRespawnType AgentRespawnType = Moba_gameAgentRespawnType.StartPos;
         [SerializeField] public Moba_gameGameScenarioType GameScenarioType = Moba_gameGameScenarioType.Normal;
         private Moba_game1vs1MatchSpawner Match1v1Spawner;
-        private EnvironmentControllerBase envBase;
 
 
         [Header("Moba_game Base Configuration")]
@@ -56,8 +55,10 @@ namespace Problems.Moba_game
         [SerializeField] public float AgentRotationSpeed = 80f;
         [SerializeField] public float AgentTurrentRotationSpeed = 90f;
         [HideInInspector] public float ForwardSpeed = 1f;
-        [SerializeField] public float ForwardThrust = 5f;
-        [SerializeField] public float Tourque = 1f;
+        [SerializeField] public float LavaAgentForwardThrust = 5f;
+        [SerializeField] public float LavaAgentTourque = 1f;
+        [SerializeField] public float IceAgentForwardThrust = 2.5f;
+        [SerializeField] public float IceAgentTourque = 0.5f;
 
         [Header("Moba_game Missile Configuration")]
         [SerializeField] public GameObject MissilePrefab;
@@ -86,9 +87,14 @@ namespace Problems.Moba_game
 
         [Header("Moba_game Stats Text Configuration")]
         [SerializeField] public TextMeshProUGUI Base0HealthText;
-        [SerializeField] public TextMeshProUGUI Base1HealthText;
         [SerializeField] public TextMeshProUGUI Base0MoneyText;
+        [SerializeField] public TextMeshProUGUI Base0LavaText;
+        [SerializeField] public TextMeshProUGUI Base0IceText;
+
+        [SerializeField] public TextMeshProUGUI Base1HealthText;
         [SerializeField] public TextMeshProUGUI Base1MoneyText;
+        [SerializeField] public TextMeshProUGUI Base1LavaText;
+        [SerializeField] public TextMeshProUGUI Base1IceText;
 
         public MissileController MissileController { get; set; }
 
@@ -127,9 +133,14 @@ namespace Problems.Moba_game
         // variables
         private BaseSpawner baseSpawner;
         private float lastBase0Health = -1;
-        private float lastBase1Health = -1;
         private float lastBase0Money = -1;
+        private float lastBase0Lava = -1;
+        private float lastBase0Ice = -1;
+
+        private float lastBase1Health = -1;
         private float lastBase1Money = -1;
+        private float lastBase1Lava = -1;
+        private float lastBase1Ice = -1;
 
         protected override void DefineAdditionalDataOnPostAwake()
         {
@@ -250,22 +261,68 @@ namespace Problems.Moba_game
                 }
             }
         }
-        private int i= 0;
         private void UpdateBaseMoney()
         {
             // preštej kolko planetov je zasedeno od posameznega teama.... countTeamID*3ssilicij | countTeamID*železo
-            //i++;
-            //Base0MoneyText.text = i.ToString();
+            int team0LavaCount = 0;
+            int team0IceCount = 0;
+
+            int team1LavaCount = 0;
+            int team1IceCount = 0;
+
+            foreach (Moba_gamePlanetComponent planet in Planets)
+            {
+                if (planet.CapturedTeamID == 0)
+                {
+                    if (planet.Type == "lava")
+                    {
+                        team0LavaCount++;
+                    }
+                    else
+                    {
+                        team0IceCount++;
+                    }
+                }
+                else if (planet.CapturedTeamID == 1)
+                {
+                    if (planet.Type == "lava")
+                    {
+                        team1LavaCount++;
+                    }
+                    else
+                    {
+                        team1IceCount++;
+                    }
+                }
+            }
+            foreach (Moba_gameBaseComponent baseComponent in Bases)
+            {
+                if (baseComponent.TeamID == 0)
+                {
+                    baseComponent.LavaAmount+=team0LavaCount;
+                    baseComponent.IceAmount+=team0IceCount;
+                }
+                else if (baseComponent.TeamID == 1)
+                {
+                    baseComponent.LavaAmount+=team1LavaCount;
+                    baseComponent.IceAmount+=team1IceCount;
+                }
+            }
         }
         private void UpdateBaseUI()
         {
             float money;
             float health;
+            float lava;
+            float ice;
+
 
             foreach (Moba_gameBaseComponent baseComponent in Bases)
             {
                 money = baseComponent.MoneyComponent.Money;
                 health = baseComponent.HealthComponent.Health;
+                lava = baseComponent.LavaAmount;
+                ice = baseComponent.IceAmount;
 
                 if (baseComponent.TeamID == 0)
                 {
@@ -278,6 +335,16 @@ namespace Problems.Moba_game
                     {
                         Base0HealthText.text = health.ToString();
                         lastBase0Health = health;
+                    }
+                    if (lava != lastBase0Lava)
+                    {
+                        Base0LavaText.text = lava.ToString();
+                        lastBase0Lava = lava;
+                    }
+                    if (ice != lastBase0Ice)
+                    {
+                        Base0IceText.text = ice.ToString();
+                        lastBase0Ice = ice;
                     }
                 }
                 else if (baseComponent.TeamID == 1)
@@ -292,6 +359,16 @@ namespace Problems.Moba_game
                         Base1HealthText.text = health.ToString();
                         lastBase1Health = health;
                     }
+                    if (lava != lastBase1Lava)
+                    {
+                        Base1LavaText.text = lava.ToString();
+                        lastBase1Lava = lava;
+                    }
+                    if (ice != lastBase1Ice)
+                    {
+                        Base1IceText.text = ice.ToString();
+                        lastBase1Ice = ice;
+                    }
                 }
             }
         }
@@ -299,11 +376,15 @@ namespace Problems.Moba_game
         private void SpawnNewAgents()
         {
             float money;
+            float lava;
+            float ice;
             bool canSpawn = true;
             foreach (Moba_gameBaseComponent baseComponent in Bases)
             {
                 money = baseComponent.MoneyComponent.Money;
-                if (money >= 5)
+                lava = baseComponent.LavaAmount;
+                ice = baseComponent.IceAmount;
+                if (lava >= 5)
                 {
                     if (Agents != null)
                     {
@@ -318,7 +399,7 @@ namespace Problems.Moba_game
                     }
                     if (canSpawn)
                     {
-                        Moba_gameAgentComponent obj = (Moba_gameAgentComponent)Match1v1Spawner.SpawnAgent<AgentComponent>(this, baseComponent.TeamID);
+                        Moba_gameAgentComponent obj = (Moba_gameAgentComponent)Match1v1Spawner.SpawnAgent<AgentComponent>(this, baseComponent.TeamID, "lava");
                         Color color = new Color(UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0.0f, 1f), UnityEngine.Random.Range(0f, 1f), 1);
 
                         obj.HealthComponent.Health = AgentStartHealth;
@@ -330,7 +411,37 @@ namespace Problems.Moba_game
                         agentList.Add(obj);
                         Agents = agentList.ToArray();
                         //envBase.InitializeAgents();
-                        baseComponent.MoneyComponent.Money -= 5;
+                        baseComponent.LavaAmount -= 5;
+                    }
+                }
+                if (ice >= 5)
+                {
+                    if (Agents != null)
+                    {
+                        foreach (Moba_gameAgentComponent agent in Agents)
+                        {
+                            if (Vector3.Distance(agent.transform.position, Match1v1Spawner.SpawnPoints[baseComponent.TeamID].position) < 1.5f)
+                            {
+                                canSpawn = false;
+                                break;
+                            }
+                        }
+                    }
+                    if (canSpawn)
+                    {
+                        Moba_gameAgentComponent obj = (Moba_gameAgentComponent)Match1v1Spawner.SpawnAgent<AgentComponent>(this, baseComponent.TeamID, "ice");
+                        Color color = new Color(UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0.0f, 1f), UnityEngine.Random.Range(0f, 1f), 1);
+
+                        obj.HealthComponent.Health = AgentStartHealth;
+                        obj.ShieldComponent.Shield = AgentStartShield;
+                        obj.AmmoComponent.Ammo = AgentStartAmmo;
+                        obj.SetEnvironmentColor(color);
+
+                        List<AgentComponent> agentList = Agents.ToList();
+                        agentList.Add(obj);
+                        Agents = agentList.ToArray();
+                        //envBase.InitializeAgents();
+                        baseComponent.IceAmount -= 5;
                     }
                 }
             }

@@ -24,6 +24,7 @@ namespace Problems.Moba_game
         Rigidbody rb;
         MissileComponent mc;
         Vector3 spawnPosition;
+        Vector3 spawnPosition1;
         Quaternion spawnRotation;
         Vector3 localXDir;
         Vector3 velocity;
@@ -45,23 +46,30 @@ namespace Problems.Moba_game
 
         void HandleMovement(Moba_gameAgentComponent agent)
         {
-            rotateDir = Vector3.zero;
+            var thrust = Moba_gameEnvironmentController.LavaAgentForwardThrust;
+            var torque = Moba_gameEnvironmentController.LavaAgentTourque;
+            if (agent.AgentType == "ice")
+            {
+                thrust = Moba_gameEnvironmentController.IceAgentForwardThrust;
+                torque = Moba_gameEnvironmentController.IceAgentTourque;
+            }
+
             Rigidbody2D rigidbodi = agent.GetComponent<Rigidbody2D>();
             forwardAxis = agent.ActionBuffer.GetDiscreteAction("moveForwardDirection");
             switch (forwardAxis)
             {
                 case 1:
-                    rigidbodi.AddRelativeForce(new Vector2(0, Moba_gameEnvironmentController.ForwardThrust));
+                    rigidbodi.AddRelativeForce(new Vector2(0, thrust));
                     break;
             }
             rotateAxis = agent.ActionBuffer.GetDiscreteAction("rotateDirection");
             switch (rotateAxis)
             {
                 case 1:
-                    rigidbodi.AddTorque(Moba_gameEnvironmentController.Tourque);
+                    rigidbodi.AddTorque(torque);
                     break;
                 case 2:
-                    rigidbodi.AddTorque(-Moba_gameEnvironmentController.Tourque);
+                    rigidbodi.AddTorque(-torque);
                     break;
             }
         }
@@ -143,6 +151,24 @@ namespace Problems.Moba_game
 
                 // Add missile to missile controller
                 Moba_gameEnvironmentController.MissileController.AddMissile(mc);
+                if (agent.AgentType == "ice")
+                {
+                    spawnPosition1 = agent.MissileSpawnPoint1.transform.position;
+                    localXDir = agent.MissileSpawnPoint1.transform.TransformDirection(Vector3.up);
+                    velocity = localXDir * Moba_gameEnvironmentController.MissleLaunchSpeed;
+                    obj = Instantiate(Moba_gameEnvironmentController.MissilePrefab, spawnPosition1, spawnRotation, transform);
+                    obj.layer = gameObject.layer;
+                    mc = obj.GetComponent<MissileComponent>();
+                    mc.Parent = agent;
+                    mc.MissileVelocity = velocity;
+                    mc.Moba_gameEnvironmentController = Moba_gameEnvironmentController;
+                    agent.NextShootTime = Moba_gameEnvironmentController.CurrentSimulationTime + Moba_gameEnvironmentController.MissileShootCooldown;
+
+                    agent.MissileFired();
+
+                    // Add missile to missile controller
+                    Moba_gameEnvironmentController.MissileController.AddMissile(mc);
+                }
             }
         }
     }

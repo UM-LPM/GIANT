@@ -40,24 +40,30 @@ namespace Problems.Moba_game
             List<T> planets = new List<T>();
             List<Vector3> planetSpawnPositions = new List<Vector3>();
             Moba_gameEnvironmentController Moba_gameEnvironmentController = environmentController as Moba_gameEnvironmentController;
-            
+
             // Spawn Lava Planets
             for (int i = 0; i < Moba_gameEnvironmentController.LavaPlanetSpawnAmount; i++)
             {
-                planets.Add(SpawnGold<T>(Moba_gameEnvironmentController, Moba_gameEnvironmentController.LavaPlanetPrefab, planetSpawnPositions));
+                T planet = SpawnPlanet<T>(Moba_gameEnvironmentController, Moba_gameEnvironmentController.LavaPlanetPrefab, planetSpawnPositions);
+                Moba_gamePlanetComponent planetComponent = planet as Moba_gamePlanetComponent;
+                planetComponent.Type = "lava";
+                planets.Add(planet);
                 planetSpawnPositions.Add(planets[i].transform.position);
             }
             // Spawn Ice Planets
             for (int i = 0; i < Moba_gameEnvironmentController.IcePlanetSpawnAmount; i++)
             {
-                planets.Add(SpawnGold<T>(Moba_gameEnvironmentController, Moba_gameEnvironmentController.IcePlanetPrefab, planetSpawnPositions));
+                T planet = SpawnPlanet<T>(Moba_gameEnvironmentController, Moba_gameEnvironmentController.IcePlanetPrefab, planetSpawnPositions);
+                Moba_gamePlanetComponent planetComponent = planet as Moba_gamePlanetComponent;
+                planetComponent.Type = "ice";
+                planets.Add(planet);
                 planetSpawnPositions.Add(planets[i].transform.position);
             }
-            
+
             return planets.ToArray();
         }
 
-        public T SpawnGold<T>(Moba_gameEnvironmentController environmentController, GameObject planetPrefab, List<Vector3> existingPlanetPositions) where T :  Component
+        public T SpawnPlanet<T>(Moba_gameEnvironmentController environmentController, GameObject planetPrefab, List<Vector3> existingPlanetPositions) where T : Component
         {
             counter = 0;
             do
@@ -104,9 +110,8 @@ namespace Problems.Moba_game
                 counter++;
             } while (!isFarEnough);
 
-            // Instantiate powerup and set layer
+            // Instantiate planet and set layer
             obj = Instantiate(planetPrefab, spawnPos, rotation, gameObject.transform);
-
             return obj.GetComponent<T>();
         }
 
