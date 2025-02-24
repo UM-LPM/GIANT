@@ -63,19 +63,25 @@ namespace Problems.Moba_game
 
         // [Header("Moba_game PowerUps Prefabs")]
         [SerializeField] public float MinPowerUpDistance = 8f;
-         [SerializeField] public float MinPowerUpDistanceFromAgents = 8f;
-         [SerializeField] public Vector3 PowerUpColliderExtendsMultiplier = new Vector3(0.505f, 0.495f, 0.505f);
+        [SerializeField] public float MinPowerUpDistanceFromAgents = 8f;
+        [SerializeField] public Vector3 PowerUpColliderExtendsMultiplier = new Vector3(0.505f, 0.495f, 0.505f);
 
         [Header("Moba_game Stats Text Configuration")]
         [SerializeField] public TextMeshProUGUI Base0HealthText;
-        [SerializeField] public TextMeshProUGUI Base0MoneyText;
         [SerializeField] public TextMeshProUGUI Base0LavaText;
         [SerializeField] public TextMeshProUGUI Base0IceText;
 
         [SerializeField] public TextMeshProUGUI Base1HealthText;
-        [SerializeField] public TextMeshProUGUI Base1MoneyText;
         [SerializeField] public TextMeshProUGUI Base1LavaText;
         [SerializeField] public TextMeshProUGUI Base1IceText;
+
+        [SerializeField] public TextMeshProUGUI Base2HealthText;
+        [SerializeField] public TextMeshProUGUI Base2LavaText;
+        [SerializeField] public TextMeshProUGUI Base2IceText;
+
+        [SerializeField] public TextMeshProUGUI Base3HealthText;
+        [SerializeField] public TextMeshProUGUI Base3LavaText;
+        [SerializeField] public TextMeshProUGUI Base3IceText;
 
         public MissileController MissileController { get; set; }
 
@@ -107,14 +113,20 @@ namespace Problems.Moba_game
         // variables
         private BaseSpawner baseSpawner;
         private float lastBase0Health = -1;
-        private float lastBase0Money = -1;
         private float lastBase0Lava = -1;
         private float lastBase0Ice = -1;
 
         private float lastBase1Health = -1;
-        private float lastBase1Money = -1;
         private float lastBase1Lava = -1;
         private float lastBase1Ice = -1;
+
+        private float lastBase2Health = -1;
+        private float lastBase2Lava = -1;
+        private float lastBase2Ice = -1;
+
+        private float lastBase3Health = -1;
+        private float lastBase3Lava = -1;
+        private float lastBase3Ice = -1;
 
         protected override void DefineAdditionalDataOnPostAwake()
         {
@@ -215,48 +227,32 @@ namespace Problems.Moba_game
         }
         private void UpdateBaseMoney()
         {
-            int team0LavaCount = 0;
-            int team0IceCount = 0;
-
-            int team1LavaCount = 0;
-            int team1IceCount = 0;
+            int[] lavaCounts = new int[4];
+            int[] iceCounts = new int[4];
 
             foreach (Moba_gamePlanetComponent planet in Planets)
             {
-                if (planet.CapturedTeamID == 0)
+                if (planet.CapturedTeamID >= 0 && planet.CapturedTeamID <= 3)
                 {
+                    int teamIndex = planet.CapturedTeamID;
                     if (planet.Type == "lava")
                     {
-                        team0LavaCount++;
+                        lavaCounts[teamIndex]++;
                     }
                     else
                     {
-                        team0IceCount++;
-                    }
-                }
-                else if (planet.CapturedTeamID == 1)
-                {
-                    if (planet.Type == "lava")
-                    {
-                        team1LavaCount++;
-                    }
-                    else
-                    {
-                        team1IceCount++;
+                        iceCounts[teamIndex]++;
                     }
                 }
             }
+
             foreach (Moba_gameBaseComponent baseComponent in Bases)
             {
-                if (baseComponent.TeamID == 0)
+                if (baseComponent.TeamID >= 0 && baseComponent.TeamID <= 3)
                 {
-                    baseComponent.LavaAmount+=team0LavaCount;
-                    baseComponent.IceAmount+=team0IceCount;
-                }
-                else if (baseComponent.TeamID == 1)
-                {
-                    baseComponent.LavaAmount+=team1LavaCount;
-                    baseComponent.IceAmount+=team1IceCount;
+                    int teamIndex = baseComponent.TeamID;
+                    baseComponent.LavaAmount += lavaCounts[teamIndex];
+                    baseComponent.IceAmount += iceCounts[teamIndex];
                 }
             }
         }
@@ -266,48 +262,34 @@ namespace Problems.Moba_game
             float lava;
             float ice;
 
-
             foreach (Moba_gameBaseComponent baseComponent in Bases)
             {
                 health = baseComponent.HealthComponent.Health;
                 lava = baseComponent.LavaAmount;
                 ice = baseComponent.IceAmount;
 
-                if (baseComponent.TeamID == 0)
+                switch (baseComponent.TeamID)
                 {
-                    if (health != lastBase0Health)
-                    {
-                        Base0HealthText.text = health.ToString();
-                        lastBase0Health = health;
-                    }
-                    if (lava != lastBase0Lava)
-                    {
-                        Base0LavaText.text = lava.ToString();
-                        lastBase0Lava = lava;
-                    }
-                    if (ice != lastBase0Ice)
-                    {
-                        Base0IceText.text = ice.ToString();
-                        lastBase0Ice = ice;
-                    }
-                }
-                else if (baseComponent.TeamID == 1)
-                {
-                    if (health != lastBase1Health)
-                    {
-                        Base1HealthText.text = health.ToString();
-                        lastBase1Health = health;
-                    }
-                    if (lava != lastBase1Lava)
-                    {
-                        Base1LavaText.text = lava.ToString();
-                        lastBase1Lava = lava;
-                    }
-                    if (ice != lastBase1Ice)
-                    {
-                        Base1IceText.text = ice.ToString();
-                        lastBase1Ice = ice;
-                    }
+                    case 0:
+                        if (health != lastBase0Health) Base0HealthText.text = (lastBase0Health = health).ToString();
+                        if (lava != lastBase0Lava) Base0LavaText.text = (lastBase0Lava = lava).ToString();
+                        if (ice != lastBase0Ice) Base0IceText.text = (lastBase0Ice = ice).ToString();
+                        break;
+                    case 1:
+                        if (health != lastBase1Health) Base1HealthText.text = (lastBase1Health = health).ToString();
+                        if (lava != lastBase1Lava) Base1LavaText.text = (lastBase1Lava = lava).ToString();
+                        if (ice != lastBase1Ice) Base1IceText.text = (lastBase1Ice = ice).ToString();
+                        break;
+                    case 2:
+                        if (health != lastBase2Health) Base2HealthText.text = (lastBase2Health = health).ToString();
+                        if (lava != lastBase2Lava) Base2LavaText.text = (lastBase2Lava = lava).ToString();
+                        if (ice != lastBase2Ice) Base2IceText.text = (lastBase2Ice = ice).ToString();
+                        break;
+                    case 3:
+                        if (health != lastBase3Health) Base3HealthText.text = (lastBase3Health = health).ToString();
+                        if (lava != lastBase3Lava) Base3LavaText.text = (lastBase3Lava = lava).ToString();
+                        if (ice != lastBase3Ice) Base3IceText.text = (lastBase3Ice = ice).ToString();
+                        break;
                 }
             }
         }

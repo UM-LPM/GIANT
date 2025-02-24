@@ -11,16 +11,20 @@ namespace Problems.Moba_game
         public string Type { get; set; }
         public float captureTime = 5f;
 
-
-        private enum Team { NONE, BLUE, RED }
-        private Team capturingTeam = Team.NONE;
+        private int capturingTeam = -1;
         private float captureProgress = 0f;
         private float captureSpeed;
-        private Color whiteColor = new Color(1,1,1,0.2f);
-        private Color blueColor = new Color(0,0,1,0.6f);
-        private Color redColor = new Color(1,0,0,0.6f);
         private SpriteRenderer planetCircle;
         private List<AgentComponent> agentsInZone = new List<AgentComponent>();
+
+        private readonly Color whiteColor = new Color(1, 1, 1, 0.2f);
+        private readonly Color[] teamColors =
+        {
+            new Color(1, 0, 0, 0.6f),    // Team 1: Red
+            new Color(0, 0, 1, 0.6f),   // Team 2: Blue
+            new Color(0, 1, 0, 0.6f),  // Team 3: Green
+            new Color(1, 0, 1, 0.6f)  // Team 4: Purple
+        };
 
         protected override void DefineAdditionalDataOnAwake()
         {
@@ -28,23 +32,36 @@ namespace Problems.Moba_game
             captureSpeed = 1 / captureTime;
             CapturedTeamID = -1;
         }
-        Team GetStrongestTeam()
+
+        private int GetStrongestTeam()
         {
-            int blueCount = 0, redCount = 0;
+            int[] teamCounts = new int[4];
 
             foreach (var agent in agentsInZone)
             {
                 Moba_gameAgentComponent agentComponent = agent.GetComponent<Moba_gameAgentComponent>();
-                if (agentComponent.TeamID == 0) redCount++;
-                if (agentComponent.TeamID == 1) blueCount++;
+                if (agentComponent != null && agentComponent.TeamID >= 0 && agentComponent.TeamID <= 3)
+                {
+                    teamCounts[agentComponent.TeamID]++;
+                }
             }
 
-            if (blueCount > redCount) return Team.BLUE;
-            if (redCount > blueCount) return Team.RED;
-            return Team.NONE;
+            int maxIndex = -1;
+            int maxCount = 0;
+            for (int i = 0; i < teamCounts.Length; i++)
+            {
+                if (teamCounts[i] > maxCount)
+                {
+                    maxCount = teamCounts[i];
+                    maxIndex = i;
+                }else if(teamCounts[i] == maxCount){
+                    maxIndex = -1;
+                }
+            }
+            return maxIndex;
         }
 
-        void OnTriggerEnter2D(Collider2D other)
+        private void OnTriggerEnter2D(Collider2D other)
         {
             if (other.CompareTag("Agent"))
             {
@@ -52,7 +69,7 @@ namespace Problems.Moba_game
             }
         }
 
-        void OnTriggerExit2D(Collider2D other)
+        private void OnTriggerExit2D(Collider2D other)
         {
             if (other.CompareTag("Agent"))
             {
@@ -60,28 +77,26 @@ namespace Problems.Moba_game
             }
         }
 
-        void UpdateColor()
+        private void UpdateColor()
         {
-            if (capturingTeam == Team.BLUE)
+            if (capturingTeam >= 0 && capturingTeam < teamColors.Length)
             {
-                planetCircle.color = Color.Lerp(whiteColor, blueColor, captureProgress);
-            }
-            else if (capturingTeam == Team.RED)
-            {
-                planetCircle.color = Color.Lerp(whiteColor, redColor, captureProgress);
+                planetCircle.color = Color.Lerp(whiteColor, teamColors[capturingTeam], captureProgress);
             }
             else
             {
                 planetCircle.color = whiteColor;
             }
         }
-        void Update()
+
+        private void Update()
         {
             if (agentsInZone.Count > 0)
             {
-                Team strongestTeam = GetStrongestTeam();
+                int strongestTeam = GetStrongestTeam();
+                if (strongestTeam == -1) return;
 
-                if (capturingTeam == Team.NONE)
+                if (capturingTeam == -1)
                 {
                     capturingTeam = strongestTeam;
                 }
@@ -98,12 +113,12 @@ namespace Problems.Moba_game
                         capturingTeam = strongestTeam;
                     }
                 }
+                if (captureProgress == 1 && capturingTeam != -1)
+                {
+                    CapturedTeamID = GetStrongestTeam();
+                }
             }
 
-            if (captureProgress == 1 && capturingTeam != Team.NONE)
-            {
-                CapturedTeamID = capturingTeam == Team.RED ? 0 : 1;
-            }
             if (captureProgress < 1)
             {
                 CapturedTeamID = -1;
