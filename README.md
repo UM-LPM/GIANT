@@ -7,10 +7,10 @@ GenIATraP is designed with a highly modular structure, ensuring that each compon
 
 # Features
 - Four built-in example environments
-- Support for both single-agent and multi-agent scenarios
+- Support for both Single-Agent and Multi-Agent scenarios
 - Highly extensible and modular design
 - Compatibility with various decision-making systems, including Behavior Trees, Neural Networks, and more
-- Parallelization at two levels: within a single Unity instance and across multiple Unity instances
+- Multilevel parallelization
 - Easily extendable to new problem domains
 - Manual solution testing, allowing human players to compete against AI agents
 - Visualization tools for comparing different methods
