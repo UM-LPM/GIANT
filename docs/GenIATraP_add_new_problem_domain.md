@@ -1,4 +1,5 @@
-To add a new problem domain to the platform, follow these steps to integrate your custom environment, agents, and configurations. This guide will walk you through creating the necessary folders, scenes, prefabs, and implementing the required logic to define your problem domain.
+# Add New Problem Domain To The Platform
+To add a new problem domain to the platform, follow the following steps to integrate your custom environment, agents, and configurations. This guide will walk you through creating the necessary folders, scenes, and prefabs, and implementing the required logic to define your problem domain.
 
 ### **Step 1: Create New Folders for Your Problem Domain**
 
@@ -78,6 +79,6 @@ Make sure to clearly define the problem domain-specific behavior in separate scr
 
 Once you have implemented the core logic and configurations for your new problem domain:
 
-1. Test the simulation to ensure that agents behave as expected and interact correctly with the environment.
-2. Validate the fitness evaluation to ensure it reflects the desired performance metrics (e.g., agents should be rewarded for winning, surviving, or completing objectives).
-3. Iterate on your implementation to fix any issues or improve the agent's performance.
+- Test the simulation to ensure that agents behave as expected and interact correctly with the environment.
+- Validate the fitness evaluation to ensure it reflects the desired performance metrics (e.g., agents should be rewarded for winning, surviving, or completing objectives).
+- Iterate on your implementation to fix any issues or improve the agent's performance.
