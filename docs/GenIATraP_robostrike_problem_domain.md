@@ -10,6 +10,7 @@ The Robostrike environment consists of a battlefield where robots compete in com
 
 - Arena: The arena is a bounded, 2D or 3D space where robots can move, hide, and interact. The layout may include obstacles and cover for strategic positioning.
 - Robots: Each robot is controlled by an agent and has capabilities such as movement, aiming, shooting, and health management. Robots start with a fixed amount of health and ammunition.
+- Ray sensors: Agents can only perceive the environment using ray sensors that can be shot in multiple directions. Rays can detect other agents, walls, power-ups, projectiles and obstacles.
 - Weaponry: Robots can use weapons to attack other robots. These weapons may have limited ammo, and robots must manage their usage effectively.
 - Health: Robots start with a set amount of health, and their health decreases when they take damage from enemy attacks or environmental hazards.
 - Power-ups: Power-ups in the arena can replenish health, ammo, or shield.
