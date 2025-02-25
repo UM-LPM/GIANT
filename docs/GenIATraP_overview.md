@@ -45,6 +45,8 @@ The optimization process initiates within the **EARS framework**, where the init
 ## 4. Response
 - Following the completion of the evaluation process, the **Coordinator** forwards the response to the Web API, which subsequently relays it back to EARS, where the optimization process continues.
 
+![Platform optimization process](/docs/images/platform_architecture.png)
+
 # Next Step
 Before jumping to platform setup, the following concepts should be known to you:
 - Introduction to [Machine Learning](/docs/introduction_to_machine_learning.md)
