@@ -12,6 +12,7 @@ Game AI can range from **simple rule-based systems** to **complex machine learni
     - Utility-Based AI
     - GOAP (Goal-Oriented Action Planning)
     - Neural Networks
+    - Custom Scripts & Hybrid Approaches
     - Rule-Based AI
     - Fuzzy Logic AI
     - HTN (Hierarchical Task Networks)
