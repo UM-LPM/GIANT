@@ -77,7 +77,7 @@ A **Simulation** is one of the core processes through which predefined matches a
 - **Match** – Defines which individuals will be evaluated.
 - **Agent Scenario** – Specifies how agents are **spawned** and **controlled** within the environment.
 - **Game Scenario** – Defines the environment in which agents will operate.
-- **Environment Controller** – Manages the entire simulation process and communicates with the **Communicator** component.
+- **Environment Controller** – Manages the entire simulation process and communicates with the [**Communicator**](/docs/GenIATraP_evaluation_environment_unity_overview.md#communicator) component.
 
 ### Spawner
 The platform includes two primary types of **Spawners**:
@@ -106,3 +106,87 @@ The **Environment Controller** acts as the **central orchestration component** o
 4. **Termination** – The simulation continues running until the defined termination criteria are met.
 
 ![Simulation Scheme](/docs/images/simulation_scheme.png)
+
+## Communicator
+
+The **Communicator** class is a central component responsible for managing the communication between the Unity environment and [**Coordinator**](/docs/GenIATraP_evaluation_environment_unity_overview.md#coordinator) via an HTTP server. It also facilitates scene management and simulation execution for evaluating agent performance in different game scenarios.
+
+### Key Responsibilities
+
+- **Singleton Pattern Implementation:** Ensures only one instance of **Communicator** exists.
+- **Configuration Management:** Reads and applies configurations from **MenuManager**.
+- **HTTP Server Management:** Initializes and maintains an HTTP listener to handle incoming evaluation requests.
+- **Scene Management:** Loads, runs, and unloads simulation scenes based on different modes (**LayerMode**, **GridMode**).
+- **Evaluation Processing:** Handles incoming requests, sets up matches, and calculates fitness scores for agents.
+
+### Main Components
+
+#### 1. **Singleton Implementation**
+
+Ensures only one instance of **Communicator** exists in one Unity program (built game) instance. If multiple instances of Unity program are used, then each instance requires it's own **Communicator**.
+
+#### 2. **Configuration Management**
+
+- Loads parameters from **MenuManager** to dynamically adjust the behavior of the communicator.
+- Updates properties such as **CommunicatorURI**, **TimeScale**, **FixedTimeStep**, and **InitialSeed**.
+
+#### 3. **HTTP Server Management**
+
+- Uses **HttpListener** to listen for incoming HTTP requests.
+- Runs a background thread (**ListenerThread**) to handle requests asynchronously.
+- Processes evaluation requests and forwards them to Unity’s main thread using **UnityMainThreadDispatcher** class.
+#### 4. **Scene Management**
+
+Supports two modes of scene loading:
+
+- **Layer Mode**: Uses layered scene management with predefined layer IDs.
+- **Grid Mode**: Arranges scenes in a grid pattern based on **GridSize** and **GridSpacing** parameters.
+#### 5. **Evaluation Processing**
+
+- Reads match requests and sets up tournament matches.
+- Waits for scene execution to complete before responding.
+- Uses special coroutine to handle evaluation logic asynchronously.
+
+## Coordinator
+The **Coordinator** is a central management component responsible for orchestrating the evaluation process of individuals within the platform. It acts as the bridge between the **Web API** and the evaluation environments, ensuring that individuals are properly evaluated and their results are processed effectively.
+
+## Core Responsibilities
+
+The **Coordinator** has three primary functions:
+
+1. **Handling HTTP Requests**
+    - It hosts an HTTP server that listens for incoming evaluation requests.
+    - It receives requests from the **Web API**), processes the request, and returns evaluation results.
+    - It ensures that evaluation tasks are handled asynchronously and efficiently.
+2.  **Configuring and Managing Individuals**
+    - It loads individuals from JSON files or Scriptable Objects (depending on the **Environment Controller** setup).
+    - It can convert and store individuals into different formats for persistence.
+3. **Coordinate the Evaluation Process**
+    - It receives evaluation requests containing a batch of individuals.
+    - It initializes evaluators based on the chosen evaluation strategy (Simple Evaluation, Tournament Evaluation, or Rating System Evaluation).
+    - It assigns individuals to evaluators and organizes tournaments if required.
+
+The **Coordinator** interacts with several key components in the system:
+- **Web API** - The **Coordinator** handles all the requests, sent from the **WebAPI** and delegates them forward to active **Communicators**. 
+- **Communicator** - The **Communicator** is responsible for evaluating batches of individuals that were sent from the **Coordinator**. 
+- **Evaluators** - The **Coordinator** delegates the actual evaluation process to an appropriate evaluator, based on the configured evaluation type. The possible evaluators include:
+	- **Simple Evaluator**: A direct fitness evaluation without additional structure.
+	- **Tournament Evaluator**: Organizes matches between individuals and ranks them based on performance.
+	- **Rating Evaluator**: Uses a rating system (e.g., TrueSkill, Elo, or Glicko2) to assess individual skill levels over time.
+
+### Configuration Options
+
+The **Coordinator** can be configured using various parameters, allowing users to define how evaluations should be conducted. Key configurations include:
+
+- **Evaluator Type**: Determines the evaluation strategy (Simple, Tournament, or Rating-based evaluation).
+- **Rating System Type**: Selects the rating system for performance tracking (TrueSkill, Elo, Glicko2, etc.).
+- **Tournament Organization Type**: Defines how matches are structured (Round Robin, Swiss System, Single Elimination, etc.).
+- **Individuals Source**: Specifies the source of individual configurations (JSON files or Scriptable Objects).
+
+### Evaluation Workflow
+
+1. The **Web API** sends a request to the **Coordinator**, providing a set of **Individuals** to be evaluated.
+2. The **Coordinator** retrieves the specified individuals from either a JSON file or Scriptable Objects.
+3. The **Coordinator** initializes the appropriate **Evaluator**, which organizes the required **Matches** and distributes them to all available **Communicators**.
+4. **Communicators** evaluates all matches and return the results back to the **Coordinator**.
+5. Once all **Communicators** have submitted their results, the **Coordinator** compiles the data and sends the final evaluation results back to the **Web API**.
