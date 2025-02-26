@@ -3,17 +3,17 @@ using UnityEngine;
 
 namespace Problems.Moba_game
 {
-    [CreateAssetMenu(fileName = "Moba_gameManualAgentController", menuName = "AgentControllers/AIAgentControllers/ManualAgentControllers/Moba_gameManualAgentController")]
-    public class Moba_gameManualAgentController : ManualAgentController
+    [CreateAssetMenu(fileName = "Moba_gameManualAgentController2", menuName = "AgentControllers/AIAgentControllers/ManualAgentControllers/Moba_gameManualAgentController2")]
+    public class Moba_gameManualAgentController2 : ManualAgentController
     {
         public override void GetActions(in ActionBuffer actionsOut)
         {
-            if (Input.GetKey(KeyCode.W))
+            if (Input.GetKey(KeyCode.UpArrow))
                 actionsOut.AddDiscreteAction("moveForwardDirection", 1);
 
-            if (Input.GetKey(KeyCode.D))
+            if (Input.GetKey(KeyCode.RightArrow))
                 actionsOut.AddDiscreteAction("rotateDirection", 2);
-            else if (Input.GetKey(KeyCode.A))
+            else if (Input.GetKey(KeyCode.LeftArrow))
                 actionsOut.AddDiscreteAction("rotateDirection", 1);
 
             if (Input.GetKey(KeyCode.Space))

@@ -21,8 +21,7 @@ namespace Problems.Moba_game
         [Header("Moba_game General Configuration")]
         [SerializeField] int AgentStartHealth = 10;
         [SerializeField] int BaseStartHealth = 20;
-        [SerializeField] int AgentStartShield = 0;
-        [SerializeField] int AgentStartAmmo = 0;
+        [SerializeField] int AgentStartAmmo = 50;
         [SerializeField] public Moba_gameAgentRespawnType AgentRespawnType = Moba_gameAgentRespawnType.StartPos;
         [SerializeField] public Moba_gameGameScenarioType GameScenarioType = Moba_gameGameScenarioType.Normal;
         private Moba_game1vs1MatchSpawner Match1v1Spawner;
@@ -30,8 +29,6 @@ namespace Problems.Moba_game
 
         [Header("Moba_game Base Configuration")]
         [SerializeField] public GameObject BasePrefab;
-        [SerializeField] int BaseStartMoney = 0;
-
         private BaseComponent[] Bases;
 
         [Header("Moba_game Planets Configuration")]
@@ -61,7 +58,7 @@ namespace Problems.Moba_game
         [SerializeField] public static int MissileDamage = 2;
 
 
-        // [Header("Moba_game PowerUps Prefabs")]
+        [Header("Moba_game Planets Configuration")]
         [SerializeField] public float MinPowerUpDistance = 8f;
         [SerializeField] public float MinPowerUpDistanceFromAgents = 8f;
         [SerializeField] public Vector3 PowerUpColliderExtendsMultiplier = new Vector3(0.505f, 0.495f, 0.505f);
@@ -418,11 +415,6 @@ namespace Problems.Moba_game
                 if (conf.ProblemConfiguration.ContainsKey("AgentStartHealth"))
                 {
                     AgentStartHealth = int.Parse(conf.ProblemConfiguration["AgentStartHealth"]);
-                }
-
-                if (conf.ProblemConfiguration.ContainsKey("AgentStartShield"))
-                {
-                    AgentStartShield = int.Parse(conf.ProblemConfiguration["AgentStartShield"]);
                 }
 
                 if (conf.ProblemConfiguration.ContainsKey("AgentStartAmmo"))

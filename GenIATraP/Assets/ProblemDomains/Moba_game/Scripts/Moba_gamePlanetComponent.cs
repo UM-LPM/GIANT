@@ -10,12 +10,11 @@ namespace Problems.Moba_game
         public int CapturedTeamID { get; set; }
         public string Type { get; set; }
         public float captureTime = 5f;
-
-        private int capturingTeam = -1;
         private float captureProgress = 0f;
         private float captureSpeed;
         private SpriteRenderer planetCircle;
         private List<AgentComponent> agentsInZone = new List<AgentComponent>();
+        private int capturingTeamID = -1; // Team currently capturing
 
         private readonly Color whiteColor = new Color(1, 1, 1, 0.2f);
         private readonly Color[] teamColors =
@@ -45,20 +44,25 @@ namespace Problems.Moba_game
                     teamCounts[agentComponent.TeamID]++;
                 }
             }
-
             int maxIndex = -1;
             int maxCount = 0;
+            bool isDraw = false; // Flag to track if there's a tie
+
             for (int i = 0; i < teamCounts.Length; i++)
             {
                 if (teamCounts[i] > maxCount)
                 {
                     maxCount = teamCounts[i];
                     maxIndex = i;
-                }else if(teamCounts[i] == maxCount){
-                    maxIndex = -1;
+                    isDraw = false; // Reset draw flag when a new max is found
+                }
+                else if (teamCounts[i] == maxCount && maxCount > 0)
+                {
+                    isDraw = true; // A tie occurs
                 }
             }
-            return maxIndex;
+
+            return isDraw ? -1 : maxIndex;
         }
 
         private void OnTriggerEnter2D(Collider2D other)
@@ -77,53 +81,64 @@ namespace Problems.Moba_game
             }
         }
 
-        private void UpdateColor()
-        {
-            if (capturingTeam >= 0 && capturingTeam < teamColors.Length)
-            {
-                planetCircle.color = Color.Lerp(whiteColor, teamColors[capturingTeam], captureProgress);
-            }
-            else
-            {
-                planetCircle.color = whiteColor;
-            }
-        }
+
 
         private void Update()
         {
-            if (agentsInZone.Count > 0)
+            int strongestTeam = GetStrongestTeam();
+            if (agentsInZone.Count != 0)
             {
-                int strongestTeam = GetStrongestTeam();
-                if (strongestTeam == -1) return;
-
-                if (capturingTeam == -1)
+                if (strongestTeam != -1)
                 {
-                    capturingTeam = strongestTeam;
-                }
+                    if (capturingTeamID == -1)
+                    {
+                        capturingTeamID = strongestTeam;
+                    }
 
-                if (strongestTeam == capturingTeam)
-                {
-                    captureProgress = Mathf.Min(1, captureProgress + captureSpeed * Time.deltaTime);
+                    if (strongestTeam == capturingTeamID) // If the same team is capturing
+                    {
+                        captureProgress = Mathf.Min(1, captureProgress + captureSpeed * Time.deltaTime);
+                    }
+                    else // If a new team is contesting
+                    {
+                        captureProgress = Mathf.Max(0, captureProgress - captureSpeed * Time.deltaTime);
+                        CapturedTeamID = -1;
+                        if (captureProgress == 0)
+                        {
+                            capturingTeamID = strongestTeam;
+                        }
+                    }
+
+                    // Update the color to match the capturing progress
+                    planetCircle.color = Color.Lerp(whiteColor, teamColors[capturingTeamID], captureProgress);
+
+                    // When fully captured, assign ownership
+                    if (captureProgress >= 1)
+                    {
+                        CapturedTeamID = capturingTeamID;
+                    }
                 }
                 else
                 {
+                    CapturedTeamID = -1;
                     captureProgress = Mathf.Max(0, captureProgress - captureSpeed * Time.deltaTime);
-                    if (captureProgress == 0)
+                    if (capturingTeamID != -1)
                     {
-                        capturingTeam = strongestTeam;
+                        planetCircle.color = Color.Lerp(whiteColor, teamColors[capturingTeamID], captureProgress);
                     }
                 }
-                if (captureProgress == 1 && capturingTeam != -1)
+            }
+            else
+            {
+                if (CapturedTeamID == -1)
                 {
-                    CapturedTeamID = GetStrongestTeam();
+                    captureProgress = Mathf.Max(0, captureProgress - captureSpeed * Time.deltaTime);
+                    if (capturingTeamID != -1)
+                    {
+                        planetCircle.color = Color.Lerp(whiteColor, teamColors[capturingTeamID], captureProgress);
+                    }
                 }
             }
-
-            if (captureProgress < 1)
-            {
-                CapturedTeamID = -1;
-            }
-            UpdateColor();
         }
     }
 }
