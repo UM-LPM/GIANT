@@ -1,5 +1,4 @@
 # GenIATraP - Unity Evaluation Environment
-
 The **Unity Evaluation Environment** within GenIATraP is designed to provide a robust and flexible platform for testing, training, and evaluating AI agents. Built on the **[Unity Game Engine](https://unity.com/)**, this environment leverages Unity’s capabilities to create dynamic, interactive, and complex simulations that are ideal for evaluating a wide range of AI behaviors. Below is a detailed breakdown of its architecture, key components, workflows, and extensibility features.
 
 The **Unity evaluation environment** builds upon many **established functionalities** and concepts from [**ML-Agents**](https://github.com/Unity-Technologies/ml-agents/tree/develop), a Unity-based framework designed to facilitate machine learning workflows within Unity. By adapting these concepts, GenIATraP extends the capabilities of the Unity environment to provide broader support for the evaluation and testing of different AI controller types, including **Neural Networks, Behavior Trees, Finite State Machines, and more**.
@@ -21,14 +20,12 @@ An **Agent** in GenIATraP performs several key **tasks** within the evaluation p
 - **Interaction with Other Agents/Objects**: Agents can also interact with other agents (**Multi-Agent Systems**) or objects within the environment. In competitive or cooperative scenarios, agents may need to assess and respond to the actions of other agents, leading to complex **Multi-Agent dynamics**.
 
 ### Agent Architecture and Components
-
 The structure of an **Agent** and its key components is illustrated in the image below. Each agent consists of multiple essential components that define its behavior, interaction with the environment, and role within the evaluation framework.
 
-![Agent Scheme](/docs/images/agent_scheme.png)
+![Agent Scheme](agent_scheme.png)
 
-#### 1. Agent Component
-
-The **Agent Component** serves as the central entity that encapsulates all key functionalities of an agent. It manages critical subsystems, including the **Agent Controller**, **Action Buffer**, **Agent Fitness**, and other problem-specific attributes.
+#### Agent Component
+The **Agent Component** serves as the central entity that encapsulates all key functionalities of an agent. It manages critical subsystems, including the **Agent Controller**, **Action Buffer**, **Agent Fitness**, and other problem-specific systems.
 
 - **Action Buffer**: Stores the current set of actions that the agent must execute in the next simulation step. This buffer updates whenever a new decision request is issued. It supports two types of actions:
     - **Discrete Actions**: Used for actions with distinct choices such as **shooting**, **jumping**, or **activating abilities**.
@@ -36,24 +33,21 @@ The **Agent Component** serves as the central entity that encapsulates all key f
 - **Agent Controller**: Defines the logic that governs the agent’s behavior. At each decision step, the **Agent Controller** determines and fills the **Action Buffer** based on the AI model's output and the agent’s current observations from the environment. The controller can be implemented using various AI techniques such as **Neural Networks, Behavior Trees, Finite State Machines (FSMs), or Custom Scripts**.
 - **Agent Fitness**: Tracks all **rewards** and **penalties** accumulated during a simulation episode. The fitness function is domain-specific, meaning each problem defines its own reward structure to guide agent behavior. This component is essential for evaluating an agent’s performance and optimizing its decision-making process.
 
-#### 2. Sensors
-
+#### Sensors
 Sensors define how an agent perceives its environment. The platform currently supports multiple types of sensors, each optimized for different perception methods:
 
-- **Ray Sensor**: Uses raycasting to detect objects in the agent’s surroundings. Rays originate from the agent’s position and extend in predefined directions. Various configurable parameters, such as **ray length, detection radius, layer masks**, and **hit sensitivity**, allow for fine-tuned detection capabilities.
-- **Grid Sensor**: Detects objects in the environment using a grid-based approach. The grid structure surrounds the agent, and each cell detects the presence of objects. Grid and cell sizes can be adjusted to optimize for different use cases, balancing precision and computational efficiency.
-- **Camera Sensor**: Captures a 2D image of the agent’s surroundings using an in-game camera. This image can be processed in **grayscale** or **color**, depending on the problem’s requirements. The agent’s AI model can use pixel data as input to make decisions.
-- **Vision Sensor**: Simulates **human-like vision** by capturing all visible objects within a predefined **field of view (FOV)**. The **vision range and width** are adjustable, enabling realistic simulations of varying vision capabilities. This sensor is particularly useful for evaluating how vision quality affects agent performance in different scenarios.
+- ⚡**Ray Sensor**: Uses raycasting to detect objects in the agent’s surroundings. Rays originate from the agent’s position and extend in predefined directions. Various configurable parameters, such as **ray length, detection radius, layer masks**, and **hit sensitivity**, allow for fine-tuned detection capabilities.
+- 🔲**Grid Sensor**: Detects objects in the environment using a grid-based approach. The grid structure surrounds the agent, and each cell detects the presence of objects. Grid and cell sizes can be adjusted to optimize for different use cases, balancing precision and computational efficiency.
+- 🎥**Camera Sensor**: Captures a 2D image of the agent’s surroundings using an in-game camera. This image can be processed in **grayscale** or **color**, depending on the problem’s requirements. The agent’s AI model can use pixel data as input to make decisions.
+- 👁️**Vision Sensor**: Simulates **human-like vision** by capturing all visible objects within a predefined **field of view (FOV)**. The **vision range and width** are adjustable, enabling realistic simulations of varying vision capabilities. This sensor is particularly useful for evaluating how vision quality affects agent performance in different scenarios.
 
-#### 3. Model (2D/3D)
-
+#### Model (2D/3D)
 The **Model** defines the **physical representation** of an agent within the simulation. This influences both how the agent moves and how other agents perceive it. A complete model typically consists of:
 
-- **Mesh (2D/3D)**: The agent’s graphical representation in the game world.
-- **Collider**: Defines the agent’s collision boundaries, ensuring accurate physics interactions with the environment. The collider type (e.g., box, sphere, capsule) depends on the agent’s shape and movement mechanics.
+- 🔳**Mesh (2D/3D)**: The agent’s graphical representation in the game world.
+- 🛑**Collider**: Defines the agent’s collision boundaries, ensuring accurate physics interactions with the environment. The collider type (e.g., box, sphere, capsule) depends on the agent’s shape and movement mechanics.
 
-#### 4. Problem-Specific Components
-
+#### Problem-Specific Components
 Problem-specific components extend the base agent functionalities to support unique **game logic and mechanics**. These components vary based on the evaluation environment’s problem domain. For example:
 
 - In the **RoboStrike** problem domain, an agent may include:
@@ -62,3 +56,53 @@ Problem-specific components extend the base agent functionalities to support uni
     - **Shield System**: Determines active defensive capabilities.
 
 Each problem domain defines its own specialized components to support complex interactions and decision-making processes.
+
+## Individual
+An **Individual** is a fundamental **unit** that undergoes evaluation within the evaluation environment. In the context of Genetic Programming, an individual represents a single **solution** within a population. Each individual comprises an array of **Agent Controllers**, which can be either **AI Controllers** or **Manual Controllers**.
+
+- **Homogeneous Individuals**: If an individual has only one Agent Controller, all agents controlled by this individual exhibit the **same behavior**, regardless of their specific roles or positions.
+- **Heterogeneous Individuals**: If an individual consists of multiple Agent Controllers, different agents—or groups of agents—can exhibit **distinct behaviors**.
+
+For example, in the **soccer problem domain**, a homogeneous individual would result in all players following the same decision-making strategy, whereas a heterogeneous individual allows different players (e.g., defenders, midfielders, strikers) to adopt **specialized behaviors**. This configuration enables the evolution of **more adaptive and sophisticated** solutions.
+
+### Teams and Matches
+When multiple individuals are grouped together, they form a **Team**. In a team-based setup, agents (representing individuals) must **cooperate** to achieve a common objective. In many problem domains, effective teamwork is essential, as the goal **cannot be achieved through individual effort alone**.
+
+Once teams are defined, they can participate in a **Match**. A match consists of at least one team and each team consists of at least on individual, depending on the requirements of the specific problem domain. Currently, different teams operate **independently**, meaning that inter-team cooperation is not supported—each team functions autonomously within its own strategy.
+
+![Individual Scheme](individual_scheme.png)
+## Simulation
+A **Simulation** is one of the core processes through which predefined matches are **evaluated** within the platform. It consists of several key components:
+
+- **Match** – Defines which individuals will be evaluated.
+- **Agent Scenario** – Specifies how agents are **spawned** and **controlled** within the environment.
+- **Game Scenario** – Defines the environment in which agents will operate.
+- **Environment Controller** – Manages the entire simulation process and communicates with the **Communicator** component.
+
+### Spawner
+The platform includes two primary types of **Spawners**:
+
+1. **Match Spawner** – Handles spawning of individuals and teams for a simulation.
+2. **Additional Data Spawner** – Manages the spawning of supplementary objects (e.g., items, obstacles, or interactive elements).
+
+Both spawners include **respawn mechanisms**, which are useful in scenarios such as resetting player positions and respawning a soccer ball when a goal is scored. The spawner system is designed to be **easily extendable**, allowing for problem domain-specific adaptations.
+
+### Action Executor
+The **Action Executor** is responsible for executing actions that control agents during the simulation. It provides the logic required for translating high-level decisions into low-level actions. When adding a new problem domain, the Action Executor can either be **extended** with new functionality or **reused** from existing implementations.
+
+### Environment Controller
+The **Environment Controller** acts as the **central orchestration component** of the simulation. It contains the following:
+- The **Match** to be evaluated.
+- All **simulation-specific configurations** (e.g., duration, simulation parameters, execution type).
+- Required **prefabs** and assets.
+- **Agents** and other dynamic elements in the simulation.
+- The **problem domain logic** governing the environment.
+
+### Simulation Workflow
+0. **Pre-Init** – Evaluation request is made and the Environment Controller is loaded.
+1. **Initialization** – The Environment Controller loads the required data from the **Main Configuration** and sets up the simulation.
+2. **Spawning** – Agents and all necessary objects are instantiated within the environment.
+3. **Execution** – The simulation progresses through **fixed updates**, where agent behaviors, interactions, and physics-based calculations (such as collisions) are processed.
+4. **Termination** – The simulation continues running until the defined termination criteria are met.
+
+![Simulation Scheme](simulation_scheme.png)
