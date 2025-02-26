@@ -22,7 +22,7 @@ An **Agent** in GenIATraP performs several key **tasks** within the evaluation p
 ### Agent Architecture and Components
 The structure of an **Agent** and its key components is illustrated in the image below. Each agent consists of multiple essential components that define its behavior, interaction with the environment, and role within the evaluation framework.
 
-![Agent Scheme](agent_scheme.png)
+![Agent Scheme](/docs/images/agent_scheme.png)
 
 #### Agent Component
 The **Agent Component** serves as the central entity that encapsulates all key functionalities of an agent. It manages critical subsystems, including the **Agent Controller**, **Action Buffer**, **Agent Fitness**, and other problem-specific systems.
@@ -70,7 +70,7 @@ When multiple individuals are grouped together, they form a **Team**. In a team-
 
 Once teams are defined, they can participate in a **Match**. A match consists of at least one team and each team consists of at least on individual, depending on the requirements of the specific problem domain. Currently, different teams operate **independently**, meaning that inter-team cooperation is not supported—each team functions autonomously within its own strategy.
 
-![Individual Scheme](individual_scheme.png)
+![Individual Scheme](/docs/images/individual_scheme.png)
 ## Simulation
 A **Simulation** is one of the core processes through which predefined matches are **evaluated** within the platform. It consists of several key components:
 
@@ -105,4 +105,4 @@ The **Environment Controller** acts as the **central orchestration component** o
 3. **Execution** – The simulation progresses through **fixed updates**, where agent behaviors, interactions, and physics-based calculations (such as collisions) are processed.
 4. **Termination** – The simulation continues running until the defined termination criteria are met.
 
-![Simulation Scheme](simulation_scheme.png)
+![Simulation Scheme](/docs/images/simulation_scheme.png)
