@@ -2,6 +2,7 @@
 
 The Robostrike problem domain is a dynamic, multi-agent simulation where robots compete in a combat environment. Agents, in the form of robots, are equipped with various abilities like shooting, moving, and interacting with the environment. The goal is to destroy enemy robots while avoiding damage from opponents and environmental hazards. This problem domain is ideal for evaluating agents that need to exhibit strategic thinking, resource management, and tactical combat decision-making in a real-time environment.
 
+<img src="/docs/images/Robostrike.png" alt="Robostrike" width="600"/>
 ## Objective
 The primary objective for agents in the Robostrike domain is to survive and defeat enemy robots by managing their health, ammunition, and positioning in the arena. Agents should aim to be the last one standing while strategically using their resources to eliminate opponents. The problem domain tests agents' ability to prioritize survival, make tactical decisions under pressure, and react quickly to changing circumstances.
 

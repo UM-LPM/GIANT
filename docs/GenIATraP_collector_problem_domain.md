@@ -2,6 +2,7 @@
 
 The Collector problem domain is a single-agent environment where an agent navigates a bounded arena to collect scattered objects. This problem is designed to test an agent’s ability to efficiently explore the environment, optimize movement, and maximize the number of collected objects within a given time frame.
 
+<img src="/docs/images/Collector.png" alt="Soccer" width="600"/>
 ## Objective
 The main objective of the Collector environment is for the agent to collect as many objects as possible before the simulation ends. The agent must efficiently navigate the space while minimizing unnecessary movement and avoiding potential penalties such as collisions. This problem domain is useful for evaluating pathfinding strategies, decision-making heuristics, and reinforcement learning approaches.
 

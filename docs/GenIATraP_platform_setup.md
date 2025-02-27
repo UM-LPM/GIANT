@@ -174,9 +174,8 @@ The platform consists of three parts: Unity, Web API, and EARS framework. To set
 
 # Next Steps
 
-Read the following documentation to learn more about [Evaluation Environments](/docs/GenIATraP_evaluation_environment_overview.md), [Web API](/docs/GenIATraP_webapi_overview.md), and [Machine Learning Frameworks](/docs/GenIATraP_machine_learning_frameworks_overview.md).
-
-If you're already familiar with these, you can continue by [adding a new problem domain to the platform](/docs/GenIATraP_add_new_problem_domain.md) or check all [existing problem domains](/docs/GenIATraP_problem_domains.md) in the platform.
+- Read the following documentation to learn more about [Evaluation Environments](/docs/GenIATraP_evaluation_environment_overview.md), [Web API](/docs/GenIATraP_webapi_overview.md), and [Machine Learning Frameworks](/docs/GenIATraP_machine_learning_framework_overview.md).
+- If you're already familiar with these, you can continue by checking all [existing problem domains](/docs/GenIATraP_problem_domains.md) or [adding a new problem domain](/docs/GenIATraP_add_new_problem_domain.md)  in the platform.
 
 
 

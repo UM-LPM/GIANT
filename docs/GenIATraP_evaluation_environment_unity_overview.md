@@ -184,9 +184,19 @@ The **Coordinator** can be configured using various parameters, allowing users t
 - **Individuals Source**: Specifies the source of individual configurations (JSON files or Scriptable Objects).
 
 ### Evaluation Workflow
-
 1. The **Web API** sends a request to the **Coordinator**, providing a set of **Individuals** to be evaluated.
 2. The **Coordinator** retrieves the specified individuals from either a JSON file or Scriptable Objects.
 3. The **Coordinator** initializes the appropriate **Evaluator**, which organizes the required **Matches** and distributes them to all available **Communicators**.
 4. **Communicators** evaluates all matches and return the results back to the **Coordinator**.
 5. Once all **Communicators** have submitted their results, the **Coordinator** compiles the data and sends the final evaluation results back to the **Web API**.
+
+![Coordinator Scheme](/docs/images/coordinator_scheme.png)
+
+## Summary and Next Steps
+
+The **Unity Evaluation Environment** in **GenIATraP** is a flexible and extensible platform for testing, training, and evaluating AI agents in interactive simulations. Built on the **Unity Game Engine**, it allows for the creation of diverse problem domains, from game-like environments to real-world-inspired simulations. It supports multiple AI controllers, including **Neural Networks, Behavior Trees, and Finite State Machines**, allowing for diverse evaluation methods. Users can define custom problem domains and simulation rules, making the environment adaptable to different research and application needs. With built-in **parallel evaluation**, multiple simulations can run simultaneously, significantly improving computational efficiency. The **extensible architecture** ensures seamless integration of new sensors, AI controllers, and simulation parameters, making it a robust tool for AI research, reinforcement learning, and evolutionary algorithms.
+
+In terms of next steps:
+- Learn how to [add a new problem](/docs/GenIATraP_add_new_problem_domain.md) in **Unity Evaluation Environment**.
+- Learn how [**Web API**](/docs/GenIATraP_webapi_overview.md) is connected with **Unity Evaluation Environment** and how it works.
+- Learn how [**EARS framework**](/docs/GenIATraP_machine_learning_framework_ears_overview.md) is connected with **Web API** and how an optimization process can be executed.

@@ -20,33 +20,31 @@ The **Machine Learning framework** encompasses a sophisticated suite of algorith
 Functioning as an intermediary, the **Web API** serves to effectively bridge the ML frameworks and Evaluation Environments. Its primary objective is to translate individual representations of solutions within the ML framework into formats (such as programs or trees) that can be interpreted and evaluated by the Evaluation Environment. Subsequently, it relays pertinent information concerning the success of these solutions back to the ML framework.
 
 ![Platform General Idea](/docs/images/platform_general_idea.png)
-
 # Optimization Process (Example with EARS framework and Unity Game engine)
 
+### 1. Optimization Process Start 
 The optimization process initiates within the **EARS framework**, where the initial population is generated, and the optimization begins. During the evaluation process, a **POST** request is triggered via an HTTP call to the **Web API**. The entire population with extra parameters is encapsulated in JSON format within the request body.
-
-## 1. Data Translation
+## 2. Data Translation
 - The Web API undertakes the translation of the Tree Models array from the request to **Agent Controllers**, subsequently saving them on the filesystem within the Evaluation Environment's source folder.
 - Following the translation of all Tree Models, the Web API initiates a POST request to the Unity HTTP Server (Coordinator).
 
-## 2. Evaluation
+## 3. Evaluation
 - Upon receiving the request, the **Coordinator** module retrieves all **Individuals** from the designated source file and initiates the evaluation process.
 - Based on the configuration, matches are generated, including all individuals. There exist different [types of evaluators](/docs/GenIATraP_unity_overview.md), each creating different types of matches.
 - Depending on the number of **Unity instances** and **matches**, the **Coordinator** distributes the matches across all instances (each instance receives an equal amount of matches to evaluate). Each Unity instance contains a **Communicator**, whose task is to coordinate the evaluation inside the instance and upon successful evaluation forward the match results.
 - The **Communicator** iterates through the matches and, based on the configuration, loads corresponding scenes for evaluation. Scene loading persists until either all matches are in the evaluation process or the maximum batch size is attained. When all matches are executed, the match results are forwarded to the **Coordinator**.
-
-## 3. Scene Execution
+## 4. Simulation Execution
 - Each scene incorporates an **EnvironmentController** responsible for monitoring the simulation state and controlling the simulation for one match at a time.
 - Upon scene loading, all individuals inside the teams are spawned (**Match Spawner** contains the rules for spawning individuals) and the evaluation process begins.
 - In fixed time intervals, the **EnvironmentController** updates each agent; first, actions from **Agent Controller** are gathered, then based on the actions gathered they are applied to the agent (move, jump, shoot, etc.). Each **Individual** can contain multiple **Agent Controllers** but one agent can only have one (**Behavior Tree**, **Neural Network**, **Manual Controller**, etc.).
 - Upon meeting the termination criterion, the **EnvironmentController** emits an event, signaling termination, appended with a match result (The performance of each agent is gathered and set to the individual that the agent refers to).
 - The **Communicator** receives and saves the match result data and continues with the evaluation of a new match. 
-
-## 4. Response
+## 5. Response
 - Following the completion of the evaluation process, the **Coordinator** forwards the response to the Web API, which subsequently relays it back to EARS, where the optimization process continues.
 
-![Platform optimization process](/docs/images/platform_architecture.png)
+Full optimization process is shown on the image below:
 
+![Platform optimization process](/docs/images/platform_architecture.png)
 # Next Step
 Before jumping to platform setup, the following concepts should be known to you:
 - Introduction to [Machine Learning](/docs/introduction_to_machine_learning.md)
@@ -56,4 +54,4 @@ Before jumping to platform setup, the following concepts should be known to you:
 - [3D Modeling](/docs/3d_modeling.md) for Game Development
 - [Game Testing and Debugging](/docs/game_testing_and_debugging.md)
 
-By following these [instructions](https://github.com/UM-LPM/GeneralTrainingEnvironmentForMAS/blob/platform_refactor/docs/GenIATraP_platform_setup.md), the platform can be set up in just a few simple steps.
+By following these [instructions](/docs/GenIATraP_platform_setup.md), the platform can be set up in just a few simple steps.
