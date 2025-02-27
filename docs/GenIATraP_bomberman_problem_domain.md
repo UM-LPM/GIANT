@@ -1,6 +1,7 @@
 # Bomberman Problem Domain
 The Bomberman problem domain is a strategic simulation where agents interact within a maze-like environment. The agents' primary objective is to place bombs strategically, destroy obstacles, avoid damage from explosions, and eliminate or outlast other agents. This problem domain involves handling various game mechanics such as power-ups, health management, bomb placement, and agent movement. It is typically used to train agents in decision-making and survival tactics in a dynamic and competitive environment.
 
+<img src="/docs/images/Bomberman.png" alt="Bomberman" width="600"/>
 ## Objective
 The main objective for agents in the Bomberman domain is to navigate the environment, avoid being destroyed by explosions, and outlast opponents. Agents must make decisions on when to place bombs, how to avoid their own bombs, and how to manage power-ups to enhance their chances of survival. The problem domain rewards strategic actions like bomb placement, surviving, and collecting power-ups while penalizing self-destructive behaviors, such as being hit by bombs or placing bombs in ineffective positions.
 

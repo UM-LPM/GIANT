@@ -50,5 +50,7 @@ While it’s possible to create custom evaluation environments from scratch for 
     
 By using an existing evaluation environment, you gain the ability to **accelerate AI development**, leverage community-driven improvements, and ensure that your evaluations are robust and repeatable. This reduces the complexity of the process and allows you to focus on refining and optimizing your AI agents.
 
-## Supported Evaluation Environments in GenIATraP
-Currently, the **GenIATraP** platform supports a single evaluation environment, which is based on the powerful [**Unity Game Engine**](https://unity.com/). Unity has been chosen due to its versatility, scalability, and extensive support for both 2D and 3D environments, making it an ideal choice for simulating various problem domains for AI training and evaluation. For a more comprehensive overview of the Unity evaluation environment, including its architecture, customization options, and usage guides, refer to the [Unity Evaluation Environment Overview](/docs/GenIATraP_evaluation_environment_unity_overview.md).
+## Summary and Next Steps
+Currently, the **GenIATraP** platform supports a single evaluation environment, which is based on the powerful [**Unity Game Engine**](https://unity.com/). Unity has been chosen due to its versatility, scalability, and extensive support for both 2D and 3D environments, making it an ideal choice for simulating various problem domains for AI training and evaluation. 
+
+For a more comprehensive overview of the **Unity evaluation environment**, including its architecture, customization options, and usage guides, refer to the [**Unity Evaluation Environment Overview**](/docs/GenIATraP_evaluation_environment_unity_overview.md).

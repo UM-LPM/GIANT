@@ -7,7 +7,6 @@ Game development is complex, involving **multiple systems interacting simultaneo
 ## 1. Types of Game Testing
 
 Game testing can be categorized into different types, each serving a specific purpose:
-
 ### **1.1. Functional Testing**
 
 ✔ **Purpose**: Ensures that all game features and mechanics work as intended.
