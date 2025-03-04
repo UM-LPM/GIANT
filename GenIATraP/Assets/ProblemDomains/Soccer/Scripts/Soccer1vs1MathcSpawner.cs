@@ -89,11 +89,11 @@ namespace Problems.Soccer
                             // Configure agent material
                             if (i == 0)
                             {
-                                agentGameObject.GetComponent<Renderer>().material = SoccerTeamMaterialBlue;
+                                agentGameObject.GetComponentInChildren<HeadComponent>()!.GetComponent<Renderer>().material = SoccerTeamMaterialBlue;
                             }
                             else
                             {
-                                agentGameObject.GetComponent<Renderer>().material = SoccerTeamMaterialPurple;
+                                agentGameObject.GetComponentInChildren<HeadComponent>()!.GetComponent<Renderer>().material = SoccerTeamMaterialPurple;
                             }
 
                             // Update list
