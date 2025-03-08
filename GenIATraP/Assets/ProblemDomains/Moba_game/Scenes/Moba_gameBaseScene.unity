@@ -6901,7 +6901,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CommunicatorSetup: 1
-  IndividualsSource: C:\Users\marko\UnityProjects\GenIATraP_refactor\GeneralTrainingEnvironmentForMAS\GenIATraP\Assets\Resources\Robostrike\
   CommunicatorURI: http://localhost:4444/
   SceneLoadMode: 0
   MinLayerId: 6
@@ -6910,18 +6909,18 @@ MonoBehaviour:
   GridSize: {x: 10, y: 0, z: 10}
   GridSpacing: {x: 50, y: 0, z: 50}
   GameScenarios:
-  - GameSceneName: RobostrikeGameScene
+  - GameSceneName: Moba_gameGameScene
   AgentScenarios:
-  - AgentSceneName: RobostrikeAgentScene
+  - AgentSceneName: Moba_gameAgentScene
     GameScenarios:
-    - GameSceneName: RobostrikeGameScene
+    - GameSceneName: Moba_gameGameScene
   TimeScale: 1
   FixedTimeStep: 0.02
   RerunTimes: 1
   PredefinedMatchFitnessWinner: -1000
   PredefinedMatchFitnessLoser: 1000
   InitialSeed: 316227711
-  RandomSeedMode: 1
+  RandomSeedMode: 0
   Matches: []
 --- !u!114 &1798691732
 MonoBehaviour:
@@ -6948,8 +6947,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CoordinatorSetup: 1
-  IndividualsSourceJSON: C:\\Users\\marko\\UnityProjects\\GenIATraP_refactor\\GeneralTrainingEnvironmentForMAS\\GenIATraP\\Assets\\Resources\\JSONs\\Robostrike
-  IndividualsSourceSO: Assets\\Resources\\SOs\\Robostrike
+  IndividualsSourceJSON: Assets\\Resources\\JSONs\\Moba_game
+  IndividualsSourceSO: Assets\\Resources\\SOs\\Moba_game
   ConvertSOToJSON: 0
   CoordinatorURI: http://localhost:4000/
   InitialSeed: 316227711
@@ -6957,6 +6956,7 @@ MonoBehaviour:
   RatingSystemType: 0
   TournamentOrganizationType: 1
   TournamentRounds: -1
+  SwapTournamentMatchTeams: 1
   Individuals: []
 --- !u!114 &1798691734
 MonoBehaviour:

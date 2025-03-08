@@ -287,7 +287,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -130, y: -61}
+  m_AnchoredPosition: {x: -123.99997, y: -61}
   m_SizeDelta: {x: 160, y: 25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &47874352
@@ -421,7 +421,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -130, y: 37}
+  m_AnchoredPosition: {x: -124, y: 37}
   m_SizeDelta: {x: 160, y: 25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &84632569
@@ -586,7 +586,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -30, y: -132.99998}
+  m_AnchoredPosition: {x: -24, y: -132.99998}
   m_SizeDelta: {x: 35, y: 25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &193026857
@@ -835,7 +835,7 @@ GameObject:
   - component: {fileID: 253094008}
   - component: {fileID: 253094004}
   - component: {fileID: 253094003}
-  - component: {fileID: 253094010}
+  - component: {fileID: 253094009}
   m_Layer: 0
   m_Name: EnvironmentController
   m_TagString: Untagged
@@ -899,6 +899,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a7997f4ed952b946b0bb8ecbebc79b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  laserRange: 10
 --- !u!114 &253094006
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -958,17 +959,18 @@ MonoBehaviour:
   AgentColliderExtendsMultiplier: {x: 0.5, y: 0.5, z: 0}
   RandomTeamColor: 0
   DecisionRequestInterval: 2
-  Match: {fileID: 11400000, guid: 332fc9f3c19289244b5ca0beb4be60f2, type: 2}
+  Match: {fileID: 11400000, guid: 5370b5ac1ae324c47bf251534c7bddf9, type: 2}
   AgentStartHealth: 10
   BaseStartHealth: 20
   AgentStartAmmo: 50
   AgentRespawnType: 0
   GameScenarioType: 0
+  FrienlyFire: 0
   BasePrefab: {fileID: 472220407532831056, guid: 2cd06a3c030c820478eacf9355d99e62, type: 3}
   LavaPlanetPrefab: {fileID: 3925929529766172192, guid: 451e04b1776035d4bbfa98e06feb8522, type: 3}
-  LavaPlanetSpawnAmount: 1
+  LavaPlanetSpawnAmount: 4
   IcePlanetPrefab: {fileID: 3925929529766172192, guid: 5ef53d0e21a3d79438dd681c626d8251, type: 3}
-  IcePlanetSpawnAmount: 0
+  IcePlanetSpawnAmount: 4
   AgentMoveSpeed: 10
   AgentRotationSpeed: 180
   AgentTurrentRotationSpeed: 90
@@ -1018,7 +1020,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: b348cd69287174e498423155b5f76a7f, type: 3}
   - {fileID: 21300000, guid: 74be89cb22e4f1d43bc6801db72d87d7, type: 3}
   - {fileID: 21300000, guid: a56fca296e6bab247a10b9197bf2d0ff, type: 3}
---- !u!114 &253094010
+--- !u!114 &253094009
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1064,7 +1066,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -130, y: -97.999985}
+  m_AnchoredPosition: {x: -123.99997, y: -97.999985}
   m_SizeDelta: {x: 160, y: 25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &258532272
@@ -1198,7 +1200,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -30, y: 37.000015}
+  m_AnchoredPosition: {x: -24, y: 37.000015}
   m_SizeDelta: {x: 35, y: 25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &267116568
@@ -2344,7 +2346,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -130, y: 72.000015}
+  m_AnchoredPosition: {x: -123.99997, y: 72.000015}
   m_SizeDelta: {x: 160, y: 25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &760955135
@@ -2504,7 +2506,7 @@ Transform:
   m_GameObject: {fileID: 851898103}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -66.4, y: 0, z: 0}
   m_LocalScale: {x: 1.75, y: 3.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2696,7 +2698,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -30, y: -97.999985}
+  m_AnchoredPosition: {x: -24, y: -97.999985}
   m_SizeDelta: {x: 35, y: 25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &924589296
@@ -2953,7 +2955,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -130, y: 107}
+  m_AnchoredPosition: {x: -123.99997, y: 107}
   m_SizeDelta: {x: 160, y: 25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1026413657
@@ -3087,7 +3089,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -30, y: 106.99997}
+  m_AnchoredPosition: {x: -24, y: 106.99997}
   m_SizeDelta: {x: 35, y: 25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1064794155
@@ -3252,7 +3254,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -30, y: 72.000015}
+  m_AnchoredPosition: {x: -24, y: 72.000015}
   m_SizeDelta: {x: 35, y: 25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1130494284
@@ -4399,7 +4401,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -130, y: -133}
+  m_AnchoredPosition: {x: -123.99997, y: -133}
   m_SizeDelta: {x: 160, y: 25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1560574090
@@ -4847,7 +4849,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -30, y: -61.000008}
+  m_AnchoredPosition: {x: -24, y: -61.000008}
   m_SizeDelta: {x: 35, y: 25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1649202226

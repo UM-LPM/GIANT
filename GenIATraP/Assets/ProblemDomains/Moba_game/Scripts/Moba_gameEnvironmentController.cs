@@ -24,12 +24,13 @@ namespace Problems.Moba_game
         [SerializeField] int AgentStartAmmo = 50;
         [SerializeField] public Moba_gameAgentRespawnType AgentRespawnType = Moba_gameAgentRespawnType.StartPos;
         [SerializeField] public Moba_gameGameScenarioType GameScenarioType = Moba_gameGameScenarioType.Normal;
+        [SerializeField] public Boolean FrienlyFire = false;
         private Moba_game1vs1MatchSpawner Match1v1Spawner;
 
 
         [Header("Moba_game Base Configuration")]
         [SerializeField] public GameObject BasePrefab;
-        private BaseComponent[] Bases;
+        private List<BaseComponent> Bases;
 
         [Header("Moba_game Planets Configuration")]
 
@@ -182,7 +183,7 @@ namespace Problems.Moba_game
                 agent.SetEnvironmentColor(color);
             }
 
-            Bases = baseSpawner.Spawn<BaseComponent>(this);
+            Bases = baseSpawner.Spawn<BaseComponent>(this).ToList();
             // Set Base stats
             foreach (Moba_gameBaseComponent _base in Bases.Cast<Moba_gameBaseComponent>())
             {
@@ -248,8 +249,11 @@ namespace Problems.Moba_game
                 if (baseComponent.TeamID >= 0 && baseComponent.TeamID <= 3)
                 {
                     int teamIndex = baseComponent.TeamID;
-                    baseComponent.LavaAmount += lavaCounts[teamIndex];
-                    baseComponent.IceAmount += iceCounts[teamIndex];
+                    if (baseComponent.isActiveAndEnabled)
+                    {
+                        baseComponent.LavaAmount += lavaCounts[teamIndex];
+                        baseComponent.IceAmount += iceCounts[teamIndex];
+                    }
                 }
             }
         }
@@ -533,34 +537,63 @@ namespace Problems.Moba_game
 
         public void TankHit(MissileComponent missile, AgentComponent hitAgent)
         {
-            if (hitAgent.TeamID == missile.Parent.TeamID)
+            if (FrienlyFire)
             {
-                (missile.Parent as Moba_gameAgentComponent).MissileHitTeammate();
-
+                if (hitAgent.TeamID == missile.Parent.TeamID)
+                {
+                    (missile.Parent as Moba_gameAgentComponent).MissileHitTeammate();
+                }
+                else
+                {
+                    (missile.Parent as Moba_gameAgentComponent).MissileHitOpponent();
+                }
+                (hitAgent as Moba_gameAgentComponent).HitByOpponentMissile();
+                UpdateAgentHealth(missile, hitAgent as Moba_gameAgentComponent);
             }
             else
             {
-                (missile.Parent as Moba_gameAgentComponent).MissileHitOpponent();
-
+                if (hitAgent.TeamID == missile.Parent.TeamID)
+                {
+                    //(missile.Parent as Moba_gameAgentComponent).MissileHitTeammate();
+                }
+                else
+                {
+                    (missile.Parent as Moba_gameAgentComponent).MissileHitOpponent();
+                    UpdateAgentHealth(missile, hitAgent as Moba_gameAgentComponent);
+                    (hitAgent as Moba_gameAgentComponent).HitByOpponentMissile();
+                }
             }
-            (hitAgent as Moba_gameAgentComponent).HitByOpponentMissile();
-            UpdateAgentHealth(missile, hitAgent as Moba_gameAgentComponent);
+
 
         }
 
         public void BaseHit(MissileComponent missile, BaseComponent hitBase)
         {
-            if (hitBase.TeamID == missile.Parent.TeamID)
+            if (FrienlyFire)
             {
-                (missile.Parent as Moba_gameAgentComponent).MissileHitOwnBase();
-
+                if (hitBase.TeamID == missile.Parent.TeamID)
+                {
+                    (missile.Parent as Moba_gameAgentComponent).MissileHitOwnBase();
+                }
+                else
+                {
+                    (missile.Parent as Moba_gameAgentComponent).MissileHitBase();
+                }
+                UpdateBaseHealth(missile, hitBase as Moba_gameBaseComponent);
             }
             else
             {
-                (missile.Parent as Moba_gameAgentComponent).MissileHitBase();
-
+                if (hitBase.TeamID == missile.Parent.TeamID)
+                {
+                    //(missile.Parent as Moba_gameAgentComponent).MissileHitOwnBase();
+                }
+                else
+                {
+                    (missile.Parent as Moba_gameAgentComponent).MissileHitBase();
+                    UpdateBaseHealth(missile, hitBase as Moba_gameBaseComponent);
+                }
             }
-            UpdateBaseHealth(missile, hitBase as Moba_gameBaseComponent);
+
         }
 
         void UpdateAgentHealth(MissileComponent missile, Moba_gameAgentComponent hitAgent)
@@ -628,12 +661,29 @@ namespace Problems.Moba_game
 
         public override void CheckEndingState()
         {
-            foreach (Moba_gameBaseComponent _base in Bases.Cast<Moba_gameBaseComponent>())
+            int activeBases = 0;
+            for (int i = 0; i < Bases.Count; i++)
             {
+                Moba_gameBaseComponent _base = (Moba_gameBaseComponent)Bases[i];
+
                 if (_base.HealthComponent.Health <= 0)
                 {
-                    FinishGame();
+                    _base.HealthComponent.Health = 0f;
+                    _base.LavaAmount = 0;
+                    _base.IceAmount = 0;
+                    _base.gameObject.SetActive(false);
+                    //Bases.RemoveAt(i);
                 }
+                if (_base.gameObject.activeSelf)
+                {
+                    activeBases++;
+                }
+
+            }
+
+            if (activeBases == 1)
+            {
+                FinishGame();
             }
         }
 

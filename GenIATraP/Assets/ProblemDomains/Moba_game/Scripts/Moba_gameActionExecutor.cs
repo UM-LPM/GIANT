@@ -31,6 +31,7 @@ namespace Problems.Moba_game
 
         Vector3 newAgentPos;
         Quaternion newAgentRotation;
+        public float laserRange = 100f;
 
         private void Awake()
         {
@@ -40,8 +41,9 @@ namespace Problems.Moba_game
         public override void ExecuteActions(AgentComponent agent)
         {
             //MoveAgent(agent as Moba_gameAgentComponent);
-            ShootMissile(agent as Moba_gameAgentComponent);
+            //ShootMissile(agent as Moba_gameAgentComponent);
             HandleMovement(agent as Moba_gameAgentComponent);
+            ShootLaser(agent as Moba_gameAgentComponent);
         }
 
         void HandleMovement(Moba_gameAgentComponent agent)
@@ -127,6 +129,39 @@ namespace Problems.Moba_game
             // Agent turret rotation
             agent.Turret.transform.rotation = Quaternion.Euler(0, 0, agent.Turret.transform.rotation.eulerAngles.z + UnityUtils.RoundToDecimals(rotateTurrentDir.z * Time.fixedDeltaTime * Moba_gameEnvironmentController.AgentTurrentRotationSpeed, 2));
         }
+        void ShootLaser(Moba_gameAgentComponent agent)
+        {
+            if (agent.ActionBuffer.GetDiscreteAction("shootMissile") == 1)
+            {
+
+                spawnPosition = agent.MissileSpawnPoint.transform.position;
+                localXDir = agent.MissileSpawnPoint.transform.TransformDirection(Vector3.up);
+                Vector3 laserEnd = spawnPosition + localXDir * laserRange;
+                
+                RaycastHit2D hit = Physics2D.Raycast(spawnPosition, localXDir, laserRange);
+
+                if (hit.collider != null)
+                {
+                    laserEnd = hit.point;
+                    if (hit.collider.CompareTag("Agent"))
+                    {
+                        Debug.Log("Enemy hit!");
+                    }
+                }
+                LineRenderer lineRenderer = agent.GetComponent<LineRenderer>();
+                StartCoroutine(ShowLaser(spawnPosition, laserEnd, lineRenderer));
+            }
+        }
+
+        System.Collections.IEnumerator ShowLaser(Vector3 spawnPosition, Vector3 endPoint, LineRenderer lineRenderer)
+        {
+            lineRenderer.SetPosition(0, spawnPosition);
+            lineRenderer.SetPosition(1, endPoint);
+            lineRenderer.enabled = true;
+            yield return new WaitForSeconds(0.1f);
+            lineRenderer.enabled = false;
+        }
+
 
         private void ShootMissile(Moba_gameAgentComponent agent)
         {

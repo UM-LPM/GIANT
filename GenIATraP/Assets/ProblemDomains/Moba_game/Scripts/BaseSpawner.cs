@@ -33,6 +33,7 @@ namespace Problems.Moba_game
             for (int i = 0; i < environmentController.Match.Teams.Length; i++)
             {
                 GameObject baseGameObject = Instantiate(Moba_gameEnvironmentController.BasePrefab, BaseSpawnPoints[i].position, BaseSpawnPoints[i].rotation, gameObject.transform);
+                baseGameObject.layer = gameObject.layer;
 
                 T _base = baseGameObject.GetComponent<T>();
                 BaseComponent baseComponent = _base as BaseComponent;

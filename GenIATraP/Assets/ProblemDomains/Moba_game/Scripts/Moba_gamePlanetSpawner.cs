@@ -38,80 +38,107 @@ namespace Problems.Moba_game
             validateSpawnConditions(environmentController);
 
             List<T> planets = new List<T>();
-            List<Vector3> planetSpawnPositions = new List<Vector3>();
+            List<Vector3> lavaPlanetSpawnPositions = new List<Vector3>{new Vector3(-15, 15, 0),new Vector3(15, 15, 0),new Vector3(-15, -15, 0),new Vector3(15, -15, 0)};
+            List<Vector3> lavaPlanetSpawnPositions2 = new List<Vector3>{new Vector3(-7, 7, 0),new Vector3(7, 7, 0),new Vector3(-7, -7, 0),new Vector3(7, -7, 0)};
+            List<Vector3> icePlanetSpawnPositions = new List<Vector3>{new Vector3(-5, 5, 0),new Vector3(5, 5, 0),new Vector3(-5, -5, 0),new Vector3(5, -5, 0)};
+            List<Vector3> icePlanetSpawnPositions2 = new List<Vector3>{new Vector3(0, 25, 0),new Vector3(25, 0, 0),new Vector3(0, -25, 0),new Vector3(-25, 0, 0)};
+
+            
             Moba_gameEnvironmentController Moba_gameEnvironmentController = environmentController as Moba_gameEnvironmentController;
 
             // Spawn Lava Planets
             for (int i = 0; i < Moba_gameEnvironmentController.LavaPlanetSpawnAmount; i++)
             {
-                T planet = SpawnPlanet<T>(Moba_gameEnvironmentController, Moba_gameEnvironmentController.LavaPlanetPrefab, planetSpawnPositions);
+                T planet = SpawnPlanet<T>(Moba_gameEnvironmentController, Moba_gameEnvironmentController.LavaPlanetPrefab, lavaPlanetSpawnPositions[i]);
                 Moba_gamePlanetComponent planetComponent = planet as Moba_gamePlanetComponent;
                 planetComponent.Type = "lava";
                 planets.Add(planet);
-                planetSpawnPositions.Add(planets[i].transform.position);
             }
             // Spawn Ice Planets
             for (int i = 0; i < Moba_gameEnvironmentController.IcePlanetSpawnAmount; i++)
             {
-                T planet = SpawnPlanet<T>(Moba_gameEnvironmentController, Moba_gameEnvironmentController.IcePlanetPrefab, planetSpawnPositions);
+                T planet = SpawnPlanet<T>(Moba_gameEnvironmentController, Moba_gameEnvironmentController.IcePlanetPrefab, icePlanetSpawnPositions[i]);
                 Moba_gamePlanetComponent planetComponent = planet as Moba_gamePlanetComponent;
                 planetComponent.Type = "ice";
                 planets.Add(planet);
-                planetSpawnPositions.Add(planets[i].transform.position);
             }
+
+
+
+            // // Spawn Lava Planets
+            // for (int i = 0; i < Moba_gameEnvironmentController.LavaPlanetSpawnAmount; i++)
+            // {
+            //     T planet = SpawnPlanet<T>(Moba_gameEnvironmentController, Moba_gameEnvironmentController.LavaPlanetPrefab, planetSpawnPositions);
+            //     Moba_gamePlanetComponent planetComponent = planet as Moba_gamePlanetComponent;
+            //     planetComponent.Type = "lava";
+            //     planets.Add(planet);
+            //     planetSpawnPositions.Add(planets[i].transform.position);
+            // }
+            // // Spawn Ice Planets
+            // for (int i = 0; i < Moba_gameEnvironmentController.IcePlanetSpawnAmount; i++)
+            // {
+            //     T planet = SpawnPlanet<T>(Moba_gameEnvironmentController, Moba_gameEnvironmentController.IcePlanetPrefab, planetSpawnPositions);
+            //     Moba_gamePlanetComponent planetComponent = planet as Moba_gamePlanetComponent;
+            //     planetComponent.Type = "ice";
+            //     planets.Add(planet);
+            //     planetSpawnPositions.Add(planets[i].transform.position);
+            // }
 
             return planets.ToArray();
         }
 
-        public T SpawnPlanet<T>(Moba_gameEnvironmentController environmentController, GameObject planetPrefab, List<Vector3> existingPlanetPositions) where T : Component
+        public T SpawnPlanet<T>(Moba_gameEnvironmentController environmentController, GameObject planetPrefab, Vector3 spawnPos/*List<Vector3> existingPlanetPositions*/) where T : Component
         {
-            counter = 0;
-            do
-            {
-                isFarEnough = true;
-                spawnPos = GetRandomSpawnPoint(
-                                environmentController.Util,
-                                environmentController.GameType,
-                                environmentController.ArenaSize,
-                                environmentController.ArenaRadius,
-                                environmentController.ArenaCenterPoint,
-                                environmentController.ArenaOffset);
-                if (environmentController.SceneLoadMode == SceneLoadMode.GridMode)
-                    spawnPos += environmentController.GridCell.GridCellPosition;
+            // counter = 0;
+            // do
+            // {
+            //     isFarEnough = true;
+            //     spawnPos = GetRandomSpawnPoint(
+            //                     environmentController.Util,
+            //                     environmentController.GameType,
+            //                     environmentController.ArenaSize,
+            //                     environmentController.ArenaRadius,
+            //                     environmentController.ArenaCenterPoint,
+            //                     environmentController.ArenaOffset);
+            //     if (environmentController.SceneLoadMode == SceneLoadMode.GridMode)
+            //         spawnPos += environmentController.GridCell.GridCellPosition;
 
-                rotation = planetPrefab.transform.rotation;
+            //     rotation = planetPrefab.transform.rotation;
 
-                if (!SpawnPointSuitable(environmentController.GameType,
-                            spawnPos,
-                            rotation,
-                            existingPlanetPositions,
-                            environmentController.PowerUpColliderExtendsMultiplier,
-                            environmentController.MinPowerUpDistance,
-                            true,
-                            environmentController.gameObject.layer,
-                            environmentController.DefaultLayer))
-                {
-                    isFarEnough = false;
-                }
+            //     if (!SpawnPointSuitable(environmentController.GameType,
+            //                 spawnPos,
+            //                 rotation,
+            //                 existingPlanetPositions,
+            //                 environmentController.PowerUpColliderExtendsMultiplier,
+            //                 environmentController.MinPowerUpDistance,
+            //                 true,
+            //                 environmentController.gameObject.layer,
+            //                 environmentController.DefaultLayer))
+            //     {
+            //         isFarEnough = false;
+            //     }
 
-                // Check if current spawn point is far enough from the agents
-                foreach (AgentComponent agent in environmentController.Agents)
-                {
-                    if (Vector3.Distance(agent.transform.position, spawnPos) < environmentController.MinPowerUpDistanceFromAgents)
-                    {
-                        isFarEnough = false;
-                        break;
-                    }
-                }
+            //     // Check if current spawn point is far enough from the agents
+            //     foreach (AgentComponent agent in environmentController.Agents)
+            //     {
+            //         if (Vector3.Distance(agent.transform.position, spawnPos) < environmentController.MinPowerUpDistanceFromAgents)
+            //         {
+            //             isFarEnough = false;
+            //             break;
+            //         }
+            //     }
 
-                if (counter >= maxSpawnPoints)
-                    break;
+            //     if (counter >= maxSpawnPoints)
+            //         break;
 
-                counter++;
-            } while (!isFarEnough);
+            //     counter++;
+            // } while (!isFarEnough);
 
             // Instantiate planet and set layer
+            rotation = planetPrefab.transform.rotation;
             obj = Instantiate(planetPrefab, spawnPos, rotation, gameObject.transform);
+            obj.layer = gameObject.layer;
+
             return obj.GetComponent<T>();
         }
 
