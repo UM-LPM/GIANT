@@ -126,7 +126,7 @@ namespace Problems.Moba_game
             {
                 agentGameObject = Instantiate(environmentController.AgentPrefab, SpawnPoints[teamID].position, SpawnPoints[teamID].rotation, gameObject.transform);
             }
-
+            Moba_gameEnvironmentController Moba_gameEnvironmentController = environmentController as Moba_gameEnvironmentController;
             // Configure agent
             T agent = agentGameObject.GetComponent<T>();
             Moba_gameAgentComponent agentComponent = agent as Moba_gameAgentComponent;
@@ -134,6 +134,9 @@ namespace Problems.Moba_game
             agentComponent.IndividualID = individual.IndividualId;
             agentComponent.TeamID = teamID;
             agentComponent.AgentType = agentType;
+            agentComponent.HealthComponent.Health = Moba_gameEnvironmentController.MAX_HEALTH;
+            agentComponent.EnergyComponent.Energy = Moba_gameEnvironmentController.MAX_ENERGY;
+
 
             // Configure agent sprites
             ConfigureAgentSprites(environmentController, agentGameObject, teamID);

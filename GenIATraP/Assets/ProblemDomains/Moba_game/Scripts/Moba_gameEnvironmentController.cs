@@ -15,13 +15,14 @@ namespace Problems.Moba_game
     {
         [SerializeField] public static int MAX_BASE_HEALTH = 20;
         [SerializeField] public static int MAX_HEALTH = 10;
-        [SerializeField] public static int MAX_SHIELD = 10;
-        [SerializeField] public static int MAX_AMMO = 20;
+        [SerializeField] public static int MAX_ENERGY = 30;
 
         [Header("Moba_game General Configuration")]
         [SerializeField] int AgentStartHealth = 10;
+        [SerializeField] int AgentStartEnergy = 30;
         [SerializeField] int BaseStartHealth = 20;
         [SerializeField] int AgentStartAmmo = 50;
+
         [SerializeField] public Moba_gameAgentRespawnType AgentRespawnType = Moba_gameAgentRespawnType.StartPos;
         [SerializeField] public Moba_gameGameScenarioType GameScenarioType = Moba_gameGameScenarioType.Normal;
         [SerializeField] public Boolean FrienlyFire = false;
@@ -175,20 +176,8 @@ namespace Problems.Moba_game
             // Generate random color and assign it to the every agent stat bar
             Color color = new Color(UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0.0f, 1f), UnityEngine.Random.Range(0f, 1f), 1);
 
-            // Set Agent stats
-            foreach (Moba_gameAgentComponent agent in Agents)
-            {
-                agent.HealthComponent.Health = AgentStartHealth;
-                agent.AmmoComponent.Ammo = AgentStartAmmo;
-                agent.SetEnvironmentColor(color);
-            }
-
+            // Spawn bases
             Bases = baseSpawner.Spawn<BaseComponent>(this).ToList();
-            // Set Base stats
-            foreach (Moba_gameBaseComponent _base in Bases.Cast<Moba_gameBaseComponent>())
-            {
-                _base.HealthComponent.Health = BaseStartHealth;
-            }
 
             // Spawn planets
             Planets = PlanetSpawner.Spawn<PlanetComponent>(this).ToList();
@@ -207,7 +196,7 @@ namespace Problems.Moba_game
             if (GameState == GameState.RUNNING)
             {
                 //CheckAgentsPickedPowerUps();
-                MissileController.UpdateMissilePosAndCheckForColls();
+                //MissileController.UpdateMissilePosAndCheckForColls();
                 CheckAgentsExploration();
                 UpdateAgentsSurvivalTime();
                 ResetAgentOpponentTracking();
@@ -217,12 +206,28 @@ namespace Problems.Moba_game
                 timer += Time.deltaTime;
                 if (timer >= 1f)
                 {
-
                     UpdateBaseMoney();
+                    UpdateAgentEnergy();
                     timer = 0f;
                 }
             }
         }
+        private void UpdateAgentEnergy()
+        {
+            foreach (Moba_gameAgentComponent agent in Agents)
+            {
+                if (agent.isActiveAndEnabled)
+                {
+                    agent.EnergyComponent.Energy--;
+                    agent.UpdatetStatBars();
+                    if (agent.EnergyComponent.Energy <= 0)
+                    {
+                        agent.gameObject.SetActive(false);
+                    }
+                }
+            }
+        }
+
         private void UpdateBaseMoney()
         {
             int[] lavaCounts = new int[4];
@@ -325,7 +330,6 @@ namespace Problems.Moba_game
                         obj.HealthComponent.Health = AgentStartHealth;
                         //obj.ShieldComponent.Shield = AgentStartShield;
                         obj.AmmoComponent.Ammo = AgentStartAmmo;
-                        obj.SetEnvironmentColor(color);
 
                         List<AgentComponent> agentList = Agents.ToList();
                         agentList.Add(obj);
@@ -355,7 +359,6 @@ namespace Problems.Moba_game
                         obj.HealthComponent.Health = AgentStartHealth;
                         //obj.ShieldComponent.Shield = AgentStartShield;
                         obj.AmmoComponent.Ammo = AgentStartAmmo;
-                        obj.SetEnvironmentColor(color);
 
                         List<AgentComponent> agentList = Agents.ToList();
                         agentList.Add(obj);
@@ -441,14 +444,9 @@ namespace Problems.Moba_game
                     MAX_HEALTH = int.Parse(conf.ProblemConfiguration["MaxHealth"]);
                 }
 
-                if (conf.ProblemConfiguration.ContainsKey("MaxShield"))
+                if (conf.ProblemConfiguration.ContainsKey("MaxEnergy"))
                 {
-                    MAX_SHIELD = int.Parse(conf.ProblemConfiguration["MaxShield"]);
-                }
-
-                if (conf.ProblemConfiguration.ContainsKey("MaxAmmo"))
-                {
-                    MAX_AMMO = int.Parse(conf.ProblemConfiguration["MaxAmmo"]);
+                    MAX_ENERGY = int.Parse(conf.ProblemConfiguration["MaxEnergy"]);
                 }
 
                 if (conf.ProblemConfiguration.ContainsKey("MinPowerUpDistance"))
@@ -563,10 +561,32 @@ namespace Problems.Moba_game
                     (hitAgent as Moba_gameAgentComponent).HitByOpponentMissile();
                 }
             }
-
-
         }
-
+        public void LaserTankHit(Moba_gameAgentComponent agent, Moba_gameAgentComponent hitAgent)
+        {
+            if (FrienlyFire)
+            {
+                if (hitAgent.TeamID == agent.TeamID)
+                {
+                    agent.MissileHitTeammate();
+                }
+                else
+                {
+                    agent.MissileHitOpponent();
+                }
+                hitAgent.HitByOpponentMissile();
+                UpdateAgentHealthLaser(agent, hitAgent);
+            }
+            else
+            {
+                if (hitAgent.TeamID != agent.TeamID)
+                {
+                    agent.MissileHitOpponent();
+                    hitAgent.HitByOpponentMissile();
+                    UpdateAgentHealthLaser(agent, hitAgent);
+                }
+            }
+        }
         public void BaseHit(MissileComponent missile, BaseComponent hitBase)
         {
             if (FrienlyFire)
@@ -579,7 +599,7 @@ namespace Problems.Moba_game
                 {
                     (missile.Parent as Moba_gameAgentComponent).MissileHitBase();
                 }
-                UpdateBaseHealth(missile, hitBase as Moba_gameBaseComponent);
+                UpdateBaseHealth(hitBase as Moba_gameBaseComponent);
             }
             else
             {
@@ -590,12 +610,33 @@ namespace Problems.Moba_game
                 else
                 {
                     (missile.Parent as Moba_gameAgentComponent).MissileHitBase();
-                    UpdateBaseHealth(missile, hitBase as Moba_gameBaseComponent);
+                    UpdateBaseHealth(hitBase as Moba_gameBaseComponent);
                 }
             }
-
         }
-
+        public void LaserBaseHit(Moba_gameAgentComponent agent, Moba_gameBaseComponent hitBase)
+        {
+            if (FrienlyFire)
+            {
+                if (hitBase.TeamID == agent.TeamID)
+                {
+                    agent.MissileHitOwnBase();
+                }
+                else
+                {
+                    agent.MissileHitBase();
+                }
+                UpdateBaseHealth(hitBase);
+            }
+            else
+            {
+                if (hitBase.TeamID != agent.TeamID)
+                {
+                    agent.MissileHitBase();
+                    UpdateBaseHealth(hitBase);
+                }
+            }
+        }
         void UpdateAgentHealth(MissileComponent missile, Moba_gameAgentComponent hitAgent)
         {
             hitAgent.TakeDamage(MissileDamage);
@@ -617,7 +658,27 @@ namespace Problems.Moba_game
             }
         }
 
-        void UpdateBaseHealth(MissileComponent missile, Moba_gameBaseComponent hitBase)
+        void UpdateAgentHealthLaser(Moba_gameAgentComponent agent, Moba_gameAgentComponent hitAgent)
+        {
+            hitAgent.TakeDamage(MissileDamage);
+            if (hitAgent.HealthComponent.Health <= 0)
+            {
+                switch (GameScenarioType)
+                {
+                    case Moba_gameGameScenarioType.Normal:
+                        hitAgent.gameObject.SetActive(false);
+                        //CheckEndingState();
+                        break;
+                    case Moba_gameGameScenarioType.Deathmatch:
+                        agent.OpponentsDestroyed++;
+
+                        ResetAgent(hitAgent);
+                        break;
+                }
+            }
+        }
+
+        void UpdateBaseHealth(Moba_gameBaseComponent hitBase)
         {
             if (hitBase == null)
             {

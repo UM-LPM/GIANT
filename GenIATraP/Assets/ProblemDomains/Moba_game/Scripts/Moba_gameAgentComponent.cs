@@ -14,10 +14,12 @@ namespace Problems.Moba_game
         public float NextShootTime { get; set; }
 
         public HealthComponent HealthComponent { get; set; }
+        public EnergyComponent EnergyComponent { get; set; }
         public AmmoComponent AmmoComponent { get; set; }
 
         private AgentStatBars StatBars;
-
+        private int LaserEnergyConsumption = 5;
+        private int LaserHitEnergyBonus = 10;
         // Agent fitness variables
         public int SectorsExplored { get; set; }
 
@@ -25,11 +27,11 @@ namespace Problems.Moba_game
         public int ShieldPowerUpsCollected { get; set; }
         public int AmmoPowerUpsCollected { get; set; }
         public int MissilesFired { get; set; }
+        public int LasersFired { get; set; }
         public int MissilesHitOpponent { get; set; }
         public int MissilesHitTeammate { get; set; }
         public int MissilesHitBase { get; set; }
         public int MissilesHitOwnBase { get; set; }
-        public int MissilesHitGold { get; set; }
 
         public int HitByOpponentMissiles { get; set; }
 
@@ -64,7 +66,7 @@ namespace Problems.Moba_game
             StatBars = GetComponent<AgentStatBars>();
 
             HealthComponent = GetComponent<HealthComponent>();
-            // ShieldComponent = GetComponent<ShieldComponent>();
+            EnergyComponent = GetComponent<EnergyComponent>();
             AmmoComponent = GetComponent<AmmoComponent>();
 
             CheckComponentValidity();
@@ -106,6 +108,11 @@ namespace Problems.Moba_game
                 throw new System.Exception("HealthComponent component is missing");
                 // TODO Add error reporting here
             }
+            if (EnergyComponent == null)
+            {
+                throw new System.Exception("EnergyComponent component is missing");
+                // TODO Add error reporting here
+            }
 
             if (AmmoComponent == null)
             {
@@ -138,21 +145,13 @@ namespace Problems.Moba_game
             }
         }
 
-        public bool SetAmmo(int value)
+        public void LaserFired()
         {
-            if (AmmoComponent.Ammo + value <= Moba_gameEnvironmentController.MAX_AMMO)
+            if (EnergyComponent.Energy > 0)
             {
-                AmmoComponent.Ammo += value;
-                return true;
-            }
-            else if (AmmoComponent.Ammo < Moba_gameEnvironmentController.MAX_AMMO && AmmoComponent.Ammo + value > Moba_gameEnvironmentController.MAX_AMMO)
-            {
-                AmmoComponent.Ammo = Moba_gameEnvironmentController.MAX_AMMO;
-                return true;
-            }
-            else
-            {
-                return false;
+                EnergyComponent.Energy -= LaserEnergyConsumption;
+                LasersFired++;
+                UpdatetStatBars();
             }
         }
 
@@ -175,18 +174,15 @@ namespace Problems.Moba_game
         public void UpdatetStatBars()
         {
             if (StatBars != null)
-                StatBars.SetStats(HealthComponent.Health, 0, AmmoComponent.Ammo);
-        }
-
-        public void SetEnvironmentColor(Color color)
-        {
-            if (StatBars != null)
-                StatBars.SetEnvironmentColor(color);
+            {
+                StatBars.SetStats(HealthComponent.Health, EnergyComponent.Energy);
+            }
         }
 
         public void MissileHitOpponent()
         {
             MissilesHitOpponent++;
+            EnergyComponent.Energy += LaserHitEnergyBonus;
         }
 
         public void MissileHitTeammate()
@@ -197,16 +193,12 @@ namespace Problems.Moba_game
         public void MissileHitBase()
         {
             MissilesHitBase++;
+            EnergyComponent.Energy += LaserHitEnergyBonus;
         }
 
         public void MissileHitOwnBase()
         {
             MissilesHitOwnBase++;
-        }
-
-        public void MissileHitGold()
-        {
-            MissilesHitGold++;
         }
 
         public void HitByOpponentMissile()

@@ -36,8 +36,9 @@ namespace Problems.Moba_game
                 baseGameObject.layer = gameObject.layer;
 
                 T _base = baseGameObject.GetComponent<T>();
-                BaseComponent baseComponent = _base as BaseComponent;
+                Moba_gameBaseComponent baseComponent = _base as Moba_gameBaseComponent;
                 baseComponent.TeamID = environmentController.Match.Teams[i].TeamId;
+                baseComponent.HealthComponent.Health = Moba_gameEnvironmentController.MAX_BASE_HEALTH;
 
                 // Assign base sprite
                 SpriteRenderer baseRenderer = baseGameObject.GetComponent<SpriteRenderer>();

@@ -31,7 +31,7 @@ namespace Problems.Moba_game
 
         Vector3 newAgentPos;
         Quaternion newAgentRotation;
-        public float laserRange = 100f;
+        public float laserRange = 300f;
 
         private void Awake()
         {
@@ -129,15 +129,15 @@ namespace Problems.Moba_game
             // Agent turret rotation
             agent.Turret.transform.rotation = Quaternion.Euler(0, 0, agent.Turret.transform.rotation.eulerAngles.z + UnityUtils.RoundToDecimals(rotateTurrentDir.z * Time.fixedDeltaTime * Moba_gameEnvironmentController.AgentTurrentRotationSpeed, 2));
         }
+
         void ShootLaser(Moba_gameAgentComponent agent)
         {
-            if (agent.ActionBuffer.GetDiscreteAction("shootMissile") == 1)
+            if (agent.ActionBuffer.GetDiscreteAction("shootMissile") == 1 && agent.NextShootTime <= Moba_gameEnvironmentController.CurrentSimulationTime)
             {
-
                 spawnPosition = agent.MissileSpawnPoint.transform.position;
                 localXDir = agent.MissileSpawnPoint.transform.TransformDirection(Vector3.up);
                 Vector3 laserEnd = spawnPosition + localXDir * laserRange;
-                
+
                 RaycastHit2D hit = Physics2D.Raycast(spawnPosition, localXDir, laserRange);
 
                 if (hit.collider != null)
@@ -145,11 +145,47 @@ namespace Problems.Moba_game
                     laserEnd = hit.point;
                     if (hit.collider.CompareTag("Agent"))
                     {
-                        Debug.Log("Enemy hit!");
+                        Moba_gameAgentComponent hitAgent = hit.collider.GetComponent<Moba_gameAgentComponent>();
+                        Moba_gameEnvironmentController.LaserTankHit(agent, hitAgent);
+                    }
+                    else if (hit.collider.CompareTag("Object5"))
+                    {
+                        Moba_gameBaseComponent hitBase = hit.collider.GetComponent<Moba_gameBaseComponent>();
+                        Moba_gameEnvironmentController.LaserBaseHit(agent, hitBase);
                     }
                 }
                 LineRenderer lineRenderer = agent.GetComponent<LineRenderer>();
                 StartCoroutine(ShowLaser(spawnPosition, laserEnd, lineRenderer));
+                if (agent.AgentType == "ice")
+                {
+                    spawnPosition1 = agent.MissileSpawnPoint1.transform.position;
+                    localXDir = agent.MissileSpawnPoint1.transform.TransformDirection(Vector3.up);
+                    Vector3 laserEnd1 = spawnPosition1 + localXDir * laserRange;
+
+
+                    RaycastHit2D hit1 = Physics2D.Raycast(spawnPosition1, localXDir, laserRange);
+
+                    if (hit1.collider != null)
+                    {
+                        laserEnd1 = hit1.point;
+                        if (hit1.collider.CompareTag("Agent"))
+                        {
+                            Moba_gameAgentComponent hitAgent = hit.collider.GetComponent<Moba_gameAgentComponent>();
+                            Moba_gameEnvironmentController.LaserTankHit(agent, hitAgent);
+                        }
+                        else if (hit.collider.CompareTag("Object5"))
+                        {
+                            Moba_gameBaseComponent hitBase = hit.collider.GetComponent<Moba_gameBaseComponent>();
+                            Moba_gameEnvironmentController.LaserBaseHit(agent, hitBase);
+                        }
+                    }
+
+                    GameObject laserChild = agent.transform.Find("LineRenderer").gameObject;
+                    LineRenderer lineRenderer1 = laserChild.GetComponent<LineRenderer>();
+                    StartCoroutine(ShowLaser(spawnPosition1, laserEnd1, lineRenderer1));
+                }
+                agent.NextShootTime = Moba_gameEnvironmentController.CurrentSimulationTime + Moba_gameEnvironmentController.MissileShootCooldown;
+                agent.LaserFired();
             }
         }
 
@@ -165,46 +201,46 @@ namespace Problems.Moba_game
 
         private void ShootMissile(Moba_gameAgentComponent agent)
         {
-            if (agent.ActionBuffer.GetDiscreteAction("shootMissile") == 1 && agent.NextShootTime <= Moba_gameEnvironmentController.CurrentSimulationTime && agent.AmmoComponent.Ammo > 0)
-            {
-                spawnPosition = agent.MissileSpawnPoint.transform.position;
-                spawnRotation = agent.Turret.transform.rotation;
+            // if (agent.ActionBuffer.GetDiscreteAction("shootMissile") == 1 && agent.NextShootTime <= Moba_gameEnvironmentController.CurrentSimulationTime && agent.AmmoComponent.Ammo > 0)
+            // {
+            //     spawnPosition = agent.MissileSpawnPoint.transform.position;
+            //     spawnRotation = agent.Turret.transform.rotation;
 
-                localXDir = agent.MissileSpawnPoint.transform.TransformDirection(Vector3.up);
-                velocity = localXDir * Moba_gameEnvironmentController.MissleLaunchSpeed;
+            //     localXDir = agent.MissileSpawnPoint.transform.TransformDirection(Vector3.up);
+            //     velocity = localXDir * Moba_gameEnvironmentController.MissleLaunchSpeed;
 
-                //Instantiate object
-                obj = Instantiate(Moba_gameEnvironmentController.MissilePrefab, spawnPosition, spawnRotation, transform);
-                obj.layer = gameObject.layer;
-                mc = obj.GetComponent<MissileComponent>();
-                mc.Parent = agent;
-                mc.MissileVelocity = velocity;
-                mc.Moba_gameEnvironmentController = Moba_gameEnvironmentController;
-                agent.NextShootTime = Moba_gameEnvironmentController.CurrentSimulationTime + Moba_gameEnvironmentController.MissileShootCooldown;
+            //     //Instantiate object
+            //     obj = Instantiate(Moba_gameEnvironmentController.MissilePrefab, spawnPosition, spawnRotation, transform);
+            //     obj.layer = gameObject.layer;
+            //     mc = obj.GetComponent<MissileComponent>();
+            //     mc.Parent = agent;
+            //     mc.MissileVelocity = velocity;
+            //     mc.Moba_gameEnvironmentController = Moba_gameEnvironmentController;
+            //     agent.NextShootTime = Moba_gameEnvironmentController.CurrentSimulationTime + Moba_gameEnvironmentController.MissileShootCooldown;
 
-                agent.MissileFired();
+            //     agent.MissileFired();
 
-                // Add missile to missile controller
-                Moba_gameEnvironmentController.MissileController.AddMissile(mc);
-                if (agent.AgentType == "ice")
-                {
-                    spawnPosition1 = agent.MissileSpawnPoint1.transform.position;
-                    localXDir = agent.MissileSpawnPoint1.transform.TransformDirection(Vector3.up);
-                    velocity = localXDir * Moba_gameEnvironmentController.MissleLaunchSpeed;
-                    obj = Instantiate(Moba_gameEnvironmentController.MissilePrefab, spawnPosition1, spawnRotation, transform);
-                    obj.layer = gameObject.layer;
-                    mc = obj.GetComponent<MissileComponent>();
-                    mc.Parent = agent;
-                    mc.MissileVelocity = velocity;
-                    mc.Moba_gameEnvironmentController = Moba_gameEnvironmentController;
-                    agent.NextShootTime = Moba_gameEnvironmentController.CurrentSimulationTime + Moba_gameEnvironmentController.MissileShootCooldown;
+            //     // Add missile to missile controller
+            //     Moba_gameEnvironmentController.MissileController.AddMissile(mc);
+            //     if (agent.AgentType == "ice")
+            //     {
+            //         spawnPosition1 = agent.MissileSpawnPoint1.transform.position;
+            //         localXDir = agent.MissileSpawnPoint1.transform.TransformDirection(Vector3.up);
+            //         velocity = localXDir * Moba_gameEnvironmentController.MissleLaunchSpeed;
+            //         obj = Instantiate(Moba_gameEnvironmentController.MissilePrefab, spawnPosition1, spawnRotation, transform);
+            //         obj.layer = gameObject.layer;
+            //         mc = obj.GetComponent<MissileComponent>();
+            //         mc.Parent = agent;
+            //         mc.MissileVelocity = velocity;
+            //         mc.Moba_gameEnvironmentController = Moba_gameEnvironmentController;
+            //         agent.NextShootTime = Moba_gameEnvironmentController.CurrentSimulationTime + Moba_gameEnvironmentController.MissileShootCooldown;
 
-                    agent.MissileFired();
+            //         agent.MissileFired();
 
-                    // Add missile to missile controller
-                    Moba_gameEnvironmentController.MissileController.AddMissile(mc);
-                }
-            }
+            //         // Add missile to missile controller
+            //         Moba_gameEnvironmentController.MissileController.AddMissile(mc);
+            //     }
+            // }
         }
     }
 }
