@@ -14,17 +14,14 @@ namespace Problems.Robostrike
         [Header("Robostrike 1vs1 Match Configuration")]
         [SerializeField] public Transform[] SpawnPoints;
 
-        [Header("Robostrike 1vs1 Agent Sprites")]
-        [SerializeField] public Sprite[] Hulls;
-        [SerializeField] public Sprite[] Turrets;
-        [SerializeField] public Sprite[] Tracks;
-        [SerializeField] public Sprite[] Guns;
-
         // Respawn variables
         Vector3 respawnPos = Vector3.zero;
         Quaternion rotation = Quaternion.identity;
 
         List<Vector3> agentPositions;
+
+        Color teamColor;
+        Color[] teamColors = new Color[] { Color.red, Color.blue, Color.green, Color.yellow, Color.cyan, Color.magenta, Color.white, Color.black, Color.gray, Color.grey };
 
         bool isFarEnough;
         int counter = 0;
@@ -32,12 +29,6 @@ namespace Problems.Robostrike
 
         public override void validateSpawnConditions(EnvironmentControllerBase environmentController)
         {
-            if (Hulls == null || Hulls.Length == 0 || Turrets == null || Turrets.Length == 0 || Tracks == null || Tracks.Length == 0 || Guns == null || Guns.Length == 0)
-            {
-                throw new System.Exception("Sprites are missing");
-                // TODO add error reporting here
-            }
-
             if (environmentController.AgentPrefab == null)
             {
                 throw new System.Exception("AgentPrefab is not defined");
@@ -84,7 +75,10 @@ namespace Problems.Robostrike
             // Spawn agents
             for (int i = 0; i < environmentController.Match.Teams.Length; i++)
             {
-                foreach(Individual individual in environmentController.Match.Teams[i].Individuals)
+                // Define team color (Random color from (0,0,0) to (255,255,255))
+                teamColor = teamColors[environmentController.Util.NextInt(0, teamColors.Length - 1)];
+
+                foreach (Individual individual in environmentController.Match.Teams[i].Individuals)
                 {
                     foreach(AgentController agentController in individual.AgentControllers)
                     {
@@ -98,8 +92,8 @@ namespace Problems.Robostrike
                         agentComponent.IndividualID = individual.IndividualId;
                         agentComponent.TeamID = environmentController.Match.Teams[i].TeamId;
 
-                        // Configure agent sprites
-                        ConfigureAgentSprites(environmentController, agentGameObject);
+                        // Set agent's team color
+                        (agent as RobostrikeAgentComponent).SetTeamColor(teamColor);
 
                         // Update list
                         agents.Add(agent);
@@ -145,30 +139,6 @@ namespace Problems.Robostrike
             agent.transform.rotation = rotation;
 
             (agent as RobostrikeAgentComponent).NumOfSpawns++;
-        }
-
-        void ConfigureAgentSprites(EnvironmentControllerBase environmentController, GameObject agentGameObject)
-        {
-            // Get random hull, turret, track and gun sprites
-            Sprite hull = Hulls[environmentController.Util.NextInt(0, Hulls.Length)];
-            Sprite turret = Turrets[environmentController.Util.NextInt(0, Turrets.Length)];
-            Sprite track = Tracks[environmentController.Util.NextInt(0, Tracks.Length)];
-            Sprite gun = Guns[environmentController.Util.NextInt(0, Guns.Length)];
-
-            GameObject hullGO = agentGameObject.GetComponentInChildren<HullComponent>().gameObject;
-            GameObject turretGO = agentGameObject.GetComponentInChildren<TurretComponent>().gameObject;
-            GameObject[] tracksGO = agentGameObject.GetComponentsInChildren<TrackComponent>().Select(x=> x.gameObject).ToArray();
-            GameObject gunGO = agentGameObject.GetComponentInChildren<GunComponent>().gameObject;
-
-            // Set sprites
-
-            hullGO.GetComponent<SpriteRenderer>().sprite = hull;
-            turretGO.GetComponent<SpriteRenderer>().sprite = turret;
-            foreach (GameObject trackGO in tracksGO)
-            {
-                trackGO.GetComponent<SpriteRenderer>().sprite = track;
-            }
-            gunGO.GetComponent<SpriteRenderer>().sprite = gun;
         }
     
         void GetRandomSpawnPositionAndRotation(RobostrikeEnvironmentController environmentController, out Vector3 spawnPos, out Quaternion rotation)

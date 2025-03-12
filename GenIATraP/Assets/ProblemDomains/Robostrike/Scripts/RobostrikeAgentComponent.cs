@@ -7,8 +7,6 @@ namespace Problems.Robostrike
     {
         public HullComponent Hull{ get; set; }
         public TurretComponent Turret { get; set; }
-        public TrackComponent[] Tracks { get; set; }
-        public GunComponent Gun { get; set; }
 
         public MissileSpawnPointComponent MissileSpawnPoint { get; set; }
         public float NextShootTime { get; set; }
@@ -44,8 +42,6 @@ namespace Problems.Robostrike
         {
             Hull = GetComponentInChildren<HullComponent>();
             Turret = GetComponentInChildren<TurretComponent>();
-            Tracks = GetComponentsInChildren<TrackComponent>();
-            Gun = GetComponentInChildren<GunComponent>();
 
             MissileSpawnPoint = GetComponentInChildren<MissileSpawnPointComponent>();
             StatBars = GetComponent<AgentStatBars>();
@@ -64,7 +60,7 @@ namespace Problems.Robostrike
 
         void CheckComponentValidity()
         {
-            if(Hull == null)
+            if (Hull == null)
             {
                 throw new System.Exception("HullComponent component is missing");
                 // TODO Add error reporting here
@@ -73,18 +69,6 @@ namespace Problems.Robostrike
             if (Turret == null)
             {
                 throw new System.Exception("TurretComponent component is missing");
-                // TODO Add error reporting here
-            }
-
-            if (Tracks == null)
-            {
-                throw new System.Exception("TrackComponent component is missing");
-                // TODO Add error reporting here
-            }
-
-            if (Gun == null)
-            {
-                throw new System.Exception("GunComponent component is missing");
                 // TODO Add error reporting here
             }
 
@@ -235,6 +219,11 @@ namespace Problems.Robostrike
                 MaxSurvivalTime = CurrentSurvivalTime;
             }
             CurrentSurvivalTime = 0;
+        }
+
+        public void SetTeamColor(Color teamColor)
+        {
+            Turret.SetTurretColor(teamColor);
         }
     }
 }
