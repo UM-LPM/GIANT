@@ -1,18 +1,35 @@
 # Collector Problem Domain
 
-The Collector problem domain is a single-agent environment where an agent navigates a bounded arena to collect scattered objects. This problem is designed to test an agent’s ability to efficiently explore the environment, optimize movement, and maximize the number of collected objects within a given time frame.
+The **Collector problem domain** is a **single-agent environment** where an agent navigates a bounded arena to collect scattered objects. This problem is designed to test an agent’s ability to efficiently explore the environment, optimize movement, and maximize the number of collected objects within a given time frame.
 
-<img src="/docs/images/Collector.png" alt="Soccer" width="600"/>
+<center><img src="/docs/images/collectorProblemDomain/collector_problem_domain_main.png" alt="Collector" width="600"/></center>
 ## Objective
 The main objective of the Collector environment is for the agent to collect as many objects as possible before the simulation ends. The agent must efficiently navigate the space while minimizing unnecessary movement and avoiding potential penalties such as collisions. This problem domain is useful for evaluating pathfinding strategies, decision-making heuristics, and reinforcement learning approaches.
 
 ## Environment Details
-- Arena – Bounded environment where objects spawn randomly.
-- Collectibles – Objects that appear at different locations and must be collected by the agent.
-- Agent Movement – The agent can move freely within the arena to reach and collect objects.
-- Ray Sensors -  Agents can only perceive the environment using ray sensors that can be shot in multiple directions. Rays can detect other agents, walls, obstacles, and targets.
-- Simulation Duration – The environment runs for a fixed number of simulation steps.
-- Collision Handling – The agent may receive penalties for colliding with walls or other obstacles (if enabled).
+
+The environment consists of an **agent**, **crates** (obstacles), and a **target**. The agent's movement is restricted by the arena’s boundaries (as shown in the image below). The environment is divided into different sectors, which track the agent’s exploration progress.
+ 
+<center><img src="/docs/images/collectorProblemDomain/collector_problem_domain_exploration_progress.png" alt="Collector" width="600"/></center>
+
+### Agent
+The simulation features a single agent tasked with collecting as many **targets** as possible within a given time. The agent moves through the arena while avoiding obstacles and optimizing its trajectory. It can move forward, backward, and rotate left or right.
+<center><img src="/docs/images/collectorProblemDomain/collector_problem_domain_agent.png" alt="Collector" width="200"/></center>
+#### Environment Perception
+Agents perceives their surroundings using a **Ray Perception Sensor**. During configuration, a specific number of rays and their respective angles are defined. Basic raycasting can be replaced with **spherical rays**, which emit in a predefined direction. If a ray intersects with a detectable object (ray color is set to green), it returns information regarding the object and additional detection details. If no object is detected, the ray perception sensor returns an empty result. Rays can detect obstacles, target and walls.
+
+<center><img src="/docs/images/collectorProblemDomain/collector_problem_domain_object_detection.png" alt="Collector" width="600"/></center>
+
+### Collectible (Target)
+The **target** is the primary object that the agent must collect. After a target is collected, one of two possible outcomes occurs:
+
+1. The target is respawned at a new random location within the arena, encouraging the agent to develop smarter search strategies.
+2. The simulation ends, rewarding the agent for quickly locating and collecting the target.
+<center><img src="/docs/images/collectorProblemDomain/collector_problem_domain_target.png" alt="Collector" width="200"/></center>
+### Crate 
+A **crate** serves as an obstacle that the agent must navigate around to reach the **target**. Increasing the number of crates adds complexity to the environment, requiring more advanced pathfinding and decision-making strategies.
+
+<center><img src="/docs/images/collectorProblemDomain/collector_problem_domain_obstacle.png" alt="Collector" width="200"/></center>
 
 ## Fitness Evaluation
 The agent's performance is assessed using the following fitness metrics:
