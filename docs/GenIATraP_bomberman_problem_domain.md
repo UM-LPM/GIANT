@@ -2,6 +2,7 @@
 The Bomberman problem domain is a strategic simulation where agents interact within a maze-like environment. The agents' primary objective is to place bombs strategically, destroy obstacles, avoid damage from explosions, and eliminate or outlast other agents. This problem domain involves handling various game mechanics such as power-ups, health management, bomb placement, and agent movement. It is typically used to train agents in decision-making and survival tactics in a dynamic and competitive environment.
 
 <center><img src="/docs/images/bombermanProblemDomain/bomberman_problem_domain_main.png" alt="Bomberman" width="600"/></center>
+
 ## Objective
 The main objective for agents in the Bomberman domain is to navigate the environment, avoid being destroyed by explosions, and outlast opponents. Agents must make decisions on when to place bombs, how to avoid their own bombs, and how to manage power-ups to enhance their chances of survival. The problem domain rewards strategic actions like bomb placement, surviving, and collecting power-ups while penalizing self-destructive behaviors, such as being hit by bombs or placing bombs in ineffective positions.
 
@@ -16,6 +17,7 @@ The environment consists of a **grid-based arena** where agents are positioned i
  Agents can move within the arena, avoid explosions, place bombs, and collect power-ups. Each agent starts with a predefined amount of health, a limited number of bombs, and a base movement speed.
 
 <center><img src="/docs/images/bombermanProblemDomain/bomberman_problem_domain_agent.png" alt="Bomberman" width="100"/></center>
+
 #### Environment Perception
 Agents perceives their surroundings using **Grid Sensor**. During configuration, **grid size** and **cell size** are defined. If a cell intersects with a detectable object (grid cell color is set to red), it returns information regarding the object and additional detection details. If no object is detected, grid sensor returns an empty result for that cell. Grid cells can detect other agents, power-ups, bombs, and blocks (destructible and indestructible).
 
@@ -25,10 +27,12 @@ Agents perceives their surroundings using **Grid Sensor**. During configuration,
 Agents can place **bombs**, which detonate after a set period, damaging nearby blocks, opponents, and even the agent who placed them. If an agent collides with a bomb while moving, the bomb will be pushed in the direction of the agent’s movement. The blast radius of a bomb depends on the placing agent’s **blast radius** property.
 
 <center><img src="/docs/images/bombermanProblemDomain/bomberman_problem_domain_object_bomb.png" alt="Bomberman" width="100"/></center>
+
 ### Explosion
 **Explosions** affect the surrounding area within the bomb’s **blast radius**. They can destroy destructible blocks, damage agents, and trigger chain reactions if other bombs are within range.
 
 <center><img src="/docs/images/bombermanProblemDomain/bomberman_problem_domain_object_explosion.png" alt="Bomberman" width="300"/></center>
+
 ### Blocks
 The simulation environment contains three types of blocks:
 - **Destructible Blocks** – Obstacles that can be destroyed by explosions (first image).
@@ -38,6 +42,7 @@ The simulation environment contains three types of blocks:
 <center><img src="/docs/images/bombermanProblemDomain/bomberman_problem_domain_object_destructible_block.png" alt="Bomberman" width="100"/>
 <img src="/docs/images/bombermanProblemDomain/bomberman_problem_domain_object_border_block.png" alt="Bomberman" width="100"/>
 <img src="/docs/images/bombermanProblemDomain/bomberman_problem_domain_object_walkable_block.png" alt="Bomberman" width="100"/></center>
+
 ### Power-ups
 The environment contains randomly spawned **power-ups** that enhance an agent’s abilities, such as:
 - Increasing the maximum number of bombs an agent can place (first image).
@@ -48,6 +53,7 @@ The environment contains randomly spawned **power-ups** that enhance an agent’
 <img src="/docs/images/bombermanProblemDomain/bomberman_problem_domain_power_up_damage_increase.png" alt="Bomberman" width="100"/>
 <img src="/docs/images/bombermanProblemDomain/bomberman_problem_domain_power_up_speed_increase.png" alt="Bomberman" width="100"/>
 </center>
+
 ## Fitness Evaluation
 Fitness evaluation in the Bomberman problem domain is used to measure an agent's performance in the simulation. The fitness values are based on the agent's behavior and achievements throughout the game. Here are some key fitness components:
 
