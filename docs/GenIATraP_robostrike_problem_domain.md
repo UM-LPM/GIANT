@@ -3,14 +3,18 @@
 The **Robostrike problem domain** is a dynamic, **multi-agent** environment where robots compete in a combat environment. Agents, in the form of robots, are equipped with various abilities like shooting, moving, and interacting with the environment. The **goal** is to destroy enemy robots while avoiding damage from opponents and environmental hazards. This problem domain is ideal for evaluating agents that need to exhibit strategic thinking, resource management, and tactical combat decision-making in a real-time environment.
 
 <center><img src="/docs/images/robostrikeProblemDomain/robostrike_problem_domain_main.png" alt="Robostrike" width="600"/></center>
+
 ## Objective
 The primary objective for agents in the Robostrike domain is to survive and defeat enemy robots by managing their health, ammunition, and positioning in the arena. Agents should aim to be the last one standing while strategically using their resources to eliminate opponents. The problem domain tests agents' ability to prioritize survival, make tactical decisions under pressure, and react quickly to changing circumstances.
+
 ## Environment Details
 The Robostrike environment consists of a battlefield where agents (tanks) compete in combat. Core elements that compose the environment are described bellow.
+
 ### Environment
 The combat environment is a bounded 2D space where agents can move, hide, and interact. The layout may include obstacles that provide strategic positioning advantages. Agents can only move within the designated **green surface**, which defines the battle arena. The environment is divided into different sectors, which track the agent’s exploration progress.
 
 <center><img src="/docs/images/robostrikeProblemDomain/robostrike_problem_domain_environment.png" alt="Robostrike" width="400"/></center>
+
 ### Agent
 The simulation consists of two opposing **agents (tanks)**, each tasked with destroying the opponent as many times as possible. Additional scenarios, such as **1 vs. X** tank battles, can be configured if needed. Each agent has a **status bar** displaying its health, ammunition, and shield levels. If an agent's health reaches zero, it is destroyed and subsequently respawned at either a predefined starting position or a random location.
 
@@ -35,6 +39,7 @@ There are three types of **power-ups** available for agents to collect, each rep
 	<img src="/docs/images/robostrikeProblemDomain/robostrike_problem_domain_health.png" alt="Robostrike" width="100"/>
 	<img src="/docs/images/robostrikeProblemDomain/robostrike_problem_domain_shield.png" alt="Robostrike" width="100"/>
 	</center>
+
 ## Fitness Evaluation
 Fitness evaluation in the Robostrike problem domain is designed to measure the success of an agent in achieving its objectives, focusing on strategic behavior and combat performance. Here are some key fitness components:
 
