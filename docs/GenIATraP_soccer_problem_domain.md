@@ -3,8 +3,10 @@
 The **Soccer problem domain** is a **multi-agent environment** based on a simplified version of soccer, inspired by the [Soccer Twos](https://github.com/Unity-Technologies/ml-agents/blob/develop/docs/Learning-Environment-Examples.md#soccer-twos) problem domain implemented in [ML-Agents](https://github.com/Unity-Technologies/ml-agents/tree/develop). It features two teams competing against each other in a dynamic environment. The main objective of the agents is to cooperate with their teammates and defeat the opposing team, either by scoring goals or preventing the other team from scoring. This problem domain allows for the implementation and testing of multi-agent systems, team strategies, and various agent control schemes.
 
 <center><img src="/docs/images/soccerProblemDomain/soccer_problem_domain_main.png" alt="Soccer" width="600"/></center>
+
 ## Objective
 The **Soccer problem domain** aims to simulate a soccer match where agents cooperate to score goals against an opposing team. Agents must employ effective strategies, including ball control, positioning, and teamwork, to outmaneuver their opponents. The simulation challenges agents to make quick decisions and adapt to their teammates' actions, the opponents’ strategies, and the evolving game state.
+
 ## Environment Details
 The environment consists of a **soccer field** with two **goals**, a **ball**, and two **opposing teams**. The **soccer field** is bounded by defined edges, and agents must navigate this space while executing actions such as running, kicking the ball, and coordinating with teammates. The environment is divided into different sectors, which track the agent’s exploration progress.
 
@@ -24,17 +26,21 @@ The **soccer ball** is the focal point of the game, requiring agents to learn ef
 The simulation features two opposing teams, each consisting of two agents. Agents are responsible for scoring as many goals as possible. An agent can strike the ball upon collision, with the impact force determined by its velocity. Additionally, hitting the ball at different angles influences its trajectory.
 
 <center><img src="/docs/images/soccerProblemDomain/soccer_problem_domain_agents.png" alt="Soccer" width="400"/></center>
+
 #### Environment Perception
 Agents perceives their surroundings using a **Ray Perception Sensor**. During configuration, a specific number of rays and their respective angles are defined. Basic raycasting can be replaced with **spherical rays**, which emit in a predefined direction. If a ray intersects with a detectable object (ray color is set to green), it returns information regarding the object and additional detection details. If no object is detected, the ray perception sensor returns an empty result. Rays can detect other agents, ball, goals and walls.
 
 <center><img src="/docs/images/soccerProblemDomain/soccer_problem_domain_object_detection.png" alt="Soccer" width="600"/></center>
+
 ## Key Features:
 - **Two Teams**: The simulation supports two teams of agents, with each team having its own set of controlled agents.
 - **Ball Handling**: Agents are required to interact with the ball to move it across the field and score goals.
 - **Goal Scoring**: The primary objective is to score goals against the opposing team.
 - **Agent Actions**: Agents can perform actions such as running, and kicking, all of which contribute to the game’s progression.
+
 ## Fitness Evaluation
 The fitness of agents in the Soccer problem domain is determined by their performance in the soccer game, with key metrics focusing on teamwork, ball control, and scoring ability. Fitness evaluation is based on the agent's ability to contribute to the team's success and outplay the opponent.
+
 ### Key Fitness Metrics:
 - Goals Scored: Positive reward for each goal scored by the agent's team.
 - Goals Received: Penalty for allowing the opposing team to score.
