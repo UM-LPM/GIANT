@@ -1,6 +1,6 @@
 # Robostrike Problem Domain
 
-The Robostrike problem domain is a dynamic, multi-agent simulation where robots compete in a combat environment. Agents, in the form of robots, are equipped with various abilities like shooting, moving, and interacting with the environment. The goal is to destroy enemy robots while avoiding damage from opponents and environmental hazards. This problem domain is ideal for evaluating agents that need to exhibit strategic thinking, resource management, and tactical combat decision-making in a real-time environment.
+The **Robostrike problem domain** is a dynamic, **multi-agent** environment where robots compete in a combat environment. Agents, in the form of robots, are equipped with various abilities like shooting, moving, and interacting with the environment. The **goal** is to destroy enemy robots while avoiding damage from opponents and environmental hazards. This problem domain is ideal for evaluating agents that need to exhibit strategic thinking, resource management, and tactical combat decision-making in a real-time environment.
 
 <center><img src="/docs/images/robostrikeProblemDomain/robostrike_problem_domain_main.png" alt="Robostrike" width="600"/></center>
 ## Objective
@@ -8,7 +8,7 @@ The primary objective for agents in the Robostrike domain is to survive and defe
 ## Environment Details
 The Robostrike environment consists of a battlefield where agents (tanks) compete in combat. Core elements that compose the environment are described bellow.
 ### Environment
-The combat environment is a bounded 2D space where agents can move, hide, and interact. The layout may include obstacles that provide strategic positioning advantages. Agents can only move within the designated **green surface**, which defines the battle arena.
+The combat environment is a bounded 2D space where agents can move, hide, and interact. The layout may include obstacles that provide strategic positioning advantages. Agents can only move within the designated **green surface**, which defines the battle arena. The environment is divided into different sectors, which track the agent’s exploration progress.
 
 <center><img src="/docs/images/robostrikeProblemDomain/robostrike_problem_domain_environment.png" alt="Robostrike" width="400"/></center>
 ### Agent
@@ -24,7 +24,7 @@ When an agent picks up an **ammo power-up**, it gains the ability to fire projec
 <center><img src="/docs/images/robostrikeProblemDomain/robostrike_problem_domain_missile.png" alt="Robostrike" width="100"/></center>
 
 #### Environment Perception
-Agents perceives their surroundings using a **Ray Perception Sensor**. During configuration, a specific number of rays and their respective angles are defined. Basic raycasting can be replaced with **spherical rays**, which emit in a predefined direction. If a ray intersects with a detectable object, it returns information regarding the object and additional detection details. If no object is detected, the ray perception sensor returns an empty result. Rays can detect other agents, power-ups, missiles, obstacles and walls.
+Agents perceives their surroundings using a **Ray Perception Sensor**. During configuration, a specific number of rays and their respective angles are defined. Basic raycasting can be replaced with **spherical rays**, which emit in a predefined direction. If a ray intersects with a detectable object (ray color is set to green), it returns information regarding the object and additional detection details. If no object is detected, the ray perception sensor returns an empty result. Rays can detect other agents, power-ups, missiles, obstacles and walls.
 
 <center><img src="/docs/images/robostrikeProblemDomain/robostrike_problem_domain_object_detection.png" alt="Robostrike" width="400"/></center>
 
