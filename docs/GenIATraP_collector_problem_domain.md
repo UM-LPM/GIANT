@@ -15,6 +15,7 @@ The environment consists of an **agent**, **crates** (obstacles), and a **target
 ### Agent
 The simulation features a single agent tasked with collecting as many **targets** as possible within a given time. The agent moves through the arena while avoiding obstacles and optimizing its trajectory. It can move forward, backward, and rotate left or right.
 <center><img src="/docs/images/collectorProblemDomain/collector_problem_domain_agent.png" alt="Collector" width="200"/></center>
+
 #### Environment Perception
 Agents perceives their surroundings using a **Ray Perception Sensor**. During configuration, a specific number of rays and their respective angles are defined. Basic raycasting can be replaced with **spherical rays**, which emit in a predefined direction. If a ray intersects with a detectable object (ray color is set to green), it returns information regarding the object and additional detection details. If no object is detected, the ray perception sensor returns an empty result. Rays can detect obstacles, target and walls.
 
@@ -26,6 +27,7 @@ The **target** is the primary object that the agent must collect. After a target
 1. The target is respawned at a new random location within the arena, encouraging the agent to develop smarter search strategies.
 2. The simulation ends, rewarding the agent for quickly locating and collecting the target.
 <center><img src="/docs/images/collectorProblemDomain/collector_problem_domain_target.png" alt="Collector" width="200"/></center>
+
 ### Crate 
 A **crate** serves as an obstacle that the agent must navigate around to reach the **target**. Increasing the number of crates adds complexity to the environment, requiring more advanced pathfinding and decision-making strategies.
 
