@@ -2,22 +2,35 @@
 
 The Soccer problem domain is a multi-agent environment based on a simplified version of soccer, inspired by the [Soccer Twos](https://github.com/Unity-Technologies/ml-agents/blob/develop/docs/Learning-Environment-Examples.md#soccer-twos) problem domain implemented in [ML-Agents](https://github.com/Unity-Technologies/ml-agents/tree/develop). It features two teams competing against each other in a dynamic environment. The main objective of the agents is to cooperate with their teammates and defeat the opposing team, either by scoring goals or preventing the other team from scoring. This problem domain allows for the implementation and testing of multi-agent systems, team strategies, and various agent control schemes.
 
-<img src="/docs/images/Soccer.png" alt="Soccer" width="600"/>
+<center><img src="/docs/images/soccerProblemDomain/soccer_problem_domain_main.png" alt="Soccer" width="600"/></center>
 ## Objective
-The primary objective of the Soccer problem domain is to simulate a soccer game where agents work together to score goals against an opposing team. Agents need to execute effective strategies, including ball handling, positioning, and teamwork, to outplay the opposing team. The simulation challenges agents to make quick decisions and adapt to their teammates' actions, the opponent's moves, and the evolving game state.
-
+The **Soccer problem domain** aims to simulate a soccer match where agents cooperate to score goals against an opposing team. Agents must employ effective strategies, including ball control, positioning, and teamwork, to outmaneuver their opponents. The simulation challenges agents to make quick decisions and adapt to their teammates' actions, the opponents’ strategies, and the evolving game state.
 ## Environment Details
-The environment in the Soccer problem domain consists of a soccer field with two goals, a ball, and two teams. Each team comprises a set of agents that control their respective characters. The soccer field is bounded by the field edges, and the agents must navigate this space to perform actions like running, kicking the ball, and interacting with teammates. The ball is the central object of focus, and agents are expected to learn effective ways to pass, intercept, and shoot the ball toward the opponent’s goal. Agents can only perceive the environment using ray sensors that can be shot in multiple directions. Rays can detect other agents, walls, soccer balls, and goals.
+The environment consists of a soccer field with two goals, a ball, and two opposing teams of agents. The field is bounded by defined edges, and agents must navigate this space while executing actions such as running, kicking the ball, and coordinating with teammates.
 
+<center><img src="/docs/images/soccerProblemDomain/soccer_problem_domain_exploration_progress.png" alt="Soccer" width="600"/></center>
+
+### Goals
+Each team has a designated goal area. A team scores when the ball enters the opponent's goal (highlighted in blue in the image below). Upon scoring, the agents and the ball are reset to their initial positions.
+
+<center><img src="/docs/images/soccerProblemDomain/soccer_problem_domain_goal.png" alt="Soccer" width="400"/></center>
+
+### Soccer Ball
+The **soccer ball** is the focal point of the game, requiring agents to learn efficient strategies for passing, intercepting, and shooting toward the opponent’s goal.
+
+<center><img src="/docs/images/soccerProblemDomain/soccer_problem_domain_soccerball.png" alt="Soccer" width="200"/></center>
+
+### Agents
+The simulation features two opposing teams, each consisting of two agents. Agents are responsible for scoring as many goals as possible. An agent can strike the ball upon collision, with the impact force determined by its velocity. Additionally, hitting the ball at different angles influences its trajectory.
+
+<center><img src="/docs/images/soccerProblemDomain/soccer_problem_domain_agents.png" alt="Soccer" width="400"/></center>
 ## Key Features:
-- Two Teams: The simulation supports two teams of agents, with each team having its own set of controlled agents.
-- Ball Handling: Agents are required to interact with the ball to move it across the field and score goals.
-- Goal Scoring: The primary objective is to score goals against the opposing team.
-- Agent Actions: Agents can perform actions such as running, and kicking, all of which contribute to the game’s progression.
-
+- **Two Teams**: The simulation supports two teams of agents, with each team having its own set of controlled agents.
+- **Ball Handling**: Agents are required to interact with the ball to move it across the field and score goals.
+- **Goal Scoring**: The primary objective is to score goals against the opposing team.
+- **Agent Actions**: Agents can perform actions such as running, and kicking, all of which contribute to the game’s progression.
 ## Fitness Evaluation
 The fitness of agents in the Soccer problem domain is determined by their performance in the soccer game, with key metrics focusing on teamwork, ball control, and scoring ability. Fitness evaluation is based on the agent's ability to contribute to the team's success and outplay the opponent.
-
 ### Key Fitness Metrics:
 - Goals Scored: Positive reward for each goal scored by the agent's team.
 - Goals Received: Penalty for allowing the opposing team to score.

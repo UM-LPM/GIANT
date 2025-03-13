@@ -5,19 +5,20 @@ The platform currently includes four implemented problem domains: **RoboStrike**
 ## RoboStrike Problem Domain
 [**RoboStrike**](/docs/GenIATraP_robostrike_problem_domain.md) is a multi-agent combat simulation where agents are represented as tanks and placed in a strategic battle arena. Agents must navigate obstacles, track opponents, and use efficient attack and evasion strategies to survive and eliminate opponents.
 
-<img src="/docs/images/Robostrike.png" alt="Robostrike" width="600"/>
+<center><img src="/docs/images/robostrikeProblemDomain/robostrike_problem_domain_main.png" alt="Robostrike" width="600"/></center>
+
 
 ## Soccer Problem Domain
 [**Soccer**](/docs/GenIATraP_soccer_problem_domain.md): A multi-agent soccer environment where agents compete to score goals by strategically positioning themselves, passing, and shooting. The challenge lies in teamwork, spatial awareness, and decision-making under dynamic conditions.
 
-<img src="/docs/images/Soccer.png" alt="Soccer" width="600"/>
+<center><img src="/docs/images/soccerProblemDomain/soccer_problem_domain_main.png" alt="Soccer" width="600"/></center>
 
 ## Collector Problem Domain
 [**Collector**](/docs/GenIATraP_collector_problem_domain.md) is a single-agent environment where agents navigate a map to collect scattered resources while avoiding obstacles. The goal is to optimize movement efficiency and maximize resource collection within a given time frame.
 
-<img src="/docs/images/Collector.png" alt="Soccer" width="600"/>
+<center><img src="/docs/images/collectorProblemDomain/collector_problem_domain_main.png" alt="Collector" width="600"/></center>
 
 ## Bomberman Problem Domain
 [**Bomberman**](/docs/GenIATraP_bomberman_problem_domain.md) is a multi-agent environment inspired by the classic Bomberman game, where agents strategically place bombs to destroy obstacles and eliminate opponents while avoiding explosions. Success requires careful planning, opponent prediction, and tactical movement.
 
-<img src="/docs/images/Bomberman.png" alt="Bomberman" width="600"/>
+<center><img src="/docs/images/bombermanProblemDomain/bomberman_problem_domain_main.png" alt="Bomberman" width="600"/></center>
