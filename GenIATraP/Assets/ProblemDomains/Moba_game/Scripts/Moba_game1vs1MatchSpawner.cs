@@ -104,7 +104,6 @@ namespace Problems.Moba_game
                         T agent = SpawnAgent<T>(environmentController, teamID);
                         // Update list
                         agents.Add(agent);
-                        (agent as Moba_gameAgentComponent).NumOfSpawns++;
                     }
                 }
             }
@@ -126,7 +125,6 @@ namespace Problems.Moba_game
             {
                 agentGameObject = Instantiate(environmentController.AgentPrefab, SpawnPoints[teamID].position, SpawnPoints[teamID].rotation, gameObject.transform);
             }
-            Moba_gameEnvironmentController Moba_gameEnvironmentController = environmentController as Moba_gameEnvironmentController;
             // Configure agent
             T agent = agentGameObject.GetComponent<T>();
             Moba_gameAgentComponent agentComponent = agent as Moba_gameAgentComponent;
@@ -140,7 +138,7 @@ namespace Problems.Moba_game
 
             // Configure agent sprites
             ConfigureAgentSprites(environmentController, agentGameObject, teamID);
-
+            (agent as Moba_gameAgentComponent).NumOfSpawns++;
             return agent;
         }
 

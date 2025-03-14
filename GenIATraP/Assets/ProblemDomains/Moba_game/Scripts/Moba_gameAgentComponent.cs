@@ -32,12 +32,15 @@ namespace Problems.Moba_game
         public int MissilesHitTeammate { get; set; }
         public int MissilesHitBase { get; set; }
         public int MissilesHitOwnBase { get; set; }
-
         public int HitByOpponentMissiles { get; set; }
-
+        public int EnteredLavaPlanetOrbit { get; set; }
+        public int EnteredIcePlanetOrbit { get; set; }
+        public int CapturedLavaPlanet { get; set; }
+        public int CapturedIcePlanet { get; set; }
         public int MaxSurvivalTime { get; set; }
         public int CurrentSurvivalTime { get; set; }
         public int OpponentsDestroyed { get; set; }
+        public int OpponentBasesDestroyed { get; set; }
 
         public int NumOfSpawns { get; set; }
 

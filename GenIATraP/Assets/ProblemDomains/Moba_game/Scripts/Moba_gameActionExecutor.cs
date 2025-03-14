@@ -137,55 +137,57 @@ namespace Problems.Moba_game
                 spawnPosition = agent.MissileSpawnPoint.transform.position;
                 localXDir = agent.MissileSpawnPoint.transform.TransformDirection(Vector3.up);
                 Vector3 laserEnd = spawnPosition + localXDir * laserRange;
-
-                RaycastHit2D hit = Physics2D.Raycast(spawnPosition, localXDir, laserRange);
-
-                if (hit.collider != null)
+                RaycastHit2D[] hits = Physics2D.RaycastAll(spawnPosition, localXDir, laserRange);
+                foreach (var hit in hits)
                 {
-                    laserEnd = hit.point;
-                    if (hit.collider.CompareTag("Agent"))
+                    if (!hit.collider.isTrigger)
                     {
-                        Moba_gameAgentComponent hitAgent = hit.collider.GetComponent<Moba_gameAgentComponent>();
-                        Moba_gameEnvironmentController.LaserTankHit(agent, hitAgent);
-                    }
-                    else if (hit.collider.CompareTag("Object5"))
-                    {
-                        Moba_gameBaseComponent hitBase = hit.collider.GetComponent<Moba_gameBaseComponent>();
-                        Moba_gameEnvironmentController.LaserBaseHit(agent, hitBase);
+                        laserEnd = hit.point;
+                        HandleHit(hit.collider, agent);
+                        break;
                     }
                 }
                 LineRenderer lineRenderer = agent.GetComponent<LineRenderer>();
                 StartCoroutine(ShowLaser(spawnPosition, laserEnd, lineRenderer));
+                agent.LaserFired();
+
                 if (agent.AgentType == "ice")
                 {
                     spawnPosition1 = agent.MissileSpawnPoint1.transform.position;
                     localXDir = agent.MissileSpawnPoint1.transform.TransformDirection(Vector3.up);
                     Vector3 laserEnd1 = spawnPosition1 + localXDir * laserRange;
-
-
-                    RaycastHit2D hit1 = Physics2D.Raycast(spawnPosition1, localXDir, laserRange);
-
-                    if (hit1.collider != null)
+                    RaycastHit2D[] hits1 = Physics2D.RaycastAll(spawnPosition1, localXDir, laserRange);
+                    foreach (var hit in hits1)
                     {
-                        laserEnd1 = hit1.point;
-                        if (hit1.collider.CompareTag("Agent"))
+                        if (!hit.collider.isTrigger)
                         {
-                            Moba_gameAgentComponent hitAgent = hit.collider.GetComponent<Moba_gameAgentComponent>();
-                            Moba_gameEnvironmentController.LaserTankHit(agent, hitAgent);
-                        }
-                        else if (hit.collider.CompareTag("Object5"))
-                        {
-                            Moba_gameBaseComponent hitBase = hit.collider.GetComponent<Moba_gameBaseComponent>();
-                            Moba_gameEnvironmentController.LaserBaseHit(agent, hitBase);
+                            laserEnd1 = hit.point;
+                            HandleHit(hit.collider, agent);
+                            break;
                         }
                     }
-
                     GameObject laserChild = agent.transform.Find("LineRenderer").gameObject;
                     LineRenderer lineRenderer1 = laserChild.GetComponent<LineRenderer>();
                     StartCoroutine(ShowLaser(spawnPosition1, laserEnd1, lineRenderer1));
+                    agent.LaserFired();
+
                 }
                 agent.NextShootTime = Moba_gameEnvironmentController.CurrentSimulationTime + Moba_gameEnvironmentController.MissileShootCooldown;
-                agent.LaserFired();
+                
+            }
+        }
+
+        private void HandleHit(Collider2D collider, Moba_gameAgentComponent agent)
+        {
+            if (collider.CompareTag("Agent"))
+            {
+                Moba_gameAgentComponent hitAgent = collider.GetComponent<Moba_gameAgentComponent>();
+                Moba_gameEnvironmentController.LaserTankHit(agent, hitAgent);
+            }
+            else if (collider.CompareTag("Object5"))
+            {
+                Moba_gameBaseComponent hitBase = collider.GetComponent<Moba_gameBaseComponent>();
+                Moba_gameEnvironmentController.LaserBaseHit(agent, hitBase);
             }
         }
 

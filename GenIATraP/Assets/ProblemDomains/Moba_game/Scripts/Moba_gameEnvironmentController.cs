@@ -91,15 +91,26 @@ namespace Problems.Moba_game
 
         // Fitness calculation
         private float sectorExplorationFitness;
-        private float allPossibleMissilesFired;
-        private float missilesFired;
-        private float missilesFiredAccuracy;
+        private float allPossibleLasersFired;
+        private float lasersFired;
+        private float lasersFiredOpponentAccuracy;
+        private float lasersFiredBaseAccuracy;
         private float survivalBonus;
         private float baseHitsBonus;
         private float teammateHitsPenatly;
         private float ownBaseHitsPenalty;
         private int numOfOpponents;
+        private int numOfAllLavaPlanetOrbitEnters;
+        private float lavaPlanetOrbitEnters;
+        private int numOfAllIcePlanetOrbitEnters;
+        private float icePlanetOrbitEnters;
+        private int numOfAllLavaPlanetOrbitCaptures;
+        private float lavaPlanetOrbitCaptures;
+        private int numOfAllIcePlanetOrbitCaptures;
+        private float icePlanetOrbitCaptures;
+        private int numOfOpponentBases;
         private float opponentsDestroyedBonus;
+        private float opponentBasesDestroyedBonus;
         private int numOfFiredOpponentMissiles;
         private float damageTakenPenalty;
         private float opponentTrackingBonus;
@@ -209,6 +220,11 @@ namespace Problems.Moba_game
                     UpdateBaseMoney();
                     UpdateAgentEnergy();
                     timer = 0f;
+                    // Moba_gameAgentComponent a = Agents[0] as Moba_gameAgentComponent;
+                    // Debug.Log("EnteredLavaPlanetOrbit: " + a.EnteredLavaPlanetOrbit);
+                    // Debug.Log("EnteredIcePlanetOrbit: " +a.EnteredIcePlanetOrbit);
+                    // Debug.Log("CapturedLavaPlanet: "+a.CapturedLavaPlanet);
+                    // Debug.Log("CapturedIcePlanet: "+a.CapturedIcePlanet);
                 }
             }
         }
@@ -309,66 +325,65 @@ namespace Problems.Moba_game
             {
                 lava = baseComponent.LavaAmount;
                 ice = baseComponent.IceAmount;
-                if (lava >= 5)
+
+                if (lava >= 5 || ice >= 5)
                 {
                     if (Agents != null)
                     {
                         foreach (Moba_gameAgentComponent agent in Agents)
                         {
-                            if (Vector3.Distance(agent.transform.position, Match1v1Spawner.SpawnPoints[baseComponent.TeamID].position) < 1.5f)
+                            if (agent.isActiveAndEnabled)
                             {
-                                canSpawn = false;
-                                break;
+                                if (Vector3.Distance(agent.transform.position, Match1v1Spawner.SpawnPoints[baseComponent.TeamID].position) < 1.5f)
+                                {
+                                    canSpawn = false;
+                                    break;
+                                }
                             }
                         }
-                    }
-                    if (canSpawn)
-                    {
-                        Moba_gameAgentComponent obj = (Moba_gameAgentComponent)Match1v1Spawner.SpawnAgent<AgentComponent>(this, baseComponent.TeamID, "lava");
-                        Color color = new Color(UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0.0f, 1f), UnityEngine.Random.Range(0f, 1f), 1);
-
-                        obj.HealthComponent.Health = AgentStartHealth;
-                        //obj.ShieldComponent.Shield = AgentStartShield;
-                        obj.AmmoComponent.Ammo = AgentStartAmmo;
-
-                        List<AgentComponent> agentList = Agents.ToList();
-                        agentList.Add(obj);
-                        Agents = agentList.ToArray();
-                        //envBase.InitializeAgents();
-                        baseComponent.LavaAmount -= 5;
                     }
                 }
-                if (ice >= 5)
+                if (canSpawn)
                 {
-                    if (Agents != null)
+                    if (lava >= 5 && ice >= 5)
                     {
-                        foreach (Moba_gameAgentComponent agent in Agents)
+                        if (lava >= ice)
                         {
-                            if (Vector3.Distance(agent.transform.position, Match1v1Spawner.SpawnPoints[baseComponent.TeamID].position) < 1.5f)
-                            {
-                                canSpawn = false;
-                                break;
-                            }
+                            Moba_gameAgentComponent obj = (Moba_gameAgentComponent)Match1v1Spawner.SpawnAgent<AgentComponent>(this, baseComponent.TeamID, "lava");
+                            List<AgentComponent> agentList = Agents.ToList();
+                            agentList.Add(obj);
+                            Agents = agentList.ToArray();
+                            baseComponent.LavaAmount -= 5;
+                        }
+                        else
+                        {
+                            Moba_gameAgentComponent obj = (Moba_gameAgentComponent)Match1v1Spawner.SpawnAgent<AgentComponent>(this, baseComponent.TeamID, "ice");
+                            List<AgentComponent> agentList = Agents.ToList();
+                            agentList.Add(obj);
+                            Agents = agentList.ToArray();
+                            baseComponent.IceAmount -= 5;
                         }
                     }
-                    if (canSpawn)
+                    else if (lava >= 5)
                     {
-                        Moba_gameAgentComponent obj = (Moba_gameAgentComponent)Match1v1Spawner.SpawnAgent<AgentComponent>(this, baseComponent.TeamID, "ice");
-                        Color color = new Color(UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0.0f, 1f), UnityEngine.Random.Range(0f, 1f), 1);
-
-                        obj.HealthComponent.Health = AgentStartHealth;
-                        //obj.ShieldComponent.Shield = AgentStartShield;
-                        obj.AmmoComponent.Ammo = AgentStartAmmo;
-
+                        Moba_gameAgentComponent obj = (Moba_gameAgentComponent)Match1v1Spawner.SpawnAgent<AgentComponent>(this, baseComponent.TeamID, "lava");
                         List<AgentComponent> agentList = Agents.ToList();
                         agentList.Add(obj);
                         Agents = agentList.ToArray();
-                        //envBase.InitializeAgents();
+                        baseComponent.LavaAmount -= 5;
+                    }
+                    else if (ice >= 5)
+                    {
+                        Moba_gameAgentComponent obj = (Moba_gameAgentComponent)Match1v1Spawner.SpawnAgent<AgentComponent>(this, baseComponent.TeamID, "ice");
+                        List<AgentComponent> agentList = Agents.ToList();
+                        agentList.Add(obj);
+                        Agents = agentList.ToArray();
                         baseComponent.IceAmount -= 5;
                     }
                 }
             }
         }
+
 
 
         protected override void OnPreFinishGame()
@@ -599,7 +614,7 @@ namespace Problems.Moba_game
                 {
                     (missile.Parent as Moba_gameAgentComponent).MissileHitBase();
                 }
-                UpdateBaseHealth(hitBase as Moba_gameBaseComponent);
+                //UpdateBaseHealth(hitBase as Moba_gameBaseComponent);
             }
             else
             {
@@ -610,7 +625,7 @@ namespace Problems.Moba_game
                 else
                 {
                     (missile.Parent as Moba_gameAgentComponent).MissileHitBase();
-                    UpdateBaseHealth(hitBase as Moba_gameBaseComponent);
+                    //UpdateBaseHealth(hitBase as Moba_gameBaseComponent);
                 }
             }
         }
@@ -626,14 +641,14 @@ namespace Problems.Moba_game
                 {
                     agent.MissileHitBase();
                 }
-                UpdateBaseHealth(hitBase);
+                UpdateBaseHealth(agent, hitBase);
             }
             else
             {
                 if (hitBase.TeamID != agent.TeamID)
                 {
                     agent.MissileHitBase();
-                    UpdateBaseHealth(hitBase);
+                    UpdateBaseHealth(agent, hitBase);
                 }
             }
         }
@@ -667,6 +682,7 @@ namespace Problems.Moba_game
                 {
                     case Moba_gameGameScenarioType.Normal:
                         hitAgent.gameObject.SetActive(false);
+                        agent.OpponentsDestroyed++;
                         //CheckEndingState();
                         break;
                     case Moba_gameGameScenarioType.Deathmatch:
@@ -678,7 +694,7 @@ namespace Problems.Moba_game
             }
         }
 
-        void UpdateBaseHealth(Moba_gameBaseComponent hitBase)
+        void UpdateBaseHealth(Moba_gameAgentComponent agent, Moba_gameBaseComponent hitBase)
         {
             if (hitBase == null)
             {
@@ -686,6 +702,12 @@ namespace Problems.Moba_game
                 return;
             }
             hitBase.TakeDamage(MissileDamage);
+            if (hitBase.HealthComponent.Health <= 0)
+            {
+                agent.OpponentBasesDestroyed++;
+                hitBase.gameObject.SetActive(false);
+            }
+
             CheckEndingState();
         }
 
@@ -723,25 +745,13 @@ namespace Problems.Moba_game
         public override void CheckEndingState()
         {
             int activeBases = 0;
-            for (int i = 0; i < Bases.Count; i++)
+            foreach (Moba_gameBaseComponent _base in Bases)
             {
-                Moba_gameBaseComponent _base = (Moba_gameBaseComponent)Bases[i];
-
-                if (_base.HealthComponent.Health <= 0)
-                {
-                    _base.HealthComponent.Health = 0f;
-                    _base.LavaAmount = 0;
-                    _base.IceAmount = 0;
-                    _base.gameObject.SetActive(false);
-                    //Bases.RemoveAt(i);
-                }
-                if (_base.gameObject.activeSelf)
+                if (_base.isActiveAndEnabled)
                 {
                     activeBases++;
                 }
-
             }
-
             if (activeBases == 1)
             {
                 FinishGame();
@@ -752,37 +762,40 @@ namespace Problems.Moba_game
         {
             foreach (Moba_gameAgentComponent agent in Agents)
             {
-                // Sector exploration
+                // SectorExploration
                 sectorExplorationFitness = agent.SectorsExplored / (float)Sectors.Length;
                 sectorExplorationFitness = (float)Math.Round(Moba_gameFitness.FitnessValues[Moba_gameFitness.FitnessKeys.SectorExploration.ToString()] * sectorExplorationFitness, 4);
                 agent.AgentFitness.UpdateFitness(sectorExplorationFitness, Moba_gameFitness.FitnessKeys.SectorExploration.ToString());
 
-                // Missiles fired
-                allPossibleMissilesFired = (CurrentSimulationSteps * Time.fixedDeltaTime) / MissileShootCooldown;
-                missilesFired = agent.MissilesFired / allPossibleMissilesFired;
-                missilesFired = (float)Math.Round(Moba_gameFitness.FitnessValues[Moba_gameFitness.FitnessKeys.MissilesFired.ToString()] * missilesFired, 4);
-                agent.AgentFitness.UpdateFitness(missilesFired, Moba_gameFitness.FitnessKeys.MissilesFired.ToString());
-
-                // Missiles fired accuracy
-                if (agent.MissilesFired > 0)
-                {
-                    missilesFiredAccuracy = agent.MissilesHitOpponent / (float)agent.MissilesFired;
-                    missilesFiredAccuracy = (float)Math.Round(Moba_gameFitness.FitnessValues[Moba_gameFitness.FitnessKeys.MissilesFiredAccuracy.ToString()] * missilesFiredAccuracy, 4);
-                    agent.AgentFitness.UpdateFitness(missilesFiredAccuracy, Moba_gameFitness.FitnessKeys.MissilesFiredAccuracy.ToString());
-                }
-
-                // Survival bonus
+                // SurvivalBonus
                 survivalBonus = agent.MaxSurvivalTime / (float)CurrentSimulationSteps;
                 survivalBonus = (float)Math.Round(Moba_gameFitness.FitnessValues[Moba_gameFitness.FitnessKeys.SurvivalBonus.ToString()] * survivalBonus, 4);
                 agent.AgentFitness.UpdateFitness(survivalBonus, Moba_gameFitness.FitnessKeys.SurvivalBonus.ToString());
                 agent.ResetSurvivalTime();
 
-                // Opponent tracking bonus
-                opponentTrackingBonus = agent.OpponentTrackCounter / (CurrentSimulationSteps / (float)DecisionRequestInterval);
-                opponentTrackingBonus = (float)Math.Round(Moba_gameFitness.FitnessValues[Moba_gameFitness.FitnessKeys.OpponentTrackingBonus.ToString()] * opponentTrackingBonus, 4);
-                agent.AgentFitness.UpdateFitness(opponentTrackingBonus, Moba_gameFitness.FitnessKeys.OpponentTrackingBonus.ToString());
+                // LasersFired
+                allPossibleLasersFired = (CurrentSimulationSteps * Time.fixedDeltaTime) / MissileShootCooldown;
+                lasersFired = agent.LasersFired / allPossibleLasersFired;
+                lasersFired = (float)Math.Round(Moba_gameFitness.FitnessValues[Moba_gameFitness.FitnessKeys.LasersFired.ToString()] * lasersFired, 4);
+                agent.AgentFitness.UpdateFitness(lasersFired, Moba_gameFitness.FitnessKeys.LasersFired.ToString());
 
-                // Opponents destroyed
+                // LaserOpponentAccuracy
+                if (agent.LasersFired > 0)
+                {
+                    lasersFiredOpponentAccuracy = agent.MissilesHitOpponent / (float)agent.LasersFired;
+                    lasersFiredOpponentAccuracy = (float)Math.Round(Moba_gameFitness.FitnessValues[Moba_gameFitness.FitnessKeys.LaserOpponentAccuracy.ToString()] * lasersFiredOpponentAccuracy, 4);
+                    agent.AgentFitness.UpdateFitness(lasersFiredOpponentAccuracy, Moba_gameFitness.FitnessKeys.LaserOpponentAccuracy.ToString());
+                }
+
+                // LaserOpponentBaseLaserAccuracy
+                if (agent.LasersFired > 0)
+                {
+                    lasersFiredBaseAccuracy = agent.MissilesHitBase / (float)agent.LasersFired;
+                    lasersFiredBaseAccuracy = (float)Math.Round(Moba_gameFitness.FitnessValues[Moba_gameFitness.FitnessKeys.LaserOpponentBaseLaserAccuracy.ToString()] * lasersFiredBaseAccuracy, 4);
+                    agent.AgentFitness.UpdateFitness(lasersFiredBaseAccuracy, Moba_gameFitness.FitnessKeys.LaserOpponentBaseLaserAccuracy.ToString());
+                }
+
+                // OpponentDestroyedBonus
                 numOfOpponents = Agents.Where(a => a.TeamID != agent.TeamID).Select(a => (a as Moba_gameAgentComponent).NumOfSpawns).Sum();
                 if (numOfOpponents > 0)
                 {
@@ -791,8 +804,17 @@ namespace Problems.Moba_game
                     agent.AgentFitness.UpdateFitness(opponentsDestroyedBonus, Moba_gameFitness.FitnessKeys.OpponentDestroyedBonus.ToString());
                 }
 
-                // Damage taken
-                numOfFiredOpponentMissiles = Agents.Where(a => a.TeamID != agent.TeamID).Select(a => (a as Moba_gameAgentComponent).MissilesFired).Sum();
+                // OpponentBaseDestroyedBonus
+                numOfOpponentBases = Match.Teams.Length - 1;
+                if (numOfOpponentBases > 0)
+                {
+                    opponentBasesDestroyedBonus = agent.OpponentBasesDestroyed / (float)numOfOpponentBases;
+                    opponentBasesDestroyedBonus = (float)Math.Round(Moba_gameFitness.FitnessValues[Moba_gameFitness.FitnessKeys.OpponentBaseDestroyedBonus.ToString()] * opponentBasesDestroyedBonus, 4);
+                    agent.AgentFitness.UpdateFitness(opponentBasesDestroyedBonus, Moba_gameFitness.FitnessKeys.OpponentBaseDestroyedBonus.ToString());
+                }
+
+                // DamageTakenPenalty
+                numOfFiredOpponentMissiles = Agents.Where(a => a.TeamID != agent.TeamID).Select(a => (a as Moba_gameAgentComponent).LasersFired).Sum();
                 if (numOfFiredOpponentMissiles > 0)
                 {
                     damageTakenPenalty = agent.HitByOpponentMissiles / (float)numOfFiredOpponentMissiles;
@@ -800,35 +822,61 @@ namespace Problems.Moba_game
                     agent.AgentFitness.UpdateFitness(damageTakenPenalty, Moba_gameFitness.FitnessKeys.DamageTakenPenalty.ToString());
                 }
 
-                teammateHitsPenatly = agent.MissilesHitTeammate;
-                teammateHitsPenatly = (float)Math.Round(Moba_gameFitness.FitnessValues[Moba_gameFitness.FitnessKeys.TeammateHitsPenalty.ToString()] * teammateHitsPenatly, 4);
-                agent.AgentFitness.UpdateFitness(teammateHitsPenatly, Moba_gameFitness.FitnessKeys.TeammateHitsPenalty.ToString());
+                // LavaPlanetOrbitEnter
+                numOfAllLavaPlanetOrbitEnters = Agents.Select(a => (a as Moba_gameAgentComponent).EnteredLavaPlanetOrbit).Sum();
+                if (numOfAllLavaPlanetOrbitEnters > 0)
+                {
+                    lavaPlanetOrbitEnters = agent.EnteredLavaPlanetOrbit / (float)numOfAllLavaPlanetOrbitEnters;
+                    lavaPlanetOrbitEnters = (float)Math.Round(Moba_gameFitness.FitnessValues[Moba_gameFitness.FitnessKeys.LavaPlanetOrbitEnter.ToString()] * lavaPlanetOrbitEnters, 4);
+                    agent.AgentFitness.UpdateFitness(lavaPlanetOrbitEnters, Moba_gameFitness.FitnessKeys.LavaPlanetOrbitEnter.ToString());
+                }
 
-                ownBaseHitsPenalty = agent.MissilesHitOwnBase;
-                ownBaseHitsPenalty = (float)Math.Round(Moba_gameFitness.FitnessValues[Moba_gameFitness.FitnessKeys.OwnBaseHitsPenalty.ToString()] * ownBaseHitsPenalty, 4);
-                agent.AgentFitness.UpdateFitness(ownBaseHitsPenalty, Moba_gameFitness.FitnessKeys.OwnBaseHitsPenalty.ToString());
+                // IcePlanetOrbitEnter
+                numOfAllIcePlanetOrbitEnters = Agents.Select(a => (a as Moba_gameAgentComponent).EnteredIcePlanetOrbit).Sum();
+                if (numOfAllIcePlanetOrbitEnters > 0)
+                {
+                    icePlanetOrbitEnters = agent.EnteredIcePlanetOrbit / (float)numOfAllIcePlanetOrbitEnters;
+                    icePlanetOrbitEnters = (float)Math.Round(Moba_gameFitness.FitnessValues[Moba_gameFitness.FitnessKeys.IcePlanetOrbitEnter.ToString()] * icePlanetOrbitEnters, 4);
+                    agent.AgentFitness.UpdateFitness(icePlanetOrbitEnters, Moba_gameFitness.FitnessKeys.IcePlanetOrbitEnter.ToString());
+                }
 
+                // LavaPlanetOrbitCapture
+                numOfAllLavaPlanetOrbitCaptures = Agents.Select(a => (a as Moba_gameAgentComponent).CapturedLavaPlanet).Sum();
+                if (numOfAllLavaPlanetOrbitCaptures > 0)
+                {
+                    lavaPlanetOrbitCaptures = agent.CapturedLavaPlanet / (float)numOfAllLavaPlanetOrbitCaptures;
+                    lavaPlanetOrbitCaptures = (float)Math.Round(Moba_gameFitness.FitnessValues[Moba_gameFitness.FitnessKeys.LavaPlanetOrbitCapture.ToString()] * lavaPlanetOrbitCaptures, 4);
+                    agent.AgentFitness.UpdateFitness(lavaPlanetOrbitCaptures, Moba_gameFitness.FitnessKeys.LavaPlanetOrbitCapture.ToString());
+                }
+
+                // IcePlanetOrbitCapture
+                numOfAllIcePlanetOrbitCaptures = Agents.Select(a => (a as Moba_gameAgentComponent).CapturedIcePlanet).Sum();
+                if (numOfAllIcePlanetOrbitCaptures > 0)
+                {
+                    icePlanetOrbitCaptures = agent.CapturedIcePlanet / (float)numOfAllIcePlanetOrbitCaptures;
+                    icePlanetOrbitCaptures = (float)Math.Round(Moba_gameFitness.FitnessValues[Moba_gameFitness.FitnessKeys.IcePlanetOrbitCapture.ToString()] * icePlanetOrbitCaptures, 4);
+                    agent.AgentFitness.UpdateFitness(icePlanetOrbitCaptures, Moba_gameFitness.FitnessKeys.IcePlanetOrbitCapture.ToString());
+                }
 
                 /*
                 Debug.Log("========================================");
                 Debug.Log("Agent: Team ID" + agent.TeamID + ", ID: " + agent.IndividualID);
-                Debug.Log("Sectors explored: " + agent.SectorsExplored + " / " + Sectors.Length + " =");
-                Debug.Log("Health powerUps: " + agent.HealtPowerUpsCollected + " / " + PowerUpSpawner.HealthBoxSpawned + " =");
-                Debug.Log("Ammo powerUps: " + agent.AmmoPowerUpsCollected + " / " + PowerUpSpawner.AmmoBoxSpawned + " =");
-                Debug.Log("Shield powerUps: " + agent.ShieldPowerUpsCollected + " / " + PowerUpSpawner.ShieldBoxSpawned + " =");
-                Debug.Log("Missiles fired: " + agent.MissilesFired + " / " + allPossibleMissilesFired + " =");
-                Debug.Log("Missiles fired accuracy: " + agent.MissilesHitOpponent + " / " + agent.MissilesFired + " =");
-                Debug.Log("Survival bonus: " + agent.MaxSurvivalTime + " / " + CurrentSimulationSteps + " =");
-                Debug.Log("Gold hits bonus: " + agent.GoldHitsBonus " =");
-                Debug.Log("Base hits bonus: " + agent.BaseHitsBonus " =");
-                Debug.Log("Opponent tracking bonus: " + agent.OpponentTrackCounter + " / " + (CurrentSimulationSteps / (float)DecisionRequestInterval) + " =");
-                Debug.Log("Opponents destroyed bonus: " + agent.OpponentsDestroyed + " / " + numOfOpponents + " =");
-                Debug.Log("Damage taken: " + agent.HitByOpponentMissiles + " / " + numOfFiredOpponentMissiles + " =");
-                Debug.Log("Teammate hits penalty: " + agent.MissilesHitTeammate " =");
-                Debug.Log("Own base hits penalty: " + agent.MissilesHitOwnBase " =");
-
+                Debug.Log("Sectors explored: " + agent.SectorsExplored + " / " + Sectors.Length + " = " + sectorExplorationFitness);
+                Debug.Log("Survival bonus: " + agent.MaxSurvivalTime + " / " + CurrentSimulationSteps + " = " + survivalBonus);
+                Debug.Log("Lasers fired: " + agent.LasersFired + " / " + allPossibleLasersFired + " = " + lasersFired);
+                Debug.Log("Laser fired opponent accuracy: " + agent.MissilesHitOpponent + " / " + agent.LasersFired + " = " + lasersFiredOpponentAccuracy);
+                Debug.Log("Laser fired base accuracy: " + agent.MissilesHitBase + " / " + agent.LasersFired + " = " + opponentsDestroyedBonus);
+                Debug.Log("Opponents destroyed bonus: " + agent.OpponentsDestroyed + " / " + numOfOpponents + " = " + opponentsDestroyedBonus);
+                Debug.Log("Opponent bases destroyed bonus: " + agent.OpponentBasesDestroyed + " / " + numOfOpponentBases + " = " + opponentBasesDestroyedBonus);
+                Debug.Log("Damage taken penalty: " + agent.HitByOpponentMissiles + " / " + numOfFiredOpponentMissiles + " = " + damageTakenPenalty);
                 Debug.Log("========================================");
                 */
+                Debug.Log("LavaPlanetOrbitEnter: " + agent.EnteredLavaPlanetOrbit + " / " + numOfAllLavaPlanetOrbitEnters + " = " + lavaPlanetOrbitEnters);
+                Debug.Log("IcePlanetOrbitEnter: " + agent.EnteredIcePlanetOrbit + " / " + numOfAllIcePlanetOrbitEnters + " = " + icePlanetOrbitEnters);
+                Debug.Log("LavaPlanetOrbitCapture: " + agent.CapturedLavaPlanet + " / " + numOfAllLavaPlanetOrbitCaptures + " = " + lavaPlanetOrbitCaptures);
+                Debug.Log("IcePlanetOrbitCapture: " + agent.CapturedIcePlanet + " / " + numOfAllIcePlanetOrbitCaptures + " = " + icePlanetOrbitCaptures);
+
+
             }
         }
 

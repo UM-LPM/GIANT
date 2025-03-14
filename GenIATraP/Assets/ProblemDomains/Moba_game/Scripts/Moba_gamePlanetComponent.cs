@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Xml.Serialization;
 using Base;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Problems.Moba_game
@@ -13,7 +14,7 @@ namespace Problems.Moba_game
         private float captureProgress = 0f;
         private float captureSpeed;
         private SpriteRenderer planetCircle;
-        private List<AgentComponent> agentsInZone = new List<AgentComponent>();
+        private List<Moba_gameAgentComponent> agentsInZone = new List<Moba_gameAgentComponent>();
         private int capturingTeamID = -1; // Team currently capturing
 
         private readonly Color whiteColor = new Color(1, 1, 1, 0.2f);
@@ -36,12 +37,11 @@ namespace Problems.Moba_game
         {
             int[] teamCounts = new int[4];
 
-            foreach (var agent in agentsInZone)
+            foreach (Moba_gameAgentComponent agent in agentsInZone)
             {
-                Moba_gameAgentComponent agentComponent = agent.GetComponent<Moba_gameAgentComponent>();
-                if (agentComponent != null && agentComponent.TeamID >= 0 && agentComponent.TeamID <= 3)
+                if (agent != null && agent.TeamID >= 0 && agent.TeamID <= 3)
                 {
-                    teamCounts[agentComponent.TeamID]++;
+                    teamCounts[agent.TeamID]++;
                 }
             }
             int maxIndex = -1;
@@ -69,7 +69,16 @@ namespace Problems.Moba_game
         {
             if (other.CompareTag("Agent"))
             {
-                agentsInZone.Add(other.GetComponent<Moba_gameAgentComponent>());
+                Moba_gameAgentComponent agent = other.GetComponent<Moba_gameAgentComponent>();
+                if (Type == "lava")
+                {
+                    agent.EnteredLavaPlanetOrbit++;
+                }
+                else
+                {
+                    agent.EnteredIcePlanetOrbit++;
+                }
+                agentsInZone.Add(agent);
             }
         }
 
@@ -115,7 +124,24 @@ namespace Problems.Moba_game
                     // When fully captured, assign ownership
                     if (captureProgress >= 1)
                     {
-                        CapturedTeamID = capturingTeamID;
+                        if (capturingTeamID != CapturedTeamID)
+                        {
+                            CapturedTeamID = capturingTeamID;
+                            foreach (Moba_gameAgentComponent agent in agentsInZone)
+                            {
+                                if (agent.TeamID == CapturedTeamID)
+                                {
+                                    if (Type == "lava")
+                                    {
+                                        agent.CapturedLavaPlanet++;
+                                    }
+                                    else
+                                    {
+                                        agent.CapturedIcePlanet++;
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
                 else
