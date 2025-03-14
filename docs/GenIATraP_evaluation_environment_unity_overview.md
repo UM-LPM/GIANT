@@ -71,6 +71,7 @@ When multiple individuals are grouped together, they form a **Team**. In a team-
 Once teams are defined, they can participate in a **Match**. A match consists of at least one team and each team consists of at least on individual, depending on the requirements of the specific problem domain. Currently, different teams operate **independently**, meaning that inter-team cooperation is not supported—each team functions autonomously within its own strategy.
 
 ![Individual Scheme](/docs/images/individual_scheme.png)
+
 ## Simulation
 A **Simulation** is one of the core processes through which predefined matches are **evaluated** within the platform. It consists of several key components:
 
@@ -107,6 +108,8 @@ The **Environment Controller** acts as the **central orchestration component** o
 
 ![Simulation Scheme](/docs/images/simulation_scheme.png)
 
+### Ensuring Deterministic Environment
+⚠️ **Important:** A deterministic environment is a crucial aspect of an evaluation environment, as it guarantees the reproducibility of previously conducted experiments. To achieve this, new environments must be designed to meet these requirements. One key consideration is ensuring that all prefabs are unpacked before being added to the scene, as using packed prefabs can compromise the determinism of the simulation.
 ## Communicator
 
 The **Communicator** class is a central component responsible for managing the communication between the Unity environment and [**Coordinator**](/docs/GenIATraP_evaluation_environment_unity_overview.md#coordinator) via an HTTP server. It also facilitates scene management and simulation execution for evaluating agent performance in different game scenarios.
