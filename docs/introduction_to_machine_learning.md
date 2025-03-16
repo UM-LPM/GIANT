@@ -44,6 +44,26 @@ Reinforcement Learning is a **trial-and-error** approach where an AI agent inter
 
 Example: **AlphaGo and OpenAI Five**—AI models trained using RL to **outperform human players** in complex strategic games.
 
+## **Genetic Programming in Game AI**
+
+A **unique approach** to machine learning in games is **Genetic Programming (GP)**. Instead of using datasets for training, GP evolves AI behavior using principles of **natural selection**—similar to how biological evolution works.
+
+### **How Genetic Programming Works**
+
+1. Create a population of AI agents with random behaviors.
+2. Evaluate performance based on a fitness function (e.g., survival time, damage dealt).
+3. Select the best-performing agents and apply mutations/crossovers.
+4. Repeat the process for multiple generations until AI evolves optimal strategies.
+
+### **How GenIATraP Uses Genetic Programming**
+
+GenIATraP is designed to evolve AI agents **without pre-programmed rules** by:
+
+- Allowing **multi-agent competition** to drive strategy development.
+- Using different **Rating systems** and **Tournament organizations** to evaluate AI fitness.
+- Enabling agents to **learn, adapt, and improve over multiple generations**.
+
+**Example**: In a [**Robocode-like battle simulation**](/docs/GenIATraP_robostrike_problem_domain), agents can evolve **aiming, shooting, dodging, and movement strategies** purely through the optimization with genetic programming.
 
 ## **Machine Learning vs. Traditional Game AI**
 
@@ -90,27 +110,6 @@ Machine learning offers several improvements over traditional rule-based AI:
 
 - AI models simulating thousands of matches to refine game balance.
 - Example: Fighting games using ML-trained AI to **identify overpowered characters**.
-
-## **Genetic Programming in Game AI**
-
-A **unique approach** to machine learning in games is **Genetic Programming (GP)**. Instead of using datasets for training, GP evolves AI behavior using principles of **natural selection**—similar to how biological evolution works.
-
-### **How Genetic Programming Works**
-
-1. Create a population of AI agents with random behaviors.
-2. Evaluate performance based on a fitness function (e.g., survival time, damage dealt).
-3. Select the best-performing agents and apply mutations/crossovers.
-4. Repeat the process for multiple generations until AI evolves optimal strategies.
-
-### **How GenIATraP Uses Genetic Programming**
-
-GenIATraP is designed to evolve AI agents **without pre-programmed rules** by:
-
-- Allowing **multi-agent competition** to drive strategy development.
-- Using different **Rating systems** and **Tournament organizations** to evaluate AI fitness.
-- Enabling agents to **learn, adapt, and improve over multiple generations**.
-
-Example: In a **Robocode-like battle simulation**, agents can evolve **aiming, shooting, dodging, and movement strategies** purely through the optimization with genetic programming.
 
 ## **Conclusion**
 
