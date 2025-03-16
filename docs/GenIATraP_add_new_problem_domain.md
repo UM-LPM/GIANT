@@ -1,5 +1,5 @@
 # Add New Problem Domain To The Unity Evaluation Environment
-To add a new problem domain to the platform, follow the following steps to integrate your custom environment, agents, and configurations. This guide will walk you through creating the necessary folders, scenes, and prefabs, and implementing the required logic to define your problem domain.
+To add a new problem domain to the platform, follow these steps to integrate your custom environment, agents, and configurations. This guide will walk you through creating the necessary folders, scenes, and prefabs, and implementing the required logic to define your problem domain.
 
 ### **Step 1: Create New Folders for Your Problem Domain**
 
@@ -42,6 +42,7 @@ For the simulation to work, you need to create the necessary **prefabs** that de
     - A **Rigidbody** for movement if required.
     - An **AgentController** to handle the agent’s decision-making and actions.
     - Any other components needed for your agent’s behavior (e.g., sensors, abilities, etc.).
+- **!Important!** - All prefabs that are added to the scene need to be **unpacked**, otherwise the determinism of the simulation is at risk.
     
 ### **Step 4: Implement New Problem Domain Logic**
 
@@ -59,7 +60,7 @@ At this stage, you need to implement the logic specific to your new problem doma
 4. **ActionExecutor**:
     - This class is responsible for translating the agent’s actions into actual in-game movements. Agent's actions are stored in the ActionBuffer property.
     - Implement this class to handle the specific actions that agents can perform (e.g., move, attack, interact with objects).
-5. **(Dummy)Fitness**:
+5. **Fitness**:
     - Fitness logic determines how well an agent performs in the environment.
     - Define your custom fitness keys and fitness values, which are used to set the agent's performance based on the objectives of your problem domain (e.g., scoring goals in soccer, surviving in a combat game, etc.).
 6. **ManualAgentController**:
@@ -78,7 +79,9 @@ Make sure to clearly define the problem domain-specific behavior in separate scr
 ### **Step 6: Test and Validate**
 
 Once you have implemented the core logic and configurations for your new problem domain:
-
 - Test the simulation to ensure that agents behave as expected and interact correctly with the environment.
 - Validate the fitness evaluation to ensure it reflects the desired performance metrics (e.g., agents should be rewarded for winning, surviving, or completing objectives).
 - Iterate on your implementation to fix any issues or improve the agent's performance.
+
+## Next Step
+To see which problem domains are already included in the platform, check out the [existing problem domains](/docs/GenIATraP_problem_domains.md). 

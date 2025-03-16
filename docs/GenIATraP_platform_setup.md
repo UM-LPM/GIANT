@@ -1,10 +1,10 @@
 # Platform Setup (Developer)
 
-The platform consists of three parts: Unity, Web API, and EARS framework. To set up the platform follow the instructions listed below for each component.
+The platform consists of three parts: **Unity**, **Web API**, and **EARS framework**. To set up the platform follow the instructions listed below for each component.
 
 ## Unity Setup
 1. Install Unity Hub from the official [website](https://unity.com/download).
-2. From the Unity Hub install the LTS Unity version for 2022 or higher.
+2. From the Unity Hub install the Unity LTS version for 2022 or higher.
 3. Clone the [repository](https://github.com/UM-LPM/GeneralTrainingEnvironmentForMAS/tree/platform_refactor) on your local machine from the GitHub.
 4. Add and open the cloned project in the Unity Hub.
 5. Configure Unity Editor (Edit -> Project Settings -> Physics) if the settings don't match the ones displayed in the image below.
@@ -114,7 +114,7 @@ The platform consists of three parts: Unity, Web API, and EARS framework. To set
 
 ## Web API Setup
 
-1. Install [MS VisualStudio](https://visualstudio.microsoft.com/downloads/).
+1. Install [MS VisualStudio](https://visualstudio.microsoft.com/downloads/) or any other code editor that supports reading .cs files.
 2. In the cloned repository navigate to the WebAPI folder, open WebAPI.sln, and start the API.
 3. Navigate to **`http://localhost:5016/swagger/index.html`** to see if the API ran successfully.
 4. API can be tested with a POST request to the http://localhost:5016/api/JsonToSoParser with the following request body:

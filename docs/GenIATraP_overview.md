@@ -11,13 +11,13 @@ So if you are an AI researcher, game developer, or hobbyist—you may have diffe
 The rest of this documentation provides a deep dive into GenIATraP, including its core components, training methodologies, and implementation details. By the end, you’ll have a clear understanding of how to use the platform effectively. Subsequent sections will walk you through setting up and using GenIATraP for your projects.
 
 # General Idea
-The conceptual platform comprises three fundamental components: a Machine Learning (ML) framework, an Evaluation Environment, and a Web API intended to facilitate seamless integration between these two components.
+The conceptual platform comprises three fundamental components: a **Machine Learning (ML) framework**, an **Evaluation Environment**, and a **Web API** intended to facilitate seamless integration between these two components.
 
 The **Machine Learning framework** encompasses a sophisticated suite of algorithms tailored to optimize Single-agent and Multi-agent Systems. Currently among these frameworks is only EARS, which offers genetic programming algorithms tuned for Single-agent and Multi-agent optimization tasks.
 
 **Evaluation Environments** contain a diverse set of problems that replicate real-world challenges encountered in Single-Agent and Multi-Agent Systems.
 
-Functioning as an intermediary, the **Web API** serves to effectively bridge the ML frameworks and Evaluation Environments. Its primary objective is to translate individual representations of solutions within the ML framework into formats (such as programs or trees) that can be interpreted and evaluated by the Evaluation Environment. Subsequently, it relays pertinent information concerning the success of these solutions back to the ML framework.
+**Web API** serves to effectively bridge the **ML frameworks** and **Evaluation Environments**. Its primary objective is to translate individual representations of solutions within the ML framework into formats (such as programs or trees) that can be interpreted and evaluated by the Evaluation Environment. Subsequently, it relays pertinent information concerning the success of these solutions back to the ML framework.
 
 ![Platform General Idea](/docs/images/platform_general_idea.png)
 # Optimization Process (Example with EARS framework and Unity Game engine)

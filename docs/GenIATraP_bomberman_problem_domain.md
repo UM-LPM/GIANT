@@ -57,14 +57,14 @@ The environment contains randomly spawned **power-ups** that enhance an agent’
 ## Fitness Evaluation
 Fitness evaluation in the Bomberman problem domain is used to measure an agent's performance in the simulation. The fitness values are based on the agent's behavior and achievements throughout the game. Here are some key fitness components:
 
-- SectorExploration: A penalty is applied for exploring new sectors of the arena.
-- BombsPlaced: A small penalty is applied for placing bombs, encouraging strategic placement.
-- BlockDestroyed: A penalty is imposed for destroying blocks, as it can create unnecessary chaos or block movement.
-- PowerUpsCollected: A small penalty is given for collecting power-ups, ensuring agents focus on survival and strategic actions.
-- BombsHitAgent: A penalty is given if an agent is hit by their own bomb, promoting careful decision-making.
-- AgentsKilled: A significant penalty is applied for killing other agents, emphasizing the importance of self-preservation.
-- AgentDeath: A penalty is given when an agent dies, reinforcing the goal of survival.
-- SurvivalBonus: A small penalty is awarded for simply surviving without taking substantial action, rewarding agents who engage with the environment rather than hiding.
+- **SectorExploration**: A penalty is applied for exploring new sectors of the arena.
+- **BombsPlaced**: A small penalty is applied for placing bombs, encouraging strategic placement.
+- **BlockDestroyed**: A penalty is imposed for destroying blocks, as it can create unnecessary chaos or block movement.
+- **PowerUpsCollected**: A small penalty is given for collecting power-ups, ensuring agents focus on survival and strategic actions.
+- **BombsHitAgent**: A penalty is given if an agent is hit by their own bomb, promoting careful decision-making.
+- **AgentsKilled**: A significant penalty is applied for killing other agents, emphasizing the importance of self-preservation.
+- **AgentDeath**: A penalty is given when an agent dies, reinforcing the goal of survival.
+- **SurvivalBonus**: A small penalty is awarded for simply surviving without taking substantial action, rewarding agents who engage with the environment rather than hiding.
 
 The overall fitness score is a sum of these factors, with higher penalties for harmful actions (like dying or being hit by bombs) and smaller penalties for less impactful behaviors.
 
