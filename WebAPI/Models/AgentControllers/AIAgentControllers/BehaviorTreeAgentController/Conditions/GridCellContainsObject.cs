@@ -5,6 +5,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
     public class GridCellContainsObject : ConditionNode
     {
         public TargetGameObject targetGameObject;
+        public ObjectTeamType targetTeamType;
         public int gridPositionX;
         public int gridPositionY;
 
