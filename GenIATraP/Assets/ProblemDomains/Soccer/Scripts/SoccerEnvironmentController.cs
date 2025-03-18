@@ -217,7 +217,7 @@ namespace Problems.Soccer
         {
             foreach (SoccerAgentComponent agent in Agents)
             {
-                teamAgentCount = Agents.Where(a => a.TeamID == agent.TeamID).ToArray().Length;
+                teamAgentCount = Agents.Where(a => a.TeamIdentifier.TeamID == agent.TeamIdentifier.TeamID).ToArray().Length;
                 // Sector exploration
                 sectorExplorationFitness = agent.SectorsExplored / (float)Sectors.Length;
                 sectorExplorationFitness = (float)Math.Round(SoccerFitness.FitnessValues[SoccerFitness.FitnessKeys.SectorExploration.ToString()] * sectorExplorationFitness, 4);

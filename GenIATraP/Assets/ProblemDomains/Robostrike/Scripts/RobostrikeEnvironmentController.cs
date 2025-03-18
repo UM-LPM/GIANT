@@ -569,7 +569,7 @@ namespace Problems.Robostrike
                 agent.AgentFitness.UpdateFitness(opponentTrackingBonus, RobostrikeFitness.FitnessKeys.OpponentTrackingBonus.ToString());
 
                 // Opponents destroyed
-                numOfOpponents = Agents.Where(a => a.TeamID != agent.TeamID).Select(a => (a as RobostrikeAgentComponent).NumOfSpawns).Sum();
+                numOfOpponents = Agents.Where(a => a.TeamIdentifier.TeamID != agent.TeamIdentifier.TeamID).Select(a => (a as RobostrikeAgentComponent).NumOfSpawns).Sum();
                 if (numOfOpponents > 0)
                 {
                     opponentsDestroyedBonus = agent.OpponentsDestroyed / (float)numOfOpponents;
@@ -578,7 +578,7 @@ namespace Problems.Robostrike
                 }
 
                 // Damage taken
-                numOfFiredOpponentMissiles = Agents.Where(a => a.TeamID != agent.TeamID).Select(a => (a as RobostrikeAgentComponent).MissilesFired).Sum();
+                numOfFiredOpponentMissiles = Agents.Where(a => a.TeamIdentifier.TeamID != agent.TeamIdentifier.TeamID).Select(a => (a as RobostrikeAgentComponent).MissilesFired).Sum();
                 if (numOfFiredOpponentMissiles > 0)
                 {
                     damageTakenPenalty = agent.HitByOpponentMissiles / (float)numOfFiredOpponentMissiles;

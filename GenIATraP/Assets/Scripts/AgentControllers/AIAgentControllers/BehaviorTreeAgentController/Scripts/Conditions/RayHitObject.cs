@@ -74,6 +74,13 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
         RaySide
     }
 
+    public enum ObjectTeamType
+    {
+        Default,
+        Teammate,
+        Opponent
+    }
+
     public class RayHitObject : ConditionNode
     {
         public static RayHitObjectDetectionType RAY_HIT_OBJECT_DETECTION_TYPE = RayHitObjectDetectionType.RayIndex;
@@ -82,10 +89,14 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
         public TargetGameObject targetGameObject;
         public AgentSideAdvanced side;
         public int rayIndex;
+        public ObjectTeamType targetTeamType;
         public RaySensorBase raySensor;
 
         private SensorPerceiveOutput[] sensorPerceiveOutputs;
         private bool targetHit;
+
+        private TeamIdentifier baseGameObjectTeam;
+        private TeamIdentifier targetGameObjectTeam;
 
         protected override void OnStart()
         {
@@ -101,6 +112,8 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
             {
                 raySensor = context.gameObject.GetComponentInChildren<RaySensorBase>();
                 raySensor.SetLayerMask((1 << context.gameObject.layer) + 1); // base layer + default
+
+                GetBaseGameObjectTeam();
             }
 
             targetHit = false;
@@ -110,7 +123,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
                 // Option 1 : Check if the target game object is hit by the single ray based on RayIndex
                 sensorPerceiveOutputs = raySensor.PerceiveSingle(xPos: rayIndex);
 
-                if (sensorPerceiveOutputs[rayIndex].HasHit && sensorPerceiveOutputs[rayIndex].HitGameObjects[0].tag.Contains(TargetGameObjectsToString(targetGameObject)))
+                if (sensorPerceiveOutputs[rayIndex].HasHit && sensorPerceiveOutputs[rayIndex].HitGameObjects[0].tag.Contains(TargetGameObjectsToString(targetGameObject)) && TargetTeamHit(sensorPerceiveOutputs[0].HitGameObjects[0]))
                 {
                     targetHit = true;
 
@@ -128,7 +141,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
                 if (side == AgentSideAdvanced.Center)
                 {
                     sensorPerceiveOutputs = raySensor.PerceiveRange(0, 1, 2);
-                    if (sensorPerceiveOutputs[0].HasHit && sensorPerceiveOutputs[0].HitGameObjects[0].tag.Contains(TargetGameObjectsToString(targetGameObject)))
+                    if (sensorPerceiveOutputs[0].HasHit && sensorPerceiveOutputs[0].HitGameObjects[0].tag.Contains(TargetGameObjectsToString(targetGameObject)) && TargetTeamHit(sensorPerceiveOutputs[0].HitGameObjects[0]))
                     {
                         targetHit = true;
                         hitIndex = 0;
@@ -139,7 +152,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
                     sensorPerceiveOutputs = raySensor.PerceiveRange(2, raySensor.GetRayPerceptionInput().Angles.Count, 2);
                     for (int i = 2; i < sensorPerceiveOutputs.Length; i += 2)
                     {
-                        if (sensorPerceiveOutputs[i].HasHit && sensorPerceiveOutputs[i].HitGameObjects[0].tag.Contains(TargetGameObjectsToString(targetGameObject)))
+                        if (sensorPerceiveOutputs[i].HasHit && sensorPerceiveOutputs[i].HitGameObjects[0].tag.Contains(TargetGameObjectsToString(targetGameObject)) && TargetTeamHit(sensorPerceiveOutputs[i].HitGameObjects[0]))
                         {
                             targetHit = true;
                             hitIndex = i;
@@ -151,7 +164,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
                     sensorPerceiveOutputs = raySensor.PerceiveRange(1, raySensor.GetRayPerceptionInput().Angles.Count, 2);
                     for (int i = 1; i < sensorPerceiveOutputs.Length; i += 2)
                     {
-                        if (sensorPerceiveOutputs[i].HasHit && sensorPerceiveOutputs[i].HitGameObjects[0].tag.Contains(TargetGameObjectsToString(targetGameObject)))
+                        if (sensorPerceiveOutputs[i].HasHit && sensorPerceiveOutputs[i].HitGameObjects[0].tag.Contains(TargetGameObjectsToString(targetGameObject)) && TargetTeamHit(sensorPerceiveOutputs[i].HitGameObjects[0]))
                         {
                             targetHit = true;
                             hitIndex = i;
@@ -167,6 +180,38 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
             }
 
             return targetHit;
+        }
+
+        public void GetBaseGameObjectTeam()
+        {
+            // Search for TeamIdentifier components in base game object
+            baseGameObjectTeam = context.gameObject.GetComponent<TeamIdentifier>();
+
+            // If base game object doesn't contain the component try to find it in children game objects
+            if(baseGameObjectTeam == null)
+                baseGameObjectTeam = context.gameObject.GetComponentInChildren<TeamIdentifier>();
+        }
+
+        public bool TargetTeamHit(GameObject hitGameObject)
+        {
+            if (baseGameObjectTeam != null)
+            {
+                targetGameObjectTeam = hitGameObject.GetComponent<TeamIdentifier>();
+
+                if(targetGameObjectTeam != null)
+                {
+                    switch (targetTeamType)
+                    {
+                        case ObjectTeamType.Default:
+                            break;
+                        case ObjectTeamType.Teammate:
+                            return baseGameObjectTeam.TeamID == targetGameObjectTeam.TeamID;
+                        case ObjectTeamType.Opponent:
+                            return baseGameObjectTeam.TeamID != targetGameObjectTeam.TeamID;
+                    }
+                }
+            }
+            return true;
         }
 
         public static string TargetGameObjectsToString(TargetGameObject targetGameObject)

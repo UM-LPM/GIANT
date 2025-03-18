@@ -90,7 +90,7 @@ namespace Problems.Robostrike
                         AgentComponent agentComponent = agent as AgentComponent;
                         agentComponent.AgentController = agentController.Clone(); // Clone the agent controller to prevent shared state between agents
                         agentComponent.IndividualID = individual.IndividualId;
-                        agentComponent.TeamID = environmentController.Match.Teams[i].TeamId;
+                        agentComponent.TeamIdentifier.TeamID = environmentController.Match.Teams[i].TeamId;
 
                         // Set agent's team color
                         (agent as RobostrikeAgentComponent).SetTeamColor(teamColor);

@@ -66,11 +66,19 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
         Empty
     }
 
+    public enum ObjectTeamType
+    {
+        Default,
+        Teammate,
+        Opponent
+    }
+
     public class RayHitObject : ConditionNode
     {
         public TargetGameObject targetGameObject;
         public AgentSideAdvanced side;
         public int rayIndex;
+        public ObjectTeamType targetTeamType;
 
         public RayHitObject(Guid guid, string name, List<WebAPI.Models.Property>? properties, Position? position)
             : base(guid, name, properties, position)
@@ -85,6 +93,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
                 targetGameObject = (TargetGameObject)(properties.Find(p => p.Name == "targetGameObject")?.Value ?? 0);
                 side = (AgentSideAdvanced)(properties.Find(p => p.Name == "side")?.Value ?? 0);
                 rayIndex = properties.Find(p => p.Name == "rayIndex")?.Value ?? 0;
+                targetTeamType = (ObjectTeamType)(properties.Find(p => p.Name == "targetTeamType")?.Value ?? 0);
             }
         }
     }
