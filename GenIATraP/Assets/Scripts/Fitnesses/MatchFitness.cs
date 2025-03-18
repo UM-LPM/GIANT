@@ -18,11 +18,11 @@ namespace Fitnesses
 
         public void AddAgentFitness(AgentComponent agent)
         {
-            TeamFitness teamFitness = TeamFitnesses.Find(tf => tf.TeamID == agent.TeamID);
+            TeamFitness teamFitness = TeamFitnesses.Find(tf => tf.TeamID == agent.TeamIdentifier.TeamID);
             if(teamFitness == null)
             {
                 teamFitness = new TeamFitness();
-                teamFitness.TeamID = agent.TeamID;
+                teamFitness.TeamID = agent.TeamIdentifier.TeamID;
                 TeamFitnesses.Add(teamFitness);
             }
 

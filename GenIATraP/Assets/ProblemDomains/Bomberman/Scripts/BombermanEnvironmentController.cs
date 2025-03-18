@@ -372,7 +372,7 @@ namespace Problems.Bomberman
                 }
 
                 Debug.Log("========================================");
-                Debug.Log("Agent: Team ID" + agent.TeamID + ", ID: " + agent.IndividualID);
+                Debug.Log("Agent: Team ID" + agent.TeamIdentifier.TeamID + ", ID: " + agent.IndividualID);
                 Debug.Log("Sectors explored: " + agent.SectorsExplored + " / " + sectorCount + "= " + sectorExplorationFitness);
                 Debug.Log("Bombs placed: " + agent.BombsPlaced + " / " + allPossibleBombs + "= " + bombsPlacedFitness);
                 Debug.Log("Blocks destroyed: " + agent.BlocksDestroyed + " / " + destructibleTilesCount + "= " + blocksDestroyedFitness);

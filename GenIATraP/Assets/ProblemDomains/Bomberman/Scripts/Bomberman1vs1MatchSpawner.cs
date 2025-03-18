@@ -75,7 +75,7 @@ namespace Problems.Bomberman
                         BombermanAgentComponent agentComponent = agent as BombermanAgentComponent;
                         agentComponent.AgentController = agentController.Clone(); // Clone the agent controller to prevent shared state between agents
                         agentComponent.IndividualID = individual.IndividualId;
-                        agentComponent.TeamID = environmentController.Match.Teams[i].TeamId;
+                        agentComponent.TeamIdentifier.TeamID = environmentController.Match.Teams[i].TeamId;
 
                         // TODO Configure agent material
 

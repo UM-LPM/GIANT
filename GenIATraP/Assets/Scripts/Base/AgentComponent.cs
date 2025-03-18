@@ -22,7 +22,11 @@ namespace Base
         public AgentController AgentController { get; set; }
 
         public int IndividualID { get; set; }
-        public int TeamID { get; set; }
+        
+        //public int TeamID { get; set; }
+        public TeamIdentifier TeamIdentifier { get; set; }
+
+
 
         private void Awake()
         {
@@ -35,6 +39,8 @@ namespace Base
             {
                 transform.position
             };
+
+            TeamIdentifier = GetComponent<TeamIdentifier>();
 
             DefineAdditionalDataOnAwake();
         }

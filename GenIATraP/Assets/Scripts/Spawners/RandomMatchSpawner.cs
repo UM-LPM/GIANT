@@ -94,7 +94,7 @@ namespace Spawners
                             AgentComponent agentComponent = agent as AgentComponent;
                             agentComponent.AgentController = agentController.Clone(); // Clone the agent controller to prevent shared state between agents
                             agentComponent.IndividualID = individual.IndividualId;
-                            agentComponent.TeamID = team.TeamId;
+                            agentComponent.TeamIdentifier.TeamID = team.TeamId;
 
                             // Update lists
                             usedSpawnPoints.Add(spawnPos);

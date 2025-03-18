@@ -100,7 +100,7 @@ namespace Spawners
                             T agent = obj.GetComponent<T>();
                             (agent as AgentComponent).AgentController = agentController.Clone(); // Clone the agent controller to prevent shared state between agents
                             (agent as AgentComponent).IndividualID = individual.IndividualId;
-                            (agent as AgentComponent).TeamID = team.TeamId;
+                            (agent as AgentComponent).TeamIdentifier.TeamID = team.TeamId;
                             usedSpawnPoints.Add(spawnPos);
 
                             agents.Add(agent);
@@ -166,7 +166,7 @@ namespace Spawners
                     AgentComponent agentComponent = agent as AgentComponent;
                     agentComponent.AgentController = agentController.Clone(); // Clone the agent controller to prevent shared state between agents
                     agentComponent.IndividualID = Opponent.IndividualId;
-                    agentComponent.TeamID = -1;
+                    agentComponent.TeamIdentifier.TeamID = -1;
 
                     // Upate lists
                     usedSpawnPoints.Add(spawnPos);

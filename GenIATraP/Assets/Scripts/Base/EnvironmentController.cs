@@ -337,7 +337,7 @@ namespace Base
 
             for (int i = 0; i < Agents.Length; i++)
             {
-                if (Agents[i].TeamID >= 0)
+                if (Agents[i].TeamIdentifier.TeamID >= 0)
                 {
                     matchFitness.AddAgentFitness(Agents[i]);
                 }
