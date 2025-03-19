@@ -15,7 +15,7 @@ namespace Problems.Moba_game
     {
         [SerializeField] public static int MAX_BASE_HEALTH = 20;
         [SerializeField] public static int MAX_HEALTH = 10;
-        [SerializeField] public static int MAX_ENERGY = 30;
+        [SerializeField] public static int MAX_ENERGY = 30000;
 
         [Header("Moba_game General Configuration")]
         [SerializeField] int AgentStartHealth = 10;

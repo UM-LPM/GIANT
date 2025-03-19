@@ -127,7 +127,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
                 if (side == AgentSideAdvanced.Center)
                 {
                     sensorPerceiveOutputs = raySensor.PerceiveRange(0, 1, 2);
-                    if (sensorPerceiveOutputs[0].HasHit && sensorPerceiveOutputs[0].HitGameObjects[0].name.Contains(TargetGameObjectsToString(targetGameObject)))
+                    if (sensorPerceiveOutputs[0].HasHit && sensorPerceiveOutputs[0].HitGameObjects[0].tag.Contains(TargetGameObjectsToString(targetGameObject)))
                     {
                         targetHit = true;
                         hitIndex = 0;
@@ -138,7 +138,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
                     sensorPerceiveOutputs = raySensor.PerceiveRange(2, raySensor.GetRayPerceptionInput().Angles.Count, 2);
                     for (int i = 2; i < sensorPerceiveOutputs.Length; i += 2)
                     {
-                        if (sensorPerceiveOutputs[i].HasHit && sensorPerceiveOutputs[i].HitGameObjects[0].name.Contains(TargetGameObjectsToString(targetGameObject)))
+                        if (sensorPerceiveOutputs[i].HasHit && sensorPerceiveOutputs[i].HitGameObjects[0].tag.Contains(TargetGameObjectsToString(targetGameObject)))
                         {
                             targetHit = true;
                             hitIndex = i;
@@ -150,7 +150,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
                     sensorPerceiveOutputs = raySensor.PerceiveRange(1, raySensor.GetRayPerceptionInput().Angles.Count, 2);
                     for (int i = 1; i < sensorPerceiveOutputs.Length; i += 2)
                     {
-                        if (sensorPerceiveOutputs[i].HasHit && sensorPerceiveOutputs[i].HitGameObjects[0].name.Contains(TargetGameObjectsToString(targetGameObject)))
+                        if (sensorPerceiveOutputs[i].HasHit && sensorPerceiveOutputs[i].HitGameObjects[0].tag.Contains(TargetGameObjectsToString(targetGameObject)))
                         {
                             targetHit = true;
                             hitIndex = i;
