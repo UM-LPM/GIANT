@@ -887,6 +887,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MissileRadius: 0.225
+  Missiles: []
+  Moba_gameEnvironmentController: {fileID: 0}
+  MissileCollisions: []
+  otherAgent: {fileID: 0}
+  otherBase: {fileID: 0}
 --- !u!114 &253094004
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -940,7 +945,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 46c0879e48761a24ba695d8a7556a301, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  EnvironmentControllerSetup: 1
+  EnvironmentControllerSetup: 0
   GameType: 0
   SimulationSteps: 10000
   SimulationTime: 0
@@ -959,11 +964,13 @@ MonoBehaviour:
   AgentColliderExtendsMultiplier: {x: 0.5, y: 0.5, z: 0}
   RandomTeamColor: 0
   DecisionRequestInterval: 2
-  Match: {fileID: 0}
+  Match: {fileID: 11400000, guid: 5370b5ac1ae324c47bf251534c7bddf9, type: 2}
   AgentStartHealth: 10
-  AgentStartEnergy: 300
+  AgentStartEnergy: 30
   BaseStartHealth: 20
-  AgentStartAmmo: 50
+  LaserEnergyConsumption: 5
+  LaserHitEnergyBonus: 10
+  UnlimitedEnergy: 1
   AgentRespawnType: 0
   GameScenarioType: 0
   FrienlyFire: 0
@@ -980,10 +987,7 @@ MonoBehaviour:
   LavaAgentTourque: 1
   IceAgentForwardThrust: 2.5
   IceAgentTourque: 0.5
-  MissilePrefab: {fileID: 5049200600163564288, guid: 742a577b28b30d7458f3661d26cf2089, type: 3}
-  DestroyMissileAfter: 1
-  MissileShootCooldown: 1
-  MissleLaunchSpeed: 15
+  LaserShootCooldown: 1
   MinPowerUpDistance: 10
   MinPowerUpDistanceFromAgents: 10
   PowerUpColliderExtendsMultiplier: {x: 0.5, y: 0.5, z: 0}
@@ -5854,7 +5858,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1885465008
 MonoBehaviour:
   m_ObjectHideFlags: 0

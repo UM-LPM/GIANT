@@ -15,11 +15,9 @@ namespace Problems.Moba_game
 
         public HealthComponent HealthComponent { get; set; }
         public EnergyComponent EnergyComponent { get; set; }
-        public AmmoComponent AmmoComponent { get; set; }
 
         private AgentStatBars StatBars;
-        private int LaserEnergyConsumption = 5;
-        private int LaserHitEnergyBonus = 10;
+
         // Agent fitness variables
         public int SectorsExplored { get; set; }
 
@@ -70,7 +68,6 @@ namespace Problems.Moba_game
 
             HealthComponent = GetComponent<HealthComponent>();
             EnergyComponent = GetComponent<EnergyComponent>();
-            AmmoComponent = GetComponent<AmmoComponent>();
 
             CheckComponentValidity();
         }
@@ -117,12 +114,6 @@ namespace Problems.Moba_game
                 // TODO Add error reporting here
             }
 
-            if (AmmoComponent == null)
-            {
-                throw new System.Exception("AmmoComponent component is missing");
-                // TODO Add error reporting here
-            }
-
             if (MissileSpawnPoint == null)
             {
                 throw new System.Exception("MissileSpawnPointComponent component is missing");
@@ -148,23 +139,16 @@ namespace Problems.Moba_game
             }
         }
 
-        public void LaserFired()
+        public void LaserFired(Moba_gameEnvironmentController moba_gameEnvironmentController)
         {
             if (EnergyComponent.Energy > 0)
             {
-                EnergyComponent.Energy -= LaserEnergyConsumption;
                 LasersFired++;
-                UpdatetStatBars();
-            }
-        }
-
-        public void MissileFired()
-        {
-            if (AmmoComponent.Ammo > 0)
-            {
-                AmmoComponent.Ammo--;
-                MissilesFired++;
-                UpdatetStatBars();
+                if (moba_gameEnvironmentController.UnlimitedEnergy == false)
+                {
+                    EnergyComponent.Energy -= moba_gameEnvironmentController.LaserEnergyConsumption;
+                    UpdatetStatBars();
+                }
             }
         }
 
@@ -182,10 +166,10 @@ namespace Problems.Moba_game
             }
         }
 
-        public void MissileHitOpponent()
+        public void MissileHitOpponent(Moba_gameEnvironmentController moba_gameEnvironmentController)
         {
             MissilesHitOpponent++;
-            EnergyComponent.Energy += LaserHitEnergyBonus;
+            EnergyComponent.Energy += moba_gameEnvironmentController.LaserHitEnergyBonus;
         }
 
         public void MissileHitTeammate()
@@ -193,10 +177,10 @@ namespace Problems.Moba_game
             MissilesHitTeammate++;
         }
 
-        public void MissileHitBase()
+        public void MissileHitBase(Moba_gameEnvironmentController moba_gameEnvironmentController)
         {
             MissilesHitBase++;
-            EnergyComponent.Energy += LaserHitEnergyBonus;
+            EnergyComponent.Energy += moba_gameEnvironmentController.LaserHitEnergyBonus;
         }
 
         public void MissileHitOwnBase()

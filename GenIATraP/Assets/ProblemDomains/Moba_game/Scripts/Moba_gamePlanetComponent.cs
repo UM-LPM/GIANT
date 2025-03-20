@@ -90,9 +90,7 @@ namespace Problems.Moba_game
             }
         }
 
-
-
-        private void Update()
+        private void FixedUpdate()
         {
             int strongestTeam = GetStrongestTeam();
             if (agentsInZone.Count != 0)

@@ -15,17 +15,20 @@ namespace Problems.Moba_game
     {
         [SerializeField] public static int MAX_BASE_HEALTH = 20;
         [SerializeField] public static int MAX_HEALTH = 10;
-        [SerializeField] public static int MAX_ENERGY = 30000;
+        [SerializeField] public static int MAX_ENERGY = 30;
 
         [Header("Moba_game General Configuration")]
         [SerializeField] int AgentStartHealth = 10;
         [SerializeField] int AgentStartEnergy = 30;
         [SerializeField] int BaseStartHealth = 20;
-        [SerializeField] int AgentStartAmmo = 50;
-
+        [SerializeField] public int LaserEnergyConsumption = 5;
+        [SerializeField] public int LaserHitEnergyBonus = 10;
+        [SerializeField] public Boolean UnlimitedEnergy = false;
         [SerializeField] public Moba_gameAgentRespawnType AgentRespawnType = Moba_gameAgentRespawnType.StartPos;
         [SerializeField] public Moba_gameGameScenarioType GameScenarioType = Moba_gameGameScenarioType.Normal;
         [SerializeField] public Boolean FrienlyFire = false;
+        [SerializeField] private int LavaAgentCost = 5;
+        [SerializeField] private int IceAgentCost = 5;
         private Moba_game1vs1MatchSpawner Match1v1Spawner;
 
 
@@ -46,18 +49,14 @@ namespace Problems.Moba_game
         [SerializeField] public float AgentMoveSpeed = 5f;
         [SerializeField] public float AgentRotationSpeed = 80f;
         [SerializeField] public float AgentTurrentRotationSpeed = 90f;
-        [HideInInspector] public float ForwardSpeed = 1f;
         [SerializeField] public float LavaAgentForwardThrust = 5f;
         [SerializeField] public float LavaAgentTourque = 1f;
         [SerializeField] public float IceAgentForwardThrust = 2.5f;
         [SerializeField] public float IceAgentTourque = 0.5f;
 
-        [Header("Moba_game Missile Configuration")]
-        [SerializeField] public GameObject MissilePrefab;
-        [SerializeField, Tooltip("Destroy Missile After X seconds")] public float DestroyMissileAfter = 3.0f;
-        [SerializeField] public float MissileShootCooldown = 1.0f;
-        [SerializeField] public float MissleLaunchSpeed = 20f;
-        [SerializeField] public static int MissileDamage = 2;
+        [Header("Moba_game Laser Configuration")]
+        [SerializeField] public float LaserShootCooldown = 1.0f;
+        [SerializeField] public static int LaserDamage = 2;
 
 
         [Header("Moba_game Planets Configuration")]
@@ -82,7 +81,6 @@ namespace Problems.Moba_game
         [SerializeField] public TextMeshProUGUI Base3LavaText;
         [SerializeField] public TextMeshProUGUI Base3IceText;
 
-        public MissileController MissileController { get; set; }
 
 
 
@@ -96,9 +94,6 @@ namespace Problems.Moba_game
         private float lasersFiredOpponentAccuracy;
         private float lasersFiredBaseAccuracy;
         private float survivalBonus;
-        private float baseHitsBonus;
-        private float teammateHitsPenatly;
-        private float ownBaseHitsPenalty;
         private int numOfOpponents;
         private int numOfAllLavaPlanetOrbitEnters;
         private float lavaPlanetOrbitEnters;
@@ -174,12 +169,6 @@ namespace Problems.Moba_game
                 Sectors = GetComponentsInChildren<SectorComponent>();
             }
 
-            MissileController = GetComponent<MissileController>();
-            if (MissileController == null)
-            {
-                throw new Exception("MissileController is not defined");
-                // TODO Add error reporting here
-            }
         }
 
         protected override void DefineAdditionalDataOnPostStart()
@@ -211,14 +200,17 @@ namespace Problems.Moba_game
                 CheckAgentsExploration();
                 UpdateAgentsSurvivalTime();
                 ResetAgentOpponentTracking();
-                UpdateBaseUI();
+                //UpdateBaseUI();
                 SpawnNewAgents();
 
                 timer += Time.deltaTime;
                 if (timer >= 1f)
                 {
                     UpdateBaseMoney();
-                    UpdateAgentEnergy();
+                    if (!UnlimitedEnergy)
+                    {
+                        UpdateAgentEnergy();
+                    }
                     timer = 0f;
                     // Moba_gameAgentComponent a = Agents[0] as Moba_gameAgentComponent;
                     // Debug.Log("EnteredLavaPlanetOrbit: " + a.EnteredLavaPlanetOrbit);
@@ -243,11 +235,12 @@ namespace Problems.Moba_game
                 }
             }
         }
-
+        private int[] lavaCounts = new int[4];
+        private int[] iceCounts = new int[4];
         private void UpdateBaseMoney()
         {
-            int[] lavaCounts = new int[4];
-            int[] iceCounts = new int[4];
+            Array.Clear(lavaCounts, 0, lavaCounts.Length);
+            Array.Clear(iceCounts, 0, iceCounts.Length);
 
             foreach (Moba_gamePlanetComponent planet in Planets)
             {
@@ -326,7 +319,7 @@ namespace Problems.Moba_game
                 lava = baseComponent.LavaAmount;
                 ice = baseComponent.IceAmount;
 
-                if (lava >= 5 || ice >= 5)
+                if (lava >= LavaAgentCost || ice >= IceAgentCost)
                 {
                     if (Agents != null)
                     {
@@ -345,7 +338,7 @@ namespace Problems.Moba_game
                 }
                 if (canSpawn)
                 {
-                    if (lava >= 5 && ice >= 5)
+                    if (lava >= LavaAgentCost && ice >= IceAgentCost)
                     {
                         if (lava >= ice)
                         {
@@ -353,7 +346,7 @@ namespace Problems.Moba_game
                             List<AgentComponent> agentList = Agents.ToList();
                             agentList.Add(obj);
                             Agents = agentList.ToArray();
-                            baseComponent.LavaAmount -= 5;
+                            baseComponent.LavaAmount -= LavaAgentCost;
                         }
                         else
                         {
@@ -361,24 +354,24 @@ namespace Problems.Moba_game
                             List<AgentComponent> agentList = Agents.ToList();
                             agentList.Add(obj);
                             Agents = agentList.ToArray();
-                            baseComponent.IceAmount -= 5;
+                            baseComponent.IceAmount -= IceAgentCost;
                         }
                     }
-                    else if (lava >= 5)
+                    else if (lava >= LavaAgentCost)
                     {
                         Moba_gameAgentComponent obj = (Moba_gameAgentComponent)Match1v1Spawner.SpawnAgent<AgentComponent>(this, baseComponent.TeamID, "lava");
                         List<AgentComponent> agentList = Agents.ToList();
                         agentList.Add(obj);
                         Agents = agentList.ToArray();
-                        baseComponent.LavaAmount -= 5;
+                        baseComponent.LavaAmount -= LavaAgentCost;
                     }
-                    else if (ice >= 5)
+                    else if (ice >= IceAgentCost)
                     {
                         Moba_gameAgentComponent obj = (Moba_gameAgentComponent)Match1v1Spawner.SpawnAgent<AgentComponent>(this, baseComponent.TeamID, "ice");
                         List<AgentComponent> agentList = Agents.ToList();
                         agentList.Add(obj);
                         Agents = agentList.ToArray();
-                        baseComponent.IceAmount -= 5;
+                        baseComponent.IceAmount -= IceAgentCost;
                     }
                 }
             }
@@ -414,34 +407,19 @@ namespace Problems.Moba_game
                     AgentTurrentRotationSpeed = float.Parse(conf.ProblemConfiguration["AgentTurrentRotationSpeed"]);
                 }
 
-                if (conf.ProblemConfiguration.ContainsKey("DestroyMissileAfter"))
+                if (conf.ProblemConfiguration.ContainsKey("LaserShootCooldown"))
                 {
-                    DestroyMissileAfter = float.Parse(conf.ProblemConfiguration["DestroyMissileAfter"]);
+                    LaserShootCooldown = float.Parse(conf.ProblemConfiguration["LaserShootCooldown"]);
                 }
 
-                if (conf.ProblemConfiguration.ContainsKey("MissileShootCooldown"))
+                if (conf.ProblemConfiguration.ContainsKey("LaserDamage"))
                 {
-                    MissileShootCooldown = float.Parse(conf.ProblemConfiguration["MissileShootCooldown"]);
-                }
-
-                if (conf.ProblemConfiguration.ContainsKey("MissleLaunchSpeed"))
-                {
-                    MissleLaunchSpeed = float.Parse(conf.ProblemConfiguration["MissleLaunchSpeed"]);
-                }
-
-                if (conf.ProblemConfiguration.ContainsKey("MissileDamage"))
-                {
-                    MissileDamage = int.Parse(conf.ProblemConfiguration["MissileDamage"]);
+                    LaserDamage = int.Parse(conf.ProblemConfiguration["LaserDamage"]);
                 }
 
                 if (conf.ProblemConfiguration.ContainsKey("AgentStartHealth"))
                 {
                     AgentStartHealth = int.Parse(conf.ProblemConfiguration["AgentStartHealth"]);
-                }
-
-                if (conf.ProblemConfiguration.ContainsKey("AgentStartAmmo"))
-                {
-                    AgentStartAmmo = int.Parse(conf.ProblemConfiguration["AgentStartAmmo"]);
                 }
 
                 if (conf.ProblemConfiguration.ContainsKey("GameScenarioType"))
@@ -548,35 +526,7 @@ namespace Problems.Moba_game
             return false;
         }
 
-        public void TankHit(MissileComponent missile, AgentComponent hitAgent)
-        {
-            if (FrienlyFire)
-            {
-                if (hitAgent.TeamID == missile.Parent.TeamID)
-                {
-                    (missile.Parent as Moba_gameAgentComponent).MissileHitTeammate();
-                }
-                else
-                {
-                    (missile.Parent as Moba_gameAgentComponent).MissileHitOpponent();
-                }
-                (hitAgent as Moba_gameAgentComponent).HitByOpponentMissile();
-                UpdateAgentHealth(missile, hitAgent as Moba_gameAgentComponent);
-            }
-            else
-            {
-                if (hitAgent.TeamID == missile.Parent.TeamID)
-                {
-                    //(missile.Parent as Moba_gameAgentComponent).MissileHitTeammate();
-                }
-                else
-                {
-                    (missile.Parent as Moba_gameAgentComponent).MissileHitOpponent();
-                    UpdateAgentHealth(missile, hitAgent as Moba_gameAgentComponent);
-                    (hitAgent as Moba_gameAgentComponent).HitByOpponentMissile();
-                }
-            }
-        }
+
         public void LaserTankHit(Moba_gameAgentComponent agent, Moba_gameAgentComponent hitAgent)
         {
             if (FrienlyFire)
@@ -587,7 +537,7 @@ namespace Problems.Moba_game
                 }
                 else
                 {
-                    agent.MissileHitOpponent();
+                    agent.MissileHitOpponent(this);
                 }
                 hitAgent.HitByOpponentMissile();
                 UpdateAgentHealthLaser(agent, hitAgent);
@@ -596,39 +546,13 @@ namespace Problems.Moba_game
             {
                 if (hitAgent.TeamID != agent.TeamID)
                 {
-                    agent.MissileHitOpponent();
+                    agent.MissileHitOpponent(this);
                     hitAgent.HitByOpponentMissile();
                     UpdateAgentHealthLaser(agent, hitAgent);
                 }
             }
         }
-        public void BaseHit(MissileComponent missile, BaseComponent hitBase)
-        {
-            if (FrienlyFire)
-            {
-                if (hitBase.TeamID == missile.Parent.TeamID)
-                {
-                    (missile.Parent as Moba_gameAgentComponent).MissileHitOwnBase();
-                }
-                else
-                {
-                    (missile.Parent as Moba_gameAgentComponent).MissileHitBase();
-                }
-                //UpdateBaseHealth(hitBase as Moba_gameBaseComponent);
-            }
-            else
-            {
-                if (hitBase.TeamID == missile.Parent.TeamID)
-                {
-                    //(missile.Parent as Moba_gameAgentComponent).MissileHitOwnBase();
-                }
-                else
-                {
-                    (missile.Parent as Moba_gameAgentComponent).MissileHitBase();
-                    //UpdateBaseHealth(hitBase as Moba_gameBaseComponent);
-                }
-            }
-        }
+
         public void LaserBaseHit(Moba_gameAgentComponent agent, Moba_gameBaseComponent hitBase)
         {
             if (FrienlyFire)
@@ -639,7 +563,7 @@ namespace Problems.Moba_game
                 }
                 else
                 {
-                    agent.MissileHitBase();
+                    agent.MissileHitBase(this);
                 }
                 UpdateBaseHealth(agent, hitBase);
             }
@@ -647,35 +571,16 @@ namespace Problems.Moba_game
             {
                 if (hitBase.TeamID != agent.TeamID)
                 {
-                    agent.MissileHitBase();
+                    agent.MissileHitBase(this);
                     UpdateBaseHealth(agent, hitBase);
                 }
             }
         }
-        void UpdateAgentHealth(MissileComponent missile, Moba_gameAgentComponent hitAgent)
-        {
-            hitAgent.TakeDamage(MissileDamage);
 
-            if (hitAgent.HealthComponent.Health <= 0)
-            {
-                switch (GameScenarioType)
-                {
-                    case Moba_gameGameScenarioType.Normal:
-                        hitAgent.gameObject.SetActive(false);
-                        //CheckEndingState();
-                        break;
-                    case Moba_gameGameScenarioType.Deathmatch:
-                        (missile.Parent as Moba_gameAgentComponent).OpponentsDestroyed++;
-
-                        ResetAgent(hitAgent);
-                        break;
-                }
-            }
-        }
 
         void UpdateAgentHealthLaser(Moba_gameAgentComponent agent, Moba_gameAgentComponent hitAgent)
         {
-            hitAgent.TakeDamage(MissileDamage);
+            hitAgent.TakeDamage(LaserDamage);
             if (hitAgent.HealthComponent.Health <= 0)
             {
                 switch (GameScenarioType)
@@ -701,7 +606,7 @@ namespace Problems.Moba_game
                 Debug.LogError("hitBase je null v UpdateBaseHealth!");
                 return;
             }
-            hitBase.TakeDamage(MissileDamage);
+            hitBase.TakeDamage(LaserDamage);
             if (hitBase.HealthComponent.Health <= 0)
             {
                 agent.OpponentBasesDestroyed++;
@@ -731,9 +636,6 @@ namespace Problems.Moba_game
 
             // Restore health
             agent.HealthComponent.Health = AgentStartHealth;
-
-            // Restore ammo
-            agent.AmmoComponent.Ammo = AgentStartAmmo;
 
             // Update Healthbar
             agent.UpdatetStatBars();
@@ -774,7 +676,7 @@ namespace Problems.Moba_game
                 agent.ResetSurvivalTime();
 
                 // LasersFired
-                allPossibleLasersFired = (CurrentSimulationSteps * Time.fixedDeltaTime) / MissileShootCooldown;
+                allPossibleLasersFired = (CurrentSimulationSteps * Time.fixedDeltaTime) / LaserShootCooldown;
                 lasersFired = agent.LasersFired / allPossibleLasersFired;
                 lasersFired = (float)Math.Round(Moba_gameFitness.FitnessValues[Moba_gameFitness.FitnessKeys.LasersFired.ToString()] * lasersFired, 4);
                 agent.AgentFitness.UpdateFitness(lasersFired, Moba_gameFitness.FitnessKeys.LasersFired.ToString());
@@ -871,10 +773,10 @@ namespace Problems.Moba_game
                 Debug.Log("Damage taken penalty: " + agent.HitByOpponentMissiles + " / " + numOfFiredOpponentMissiles + " = " + damageTakenPenalty);
                 Debug.Log("========================================");
                 */
-                Debug.Log("LavaPlanetOrbitEnter: " + agent.EnteredLavaPlanetOrbit + " / " + numOfAllLavaPlanetOrbitEnters + " = " + lavaPlanetOrbitEnters);
-                Debug.Log("IcePlanetOrbitEnter: " + agent.EnteredIcePlanetOrbit + " / " + numOfAllIcePlanetOrbitEnters + " = " + icePlanetOrbitEnters);
-                Debug.Log("LavaPlanetOrbitCapture: " + agent.CapturedLavaPlanet + " / " + numOfAllLavaPlanetOrbitCaptures + " = " + lavaPlanetOrbitCaptures);
-                Debug.Log("IcePlanetOrbitCapture: " + agent.CapturedIcePlanet + " / " + numOfAllIcePlanetOrbitCaptures + " = " + icePlanetOrbitCaptures);
+                // Debug.Log("LavaPlanetOrbitEnter: " + agent.EnteredLavaPlanetOrbit + " / " + numOfAllLavaPlanetOrbitEnters + " = " + lavaPlanetOrbitEnters);
+                // Debug.Log("IcePlanetOrbitEnter: " + agent.EnteredIcePlanetOrbit + " / " + numOfAllIcePlanetOrbitEnters + " = " + icePlanetOrbitEnters);
+                // Debug.Log("LavaPlanetOrbitCapture: " + agent.CapturedLavaPlanet + " / " + numOfAllLavaPlanetOrbitCaptures + " = " + lavaPlanetOrbitCaptures);
+                // Debug.Log("IcePlanetOrbitCapture: " + agent.CapturedIcePlanet + " / " + numOfAllIcePlanetOrbitCaptures + " = " + icePlanetOrbitCaptures);
 
 
             }
