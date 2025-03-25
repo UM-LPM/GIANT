@@ -1,84 +1,57 @@
 {
-				"AutoStart": true,
-				"ProblemDomain": "Robostrike",
-				"CoordinatorURI": "http://localhost:4000/",
-				"IndividualsSourceJSON": "C:\\Users\\marko\\UnityProjects\\GenIATraP_refactor\\GeneralTrainingEnvironmentForMAS\\GenIATraP\\Assets\\Resources\\JSONs\\Robostrike\\",
-				"IndividualsSourceSO": "Assets\\Resources\\SOs\\Robostrike",
-				"ConvertSOToJSON": false,
-				"StartCommunicatorURI": "http://localhost:4444/",
-				"TimeScale": 5,
-				"FixedTimeStep": 0.02,
-				"RerunTimes": 1,
-				"InitialSeed": 963852,
-				"Render": true,
-				"RandomSeedMode": 1,
-				"SimulationSteps": 3000,
-				"SimulationTime": 0,
-				"IncludeEncapsulatedNodesToFreqCount": false,
-				"EvaluatorType": 1, 
-				"RatingSystemType": 0,
-				"TournamentOrganizationType": 2,
-				"TournamentRounds": 1,
-				"SwapTournamentMatchTeams": true,
-				"GameScenarios": [
-					{"GameSceneName": "RobostrikeGameScene"}
-					
-				],
-				"AgentScenarios": [
-					{
-						"AgentSceneName": "RobostrikeAgentScene", 
-						"GameScenarios": [
-							{"GameSceneName": "RobostrikeGameScene"}
-						]
-					}
-				],
-				"ProblemConfiguration": {
-					"DecisionRequestInterval": 2,
-					"ArenaSizeX": 30,
-					"ArenaSizeY": 18,
-					"ArenaSizeZ": 0,
-					"ArenaOffset": 4.0,
-					"AgentAimFitnessUpdateInterval": 4,
-					"AgentMoveFitnessMinDistance": 4,
-					"AgentMoveFitnessUpdateInterval": 5,
-					"AgentNearWallUpdateInterval": 6,
-					"AgentMoveSpeed": 8,
-					"AgentRespawnType": 0,
-					"AgentRotationSpeed": 150,
-					"AgentStartAmmo": 0,
-					"AgentStartHealth": 10,
-					"AgentStartShield": 0,
-					"AgentTurrentRotationSpeed": 180,
-					"AmmoBoxSpawnAmount": 2,
-					"AmmoPowerUpValue": 10,
-					"DestroyMissileAfter": 1,
-					"GameMode": 0,
-					"GameScenarioType": 1,
-					"HealthBoxSpawnAmount": 1,
-					"HealthPowerUpValue": 5,
-					"MaxAmmo": 20,
-					"MaxHealth": 10,
-					"MaxShield": 10,
-					"MinPowerUpDistance": 8,
-					"MinPowerUpDistanceFromAgents": 8.0,
-					"MissileDamage": 2,
-					"MissileShootCooldown": 1,
-					"MissleLaunchSpeed": 20,
-					"ShieldBoxSpawnAmount": 1,
-					"ShieldPowerUpValue": 5,
-					"RayHitObjectDetectionType": 1
-				},
-				"FitnessValues": 
-				{ 
-					"SectorExploration": -5,
-					"PowerUp_Pickup_Health": -10,
-					"PowerUp_Pickup_Ammo": -15,
-					"PowerUp_Pickup_Shield": -5,
-					"MissilesFired": -20,
-					"MissilesFiredAccuracy": -50,
-					"SurvivalBonus": -5,
-					"OpponentTrackingBonus": -5,
-					"OpponentDestroyedBonus": -500,
-					"DamageTakenPenalty": 50
-				}
-			}
+	"AutoStart": true,
+	"ProblemDomain": "Collector",
+	"CoordinatorURI": "http://localhost:4000/",
+	"IndividualsSourceJSON": "C:\\Users\\marko\\UnityProjects\\GenIATraP_refactor\\GeneralTrainingEnvironmentForMAS\\GenIATraP\\Assets\\Resources\\JSONs\\Collector\\",
+	"IndividualsSourceSO": "Assets\\Resources\\SOs\\Collector",
+	"ConvertSOToJSON": false,
+	"StartCommunicatorURI": "http://localhost:4444/",
+	"TimeScale": 2,
+	"FixedTimeStep": 0.02,
+	"RerunTimes": 1,
+	"InitialSeed": 963852,
+	"Render": true,
+	"RandomSeedMode": 1,
+	"SimulationSteps": 3000,
+	"SimulationTime": 0,
+	"IncludeEncapsulatedNodesToFreqCount": false,
+	"EvaluatorType": 0, 
+	"RatingSystemType": -1,
+	"TournamentOrganizationType": 3,
+	"TournamentRounds": -1,
+	"SwapTournamentMatchTeams": false,
+	"GameScenarios": [
+		{"GameSceneName": "CollectorGameScene"}
+		
+	],
+	"AgentScenarios": [
+		{
+			"AgentSceneName": "CollectorAgentScene", 
+			"GameScenarios": [
+				{"GameSceneName": "CollectorGameScene"}
+			]
+		}
+	],
+	"ProblemConfiguration": {
+		"DecisionRequestInterval": 2,
+		"ArenaRadius": 18,
+		"ArenaOffset": 0.0,
+		"AgentMoveSpeed": 10,
+		"AgentRotationSpeed": 180,
+		"GameMode": 1,
+		"StartNumberOfTargets": 1,
+		"TargetMinDistanceFromAgents": 10,
+		"TargetToTargetMinDistance": 10
+	},
+	"FitnessValues": 
+	{ 
+		"AgentPickedTarget": -50,
+		"AgentExploredSector": -3,
+		"AgentReExploredSector": -1,
+		"AgentNearTarget": -2,
+		"AgentSpottedTarget": -2,
+		"AgentTouchedStaticObject": 5,
+		"AgentNotMoved": 0,
+		"TimePassedPenalty": 0
+	}
+}
