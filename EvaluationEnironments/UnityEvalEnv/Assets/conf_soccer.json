@@ -1,0 +1,59 @@
+{
+				"AutoStart": true,
+				"ProblemDomain": "Soccer",
+				"CoordinatorURI": "http://localhost:4000/",
+				"IndividualsSourceJSON": "C:\\Users\\marko\\UnityProjects\\GenIATraP_refactor\\GenIATraP\\EvaluationEnironments\\UnityEvalEnv\\Assets\\Resources\\JSONs\\Soccer\\",
+				"IndividualsSourceSO": "Assets\\Resources\\SOs\\Soccer",
+				"ConvertSOToJSON": false,
+				"StartCommunicatorURI": "http://localhost:4444/",
+				"TimeScale": 2,
+				"FixedTimeStep": 0.02,
+				"RerunTimes": 1,
+				"InitialSeed": 963852,
+				"Render": true,
+				"RandomSeedMode": 1,
+				"SimulationSteps": 6000,
+				"SimulationTime": 0,
+				"IncludeEncapsulatedNodesToFreqCount": false,
+				"EvaluatorType": 1, 
+				"RatingSystemType": -1,
+				"TournamentOrganizationType": 3,
+				"TournamentRounds": -1,
+				"SwapTournamentMatchTeams": false,
+				"GameScenarios": [
+					{"GameSceneName": "SoccerGameScene"}
+					
+				],
+				"AgentScenarios": [
+					{
+						"AgentSceneName": "SoccerAgentScene", 
+						"GameScenarios": [
+							{"GameSceneName": "SoccerGameScene"}
+						]
+					}
+				],
+				"ProblemConfiguration": {
+					"DecisionRequestInterval": 2,
+					"ArenaSizeX": 30,
+					"ArenaSizeY": 15,
+					"ArenaSizeZ": 0.5,
+					"ArenaOffset": 4.0,
+					"AgentRunSpeed": 1,
+					"AgentRotationSpeed": 90,
+					"KickPower": 1000,
+					"GameScenarioType": 1,
+					"PassTolerance": 0.3,
+					"MaxGoals": 10,
+					"RayHitObjectDetectionType": 1
+				},
+				"FitnessValues": 
+				{ 
+					"SectorExploration": -20,
+					"GoalsScored": -500,
+					"GoalsReceived": 250,
+					"AutoGoals": 300,
+					"PassesToOponentGoal": -50,
+					"PassesToOwnGoal": -30,
+					"Passes": -40
+				}
+			}
