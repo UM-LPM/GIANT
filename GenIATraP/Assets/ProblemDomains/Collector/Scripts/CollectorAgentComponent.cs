@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Problems.Collector
 {
-    public class DummyAgentComponent : AgentComponent
+    public class CollectorAgentComponent : AgentComponent
     {
 
         public Rigidbody Rigidbody { get; set; }

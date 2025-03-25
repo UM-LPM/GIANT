@@ -41,6 +41,8 @@ namespace Spawners
             Vector3 spawnPos;
             Quaternion rotation;
 
+            Renderer renderer;
+
             foreach (var team in environmentController.Match.Teams)
             {
                 Material material = new Material(Shader.Find("Standard"));
@@ -86,7 +88,11 @@ namespace Spawners
                             if (environmentController.RandomTeamColor)
                             {
                                 //Apply random color to the agent
-                                obj.GetComponent<Renderer>().material = material;
+                                renderer = obj.GetComponent<Renderer>();
+                                if(renderer != null)
+                                {
+                                    renderer.material = material;
+                                }
                             }
 
                             // Configure agent

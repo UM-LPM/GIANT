@@ -47,7 +47,7 @@ namespace Problems.Collector
 
         protected override void DefineAdditionalDataOnPostStart()
         {
-            foreach (DummyAgentComponent agent in Agents)
+            foreach (CollectorAgentComponent agent in Agents)
             {
                 agent.Rigidbody = agent.GetComponent<Rigidbody>();
             }
@@ -67,14 +67,14 @@ namespace Problems.Collector
 
         void CheckAgentTargetOverlaps()
         {
-            foreach (DummyAgentComponent agent in Agents)
+            foreach (CollectorAgentComponent agent in Agents)
             {
                 TargetComponent component = PhysicsUtil.PhysicsOverlapTargetObject<TargetComponent>(GameType, agent.gameObject, agent.transform.position, 0, AgentColliderExtendsMultiplier, agent.transform.rotation, PhysicsOverlapType.OverlapBox, false, gameObject.layer, DefaultLayer);
                 if (component != null)
                 {
                     // 1. Update Agent fitnss
                     agent.AgentFitness.UpdateFitness(DummyFitness.FitnessValues[DummyFitness.FitnessKeys.AgentPickedTarget.ToString()], DummyFitness.FitnessKeys.AgentPickedTarget.ToString());
-                    agent.GetComponent<DummyAgentComponent>().TargetsAquired++;
+                    agent.GetComponent<CollectorAgentComponent>().TargetsAquired++;
 
                     if (GameMode == DummyGameMode.SingleTargetPickup)
                     {
@@ -103,7 +103,7 @@ namespace Problems.Collector
 
         void CheckAgentSectorOverlaps()
         {
-            foreach (DummyAgentComponent agent in Agents)
+            foreach (CollectorAgentComponent agent in Agents)
             {
                 List<SectorComponent> components = PhysicsUtil.PhysicsOverlapTargetObjects<SectorComponent>(GameType, agent.gameObject, agent.transform.position, 0, AgentColliderExtendsMultiplier, agent.transform.rotation, PhysicsOverlapType.OverlapBox, false, gameObject.layer, DefaultLayer);
                 if (components != null && components.Count > 0)
@@ -135,7 +135,7 @@ namespace Problems.Collector
             }
         }
 
-        private bool AgentExploredNewSector(DummyAgentComponent agentComponent, SectorComponent sectorComponent)
+        private bool AgentExploredNewSector(CollectorAgentComponent agentComponent, SectorComponent sectorComponent)
         {
             return !agentComponent.LastKnownSectorPositions.Contains(sectorComponent.transform.position);
         }

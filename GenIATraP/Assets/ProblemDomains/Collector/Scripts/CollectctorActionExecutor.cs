@@ -21,10 +21,10 @@ namespace Problems.Collector
 
         public override void ExecuteActions(AgentComponent agent)
         {
-            MoveAgent(agent as DummyAgentComponent);
+            MoveAgent(agent as CollectorAgentComponent);
         }
 
-        private void MoveAgent(DummyAgentComponent agent)
+        private void MoveAgent(CollectorAgentComponent agent)
         {
             dirToGo = Vector3.zero;
             rotateDir = Vector3.zero;
