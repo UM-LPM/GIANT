@@ -1,6 +1,6 @@
 # GenIATraP Problem Domains
 
-The platform currently includes four implemented problem domains: **RoboStrike**, **Soccer**, **Collector**, and **Bomberman**. These domains provide a mix of single-agent and multi-agent environments, allowing for diverse agent interactions and challenges. Each agent within these environments can be controlled using different types of controllers. The AI Controller supports various decision-making models, including **custom scripts**, **Behavior Trees (BTs)**, **Neural Networks (NNs)**, and **Finite State Machines (FSMs)**. Additionally, the Manual Controller allows for direct user input, functioning as a custom script that processes player commands and updates the agent’s ActionBuffer accordingly. This flexible control system enables both autonomous AI-driven gameplay and human-in-the-loop experimentation.
+The platform currently includes four implemented problem domains: **RoboStrike**, **Soccer**, **Collector**, and **BombClash**. These domains provide a mix of single-agent and multi-agent environments, allowing for diverse agent interactions and challenges. Each agent within these environments can be controlled using different types of controllers. The AI Controller supports various decision-making models, including **custom scripts**, **Behavior Trees (BTs)**, **Neural Networks (NNs)**, and **Finite State Machines (FSMs)**. Additionally, the Manual Controller allows for direct user input, functioning as a custom script that processes player commands and updates the agent’s ActionBuffer accordingly. This flexible control system enables both autonomous AI-driven gameplay and human-in-the-loop experimentation.
 
 ## RoboStrike Problem Domain
 [**RoboStrike**](/docs/GenIATraP_robostrike_problem_domain.md) is a **multi-agent** combat simulation where agents are represented as tanks and placed in a strategic battle arena. Agents must navigate obstacles, track opponents, and use efficient attack and evasion strategies to survive and eliminate opponents.
@@ -18,7 +18,7 @@ The platform currently includes four implemented problem domains: **RoboStrike**
 
 <center><img src="/docs/images/collectorProblemDomain/collector_problem_domain_main.png" alt="Collector" width="600"/></center>
 
-## Bomberman Problem Domain
-[**Bomberman**](/docs/GenIATraP_bomberman_problem_domain.md) is a **multi-agent** environment inspired by the classic Bomberman game, where agents strategically place bombs to destroy obstacles and eliminate opponents while avoiding explosions. Success requires careful planning, opponent prediction, and tactical movement.
+## BombClash Problem Domain
+[**BombClash**](/docs/GenIATraP_bombclash_problem_domain.md) is a **multi-agent** environment inspired by the classic Bomberman game, where agents strategically place bombs to destroy obstacles and eliminate opponents while avoiding explosions. Success requires careful planning, opponent prediction, and tactical movement.
 
-<center><img src="/docs/images/bombermanProblemDomain/bomberman_problem_domain_main.png" alt="Bomberman" width="600"/></center>
+<center><img src="/docs/images/bombClashProblemDomain/bombClash_problem_domain_main.png" alt="BombClash" width="600"/></center>

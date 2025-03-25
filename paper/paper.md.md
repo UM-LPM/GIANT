@@ -52,19 +52,23 @@ The modular architecture of GenIATraP ensures that components remain independent
 
 The platform includes a set of predefined problem domains, ranging from single-agent to multi-agent scenarios, to facilitate the development of custom problem definitions. These problem domains are structured as game-based environments, where agents operate under the control of AI-driven decision-making models.
 
-The platform currently supports the following problem domains: Collector, RoboStrike, Soccer, and Bomberman. Within these environments, agents can be controlled using a variety of AI controllers, including custom scripts, Behavior Trees (BTs) [8], Neural Networks (NNs), Finite State Machines (FSMs).. Additionally, the platform features a Manual Controller, which allows for direct user input by functioning as a custom script that processes player commands.
+The platform currently supports the following problem domains: Collector, RoboStrike, Soccer, and BombClash. Within these environments, agents can be controlled using a variety of AI controllers, including custom scripts, Behavior Trees (BTs) [8], Neural Networks (NNs), Finite State Machines (FSMs).. Additionally, the platform features a Manual Controller, which allows for direct user input by functioning as a custom script that processes player commands.
 
 - Collector is a single-agent environment where agents navigate a map to collect scattered resources while avoiding obstacles. The goal is to optimize movement efficiency and maximize resource collection within a given time frame.
 - RoboStrike is a multi-agent combat simulation where agents are represented as tanks and placed in a strategic battle arena. Agents must navigate obstacles, track opponents, and use efficient attack and evasion strategies to survive and eliminate opponents.
 - Soccer is a multi-agent soccer environment where agents compete to score goals by strategically positioning themselves, passing, and shooting. The challenge lies in teamwork, spatial awareness, and decision-making under dynamic conditions.
-- Bomberman is a multi-agent environment inspired by the classic Bomberman game, where agents strategically place bombs to destroy obstacles and eliminate opponents while avoiding explosions. Success requires careful planning, opponent prediction, and tactical movement.
+- BombClash is a multi-agent environment inspired by the classic Bomberman game, where agents strategically place bombs to destroy obstacles and eliminate opponents while avoiding explosions. Success requires careful planning, opponent prediction, and tactical movement.
 
 Platforms' flexible control system enables both fully autonomous AI-driven gameplay and human-in-the-loop experimentation, making the platform suitable for a wide range of research and development applications in machine learning, artificial intelligence, and game AI.
 
-<center><img src="/docs/images/collectorProblemDomain/collector_problem_domain_main.png" alt="Collector" width="400"/></center>
-<center><img src="/docs/images/robostrikeProblemDomain/robostrike_problem_domain_main.png" alt="Robostrike" width="400"/></center>
-<center><img src="/docs/images/soccerProblemDomain/soccer_problem_domain_main.png" alt="Soccer" width="400"/></center>
-<center><img src="/docs/images/bombermanProblemDomain/bomberman_problem_domain_main.png" alt="Bomberman" width="400"/></center>
+<table> 
+<tr> 
+<td><img src="/docs/images/collectorProblemDomain/collector_problem_domain_main.png" width="300" height="200" alt="Collector"></td> 
+<td><img src="/docs/images/robostrikeProblemDomain/robostrike_problem_domain_main.png" width="300" height="200" alt="Robostrike"></td> 
+</tr> <tr> 
+<td><img src="/docs/images/soccerProblemDomain/soccer_problem_domain_main.png" width="300" height="200" alt="Soccer"></td>
+<td><img src="/docs/images/bombClashProblemDomain/bombClash_problem_domain_main.png" width="300" height="200" alt="BombClash"></td> </tr>
+</table>
 
 # Optimization process
 
