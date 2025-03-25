@@ -15,14 +15,14 @@ GenIATraP is designed with a highly modular structure, ensuring that each compon
 - Manual solution testing, allowing human players to compete against AI agents
 - Visualization tools for comparing different methods
 
-For a detailed description of these functionalities see [GenIATraP overview](https://github.com/UM-LPM/GeneralTrainingEnvironmentForMAS/blob/platform_refactor/docs/GenIATraP_overview.md) docs.
+For a detailed description of these functionalities see [GenIATraP overview](https://github.com/UM-LPM/GeneralTrainingEnvironmentForMAS/blob/main/docs/GenIATraP_overview.md) docs.
 
 # Releases & Documentation
 
 | Version | Release Date | Source (Git branch) | Docs | Download|
 |----------|----------|----------|----------|----------|
-| Beta | Oktober 8, 2024 | [branch]() | [docs]() | [download](https://github.com/UM-LPM/GeneralTrainingEnvironmentForMAS/releases/tag/v1.0.0) | 
-| Release 1 | Insert date | [branch]() | [docs]() | [download]() | 
+| Beta | Oktober 8, 2024 | -- | -- | [download](https://github.com/UM-LPM/GeneralTrainingEnvironmentForMAS/releases/tag/v1.0.0) | 
+| Release 1 | March 25, 2025 | [branch](https://github.com/UM-LPM/GenIATraP/tree/release_1) | [docs](https://github.com/UM-LPM/GenIATraP/blob/release_1/docs/GenIATraP_overview.md) | [download](https://github.com/UM-LPM/GenIATraP/releases/tag/release_1) | 
 
 For older releases refer to the [Releases page](https://github.com/UM-LPM/GeneralTrainingEnvironmentForMAS/releases).
 
