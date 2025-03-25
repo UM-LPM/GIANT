@@ -1,0 +1,18 @@
+25/03/2025 13:49:06: Exception
+DirectoryNotFoundException: Could not find a part of the path 'C:\Users\marko\UnityProjects\GenIATraP_refactor\GeneralTrainingEnvironmentForMAS\GenIATraP\Assets\Resources\JSONs\Collector'.
+System.IO.Enumeration.FileSystemEnumerator`1[TResult].CreateDirectoryHandle (System.String path, System.Boolean ignoreNotFound) (at <787acc3c9a4c471ba7d971300105af24>:0)
+System.IO.Enumeration.FileSystemEnumerator`1[TResult]..ctor (System.String directory, System.IO.EnumerationOptions options) (at <787acc3c9a4c471ba7d971300105af24>:0)
+System.IO.Enumeration.FileSystemEnumerable`1+DelegateEnumerator[TResult]..ctor (System.IO.Enumeration.FileSystemEnumerable`1[TResult] enumerable) (at <787acc3c9a4c471ba7d971300105af24>:0)
+System.IO.Enumeration.FileSystemEnumerable`1[TResult]..ctor (System.String directory, System.IO.Enumeration.FileSystemEnumerable`1+FindTransform[TResult] transform, System.IO.EnumerationOptions options) (at <787acc3c9a4c471ba7d971300105af24>:0)
+System.IO.Enumeration.FileSystemEnumerableFactory.UserFiles (System.String directory, System.String expression, System.IO.EnumerationOptions options) (at <787acc3c9a4c471ba7d971300105af24>:0)
+System.IO.Directory.InternalEnumeratePaths (System.String path, System.String searchPattern, System.IO.SearchTarget searchTarget, System.IO.EnumerationOptions options) (at <787acc3c9a4c471ba7d971300105af24>:0)
+System.IO.Directory.GetFiles (System.String path, System.String searchPattern, System.IO.EnumerationOptions enumerationOptions) (at <787acc3c9a4c471ba7d971300105af24>:0)
+System.IO.Directory.GetFiles (System.String path, System.String searchPattern) (at <787acc3c9a4c471ba7d971300105af24>:0)
+Utils.UnityAssetParser.ParseIndividualsFromFolder (System.String folderPathJSON, System.Int32 evalRangeStart, System.Int32 evalRangeEnd) (at C:/Users/marko/UnityProjects/GenIATraP_refactor/GeneralTrainingEnvironmentForMAS/GenIATraP/Assets/Scripts/Utils/UnityAssetParsers.cs:23)
+Base.Coordinator.LoadIndividualsFromJSON (System.Int32 evalRangeStart, System.Int32 evalRangeEnd) (at C:/Users/marko/UnityProjects/GenIATraP_refactor/GeneralTrainingEnvironmentForMAS/GenIATraP/Assets/Scripts/Base/Coordinator.cs:285)
+Base.Coordinator+<CordinateEvaluation>d__27.MoveNext () (at C:/Users/marko/UnityProjects/GenIATraP_refactor/GeneralTrainingEnvironmentForMAS/GenIATraP/Assets/Scripts/Base/Coordinator.cs:164)
+UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) (at <10871f9e312b442cb78b9b97db88fdcb>:0)
+UnityEngine.MonoBehaviour:StartCoroutine(IEnumerator)
+PimDeWitte.UnityMainThreadDispatcher.<>c__DisplayClass2_0:<Enqueue>b__0() (at C:/Users/marko/UnityProjects/GenIATraP_refactor/GeneralTrainingEnvironmentForMAS/GenIATraP/Assets/Scripts/Utils/UnityMainThreadDispatcher.cs:48)
+PimDeWitte.UnityMainThreadDispatcher.UnityMainThreadDispatcher:Update() (at C:/Users/marko/UnityProjects/GenIATraP_refactor/GeneralTrainingEnvironmentForMAS/GenIATraP/Assets/Scripts/Utils/UnityMainThreadDispatcher.cs:36)
+
