@@ -30,7 +30,7 @@ The optimization process initiates within the **EARS framework**, where the init
 
 ## 3. Evaluation
 - Upon receiving the request, the **Coordinator** module retrieves all **Individuals** from the designated source file and initiates the evaluation process.
-- Based on the configuration, matches are generated, including all individuals. There exist different [types of evaluators](/docs/GenIATraP_unity_overview.md), each creating different types of matches.
+- Based on the configuration, matches are generated, including all individuals. There exist different [types of evaluators](/docs/GenIATraP_evaluation_environment_unity_overview.md), each creating different types of matches.
 - Depending on the number of **Unity instances** and **matches**, the **Coordinator** distributes the matches across all instances (each instance receives an equal amount of matches to evaluate). Each Unity instance contains a **Communicator**, whose task is to coordinate the evaluation inside the instance and upon successful evaluation forward the match results.
 - The **Communicator** iterates through the matches and, based on the configuration, loads corresponding scenes for evaluation. Scene loading persists until either all matches are in the evaluation process or the maximum batch size is attained. When all matches are executed, the match results are forwarded to the **Coordinator**.
 ## 4. Simulation Execution
