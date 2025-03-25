@@ -7,18 +7,24 @@ GenIATraP is designed with a highly modular structure, ensuring that each compon
 
 # Features
 - Four built-in example environments
-- Support for both single-agent and multi-agent scenarios
+- Support for both Single-Agent and Multi-Agent scenarios
 - Highly extensible and modular design
 - Compatibility with various decision-making systems, including Behavior Trees, Neural Networks, and more
-- Parallelization at two levels: within a single Unity instance and across multiple Unity instances
+- Multilevel parallelization
 - Easily extendable to new problem domains
 - Manual solution testing, allowing human players to compete against AI agents
 - Visualization tools for comparing different methods
 
-For a detailed description of these functionalities see [GenIATrap overview]().
+For a detailed description of these functionalities see [GenIATraP overview](https://github.com/UM-LPM/GeneralTrainingEnvironmentForMAS/blob/platform_refactor/docs/GenIATraP_overview.md) docs.
 
 # Releases & Documentation
 
+| Version | Release Date | Source (Git branch) | Docs | Download|
+|----------|----------|----------|----------|----------|
+| Beta | Oktober 8, 2024 | [branch]() | [docs]() | [download](https://github.com/UM-LPM/GeneralTrainingEnvironmentForMAS/releases/tag/v1.0.0) | 
+| Release 1 | Insert date | [branch]() | [docs]() | [download]() | 
+
+For older releases refer to the [Releases page](https://github.com/UM-LPM/GeneralTrainingEnvironmentForMAS/releases).
 
 # Publications
 If you use GenIATrap, please include this citation as a reference to the platform.
