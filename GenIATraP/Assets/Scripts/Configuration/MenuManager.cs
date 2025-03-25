@@ -9,7 +9,7 @@ namespace Configuration
         Collector,
         Robostrike,
         Soccer,
-        Bomberman,
+        BombClash,
         DodgeBall
     }
 
@@ -102,8 +102,8 @@ namespace Configuration
                 case "Soccer":
                     UnityEngine.SceneManagement.SceneManager.LoadScene("SoccerBaseScene");
                     break;
-                case "Bomberman":
-                    UnityEngine.SceneManagement.SceneManager.LoadScene("BombermanBaseScene");
+                case "BombClash":
+                    UnityEngine.SceneManagement.SceneManager.LoadScene("BombClashBaseScene");
                     break;
                 case "DodgeBall":
                     UnityEngine.SceneManagement.SceneManager.LoadScene("DodgeBallBaseScene");
