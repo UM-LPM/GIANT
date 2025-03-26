@@ -15,7 +15,7 @@ GIANT is designed with a highly modular structure, ensuring that each component 
 - Manual solution testing, allowing human players to compete against AI agents
 - Visualization tools for comparing different methods
 
-For a detailed description of these functionalities see [GIANT overview](https://github.com/UM-LPM/release_1/blob/release_1/docs/GIANT_overview.md) docs.
+For a detailed description of these functionalities see [GIANT overview](https://github.com/UM-LPM/GIANT/blob/release_1/docs/GIANT_overview.md) docs.
 
 # Releases & Documentation
 
