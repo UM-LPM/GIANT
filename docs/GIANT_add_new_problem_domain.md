@@ -84,4 +84,4 @@ Once you have implemented the core logic and configurations for your new problem
 - Iterate on your implementation to fix any issues or improve the agent's performance.
 
 ## Next Step
-To see which problem domains are already included in the platform, check out the [existing problem domains](/docs/GenIATraP_problem_domains.md). 
+To see which problem domains are already included in the platform, check out the [existing problem domains](/docs/GIANT_problem_domains.md). 

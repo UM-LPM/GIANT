@@ -55,7 +55,7 @@ Here is a sample configuration file for the Soccer problem domain:
     "AutoStart": true, // Automatically starts the simulation without requiring manual initiation.
     "ProblemDomain": "Soccer", // Specifies the problem domain as "Soccer".
     "CoordinatorURI": "http://localhost:4000/", // URI for the coordinator that manages the simulation's communication.
-    "IndividualsSourceJSON": "...\\GenIATraP\\Assets\\Resources\\JSONs\\Soccer\\", // Path to JSON files containing agent definitions for the Soccer problem.
+    "IndividualsSourceJSON": "...\\GIANT\\Assets\\Resources\\JSONs\\Soccer\\", // Path to JSON files containing agent definitions for the Soccer problem.
     "IndividualsSourceSO": "Assets\\Resources\\SOs\\Soccer", // Path to ScriptableObject files for agent definitions.
     "ConvertSOToJSON": false, // Whether to convert ScriptableObjects into JSON files; false means SO files are used directly.
     "StartCommunicatorURI": "http://localhost:4444/", // URI for starting the communication interface.

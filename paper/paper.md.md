@@ -1,7 +1,7 @@
-# GenIATraP - General Intelligent Agent Training Platform
+# GIANT - General Intelligent Agent Trainer
 
 ---
-title: 'GenIATrap: General Intelligent Agent Training Platform'
+title: 'GIANT: General Intelligent Agent Trainer'
 tags:
   - Machine Learning
   - evolutionary computation
@@ -28,12 +28,12 @@ bibliography: paper.bib
 
 # Summary
 
-GenIATraP is a versatile, open-source platform designed to train intelligent agents using diverse machine learning techniques and evaluate them in game engine-based environments. Its highly modular architecture supports a wide range of optimization methods, with the current implementation leveraging Genetic Programming (GP) [9] within the EARS framework [7]. GenIATraP aims to provide a standardized benchmark for comparing single- and multi-agent systems, incorporating concepts of self-organization to enable adaptive evaluation, and offers flexibility for integrating custom environments and techniques.
+GIANT is a versatile, open-source platform designed to train intelligent agents using diverse machine learning techniques and evaluate them in game engine-based environments. Its highly modular architecture supports a wide range of optimization methods, with the current implementation leveraging Genetic Programming (GP) [9] within the EARS framework [7]. GIANT aims to provide a standardized benchmark for comparing single- and multi-agent systems, incorporating concepts of self-organization to enable adaptive evaluation, and offers flexibility for integrating custom environments and techniques.
 # Statement of need
 
 Many frameworks support intelligent agent development using various machine learning methods and evaluation environments [1-5], but comparing solutions fairly remains challenging. Differences in human implementation, framework performance, and architectural design often lead to inconsistent conditions, complicating objective analysis [6]. Additionally, when diverse solutions need to be compared within a shared problem domain, existing frameworks often lack the capability to support the evaluation of different AI controller types in the same environment. 
 
-To tackle this problem, GenIATraP provides a modular, standardized platform for training and evaluating agents across diverse optimization methods, ensuring consistent conditions and enabling reproducible, cross-method benchmarks for AI researchers and developers.
+To tackle this problem, GIANT provides a modular, standardized platform for training and evaluating agents across diverse optimization methods, ensuring consistent conditions and enabling reproducible, cross-method benchmarks for AI researchers and developers.
 # Architecture 
 
 The conceptual design of the platform consists of three core components: the Machine Learning Framework, the Evaluation Environment, and the Web App Interface. These components work together to provide a flexible and extensible platform for training and evaluating intelligent agents.
@@ -44,7 +44,7 @@ The Evaluation Environment contains a set of problem domains that simulate real-
 
 The Web App Interface acts as the central integration layer, facilitating communication between the Machine Learning Framework and the Evaluation Environment. Its primary function is to convert individual solutions into a standardized format that can be interpreted and evaluated consistently across different environments.
 
-The modular architecture of GenIATraP ensures that components remain independent, allowing for the seamless integration or replacement of individual modules without affecting the performance of the overall system. When introducing a new component, only the Web App Interface needs to be adapted to align with its specifications, making the platform highly scalable and adaptable.
+The modular architecture of GIANT ensures that components remain independent, allowing for the seamless integration or replacement of individual modules without affecting the performance of the overall system. When introducing a new component, only the Web App Interface needs to be adapted to align with its specifications, making the platform highly scalable and adaptable.
 
 ![Platform Architecture](/docs/images/platform_architecture_orig.png)
 

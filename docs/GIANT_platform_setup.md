@@ -5,7 +5,7 @@ The platform consists of three parts: **Unity**, **Web API**, and **EARS framewo
 ## Unity Setup
 1. Install Unity Hub from the official [website](https://unity.com/download).
 2. From the Unity Hub install the Unity LTS version for 2022 or higher.
-3. Clone the [repository](https://github.com/UM-LPM/GeneralTrainingEnvironmentForMAS/tree/platform_refactor) on your local machine from the GitHub.
+3. Clone the [repository](https://github.com/UM-LPM/GIANT/) on your local machine from the GitHub.
 4. Add and open the cloned project in the Unity Hub.
 5. Configure Unity Editor (Edit -> Project Settings -> Physics) if the settings don't match the ones displayed in the image below.
    
@@ -124,7 +124,7 @@ The platform consists of three parts: **Unity**, **Web API**, and **EARS framewo
           "CoordinatorURI": "http://localhost:4000",
           "EvalEnvInstanceURIs": ["http://localhost:4444"],
           "SourceFilePath": "your path...\\jsonBody.json",
-          "DestinationFilePath": "your path...\\GenIATraP\\Assets\\Resources\\JSONs\\problem domain\\",
+          "DestinationFilePath": "your path...\\GIANT\\Assets\\Resources\\JSONs\\problem domain\\",
           "LastEvalIndividualFitnesses": null
       }
    ```
@@ -174,8 +174,8 @@ The platform consists of three parts: **Unity**, **Web API**, and **EARS framewo
 
 # Next Steps
 
-- Read the following documentation to learn more about [Evaluation Environments](/docs/GenIATraP_evaluation_environment_overview.md), [Web API](/docs/GenIATraP_webapi_overview.md), and [Machine Learning Frameworks](/docs/GenIATraP_machine_learning_framework_overview.md).
-- If you're already familiar with these, you can continue by checking all [existing problem domains](/docs/GenIATraP_problem_domains.md) or [adding a new problem domain](/docs/GenIATraP_add_new_problem_domain.md)  in the platform.
+- Read the following documentation to learn more about [Evaluation Environments](/docs/GIANT_evaluation_environment_overview.md), [Web API](/docs/GIANT_webapi_overview.md), and [Machine Learning Frameworks](/docs/GIANT_machine_learning_framework_overview.md).
+- If you're already familiar with these, you can continue by checking all [existing problem domains](/docs/GIANT_problem_domains.md) or [adding a new problem domain](/docs/GIANT_add_new_problem_domain.md)  in the platform.
 
 
 

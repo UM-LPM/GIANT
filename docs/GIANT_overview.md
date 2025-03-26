@@ -1,14 +1,14 @@
-# GenIATraP Overview
+# GIANT Overview
 
-The **General Intelligent Agents Training Platform (GenIATraP)** is an open-source project that provides a flexible and modular environment for training intelligent agents using a variety of machine-learning techniques. It integrates existing solutions such as metaheuristic frameworks and game engines, enabling seamless training and evaluation of agents. With support for Unity as a simulation environment and the EARS framework for optimization, GenIATraP allows researchers and developers to explore advanced decision-making systems, including Behavior Trees, Neural Networks, and evolutionary algorithms.
+The **General Intelligent Agent Trainer (GIANT)** is an open-source project that provides a flexible and modular environment for training intelligent agents using a variety of machine-learning techniques. It integrates existing solutions such as metaheuristic frameworks and game engines, enabling seamless training and evaluation of agents. With support for Unity as a simulation environment and the EARS framework for optimization, GIANT allows researchers and developers to explore advanced decision-making systems, including Behavior Trees, Neural Networks, and evolutionary algorithms.
 
 Agents can be trained in both **Single** and **Multi-Agent** scenarios, leveraging parallelization at two levels: within a single Unity instance and across multiple Unity instances. The platform is designed for extensibility, making introducing new problem domains easy, comparing different training methods, and visualizing results. Additionally, manual testing support enables human players to compete against AI-driven solutions, offering valuable insights into agent performance.
 
-GenIATraP bridges AI research and game development, providing a structured environment where new AI techniques can be tested, benchmarked, and refined within interactive and dynamic simulations.
+GIANT bridges AI research and game development, providing a structured environment where new AI techniques can be tested, benchmarked, and refined within interactive and dynamic simulations.
 
-So if you are an AI researcher, game developer, or hobbyist—you may have different goals when using GenIATraP. To ease your transition, we provide background materials covering key concepts in **[machine learning](/docs/introduction_to_machine_learning.md)**, **[game design](/docs/basics_of_game_design.md)**, **[AI controllers](/docs/AI_controllers.md)** and more. If you're new to any of these topics, we highly recommend reviewing these resources before getting started.
+So if you are an AI researcher, game developer, or hobbyist—you may have different goals when using GIANT. To ease your transition, we provide background materials covering key concepts in **[machine learning](/docs/introduction_to_machine_learning.md)**, **[game design](/docs/basics_of_game_design.md)**, **[AI controllers](/docs/AI_controllers.md)** and more. If you're new to any of these topics, we highly recommend reviewing these resources before getting started.
 
-The rest of this documentation provides a deep dive into GenIATraP, including its core components, training methodologies, and implementation details. By the end, you’ll have a clear understanding of how to use the platform effectively. Subsequent sections will walk you through setting up and using GenIATraP for your projects.
+The rest of this documentation provides a deep dive into GIANT, including its core components, training methodologies, and implementation details. By the end, you’ll have a clear understanding of how to use the platform effectively. Subsequent sections will walk you through setting up and using GIANT for your projects.
 
 # General Idea
 The conceptual platform comprises three fundamental components: a **Machine Learning (ML) framework**, an **Evaluation Environment**, and a **Web API** intended to facilitate seamless integration between these two components.
@@ -30,7 +30,7 @@ The optimization process initiates within the **EARS framework**, where the init
 
 ## 3. Evaluation
 - Upon receiving the request, the **Coordinator** module retrieves all **Individuals** from the designated source file and initiates the evaluation process.
-- Based on the configuration, matches are generated, including all individuals. There exist different [types of evaluators](/docs/GenIATraP_evaluation_environment_unity_overview.md), each creating different types of matches.
+- Based on the configuration, matches are generated, including all individuals. There exist different [types of evaluators](/docs/GIANT_evaluation_environment_unity_overview.md), each creating different types of matches.
 - Depending on the number of **Unity instances** and **matches**, the **Coordinator** distributes the matches across all instances (each instance receives an equal amount of matches to evaluate). Each Unity instance contains a **Communicator**, whose task is to coordinate the evaluation inside the instance and upon successful evaluation forward the match results.
 - The **Communicator** iterates through the matches and, based on the configuration, loads corresponding scenes for evaluation. Scene loading persists until either all matches are in the evaluation process or the maximum batch size is attained. When all matches are executed, the match results are forwarded to the **Coordinator**.
 ## 4. Simulation Execution
@@ -54,4 +54,4 @@ Before jumping to platform setup, the following concepts should be known to you:
 - [3D Modeling](/docs/3d_modeling.md) for Game Development
 - [Game Testing and Debugging](/docs/game_testing_and_debugging.md)
 
-By following these [instructions](/docs/GenIATraP_platform_setup.md), the platform can be set up in just a few simple steps.
+By following these [instructions](/docs/GIANT_platform_setup.md), the platform can be set up in just a few simple steps.

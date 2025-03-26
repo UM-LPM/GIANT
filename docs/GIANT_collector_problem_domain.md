@@ -47,7 +47,7 @@ Below is an example configuration file for the Collector environment:
     "AutoStart": true, // Automatically starts the simulation without needing manual initiation.
     "ProblemDomain": "Collector", // Specifies that this configuration is for the "Collector" problem domain.
     "CoordinatorURI": "http://localhost:4000/", // URI for the coordinator that manages the communication during simulation.
-    "IndividualsSourceJSON": "C:\\Users\\marko\\UnityProjects\\GenIATraP_refactor\\GeneralTrainingEnvironmentForMAS\\GenIATraP\\Assets\\Resources\\JSONs\\Collector\\", // Path to the JSON files containing agent definitions for this problem domain.
+    "IndividualsSourceJSON": "...\\Resources\\JSONs\\Collector\\", // Path to the JSON files containing agent definitions for this problem domain.
     "IndividualsSourceSO": "Assets\\Resources\\SOs\\Collector", // Path to the ScriptableObject files for agent definitions.
     "ConvertSOToJSON": false, // Whether to convert ScriptableObjects to JSON format; false means SO files are used directly.
     "StartCommunicatorURI": "http://localhost:4444/", // URI for starting the communication interface during the simulation.

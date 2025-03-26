@@ -1,4 +1,4 @@
-# GenIATraP - EARS Overview
+# GIANT - EARS Overview
 
 **EARS** (Evolutionary Algorithms Rating System) is a free and open-source Java-based Machine Learning (ML) framework developed by the University of Maribor’s Laboratory for Programming Methodologies ([UM-LPM](http://lpm.feri.um.si/en/)). It is designed for ranking, developing, and experimenting with single- and multi-objective evolutionary algorithms. EARS provides a robust platform for researchers, developers, and enthusiasts to benchmark, compare, and extend evolutionary algorithms with ease.
 ## What is EARS?

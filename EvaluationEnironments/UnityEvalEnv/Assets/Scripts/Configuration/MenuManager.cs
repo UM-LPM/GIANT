@@ -9,8 +9,7 @@ namespace Configuration
         Collector,
         Robostrike,
         Soccer,
-        BombClash,
-        DodgeBall
+        BombClash
     }
 
     public class MenuManager : MonoBehaviour
@@ -104,9 +103,6 @@ namespace Configuration
                     break;
                 case "BombClash":
                     UnityEngine.SceneManagement.SceneManager.LoadScene("BombClashBaseScene");
-                    break;
-                case "DodgeBall":
-                    UnityEngine.SceneManagement.SceneManager.LoadScene("DodgeBallBaseScene");
                     break;
                 default:
                     Debug.LogError("Problem domain not found");

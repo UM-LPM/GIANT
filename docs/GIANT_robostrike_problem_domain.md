@@ -59,7 +59,7 @@ The problem configuration file includes various settings that define how the sim
 	"AutoStart": true,  // Automatically starts the simulation without manual intervention.
 	"ProblemDomain": "Robostrike",  // Specifies the problem domain (RoboStrike).
 	"CoordinatorURI": "http://localhost:4000/",  // URL of the central coordinator for managing simulations.
-	"IndividualsSourceJSON": "...\\GenIATraP\\Assets\\Resources\\JSONs\\Robostrike\\",  // Path to JSON files storing agent configurations.
+	"IndividualsSourceJSON": "...\\GIANT\\Assets\\Resources\\JSONs\\Robostrike\\",  // Path to JSON files storing agent configurations.
 	"IndividualsSourceSO": "Assets\\Resources\\SOs\\Robostrike",  // Path to ScriptableObjects (SO) storing agent configurations.
 	"ConvertSOToJSON": false,  // If true, converts ScriptableObjects to JSON format for easier processing.
 	"StartCommunicatorURI": "http://localhost:4444/",  // URL for the communicator service.
