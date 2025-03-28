@@ -30,5 +30,5 @@ For older releases refer to the [Releases page](https://github.com/UM-LPM/GIANT/
 If you use GIANT, please include this citation as a reference to the platform.
 
 ```
-Insert bib text of a paper here
+
 ```
