@@ -60,7 +60,7 @@ The platform currently supports the following problem domains: Collector, RoboSt
 	
   ![Collector problem domain.\label{fig:collector}](/docs/images/collectorProblemDomain/collector_problem_domain_main.png){ width=40% }
 
-- RoboStrike (see \autoref{fig:robostrike}) is a multi-agent combat simulation inspired by Robocode [@nelson2024Robocode], where agents are represented as tanks and placed in a strategic battle arena. Agents must navigate obstacles, track opponents, and employ efficient attack and evasion strategies to survive and eliminate opponents.
+- RoboStrike (see \autoref{fig:robostrike}) is a multi-agent combat simulation, inspired by Robocode [@nelson2024Robocode], where agents are represented as tanks and placed in a strategic battle arena. Agents must navigate obstacles, track opponents, and employ efficient attack and evasion strategies to survive and eliminate opponents.
 
   ![RoboStrike problem domain.\label{fig:robostrike}](/docs/images/robostrikeProblemDomain/robostrike_problem_domain_main.png){ width=40% }
 
@@ -68,7 +68,7 @@ The platform currently supports the following problem domains: Collector, RoboSt
 
   ![Soccer problem domain.\label{fig:soccer}](/docs/images/soccerProblemDomain/soccer_problem_domain_main.png){ width=40% }
 
-- BombClash (see \autoref{fig:bombclash}) is a multi-agent environment inspired by the Bomberland multi-agent AI competition [@coderOne2021Bomberland], where agents strategically place bombs to destroy obstacles, eliminate opponents, and evade explosions. Success requires careful planning, opponent prediction, and tactical movement.
+- BombClash (see \autoref{fig:bombclash}) is a multi-agent environment, inspired by the Bomberland multi-agent AI competition [@coderOne2021Bomberland], where agents strategically place bombs to destroy obstacles, eliminate opponents, and evade explosions. Success requires careful planning, opponent prediction, and tactical movement.
 	
   ![BombClash problem domain.\label{fig:bombclash}](/docs/images/bombClashProblemDomain/bombClash_problem_domain_main.png){ width=40% }
 

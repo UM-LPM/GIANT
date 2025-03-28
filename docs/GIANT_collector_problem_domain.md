@@ -1,6 +1,6 @@
 # Collector Problem Domain
 
-The **Collector problem domain** is a **single-agent environment** where an agent navigates a bounded arena to collect scattered objects. This problem is designed to test an agent’s ability to efficiently explore the environment, optimize movement, and maximize the number of collected objects within a given time frame.
+The **Collector problem domain** is a **single-agent environment**, inspired by [ML-Agents' Food Collector](https://github.com/Unity-Technologies/ml-agents/blob/develop/docs/Learning-Environment-Examples.md#food-collector), where an agent navigates a bounded arena to collect scattered objects. This problem is designed to test an agent’s ability to efficiently explore the environment, optimize movement, and maximize the number of collected objects within a given time frame.
 
 <center><img src="/docs/images/collectorProblemDomain/collector_problem_domain_main.png" alt="Collector" width="600"/></center>
 ## Objective
