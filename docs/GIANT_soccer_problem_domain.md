@@ -1,6 +1,6 @@
 # Soccer problem domain
 
-The **Soccer problem domain** is a **multi-agent environment**, a replica of [ML-Agents' Soccer Twos](https://github.com/Unity-Technologies/ml-agents/blob/develop/docs/Learning-Environment-Examples.md#soccer-twos) problem domain implemented in [ML-Agents](https://github.com/Unity-Technologies/ml-agents/tree/develop). It features two teams competing against each other in a dynamic environment. The main objective of the agents is to cooperate with their teammates and defeat the opposing team, either by scoring goals or preventing the other team from scoring. This problem domain allows for the implementation and testing of multi-agent systems, team strategies, and various agent control schemes.
+The **Soccer problem domain** is a **multi-agent environment**, a replica of [ML-Agents' Soccer Twos](https://github.com/Unity-Technologies/ml-agents/blob/develop/docs/Learning-Environment-Examples.md#soccer-twos) problem domain. It features two teams competing against each other in a dynamic environment. The main objective of the agents is to cooperate with their teammates and defeat the opposing team, either by scoring goals or preventing the other team from scoring. This problem domain allows for the implementation and testing of multi-agent systems, team strategies, and various agent control schemes.
 
 <center><img src="/docs/images/soccerProblemDomain/soccer_problem_domain_main.png" alt="Soccer" width="600"/></center>
 
