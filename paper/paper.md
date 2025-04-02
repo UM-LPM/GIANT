@@ -34,7 +34,7 @@ GIANT is a versatile, open-source platform designed to train intelligent agents 
 
 Numerous frameworks exist for training intelligent agents using a variety of machine learning techniques and evaluation environments[@juliani2020MlAgents;@Song2020Arena;@towers2024gymnasium;@partlan2022EvolvingBehavior;@bellemare2013Ale;@wrona2023SoftwareAgentPlatforms]. However, fairly comparing these solutions remains a persistent challenge. Variations in human implementation, framework performance, and architectural design often introduce inconsistencies that hinder objective analysis [@carton204FairnesInML;@Nguyen2019MLSurvey]. Moreover, when diverse AI controller types must be evaluated within a shared problem domain, most existing frameworks lack the flexibility to support such comparisons under unified conditions.
 
-The importance of robust benchmarking methodologies is well-documented in the literature, with calls for standardized experimental protocols to enhance reproducibility and fairness in optimization research [@bartz2020benchmarking;@latorre2020fairness]. To address these gaps, GIANT offers a modular, standardized platform for training and evaluation across a range of optimization methods. By ensuring consistent experimental conditions, GIANT enables reproducible, cross-method benchmarks tailored to the needs of AI researchers and developers. The platform supports deterministic execution with a fixed seed for repeatable experiments, while also allowing dynamic environments to test agent adaptability under varying conditions.
+The importance of robust benchmarking methodologies is well-documented in the literature, with calls for standardized experimental protocols to enhance reproducibility and fairness in optimization research [@bartz2020benchmarking;@latorre2020fairness]. To address these gaps, GIANT offers a modular, standardized platform for training and evaluation across a range of optimization methods. By ensuring consistent experimental conditions, GIANT enables reproducible, cross-method benchmarks tailored to the needs of AI researchers and developers. The platform supports deterministic execution with a fixed seed for repeatable experiments while also allowing dynamic environments to test agent adaptability under varying conditions.
 
 # Architecture 
 
@@ -52,15 +52,15 @@ The modular architecture of GIANT ensures that components remain independent, al
 
 # Included problem domains
 
-The platform includes a set of predefined problem domains, ranging from single-agent to multi-agent scenarios, to facilitate the development of custom problem domains. These problem domains are structured as game-based environments, where agents operate under the control of AI-driven decision-making models.
+The platform includes a set of predefined problem domains, ranging from single-agent to multi-agent scenarios, to facilitate the development of custom problem domains. These problem domains are structured as game-based environments where agents operate under the control of AI-driven decision-making models.
 
-The platform currently supports the following problem domains: Collector, RoboStrike, Soccer, and BombClash. Within these environments, agents can be controlled using a variety of AI controllers, including custom scripts, Behavior Trees (BTs) [@isla2022bts] and Artificial Neural Networks (ANNs) [@richards1998ANNs]. Additionally, the platform features a Manual Controller, which allows for direct user input by functioning as a custom script that processes player commands.
+The platform currently supports the following problem domains: Collector, RoboStrike, Soccer, and BombClash. Within these environments, agents can be controlled using a variety of AI controllers, including custom scripts, Behavior Trees (BTs) [@isla2022bts], and Artificial Neural Networks (ANNs) [@richards1998ANNs]. Additionally, the platform features a Manual Controller, which allows for direct user input by functioning as a custom script that processes player commands.
 
-- Collector (see \autoref{fig:collector}) is a single-agent environment, inspired by ML-Agents' Food Collector [@juliani2020MlAgents], where agents navigate a map to collect scattered resources while avoiding obstacles. The goal is to optimize movement efficiency and maximize resource collection within a given time frame.
+- Collector (see \autoref{fig:collector}) is a single-agent environment inspired by ML-Agents' Food Collector [@juliani2020MlAgents], where agents navigate a map to collect scattered resources while avoiding obstacles. The goal is to optimize movement efficiency and maximize resource collection within a given time frame.
 	
   ![Collector problem domain.\label{fig:collector}](/docs/images/collectorProblemDomain/collector_problem_domain_main.png){ width=40% }
 
-- RoboStrike (see \autoref{fig:robostrike}) is a multi-agent combat simulation, inspired by Robocode [@nelson2024Robocode], where agents are represented as tanks and placed in a strategic battle arena. Agents must navigate obstacles, track opponents, and employ efficient attack and evasion strategies to survive and eliminate opponents.
+- RoboStrike (see \autoref{fig:robostrike}) is a multi-agent combat simulation inspired by Robocode [@nelson2024Robocode], where agents are represented as tanks and placed in a strategic battle arena. Agents must navigate obstacles, track opponents, and employ efficient attack and evasion strategies to survive and eliminate opponents.
 
   ![RoboStrike problem domain.\label{fig:robostrike}](/docs/images/robostrikeProblemDomain/robostrike_problem_domain_main.png){ width=40% }
 
@@ -68,11 +68,11 @@ The platform currently supports the following problem domains: Collector, RoboSt
 
   ![Soccer problem domain.\label{fig:soccer}](/docs/images/soccerProblemDomain/soccer_problem_domain_main.png){ width=40% }
 
-- BombClash (see \autoref{fig:bombclash}) is a multi-agent environment, inspired by the Bomberland multi-agent AI competition [@coderOne2021Bomberland], where agents strategically place bombs to destroy obstacles, eliminate opponents, and evade explosions. Success requires careful planning, opponent prediction, and tactical movement.
+- BombClash (see \autoref{fig:bombclash}) is a multi-agent environment inspired by the Bomberland multi-agent AI competition [@coderOne2021Bomberland], where agents strategically place bombs to destroy obstacles, eliminate opponents, and evade explosions. Success requires careful planning, opponent prediction, and tactical movement.
 	
   ![BombClash problem domain.\label{fig:bombclash}](/docs/images/bombClashProblemDomain/bombClash_problem_domain_main.png){ width=40% }
 
-Platforms' flexible control system enables both fully autonomous AI-driven gameplay and human-in-the-loop experimentation, making the platform suitable for a wide range of research and development applications in machine learning, artificial intelligence, and game AI.
+The platform's flexible control system enables both fully autonomous AI-driven gameplay and human-in-the-loop experimentation, making the platform suitable for a wide range of research and development applications in machine learning, artificial intelligence, and game AI.
 
 # Optimization process
 
