@@ -76,7 +76,7 @@ The BombClash problem domain configuration file contains parameters that control
     "AutoStart": true, // Automatically starts the simulation without requiring manual initiation.
     "ProblemDomain": "BombClash", // Specifies the problem domain as "BombClash".
     "CoordinatorURI": "http://localhost:4000/", // URI for the coordinator managing the communication for the simulation.
-    "IndividualsSourceJSON": "...\\GIANT\\Assets\\Resources\\JSONs\\BombClash\\", // Path to JSON files containing agent definitions for the BombClash problem.
+    "IndividualsSourceJSON": "...\\GIANT\\EvaluationEnironments\\UnityEvalEnv\\Assets\\Resources\\JSONs\\BombClash\\", // Path to JSON files containing agent definitions for the BombClash problem.
     "IndividualsSourceSO": "Assets\\Resources\\SOs\\BombClash", // Path to ScriptableObject files for agent definitions.
     "ConvertSOToJSON": false, // Whether to convert ScriptableObjects into JSON files.
     "StartCommunicatorURI": "http://localhost:4444/", // URI for the communication interface for starting the simulation.
