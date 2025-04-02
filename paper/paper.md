@@ -1,4 +1,4 @@
-# GIANT - General Intelligent Agent Trainer
+# GIANT: General Intelligent Agent Trainer
 
 ---
 title: 'GIANT: General Intelligent Agent Trainer'
@@ -28,7 +28,7 @@ bibliography: paper.bib
 
 # Summary
 
-GIANT is a versatile, open-source platform designed to train intelligent agents using diverse machine learning techniques and evaluate them in game engine-based environments. Its highly modular architecture supports a wide range of optimization methods, with the current implementation leveraging Genetic Programming (GP) [@koza2005GP] within the EARS framework [@ears2019]. GIANT aims to provide a standardized benchmark for comparing single- and multi-agent systems, incorporating concepts of self-organization to enable adaptive evaluation, and offers flexibility for integrating custom environments and techniques.
+General Intelligent Agent Trainer (GIANT) is a versatile, open-source platform designed to train intelligent agents using diverse machine learning techniques and evaluate them in game engine-based environments. Its highly modular architecture supports a wide range of optimization methods, with the current implementation leveraging Genetic Programming (GP) [@koza2005GP] within the EARS framework [@ears2019]. GIANT serves as a standardized benchmark for evaluating and comparing solutions in both single-agent and multi-agent environments. The platform integrates concepts of self-organization to enable adaptive evaluation while providing the flexibility to incorporate custom environments and methodologies.
 
 # Statement of need
 
