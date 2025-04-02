@@ -58,19 +58,19 @@ The platform currently supports the following problem domains: Collector, RoboSt
 
 - Collector (see \autoref{fig:collector}) is a single-agent environment inspired by ML-Agents' Food Collector [@juliani2020MlAgents], where agents navigate a map to collect scattered resources while avoiding obstacles. The goal is to optimize movement efficiency and maximize resource collection within a given time frame.
 	
-  ![Collector problem domain.](../docs/images/collector_problem_domain_main.png){#fig:collector width=40% }
+  ![Collector problem domain.](../docs/images/collectorProblemDomain/collector_problem_domain_main.png){#fig:collector width=40% }
 
 - RoboStrike (see \autoref{fig:robostrike}) is a multi-agent combat simulation inspired by Robocode [@nelson2024Robocode], where agents are represented as tanks and placed in a strategic battle arena. Agents must navigate obstacles, track opponents, and employ efficient attack and evasion strategies to survive and eliminate opponents.
 
-  ![RoboStrike problem domain.](../docs/images/robostrike_problem_domain_main.png){#fig:robostrike width=40% }
+  ![RoboStrike problem domain.](../docs/images/robostrikeProblemDomain/robostrike_problem_domain_main.png){#fig:robostrike width=40% }
 
 - Soccer (see \autoref{fig:soccer}) is a replica of ML-Agents' Soccer Twos [@juliani2020MlAgents], a multi-agent environment where agents compete to score goals by strategically positioning themselves, passing, and shooting.
 
-  ![Soccer problem domain.](../docs/images/soccer_problem_domain_main.png){#fig:soccer width=40% }
+  ![Soccer problem domain.](../docs/images/soccerProblemDomain/soccer_problem_domain_main.png){#fig:soccer width=40% }
 
 - BombClash (see \autoref{fig:bombclash}) is a multi-agent environment inspired by the Bomberland multi-agent AI competition [@coderOne2021Bomberland], where agents strategically place bombs to destroy obstacles, eliminate opponents, and evade explosions. Success requires careful planning, opponent prediction, and tactical movement.
 	
-  ![BombClash problem domain.](../docs/images/bombClash_problem_domain_main.png){#fig:bombclash width=40% }
+  ![BombClash problem domain.](../docs/images/bombclashProblemDomain/bombClash_problem_domain_main.png){#fig:bombclash width=40% }
 
 The platform's flexible control system enables both fully autonomous AI-driven gameplay and human-in-the-loop experimentation, making the platform suitable for a wide range of research and development applications in machine learning, artificial intelligence, and game AI.
 
