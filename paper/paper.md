@@ -1,5 +1,3 @@
-# GIANT: General Intelligent AgeNt Trainer
-
 ---
 title: 'GIANT: General Intelligent AgeNt Trainer'
 tags:
@@ -26,6 +24,8 @@ affiliations:
 date: 27 March 2025
 bibliography: paper.bib
 
+---
+
 # Summary
 
 General Intelligent AgeNt Trainer (GIANT) is a versatile, open-source platform designed to train intelligent agents using diverse machine learning techniques and evaluate them in game engine-based environments. Its highly modular architecture supports a wide range of optimization methods, with the current implementation leveraging Genetic Programming (GP) [@koza2005GP] within the EARS framework [@ears2019]. GIANT serves as a standardized benchmark for evaluating and comparing solutions in both single-agent and multi-agent environments. The platform integrates concepts of self-organization to enable adaptive evaluation while providing the flexibility to incorporate custom environments and methodologies.
@@ -48,7 +48,7 @@ The Web API Interface acts as the central integration layer, facilitating commun
 
 The modular architecture of GIANT ensures that components remain independent, allowing for the seamless integration or replacement of individual modules without affecting the performance of the overall system. When introducing a new component, only the Web App Interface needs to be adapted to align with its specifications, making the platform highly scalable and adaptable.
 
-![Architecture of GIANT platform.\label{fig:platformArchitecture}](/docs/images/platform_architecture_orig.png)
+![Architecture of GIANT platform.](../docs/images/platform_architecture_orig.png){#fig:platformArchitecture width=90% }
 
 # Included problem domains
 
@@ -58,19 +58,19 @@ The platform currently supports the following problem domains: Collector, RoboSt
 
 - Collector (see \autoref{fig:collector}) is a single-agent environment inspired by ML-Agents' Food Collector [@juliani2020MlAgents], where agents navigate a map to collect scattered resources while avoiding obstacles. The goal is to optimize movement efficiency and maximize resource collection within a given time frame.
 	
-  ![Collector problem domain.\label{fig:collector}](/docs/images/collectorProblemDomain/collector_problem_domain_main.png){ width=40% }
+  ![Collector problem domain.](../docs/images/collector_problem_domain_main.png){#fig:collector width=40% }
 
 - RoboStrike (see \autoref{fig:robostrike}) is a multi-agent combat simulation inspired by Robocode [@nelson2024Robocode], where agents are represented as tanks and placed in a strategic battle arena. Agents must navigate obstacles, track opponents, and employ efficient attack and evasion strategies to survive and eliminate opponents.
 
-  ![RoboStrike problem domain.\label{fig:robostrike}](/docs/images/robostrikeProblemDomain/robostrike_problem_domain_main.png){ width=40% }
+  ![RoboStrike problem domain.](../docs/images/robostrike_problem_domain_main.png){#fig:robostrike width=40% }
 
 - Soccer (see \autoref{fig:soccer}) is a replica of ML-Agents' Soccer Twos [@juliani2020MlAgents], a multi-agent environment where agents compete to score goals by strategically positioning themselves, passing, and shooting.
 
-  ![Soccer problem domain.\label{fig:soccer}](/docs/images/soccerProblemDomain/soccer_problem_domain_main.png){ width=40% }
+  ![Soccer problem domain.](../docs/images/soccer_problem_domain_main.png){#fig:soccer width=40% }
 
 - BombClash (see \autoref{fig:bombclash}) is a multi-agent environment inspired by the Bomberland multi-agent AI competition [@coderOne2021Bomberland], where agents strategically place bombs to destroy obstacles, eliminate opponents, and evade explosions. Success requires careful planning, opponent prediction, and tactical movement.
 	
-  ![BombClash problem domain.\label{fig:bombclash}](/docs/images/bombClashProblemDomain/bombClash_problem_domain_main.png){ width=40% }
+  ![BombClash problem domain.](../docs/images/bombClash_problem_domain_main.png){#fig:bombclash width=40% }
 
 The platform's flexible control system enables both fully autonomous AI-driven gameplay and human-in-the-loop experimentation, making the platform suitable for a wide range of research and development applications in machine learning, artificial intelligence, and game AI.
 
