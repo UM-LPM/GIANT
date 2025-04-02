@@ -9,13 +9,13 @@ GIANT is designed with a highly modular structure, ensuring that each component 
 - Four built-in example environments
 - Support for both Single-Agent and Multi-Agent scenarios
 - Highly extensible and modular design
-- Compatibility with various decision-making systems, including Behavior Trees, Neural Networks, and more
+- It is compatible with various decision-making systems, including Behavior Trees, Neural Networks, and more
 - Multilevel parallelization
 - Easily extendable to new problem domains
 - Manual solution testing, allowing human players to compete against AI agents
 - Visualization tools for comparing different methods
 
-For a detailed description of these functionalities see [GIANT overview](https://github.com/UM-LPM/GIANT/blob/release_1/docs/GIANT_overview.md) docs.
+For a detailed description of these functionalities, see [GIANT overview](/docs/GIANT_overview.md) docs.
 
 # Releases & Documentation
 
@@ -24,7 +24,7 @@ For a detailed description of these functionalities see [GIANT overview](https:/
 | Beta | Oktober 8, 2024 | -- | -- | [download](https://github.com/UM-LPM/GIANT/releases/tag/v1.0.0) | 
 | Release 1 | March 25, 2025 | [branch](https://github.com/UM-LPM/GIANT/tree/release_1) | [docs](https://github.com/UM-LPM/GIANT/blob/release_1/docs/GIANT_overview.md) | [download](https://github.com/UM-LPM/GIANT/releases/tag/release_1) | 
 
-For older releases refer to the [Releases page](https://github.com/UM-LPM/GIANT/releases).
+For older releases, refer to the [Releases page](https://github.com/UM-LPM/GIANT/releases).
 
 # Publications
 If you use GIANT, please include this citation as a reference to the platform.
