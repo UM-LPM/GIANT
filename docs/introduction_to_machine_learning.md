@@ -63,7 +63,7 @@ GIANT is designed to evolve AI agents **without pre-programmed rules** by:
 - Using different **Rating systems** and **Tournament organizations** to evaluate AI fitness.
 - Enabling agents to **learn, adapt, and improve over multiple generations**.
 
-**Example**: In a [**Robocode-like battle simulation**](/docs/GIANT_robostrike_problem_domain), agents can evolve **aiming, shooting, dodging, and movement strategies** purely through the optimization with genetic programming.
+**Example**: In a [**Robocode-like battle simulation**](/docs/GIANT_robostrike_problem_domain.md), agents can evolve **aiming, shooting, dodging, and movement strategies** purely through the optimization with genetic programming.
 
 ## **Machine Learning vs. Traditional Game AI**
 
