@@ -22,7 +22,7 @@ For a detailed description of these functionalities, see [GIANT overview](/docs/
 | Version | Release Date | Source (Git branch) | Docs | Download|
 |----------|----------|----------|----------|----------|
 | Beta | Oktober 8, 2024 | -- | -- | [download](https://github.com/UM-LPM/GIANT/releases/tag/v1.0.0) | 
-| Release 1 | March 25, 2025 | [branch](https://github.com/UM-LPM/GIANT/tree/release_1) | [docs](https://github.com/UM-LPM/GIANT/blob/release_1/docs/GIANT_overview.md) | [download](https://github.com/UM-LPM/GIANT/releases/tag/release_1) | 
+| Release 1 | April 2, 2025 | [branch](https://github.com/UM-LPM/GIANT/tree/release_1) | [docs](https://github.com/UM-LPM/GIANT/blob/release_1/docs/GIANT_overview.md) | [download](https://github.com/UM-LPM/GIANT/releases/tag/release_1) | 
 
 For older releases, refer to the [Releases page](https://github.com/UM-LPM/GIANT/releases).
 
