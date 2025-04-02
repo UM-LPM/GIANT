@@ -1,6 +1,6 @@
 # Soccer problem domain
 
-The **Soccer problem domain** is a **multi-agent environment** based on a simplified version of soccer, inspired by the [Soccer Twos](https://github.com/Unity-Technologies/ml-agents/blob/develop/docs/Learning-Environment-Examples.md#soccer-twos) problem domain implemented in [ML-Agents](https://github.com/Unity-Technologies/ml-agents/tree/develop). It features two teams competing against each other in a dynamic environment. The main objective of the agents is to cooperate with their teammates and defeat the opposing team, either by scoring goals or preventing the other team from scoring. This problem domain allows for the implementation and testing of multi-agent systems, team strategies, and various agent control schemes.
+The **Soccer problem domain** is a **multi-agent environment**, a replica of [ML-Agents' Soccer Twos](https://github.com/Unity-Technologies/ml-agents/blob/develop/docs/Learning-Environment-Examples.md#soccer-twos) problem domain. It features two teams competing against each other in a dynamic environment. The main objective of the agents is to cooperate with their teammates and defeat the opposing team, either by scoring goals or preventing the other team from scoring. This problem domain allows for the implementation and testing of multi-agent systems, team strategies, and various agent control schemes.
 
 <center><img src="/docs/images/soccerProblemDomain/soccer_problem_domain_main.png" alt="Soccer" width="600"/></center>
 
@@ -55,7 +55,7 @@ Here is a sample configuration file for the Soccer problem domain:
     "AutoStart": true, // Automatically starts the simulation without requiring manual initiation.
     "ProblemDomain": "Soccer", // Specifies the problem domain as "Soccer".
     "CoordinatorURI": "http://localhost:4000/", // URI for the coordinator that manages the simulation's communication.
-    "IndividualsSourceJSON": "...\\GenIATraP\\Assets\\Resources\\JSONs\\Soccer\\", // Path to JSON files containing agent definitions for the Soccer problem.
+    "IndividualsSourceJSON": "...\\GIANT\\Assets\\Resources\\JSONs\\Soccer\\", // Path to JSON files containing agent definitions for the Soccer problem.
     "IndividualsSourceSO": "Assets\\Resources\\SOs\\Soccer", // Path to ScriptableObject files for agent definitions.
     "ConvertSOToJSON": false, // Whether to convert ScriptableObjects into JSON files; false means SO files are used directly.
     "StartCommunicatorURI": "http://localhost:4444/", // URI for starting the communication interface.

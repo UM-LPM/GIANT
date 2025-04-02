@@ -1,5 +1,5 @@
 # BombClash Problem Domain
-The BombClash problem domain is a strategic simulation where agents interact within a maze-like environment. The agents' primary objective is to place bombs strategically, destroy obstacles, avoid damage from explosions, and eliminate or outlast other agents. This problem domain involves handling various game mechanics such as power-ups, health management, bomb placement, and agent movement. It is typically used to train agents in decision-making and survival tactics in a dynamic and competitive environment.
+The **BombClash problem domain** is a **multi-agent** environment, inspired by the [Bomberland multi-agent AI competition](https://github.com/CoderOneHQ/bomberland), where agents interact within a maze-like environment. The agents' primary objective is to place bombs strategically, destroy obstacles, avoid damage from explosions, and eliminate or outlast other agents. This problem domain involves handling various game mechanics such as power-ups, health management, bomb placement, and agent movement. It is typically used to train agents in decision-making and survival tactics in a dynamic and competitive environment.
 
 <center><img src="/docs/images/bombClashProblemDomain/bombClash_problem_domain_main.png" alt="BombClash" width="600"/></center>
 
@@ -76,7 +76,7 @@ The BombClash problem domain configuration file contains parameters that control
     "AutoStart": true, // Automatically starts the simulation without requiring manual initiation.
     "ProblemDomain": "BombClash", // Specifies the problem domain as "BombClash".
     "CoordinatorURI": "http://localhost:4000/", // URI for the coordinator managing the communication for the simulation.
-    "IndividualsSourceJSON": "...\\GenIATraP\\Assets\\Resources\\JSONs\\BombClash\\", // Path to JSON files containing agent definitions for the BombClash problem.
+    "IndividualsSourceJSON": "...\\GIANT\\Assets\\Resources\\JSONs\\BombClash\\", // Path to JSON files containing agent definitions for the BombClash problem.
     "IndividualsSourceSO": "Assets\\Resources\\SOs\\BombClash", // Path to ScriptableObject files for agent definitions.
     "ConvertSOToJSON": false, // Whether to convert ScriptableObjects into JSON files.
     "StartCommunicatorURI": "http://localhost:4444/", // URI for the communication interface for starting the simulation.

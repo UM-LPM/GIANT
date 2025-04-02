@@ -1,6 +1,6 @@
 # Collector Problem Domain
 
-The **Collector problem domain** is a **single-agent environment** where an agent navigates a bounded arena to collect scattered objects. This problem is designed to test an agent’s ability to efficiently explore the environment, optimize movement, and maximize the number of collected objects within a given time frame.
+The **Collector problem domain** is a **single-agent environment**, inspired by [ML-Agents' Food Collector](https://github.com/Unity-Technologies/ml-agents/blob/develop/docs/Learning-Environment-Examples.md#food-collector), where an agent navigates a bounded arena to collect scattered objects. This problem is designed to test an agent’s ability to efficiently explore the environment, optimize movement, and maximize the number of collected objects within a given time frame.
 
 <center><img src="/docs/images/collectorProblemDomain/collector_problem_domain_main.png" alt="Collector" width="600"/></center>
 ## Objective
@@ -47,7 +47,7 @@ Below is an example configuration file for the Collector environment:
     "AutoStart": true, // Automatically starts the simulation without needing manual initiation.
     "ProblemDomain": "Collector", // Specifies that this configuration is for the "Collector" problem domain.
     "CoordinatorURI": "http://localhost:4000/", // URI for the coordinator that manages the communication during simulation.
-    "IndividualsSourceJSON": "C:\\Users\\marko\\UnityProjects\\GenIATraP_refactor\\GeneralTrainingEnvironmentForMAS\\GenIATraP\\Assets\\Resources\\JSONs\\Collector\\", // Path to the JSON files containing agent definitions for this problem domain.
+    "IndividualsSourceJSON": "...\\Resources\\JSONs\\Collector\\", // Path to the JSON files containing agent definitions for this problem domain.
     "IndividualsSourceSO": "Assets\\Resources\\SOs\\Collector", // Path to the ScriptableObject files for agent definitions.
     "ConvertSOToJSON": false, // Whether to convert ScriptableObjects to JSON format; false means SO files are used directly.
     "StartCommunicatorURI": "http://localhost:4444/", // URI for starting the communication interface during the simulation.

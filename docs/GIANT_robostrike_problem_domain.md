@@ -1,6 +1,6 @@
 # Robostrike Problem Domain
 
-The **Robostrike problem domain** is a dynamic, **multi-agent** environment where robots compete in a combat environment. Agents, in the form of robots, are equipped with various abilities like shooting, moving, and interacting with the environment. The **goal** is to destroy enemy robots while avoiding damage from opponents and environmental hazards. This problem domain is ideal for evaluating agents that need to exhibit strategic thinking, resource management, and tactical combat decision-making in a real-time environment.
+The **Robostrike problem domain** is a dynamic, **multi-agent** environment, inspired by [Robocode](https://github.com/robocode-dev/tank-royale), where robots compete in a combat environment. Agents, in the form of robots, are equipped with various abilities like shooting, moving, and interacting with the environment. The **goal** is to destroy enemy robots while avoiding damage from opponents and environmental hazards. This problem domain is ideal for evaluating agents that need to exhibit strategic thinking, resource management, and tactical combat decision-making in a real-time environment.
 
 <center><img src="/docs/images/robostrikeProblemDomain/robostrike_problem_domain_main.png" alt="Robostrike" width="600"/></center>
 
@@ -59,7 +59,7 @@ The problem configuration file includes various settings that define how the sim
 	"AutoStart": true,  // Automatically starts the simulation without manual intervention.
 	"ProblemDomain": "Robostrike",  // Specifies the problem domain (RoboStrike).
 	"CoordinatorURI": "http://localhost:4000/",  // URL of the central coordinator for managing simulations.
-	"IndividualsSourceJSON": "...\\GenIATraP\\Assets\\Resources\\JSONs\\Robostrike\\",  // Path to JSON files storing agent configurations.
+	"IndividualsSourceJSON": "...\\GIANT\\Assets\\Resources\\JSONs\\Robostrike\\",  // Path to JSON files storing agent configurations.
 	"IndividualsSourceSO": "Assets\\Resources\\SOs\\Robostrike",  // Path to ScriptableObjects (SO) storing agent configurations.
 	"ConvertSOToJSON": false,  // If true, converts ScriptableObjects to JSON format for easier processing.
 	"StartCommunicatorURI": "http://localhost:4444/",  // URL for the communicator service.

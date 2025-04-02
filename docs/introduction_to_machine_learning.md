@@ -55,15 +55,15 @@ A **unique approach** to machine learning in games is **Genetic Programming (GP)
 3. Select the best-performing agents and apply mutations/crossovers.
 4. Repeat the process for multiple generations until AI evolves optimal strategies.
 
-### **How GenIATraP Uses Genetic Programming**
+### **How GIANT Uses Genetic Programming**
 
-GenIATraP is designed to evolve AI agents **without pre-programmed rules** by:
+GIANT is designed to evolve AI agents **without pre-programmed rules** by:
 
 - Allowing **multi-agent competition** to drive strategy development.
 - Using different **Rating systems** and **Tournament organizations** to evaluate AI fitness.
 - Enabling agents to **learn, adapt, and improve over multiple generations**.
 
-**Example**: In a [**Robocode-like battle simulation**](/docs/GenIATraP_robostrike_problem_domain), agents can evolve **aiming, shooting, dodging, and movement strategies** purely through the optimization with genetic programming.
+**Example**: In a [**Robocode-like battle simulation**](/docs/GIANT_robostrike_problem_domain.md), agents can evolve **aiming, shooting, dodging, and movement strategies** purely through the optimization with genetic programming.
 
 ## **Machine Learning vs. Traditional Game AI**
 
@@ -115,4 +115,4 @@ Machine learning offers several improvements over traditional rule-based AI:
 
 Machine Learning has fundamentally changed **how AI behaves in games**. Whether through **reinforcement learning**, **unsupervised clustering**, or **genetic programming**, these techniques allow developers to create **more intelligent, adaptable, and engaging** game experiences.
 
-**GenIATraP** embraces advances in **Machine Learning**, providing a platform where AI agents can **evolve and improve** in single-agent multi-agent environments. By leveraging **machine learning**, GenIATraP helps push the boundaries of AI in gaming.
+**GIANT** embraces advances in **Machine Learning**, providing a platform where AI agents can **evolve and improve** in single-agent multi-agent environments. By leveraging **machine learning**, GIANT helps push the boundaries of AI in gaming.

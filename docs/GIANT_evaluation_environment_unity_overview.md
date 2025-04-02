@@ -1,7 +1,7 @@
-# GenIATraP - Unity Evaluation Environment
-The **Unity Evaluation Environment** within GenIATraP is designed to provide a robust and flexible platform for testing, training, and evaluating AI agents. Built on the **[Unity Game Engine](https://unity.com/)**, this environment leverages Unity’s capabilities to create dynamic, interactive, and complex simulations that are ideal for evaluating a wide range of AI behaviors. Below is a detailed breakdown of its architecture, key components, workflows, and extensibility features.
+# GIANT - Unity Evaluation Environment
+The **Unity Evaluation Environment** within GIANT is designed to provide a robust and flexible platform for testing, training, and evaluating AI agents. Built on the **[Unity Game Engine](https://unity.com/)**, this environment leverages Unity’s capabilities to create dynamic, interactive, and complex simulations that are ideal for evaluating a wide range of AI behaviors. Below is a detailed breakdown of its architecture, key components, workflows, and extensibility features.
 
-The **Unity evaluation environment** builds upon many **established functionalities** and concepts from [**ML-Agents**](https://github.com/Unity-Technologies/ml-agents/tree/develop), a Unity-based framework designed to facilitate machine learning workflows within Unity. By adapting these concepts, GenIATraP extends the capabilities of the Unity environment to provide broader support for the evaluation and testing of different AI controller types, including **Neural Networks, Behavior Trees, Finite State Machines, and more**.
+The **Unity evaluation environment** builds upon many **established functionalities** and concepts from [**ML-Agents**](https://github.com/Unity-Technologies/ml-agents/tree/develop), a Unity-based framework designed to facilitate machine learning workflows within Unity. By adapting these concepts, GIANT extends the capabilities of the Unity environment to provide broader support for the evaluation and testing of different AI controller types, including **Neural Networks, Behavior Trees, Finite State Machines, and more**.
 
 The platform's integration with Unity allows for the seamless creation of complex environments and scenarios where AI agents can be trained, tested, and evaluated. Key features of this evaluation environment include:
 - **Customizable Problem Domains**: Platform enables easy addition of new **problem domains**, whether for game-like environments, robotics, or other real-life simulations. Users can modify environments to suit their specific evaluation needs.
@@ -9,9 +9,9 @@ The platform's integration with Unity allows for the seamless creation of comple
 - **Extensible Architecture**: The Unity evaluation environment is designed to be highly extensible, allowing users to **add new components**, **sensor types**, **AI controllers**, and adjust simulation parameters without significant modifications to the core system.
 
 ## Agent
-In the **Unity Evaluation Environment**, the **Agent** is the fundamental entity that interacts with the environment, makes decisions based on observations, and executes actions. Each Agent represents a controlled entity whose behavior is dictated by an associated **Agent Controller** (e.g., Neural Networks, FSMs, Behavior Trees, etc.) that is part of an **Individual** definition. Agents are the building blocks of any simulation in GenIATraP and form the core of the **training and evaluation workflows**.
+In the **Unity Evaluation Environment**, the **Agent** is the fundamental entity that interacts with the environment, makes decisions based on observations, and executes actions. Each Agent represents a controlled entity whose behavior is dictated by an associated **Agent Controller** (e.g., Neural Networks, FSMs, Behavior Trees, etc.) that is part of an **Individual** definition. Agents are the building blocks of any simulation in GIANT and form the core of the **training and evaluation workflows**.
 
-An **Agent** in GenIATraP performs several key **tasks** within the evaluation process:
+An **Agent** in GIANT performs several key **tasks** within the evaluation process:
 
 - **Perception**: The agent collects data from the environment through various **sensors**. Sensors can provide different types of input, such as visual data (via cameras), distance measurements (via raycast sensors), or environmental readings. These inputs form the **observations** that the agent uses to decide on subsequent actions.
 - **Decision-Making**: Based on the collected observations, the agent uses its **Agent Controller** to make decisions. These decisions determine the actions the agent will take in the environment (e.g., moving, interacting with objects, attacking opponents).
@@ -78,7 +78,7 @@ A **Simulation** is one of the core processes through which predefined matches a
 - **Match** – Defines which individuals will be evaluated.
 - **Agent Scenario** – Specifies how agents are **spawned** and **controlled** within the environment.
 - **Game Scenario** – Defines the environment in which agents will operate.
-- **Environment Controller** – Manages the entire simulation process and communicates with the [**Communicator**](/docs/GenIATraP_evaluation_environment_unity_overview.md#communicator) component.
+- **Environment Controller** – Manages the entire simulation process and communicates with the [**Communicator**](/docs/GIANT_evaluation_environment_unity_overview.md#communicator) component.
 
 ### Spawner
 The platform includes two primary types of **Spawners**:
@@ -112,7 +112,7 @@ The **Environment Controller** acts as the **central orchestration component** o
 ⚠️ **Important:** A deterministic environment is a crucial aspect of an evaluation environment, as it guarantees the reproducibility of previously conducted experiments. To achieve this, new environments must be designed to meet these requirements. One key consideration is ensuring that all prefabs are unpacked before being added to the scene, as using packed prefabs can compromise the determinism of the simulation.
 ## Communicator
 
-The **Communicator** class is a central component responsible for managing the communication between the Unity environment and [**Coordinator**](/docs/GenIATraP_evaluation_environment_unity_overview.md#coordinator) via an HTTP server. It also facilitates scene management and simulation execution for evaluating agent performance in different game scenarios.
+The **Communicator** class is a central component responsible for managing the communication between the Unity environment and [**Coordinator**](/docs/GIANT_evaluation_environment_unity_overview.md#coordinator) via an HTTP server. It also facilitates scene management and simulation execution for evaluating agent performance in different game scenarios.
 
 ### Key Responsibilities
 
@@ -197,9 +197,9 @@ The **Coordinator** can be configured using various parameters, allowing users t
 
 ## Summary and Next Steps
 
-The **Unity Evaluation Environment** in **GenIATraP** is a flexible and extensible platform for testing, training, and evaluating AI agents in interactive simulations. Built on the **Unity Game Engine**, it allows for the creation of diverse problem domains, from game-like environments to real-world-inspired simulations. It supports multiple AI controllers, including **Neural Networks, Behavior Trees, and Finite State Machines**, allowing for diverse evaluation methods. Users can define custom problem domains and simulation rules, making the environment adaptable to different research and application needs. With built-in **parallel evaluation**, multiple simulations can run simultaneously, significantly improving computational efficiency. The **extensible architecture** ensures seamless integration of new sensors, AI controllers, and simulation parameters, making it a robust tool for AI research, reinforcement learning, and evolutionary algorithms.
+The **Unity Evaluation Environment** in **GIANT** is a flexible and extensible platform for testing, training, and evaluating AI agents in interactive simulations. Built on the **Unity Game Engine**, it allows for the creation of diverse problem domains, from game-like environments to real-world-inspired simulations. It supports multiple AI controllers, including **Neural Networks, Behavior Trees, and Finite State Machines**, allowing for diverse evaluation methods. Users can define custom problem domains and simulation rules, making the environment adaptable to different research and application needs. With built-in **parallel evaluation**, multiple simulations can run simultaneously, significantly improving computational efficiency. The **extensible architecture** ensures seamless integration of new sensors, AI controllers, and simulation parameters, making it a robust tool for AI research, reinforcement learning, and evolutionary algorithms.
 
 In terms of next steps:
-- Learn how to [**add a new problem**](/docs/GenIATraP_add_new_problem_domain.md) in **Unity Evaluation Environment**.
-- Learn how [**Web API**](/docs/GenIATraP_webapi_overview.md) is connected with **Unity Evaluation Environment** and how it works.
-- Learn how [**EARS framework**](/docs/GenIATraP_machine_learning_framework_ears_overview.md) is connected with **Web API** and how an optimization process can be executed.
+- Learn how to [**add a new problem**](/docs/GIANT_add_new_problem_domain.md) in **Unity Evaluation Environment**.
+- Learn how [**Web API**](/docs/GIANT_webapi_overview.md) is connected with **Unity Evaluation Environment** and how it works.
+- Learn how [**EARS framework**](/docs/GIANT_machine_learning_framework_ears_overview.md) is connected with **Web API** and how an optimization process can be executed.

@@ -9,8 +9,6 @@ This guide explores **four essential aspects** of game design:
 3. **Player Psychology** – How players think and react.
 4. **Balance & Difficulty Tuning** – Ensuring fair and challenging gameplay.
 
----
-
 ## **1. Game Mechanics: The Core of Gameplay**
 
 ### **What Are Game Mechanics?**
