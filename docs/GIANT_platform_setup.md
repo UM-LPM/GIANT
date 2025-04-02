@@ -124,7 +124,7 @@ The platform consists of three parts: **Unity**, **Web API**, and **EARS framewo
           "CoordinatorURI": "http://localhost:4000",
           "EvalEnvInstanceURIs": ["http://localhost:4444"],
           "SourceFilePath": "your path...\\jsonBody.json",
-          "DestinationFilePath": "your path...\\GIANT\\Assets\\Resources\\JSONs\\problem domain\\",
+          "DestinationFilePath": "your path...\\GIANT\\EvaluationEnironments\\UnityEvalEnv\\Assets\\Resources\\JSONs\\problem domain\\",
           "LastEvalIndividualFitnesses": null
       }
    ```
