@@ -6,14 +6,17 @@ namespace Problems.PlanetConquest
 {
     public class PlanetComponent : MonoBehaviour
     {
+        [SerializeField] public PlanetType PlanetType;
+
         public TeamIdentifier CapturedTeamIdentifier { get; set; }
-        public PlanetType Type { get; set; }
 
         public SpriteRenderer planetOrbRenderer { get; set; }
         public List<PlanetConquestAgentComponent> AgentsInZone { get; set; }
 
         private int capturingTeamID = -1;
         private float captureProgress = 0f;
+
+        PlanetConquestAgentComponent agent;
 
         private void Awake()
         {
@@ -58,8 +61,8 @@ namespace Problems.PlanetConquest
         {
             if (other.CompareTag("Agent"))
             {
-                PlanetConquestAgentComponent agent = other.GetComponent<PlanetConquestAgentComponent>();
-                if (Type == PlanetType.Lava)
+                agent = other.GetComponent<PlanetConquestAgentComponent>();
+                if (PlanetType == PlanetType.Lava)
                 {
                     agent.EnteredLavaPlanetOrbit++;
                 }
@@ -118,7 +121,7 @@ namespace Problems.PlanetConquest
                             {
                                 if (agent.TeamIdentifier.TeamID == CapturedTeamIdentifier.TeamID)
                                 {
-                                    if (Type == PlanetType.Lava)
+                                    if (PlanetType == PlanetType.Lava)
                                     {
                                         agent.CapturedLavaPlanet++;
                                     }
@@ -135,11 +138,6 @@ namespace Problems.PlanetConquest
                 {
                     CapturedTeamIdentifier.TeamID = -1;
                     UpdateCapturingProgress(environmentController);
-                    /*captureProgress = Mathf.Max(0, captureProgress - environmentController.PlanetCaptureSpeed * Time.fixedDeltaTime);
-                    if (capturingTeamID != -1)
-                    {
-                        planetOrbRenderer.color = Color.Lerp(environmentController.PlanetOrbColor, environmentController.TeamColors[capturingTeamID], captureProgress);
-                    }*/
                 }
             }
             else
@@ -147,11 +145,6 @@ namespace Problems.PlanetConquest
                 if (CapturedTeamIdentifier.TeamID == -1)
                 {
                     UpdateCapturingProgress(environmentController);
-                    /*captureProgress = Mathf.Max(0, captureProgress - environmentController.PlanetCaptureSpeed * Time.fixedDeltaTime);
-                    if (capturingTeamID != -1)
-                    {
-                        planetOrbRenderer.color = Color.Lerp(environmentController.PlanetOrbColor, environmentController.TeamColors[capturingTeamID], captureProgress);
-                    }*/
                 }
             }
         }

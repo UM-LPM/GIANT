@@ -29,6 +29,8 @@ namespace Problems.PlanetConquest
         int counter = 0;
         int maxSpawnPoints = 100;
 
+        PlanetConquestEnvironmentController planetConquestEnvironmentController;
+
         public override void validateSpawnConditions(EnvironmentControllerBase environmentController)
         {
             if (HullsLava == null || HullsLava.Length == 0 || HullsIce == null || HullsIce.Length == 0 || Guns == null || Guns.Length == 0)
@@ -106,28 +108,27 @@ namespace Problems.PlanetConquest
             AgentController agentController = individual.AgentControllers[0];
             GameObject agentGameObject;
 
-            throw new System.Exception("not implemented");
-            // TODO Fix
-            /*if (agentType == AgentType.Ice)
+            planetConquestEnvironmentController = environmentController as PlanetConquestEnvironmentController;
+
+            switch (agentType)
             {
-                agentGameObject = Instantiate(environmentController.Agent2Prefab, SpawnPoints[teamIndex].position, SpawnPoints[teamIndex].rotation, gameObject.transform);
+                case AgentType.Lava:
+                    agentGameObject = Instantiate(planetConquestEnvironmentController.LavaAgentPrefab, SpawnPoints[teamIndex].position, SpawnPoints[teamIndex].rotation, gameObject.transform);
+                    break;
+                case AgentType.Ice:
+                    agentGameObject = Instantiate(planetConquestEnvironmentController.IceAgentPrefab, SpawnPoints[teamIndex].position, SpawnPoints[teamIndex].rotation, gameObject.transform);
+                    break;
+                default:
+                    throw new System.Exception("Invalid agent type");
+                    // TODO add error reporting here
             }
-            else if (agentType == AgentType.Lava)
-            {
-                agentGameObject = Instantiate(environmentController.AgentPrefab, SpawnPoints[teamIndex].position, SpawnPoints[teamIndex].rotation, gameObject.transform);
-            }
-            else
-            {
-                throw new System.Exception("Invalid agent type");
-                // TODO add error reporting here
-            }*/
+
             // Configure agent
             T agent = agentGameObject.GetComponent<T>();
             PlanetConquestAgentComponent agentComponent = agent as PlanetConquestAgentComponent;
             agentComponent.AgentController = agentController.Clone(); // Clone the agent controller to prevent shared state between agents
             agentComponent.IndividualID = individual.IndividualId;
             agentComponent.TeamIdentifier.TeamID = teamIndex;
-            agentComponent.AgentType = agentType;
             agentComponent.HealthComponent.Health = PlanetConquestEnvironmentController.MAX_HEALTH;
             agentComponent.EnergyComponent.Energy = PlanetConquestEnvironmentController.MAX_ENERGY;
 
@@ -227,7 +228,7 @@ namespace Problems.PlanetConquest
                 // Check if current spawn point is far enough from the agents
                 foreach (AgentComponent agent in environmentController.Agents)
                 {
-                    if (Vector3.Distance(agent.transform.position, spawnPos) < environmentController.MinPowerUpDistanceFromAgents)
+                    if (Vector3.Distance(agent.transform.position, spawnPos) < environmentController.MinAgentDistance)
                     {
                         isFarEnough = false;
                         break;

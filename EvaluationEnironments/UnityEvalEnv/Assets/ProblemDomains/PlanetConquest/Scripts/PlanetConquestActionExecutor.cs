@@ -13,9 +13,8 @@ namespace Problems.PlanetConquest
         int forwardAxis = 0;
         int rotateAxis = 0;
 
-        // Shoot missile variables
+        // Shoot laser variables
         Vector3 spawnPosition;
-        Vector3 spawnPosition1;
         Vector3 localXDir;
 
         public float laserRange = 300f;

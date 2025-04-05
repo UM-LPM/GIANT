@@ -45,7 +45,7 @@ namespace Problems.PlanetConquest
             {
                 T planet = SpawnPlanet<T>(planetConquestEnvironmentController, planetConquestEnvironmentController.LavaPlanetPrefab, lavaPlanetSpawnPositions[i]);
                 PlanetComponent planetComponent = planet as PlanetComponent;
-                planetComponent.Type = PlanetType.Lava;
+                planetComponent.PlanetType = PlanetType.Lava;
                 planets.Add(planet);
             }
             // Spawn Ice Planets
@@ -53,7 +53,7 @@ namespace Problems.PlanetConquest
             {
                 T planet = SpawnPlanet<T>(planetConquestEnvironmentController, planetConquestEnvironmentController.IcePlanetPrefab, icePlanetSpawnPositions[i]);
                 PlanetComponent planetComponent = planet as PlanetComponent;
-                planetComponent.Type = PlanetType.Ice;
+                planetComponent.PlanetType = PlanetType.Ice;
                 planets.Add(planet);
             }
 

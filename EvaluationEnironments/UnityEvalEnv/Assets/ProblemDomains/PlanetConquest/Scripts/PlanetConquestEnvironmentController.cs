@@ -26,9 +26,11 @@ namespace Problems.PlanetConquest {
         [SerializeField] private int LavaAgentCost = 5;
         [SerializeField] private int IceAgentCost = 5;
 
+        [SerializeField] public GameObject LavaAgentPrefab;
+        [SerializeField] public GameObject IceAgentPrefab;
+
         [SerializeField] public Color PlanetOrbColor = new Color(1, 1, 1, 0.2f);
-        [SerializeField]
-        public Color[] TeamColors =
+        [SerializeField] public Color[] TeamColors =
         {
             new Color(1, 0, 0, 0.6f),    // Team 1: Red
             new Color(0, 0, 1, 0.6f),   // Team 2: Blue
@@ -39,11 +41,11 @@ namespace Problems.PlanetConquest {
         private PlanetConquest1vs1MatchSpawner Match1v1Spawner;
 
 
-        [Header(" PlanetConquest Base Configuration")]
+        [Header("PlanetConquest Base Configuration")]
         [SerializeField] public GameObject BasePrefab;
         private List<BaseComponent> Bases;
 
-        [Header(" PlanetConquest Planets Configuration")]
+        [Header("PlanetConquest Planets Configuration")]
 
         [SerializeField] public GameObject LavaPlanetPrefab;
         [SerializeField] public int LavaPlanetSpawnAmount = 3;
@@ -56,7 +58,7 @@ namespace Problems.PlanetConquest {
         private PlanetSpawner PlanetSpawner;
         private List<PlanetComponent> Planets;
 
-        [Header(" PlanetConquest Movement Configuration")]
+        [Header("PlanetConquest Movement Configuration")]
         [SerializeField] public float AgentMoveSpeed = 5f;
         [SerializeField] public float AgentRotationSpeed = 80f;
         [SerializeField] public float AgentTurrentRotationSpeed = 90f;
@@ -65,15 +67,9 @@ namespace Problems.PlanetConquest {
         [SerializeField] public float IceAgentForwardThrust = 2.5f;
         [SerializeField] public float IceAgentTourque = 0.5f;
 
-        [Header(" PlanetConquest Laser Configuration")]
+        [Header("PlanetConquest Laser Configuration")]
         [SerializeField] public float LaserShootCooldown = 1.0f;
         [SerializeField] public static int LaserDamage = 2;
-
-
-        [Header(" PlanetConquest Planets Configuration")]
-        [SerializeField] public float MinPowerUpDistance = 8f;
-        [SerializeField] public float MinPowerUpDistanceFromAgents = 8f;
-        [SerializeField] public Vector3 PowerUpColliderExtendsMultiplier = new Vector3(0.505f, 0.495f, 0.505f);
 
         // Sectors
         private SectorComponent[] Sectors;
@@ -228,7 +224,7 @@ namespace Problems.PlanetConquest {
                 if (planet.CapturedTeamIdentifier.TeamID >= 0 && planet.CapturedTeamIdentifier.TeamID <= 3)
                 {
                     int teamIndex = planet.CapturedTeamIdentifier.TeamID;
-                    if (planet.Type == PlanetType.Lava)
+                    if (planet.PlanetType == PlanetType.Lava)
                     {
                         lavaCounts[teamIndex]++;
                     }
@@ -382,16 +378,6 @@ namespace Problems.PlanetConquest {
                 if (conf.ProblemConfiguration.ContainsKey("MaxEnergy"))
                 {
                     MAX_ENERGY = int.Parse(conf.ProblemConfiguration["MaxEnergy"]);
-                }
-
-                if (conf.ProblemConfiguration.ContainsKey("MinPowerUpDistance"))
-                {
-                    MinPowerUpDistance = float.Parse(conf.ProblemConfiguration["MinPowerUpDistance"]);
-                }
-
-                if (conf.ProblemConfiguration.ContainsKey("MinPowerUpDistanceFromAgents"))
-                {
-                    MinPowerUpDistanceFromAgents = float.Parse(conf.ProblemConfiguration["MinPowerUpDistanceFromAgents"]);
                 }
             }
         }

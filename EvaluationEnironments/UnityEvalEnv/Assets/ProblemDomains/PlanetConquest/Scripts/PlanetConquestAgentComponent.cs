@@ -6,7 +6,7 @@ namespace Problems.PlanetConquest
 {
     public class PlanetConquestAgentComponent : AgentComponent
     {
-        public AgentType AgentType { get; set; }
+        [SerializeField]  public AgentType AgentType;
         public HullComponent Hull { get; set; }
         public TurretComponent Turret { get; set; }
         public GunComponent Gun { get; set; }
