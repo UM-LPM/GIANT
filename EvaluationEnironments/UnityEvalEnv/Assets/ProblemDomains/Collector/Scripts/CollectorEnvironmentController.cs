@@ -8,18 +8,18 @@ using Utils;
 
 namespace Problems.Collector
 {
-    [RequireComponent(typeof(DummyTargetSpawner))]
-    public class DummyEnvironmentController : EnvironmentControllerBase
+    [RequireComponent(typeof(CollectorTargetSpawner))]
+    public class CollectorEnvironmentController : EnvironmentControllerBase
     {
-        [Header("Dummy Game Configuration")]
-        [SerializeField] public DummyGameMode GameMode = DummyGameMode.SingleTargetPickup;
+        [Header("Collector Game Configuration")]
+        [SerializeField] public CollectorGameMode GameMode = CollectorGameMode.SingleTargetPickup;
 
-        [Header("Dummy Movement Configuration")]
+        [Header("Collector Movement Configuration")]
         [SerializeField] public float AgentMoveSpeed = 5f;
         [SerializeField] public float AgentRotationSpeed = 80f;
         [HideInInspector] public float ForwardSpeed = 1f;
 
-        [Header("Dummy Target configuration")]
+        [Header("Collector Target configuration")]
         [SerializeField] public GameObject TargetPrefab;
         [SerializeField] public float TargetMinDistanceFromAgents = 3f;
         [SerializeField] public float TargetExtends = 0.245f;
@@ -29,7 +29,7 @@ namespace Problems.Collector
         [SerializeField] public float TargetToTargetDistance = 5f;
         [SerializeField] public Vector3 TargetColliderExtendsMultiplier = new Vector3(0.50f, 0.495f, 0.505f);
 
-        DummyTargetSpawner TargetSpawner;
+        CollectorTargetSpawner TargetSpawner;
 
         private List<TargetComponent> Targets;
         
@@ -37,7 +37,7 @@ namespace Problems.Collector
         {
             ReadParamsFromMainConfiguration();
 
-            TargetSpawner = GetComponent<DummyTargetSpawner>();
+            TargetSpawner = GetComponent<CollectorTargetSpawner>();
             if(TargetSpawner == null)
             {
                 throw new Exception("TargetSpawner is not defined");
@@ -73,14 +73,14 @@ namespace Problems.Collector
                 if (component != null)
                 {
                     // 1. Update Agent fitnss
-                    agent.AgentFitness.UpdateFitness(DummyFitness.FitnessValues[DummyFitness.FitnessKeys.AgentPickedTarget.ToString()], DummyFitness.FitnessKeys.AgentPickedTarget.ToString());
+                    agent.AgentFitness.UpdateFitness(CollectorFitness.FitnessValues[CollectorFitness.FitnessKeys.AgentPickedTarget.ToString()], CollectorFitness.FitnessKeys.AgentPickedTarget.ToString());
                     agent.GetComponent<CollectorAgentComponent>().TargetsAquired++;
 
-                    if (GameMode == DummyGameMode.SingleTargetPickup)
+                    if (GameMode == CollectorGameMode.SingleTargetPickup)
                     {
                         FinishGame(); // Finish game when target is aquired
                     }
-                    else if (GameMode == DummyGameMode.InfiniteTargetPickup)
+                    else if (GameMode == CollectorGameMode.InfiniteTargetPickup)
                     {
                         // Respawn target
                         List<Vector3> targetPositions = new List<Vector3>();
@@ -113,9 +113,9 @@ namespace Problems.Collector
                         if (AgentExploredNewSector(agent, sectorComponent))
                         {
                             //Debug.Log("New Sector Explored"); // TODO Remove
-                            if (DummyFitness.FitnessValues[DummyFitness.Keys[(int)DummyFitness.FitnessKeys.AgentExploredSector]] != 0)
+                            if (CollectorFitness.FitnessValues[CollectorFitness.Keys[(int)CollectorFitness.FitnessKeys.AgentExploredSector]] != 0)
                             {
-                                agent.AgentFitness.UpdateFitness((DummyFitness.FitnessValues[DummyFitness.Keys[(int)DummyFitness.FitnessKeys.AgentExploredSector]]), DummyFitness.FitnessKeys.AgentExploredSector.ToString());
+                                agent.AgentFitness.UpdateFitness((CollectorFitness.FitnessValues[CollectorFitness.Keys[(int)CollectorFitness.FitnessKeys.AgentExploredSector]]), CollectorFitness.FitnessKeys.AgentExploredSector.ToString());
                             }
 
                             // Add explored sector to the list of explored Sectors
@@ -125,9 +125,9 @@ namespace Problems.Collector
                         // Re-explored Sector
                         else if (!AgentExploredNewSector(agent, sectorComponent))
                         {
-                            if (DummyFitness.FitnessValues[DummyFitness.Keys[(int)DummyFitness.FitnessKeys.AgentReExploredSector]] != 0)
+                            if (CollectorFitness.FitnessValues[CollectorFitness.Keys[(int)CollectorFitness.FitnessKeys.AgentReExploredSector]] != 0)
                             {
-                                agent.AgentFitness.UpdateFitness((DummyFitness.FitnessValues[DummyFitness.Keys[(int)DummyFitness.FitnessKeys.AgentReExploredSector]]), DummyFitness.FitnessKeys.AgentReExploredSector.ToString());
+                                agent.AgentFitness.UpdateFitness((CollectorFitness.FitnessValues[CollectorFitness.Keys[(int)CollectorFitness.FitnessKeys.AgentReExploredSector]]), CollectorFitness.FitnessKeys.AgentReExploredSector.ToString());
                             }
                         }
                     }
@@ -146,11 +146,11 @@ namespace Problems.Collector
             {
                 MainConfiguration conf = MenuManager.Instance.MainConfiguration;
 
-                DummyFitness.FitnessValues = conf.FitnessValues;
+                CollectorFitness.FitnessValues = conf.FitnessValues;
 
                 if (conf.ProblemConfiguration.ContainsKey("GameMode"))
                 {
-                    GameMode = (DummyGameMode)int.Parse(conf.ProblemConfiguration["GameMode"]);
+                    GameMode = (CollectorGameMode)int.Parse(conf.ProblemConfiguration["GameMode"]);
                 }
 
                 if (conf.ProblemConfiguration.ContainsKey("AgentMoveSpeed"))
@@ -182,7 +182,7 @@ namespace Problems.Collector
         }
     }
 
-    public enum DummyGameMode
+    public enum CollectorGameMode
     {
         SingleTargetPickup,
         InfiniteTargetPickup

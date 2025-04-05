@@ -6,13 +6,13 @@ using Base;
 namespace Problems.Collector
 {
     [DisallowMultipleComponent]
-    public class DummyTargetSpawner : Spawner
+    public class CollectorTargetSpawner : Spawner
     {
         public override void validateSpawnConditions(EnvironmentControllerBase environmentController)
         {
-            DummyEnvironmentController dummyEnvironmentController = environmentController as DummyEnvironmentController;
+            CollectorEnvironmentController collectorEnvironmentController = environmentController as CollectorEnvironmentController;
 
-            if (dummyEnvironmentController.TargetPrefab == null)
+            if (collectorEnvironmentController.TargetPrefab == null)
             {
                 throw new System.Exception("TargetPrefab is not defined");
                 // TODO Add error reporting here
@@ -26,11 +26,11 @@ namespace Problems.Collector
             List<T> targets = new List<T>();
             List<Vector3> targetSpawnPositions = new List<Vector3>();
 
-            DummyEnvironmentController dummyEnvironmentController = environmentController as DummyEnvironmentController;
+            CollectorEnvironmentController collectorEnvironmentController = environmentController as CollectorEnvironmentController;
 
-            for (int i = 0; i < dummyEnvironmentController.StartNumberOfTargets; i++)
+            for (int i = 0; i < collectorEnvironmentController.StartNumberOfTargets; i++)
             {
-                targets.Add(SpawnTarget<T>(dummyEnvironmentController, targetSpawnPositions));
+                targets.Add(SpawnTarget<T>(collectorEnvironmentController, targetSpawnPositions));
                 targetSpawnPositions.Add(targets[i].transform.position);
             }
 
@@ -44,40 +44,40 @@ namespace Problems.Collector
             Vector3 spawnPos;
             Quaternion rotation;
             bool isFarEnough;
-            DummyEnvironmentController dummyEnvironmentController = environmentController as DummyEnvironmentController;
+            CollectorEnvironmentController collectorEnvironmentController = environmentController as CollectorEnvironmentController;
 
             do
             {
                 isFarEnough = true;
                 spawnPos = GetRandomSpawnPoint(
-                                dummyEnvironmentController.Util,
-                                dummyEnvironmentController.GameType,
-                                dummyEnvironmentController.ArenaSize,
-                                dummyEnvironmentController.ArenaRadius,
-                                dummyEnvironmentController.ArenaCenterPoint,
-                                dummyEnvironmentController.ArenaOffset);
-                if (dummyEnvironmentController.SceneLoadMode == SceneLoadMode.GridMode)
-                    spawnPos += dummyEnvironmentController.GridCell.GridCellPosition;
+                                collectorEnvironmentController.Util,
+                                collectorEnvironmentController.GameType,
+                                collectorEnvironmentController.ArenaSize,
+                                collectorEnvironmentController.ArenaRadius,
+                                collectorEnvironmentController.ArenaCenterPoint,
+                                collectorEnvironmentController.ArenaOffset);
+                if (collectorEnvironmentController.SceneLoadMode == SceneLoadMode.GridMode)
+                    spawnPos += collectorEnvironmentController.GridCell.GridCellPosition;
 
-                rotation = GetRandomRotation(dummyEnvironmentController.Util, dummyEnvironmentController.GameType);
+                rotation = GetRandomRotation(collectorEnvironmentController.Util, collectorEnvironmentController.GameType);
 
-                if (!SpawnPointSuitable(dummyEnvironmentController.GameType,
+                if (!SpawnPointSuitable(collectorEnvironmentController.GameType,
                             spawnPos,
                             rotation,
                             targetSpawnPositions,
-                            dummyEnvironmentController.TargetColliderExtendsMultiplier,
-                            dummyEnvironmentController.TargetToTargetDistance,
+                            collectorEnvironmentController.TargetColliderExtendsMultiplier,
+                            collectorEnvironmentController.TargetToTargetDistance,
                             true,
-                            dummyEnvironmentController.gameObject.layer,
-                            dummyEnvironmentController.DefaultLayer))
+                            collectorEnvironmentController.gameObject.layer,
+                            collectorEnvironmentController.DefaultLayer))
                 {
                     isFarEnough = false;
                 }
 
                 // Check if current spawn point is far enough from the agents
-                foreach (AgentComponent agent in dummyEnvironmentController.Agents)
+                foreach (AgentComponent agent in collectorEnvironmentController.Agents)
                 {
-                    if (Vector3.Distance(agent.transform.position, spawnPos) < dummyEnvironmentController.TargetMinDistanceFromAgents)
+                    if (Vector3.Distance(agent.transform.position, spawnPos) < collectorEnvironmentController.TargetMinDistanceFromAgents)
                     {
                         isFarEnough = false;
                         break;
@@ -87,7 +87,7 @@ namespace Problems.Collector
             } while (!isFarEnough);
 
             // Instantiate target and set layer
-            GameObject obj = Instantiate(dummyEnvironmentController.TargetPrefab, spawnPos, rotation, gameObject.transform);
+            GameObject obj = Instantiate(collectorEnvironmentController.TargetPrefab, spawnPos, rotation, gameObject.transform);
             obj.layer = gameObject.layer;
 
             // Upate lists

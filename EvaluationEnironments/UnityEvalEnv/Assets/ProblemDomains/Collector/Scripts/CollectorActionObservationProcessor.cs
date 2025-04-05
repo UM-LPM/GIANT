@@ -6,9 +6,9 @@ using UnityEngine;
 namespace Problems.Collector
 {
     /// <summary>
-    /// Dummy observation collector for testing purposes. It randomly generates dummy observation and action masks data.
+    /// Collector observations for testing purposes. It randomly generates dummy observation and action masks data.
     /// </summary>
-    public class DummyActionObservationProcessor : ActionObservationProcessor
+    public class CollectorActionObservationProcessor : ActionObservationProcessor
     {
         [field: SerializeField]
         public int ObservationDataSize { get; set; }
@@ -26,7 +26,7 @@ namespace Problems.Collector
             actionMasksData = new float[ActionMasksDataSize];
         }
 
-        public DummyActionObservationProcessor(int observationDataSize, int actionMasksDataSize, bool setRandomData)
+        public CollectorActionObservationProcessor(int observationDataSize, int actionMasksDataSize, bool setRandomData)
         {
             ObservationDataSize = observationDataSize;
             ActionMasksDataSize = actionMasksDataSize;
@@ -40,7 +40,7 @@ namespace Problems.Collector
         {
             Observation observation = new Observation();
 
-            // Dummy observation data
+            // Collector observation data
             for (int i = 0; i < ObservationDataSize; i++)
             {
                 if(SetRandomData)
@@ -53,7 +53,7 @@ namespace Problems.Collector
                 }
             }
 
-            // Dummy action masks data
+            // Collector action masks data
             for (int i = 0; i < ActionMasksDataSize; i++)
             {
                 if(SetRandomData)
@@ -87,7 +87,7 @@ namespace Problems.Collector
 
         public override ActionObservationProcessor Clone()
         {
-            return new DummyActionObservationProcessor(ObservationDataSize, ActionMasksDataSize, SetRandomData);
+            return new CollectorActionObservationProcessor(ObservationDataSize, ActionMasksDataSize, SetRandomData);
         }
     }
 }

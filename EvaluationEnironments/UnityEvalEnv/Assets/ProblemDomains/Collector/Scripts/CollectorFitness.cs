@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Problems.Collector
 {
-    public class DummyFitness
+    public class CollectorFitness
     {
         public static Dictionary<string, float> FitnessValues = new Dictionary<string, float> {
         { "AgentPickedTarget", -50f },

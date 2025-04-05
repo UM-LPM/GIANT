@@ -176,7 +176,7 @@ namespace Problems.Robostrike
                 // Check if current spawn point is far enough from the agents
                 foreach (AgentComponent agent in environmentController.Agents)
                 {
-                    if (Vector3.Distance(agent.transform.position, spawnPos) < environmentController.MinPowerUpDistanceFromAgents)
+                    if (Vector3.Distance(agent.transform.position, spawnPos) < environmentController.MinAgentDistance)
                     {
                         isFarEnough = false;
                         break;

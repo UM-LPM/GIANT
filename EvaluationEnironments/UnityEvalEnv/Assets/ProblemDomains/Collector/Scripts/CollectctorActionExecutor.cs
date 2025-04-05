@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace Problems.Collector
 {
-    public class DummyActionExecutor: ActionExecutor
+    public class CollectorActionExecutor: ActionExecutor
     {
-        private DummyEnvironmentController DummyEnvironmentController;
+        private CollectorEnvironmentController CollectorEnvironmentController;
 
         // Move Agent variables
         Vector3 dirToGo;
@@ -16,7 +16,7 @@ namespace Problems.Collector
 
         private void Awake()
         {
-            DummyEnvironmentController = GetComponentInParent<DummyEnvironmentController>();
+            CollectorEnvironmentController = GetComponentInParent<CollectorEnvironmentController>();
         }
 
         public override void ExecuteActions(AgentComponent agent)
@@ -35,10 +35,10 @@ namespace Problems.Collector
             switch (forwardAxis)
             {
                 case 1:
-                    dirToGo = agent.transform.forward * DummyEnvironmentController.ForwardSpeed;
+                    dirToGo = agent.transform.forward * CollectorEnvironmentController.ForwardSpeed;
                     break;
                 case 2:
-                    dirToGo = agent.transform.forward * -DummyEnvironmentController.ForwardSpeed;
+                    dirToGo = agent.transform.forward * -CollectorEnvironmentController.ForwardSpeed;
                     break;
             }
 
@@ -57,8 +57,8 @@ namespace Problems.Collector
             Agent.transform.Rotate(rotateDir, Time.fixedDeltaTime * AgentRotationSpeed);*/
 
             // Movement Version 2
-            agent.Rigidbody.MovePosition(agent.Rigidbody.position + (dirToGo * DummyEnvironmentController.AgentMoveSpeed * Time.fixedDeltaTime));
-            Quaternion turnRotation = Quaternion.Euler(0.0f, rotateDir.y * Time.fixedDeltaTime * DummyEnvironmentController.AgentRotationSpeed, 0.0f);
+            agent.Rigidbody.MovePosition(agent.Rigidbody.position + (dirToGo * CollectorEnvironmentController.AgentMoveSpeed * Time.fixedDeltaTime));
+            Quaternion turnRotation = Quaternion.Euler(0.0f, rotateDir.y * Time.fixedDeltaTime * CollectorEnvironmentController.AgentRotationSpeed, 0.0f);
             agent.Rigidbody.MoveRotation(agent.Rigidbody.rotation * turnRotation);
         }
     }
