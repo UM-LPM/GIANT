@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using AgentControllers;
+using Base;
 using UnityEngine;
 
 namespace Problems.PlanetConquest
@@ -7,6 +7,7 @@ namespace Problems.PlanetConquest
     [DisallowMultipleComponent]
     public class BaseComponent : MonoBehaviour
     {
+        public TeamIdentifier TeamIdentifier { get; set; }
         public HealthComponent HealthComponent { get; set; }
         public int LavaAmount;
         public int IceAmount;
@@ -17,6 +18,13 @@ namespace Problems.PlanetConquest
             if (HealthComponent == null)
             {
                 throw new System.Exception("HealthComponent component is missing");
+                // TODO Add error reporting here
+            }
+
+            TeamIdentifier = GetComponent<TeamIdentifier>();
+            if (TeamIdentifier == null)
+            {
+                throw new System.Exception("TeamIdentifier component is missing");
                 // TODO Add error reporting here
             }
         }

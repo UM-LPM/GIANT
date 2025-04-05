@@ -108,7 +108,7 @@ namespace Problems.PlanetConquest
 
         void HandleHit(Collider2D collider, PlanetConquestAgentComponent agent)
         {
-            // TODO Solver this using TryGetComponent instead of tag checking
+            // TODO Solve this using TryGetComponent instead of tag checking
             if (collider.CompareTag("Agent"))
             {
                 PlanetConquestAgentComponent hitAgent = collider.GetComponent<PlanetConquestAgentComponent>();
