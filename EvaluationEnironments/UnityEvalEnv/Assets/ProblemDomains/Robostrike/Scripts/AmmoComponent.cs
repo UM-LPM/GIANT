@@ -1,6 +1,9 @@
 using UnityEngine;
 
-public class AmmoComponent : MonoBehaviour
+namespace Problems.Robostrike
 {
-    public int Ammo { get; set; }
+    public class AmmoComponent : MonoBehaviour
+    {
+        public int Ammo { get; set; }
+    }
 }

@@ -1,6 +1,9 @@
 using UnityEngine;
 
-public class HealthComponent: MonoBehaviour
+namespace Problems.Robostrike
 {
-    public float Health { get; set; }
+    public class HealthComponent : MonoBehaviour
+    {
+        public float Health { get; set; }
+    }
 }
