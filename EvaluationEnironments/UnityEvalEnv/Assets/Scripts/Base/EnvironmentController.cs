@@ -383,7 +383,7 @@ namespace Base
             }
         }
 
-        public int GetNumOfActiveAgents()
+        public virtual int GetNumOfActiveAgents()
         {
             int counter = 0;
 

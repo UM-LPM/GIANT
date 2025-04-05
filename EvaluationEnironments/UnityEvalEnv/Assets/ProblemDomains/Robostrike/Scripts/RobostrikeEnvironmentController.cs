@@ -476,7 +476,7 @@ namespace Problems.Robostrike
             }
         }
 
-        public int GetNumOfActiveAgents()
+        public override int GetNumOfActiveAgents()
         {
             int counter = 0;
 
