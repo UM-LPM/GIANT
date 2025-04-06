@@ -255,34 +255,39 @@ namespace Base
         {
             for (int i = 0; i < Agents.Length; i++)
             {
-                if (Agents[i].AgentController == null)
-                {
-                    throw new Exception("AgentController is not set!");
-                    // TODO Add error reporting here
-                }
+                ConfigureAgentController(Agents[i]);
+            }
+        }
 
-                // Different initialization for different types of AgentControllers
-                switch (Agents[i].AgentController)
-                {
-                    case NeuralNetworkAgentController:
-                        // Problem specific initialization parameters
-                        Agents[i].AgentController.Initialize(new Dictionary<string, object>
+        public void ConfigureAgentController(AgentComponent agent)
+        {
+            if (agent.AgentController == null)
+            {
+                throw new Exception("AgentController is not set!");
+                // TODO Add error reporting here
+            }
+
+            // Different initialization for different types of AgentControllers
+            switch (agent.AgentController)
+            {
+                case NeuralNetworkAgentController:
+                    // Problem specific initialization parameters
+                    agent.AgentController.Initialize(new Dictionary<string, object>
                     {
                         { "actionObservationProcessor", ActionObservationProcessor }
                     });
-                        break;
-                    case BehaviorTreeAgentController:
-                        //Agents[i].AgentController = Agents[i].AgentController.Clone();
-                        ((BehaviorTreeAgentController)Agents[i].AgentController).Bind(BehaviorTreeAgentController.CreateBehaviourTreeContext(Agents[i].gameObject));
-                        ((BehaviorTreeAgentController)Agents[i].AgentController).InitNodeCallFrequencyCounter();
-                        break;
-                    case ManualAgentController:
-                        break;
-                    // TODO Implement other AgentController types
-                    default:
-                        throw new Exception("Unknown AgentController type!");
-                        // TODO Add error reporting here
-                }
+                    break;
+                case BehaviorTreeAgentController:
+                    //agent.AgentController = agent.AgentController.Clone();
+                    ((BehaviorTreeAgentController)agent.AgentController).Bind(BehaviorTreeAgentController.CreateBehaviourTreeContext(agent.gameObject));
+                    ((BehaviorTreeAgentController)agent.AgentController).InitNodeCallFrequencyCounter();
+                    break;
+                case ManualAgentController:
+                    break;
+                // TODO Implement other AgentController types
+                default:
+                    throw new Exception("Unknown AgentController type!");
+                    // TODO Add error reporting here
             }
         }
 

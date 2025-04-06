@@ -8,7 +8,6 @@ namespace Problems.PlanetConquest
     public class BaseSpawner : Spawner
     {
         [SerializeField] public Transform[] BaseSpawnPoints;
-        [SerializeField] public Sprite[] Bases;
 
         public override void validateSpawnConditions(EnvironmentControllerBase environmentController)
         {
@@ -41,10 +40,17 @@ namespace Problems.PlanetConquest
 
                 // Assign base sprite
                 SpriteRenderer baseRenderer = baseGameObject.GetComponent<SpriteRenderer>();
-                if (baseRenderer != null && Bases.Length > i)
+
+                if(i < PlanetConquestEnvironmentController.TeamColors.Length)
                 {
-                    baseRenderer.sprite = Bases[i];
+                    baseRenderer.color = PlanetConquestEnvironmentController.TeamColors[i];
                 }
+                else 
+                {
+                    throw new System.Exception("Base color not defined");
+                    // TODO Add error reporting here
+                }
+
                 bases.Add(_base);
             }
 

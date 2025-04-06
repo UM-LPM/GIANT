@@ -7,6 +7,14 @@ namespace Utils
 {
     public static class PhysicsUtil
     {
+        private static Component[] colliders;
+
+        private static RaycastHit[] hits;
+        private static RaycastHit2D[] hits2D;
+
+        private static RaycastHit hit;
+        private static RaycastHit2D hit2D;
+
         public static bool PhysicsOverlapObject(GameType gameType, GameObject caller, Vector3 position, float radius, Vector3 halfExtends, Quaternion rotation, PhysicsOverlapType overlapType, bool ignoreTriggerGameObjs, int layer, int defaultLayer)
         {
             switch (overlapType)
@@ -24,7 +32,7 @@ namespace Utils
 
         public static bool PhysicsOverlapBox(GameType gameType, GameObject caller, Vector3 position, Quaternion rotation, Vector3 halfExtends, bool ignoreTriggerGameObjs, int layer, int defaultLayer)
         {
-            Component[] colliders = null;
+            colliders = null;
             if (gameType == GameType._3D)
             {
                 colliders = Physics.OverlapBox(position, halfExtends, rotation, LayerMask.GetMask(LayerMask.LayerToName(layer)) + defaultLayer);
@@ -53,7 +61,7 @@ namespace Utils
 
         public static bool PhysicsOverlapSphere(GameType gameType, GameObject caller, Vector3 position, float radius, bool ignoreTriggerGameObjs, int layer, int defaultLayer)
         {
-            Component[] colliders = null;
+            colliders = null;
             if (gameType == GameType._3D)
             {
                 colliders = Physics.OverlapSphere(position, radius, LayerMask.GetMask(LayerMask.LayerToName(layer)) + defaultLayer);
@@ -99,7 +107,7 @@ namespace Utils
 
         public static T PhysicsOverlapBoxTargetObject<T>(GameType gameType, GameObject caller, Vector3 position, Quaternion rotation, Vector3 halfExtends, bool ignoreTriggerGameObjs, int layer, int defaultLayer) where T : Component
         {
-            Component[] colliders = null;
+            colliders = null;
             if (gameType == GameType._3D)
             {
                 colliders = Physics.OverlapBox(position, halfExtends, rotation, LayerMask.GetMask(LayerMask.LayerToName(layer)) + defaultLayer);
@@ -129,7 +137,7 @@ namespace Utils
 
         public static T PhysicsOverlapSphereTargetObject<T>(GameType gameType, GameObject caller, Vector3 position, float radius, bool ignoreTriggerGameObjs, int layer, int defaultLayer) where T : Component
         {
-            Component[] colliders = null;
+            colliders = null;
             if (gameType == GameType._3D)
             {
                 colliders = Physics.OverlapSphere(position, radius, LayerMask.GetMask(LayerMask.LayerToName(layer)) + defaultLayer);
@@ -180,7 +188,7 @@ namespace Utils
 
         public static List<T> PhysicsOverlapBoxTargetObjects<T>(GameType gameType, GameObject caller, Vector3 position, Quaternion rotation, Vector3 halfExtends, bool ignoreTriggerGameObjs, int layer, int defaultLayer) where T : Component
         {
-            Component[] colliders = null;
+            colliders = null;
             if (gameType == GameType._3D)
             {
                 colliders = Physics.OverlapBox(position, halfExtends, rotation, LayerMask.GetMask(LayerMask.LayerToName(layer)) + defaultLayer);
@@ -200,7 +208,7 @@ namespace Utils
 
         public static List<T> PhysicsOverlapSphereTargetObjects<T>(GameType gameType, GameObject caller, Vector3 position, float radius, bool ignoreTriggerGameObjs, int layer, int defaultLayer) where T : Component
         {
-            Component[] colliders = null;
+            colliders = null;
             if (gameType == GameType._3D)
             {
                 colliders = Physics.OverlapSphere(position, radius, LayerMask.GetMask(LayerMask.LayerToName(layer)) + defaultLayer);
@@ -223,6 +231,16 @@ namespace Utils
             throw new System.NotImplementedException();
         }
 
+        public static RaycastHit2D PhysicsRaycast2D(GameObject caller, Vector3 origin, Vector3 direction, float distance, bool ignoreTriggerGameObjs, int layer, int defaultLayer)
+        {
+            Physics2D.queriesHitTriggers = !ignoreTriggerGameObjs;
+
+            hit2D = Physics2D.Raycast(origin, direction, distance, LayerMask.GetMask(LayerMask.LayerToName(layer)) + defaultLayer);
+            
+            Physics2D.queriesHitTriggers = ignoreTriggerGameObjs;
+
+            return hit2D;
+        }
     }
 
     public enum PhysicsOverlapType

@@ -22,7 +22,9 @@ namespace Problems.PlanetConquest
         {
             AgentsInZone = new List<PlanetConquestAgentComponent>();
 
-            planetOrbRenderer = transform.Find("PlanetOrb").GetComponent<SpriteRenderer>();
+            planetOrbRenderer = transform.Find("Orbit").GetComponent<SpriteRenderer>();
+
+            CapturedTeamIdentifier = GetComponent<TeamIdentifier>();
         }
 
         public int GetStrongestTeam()

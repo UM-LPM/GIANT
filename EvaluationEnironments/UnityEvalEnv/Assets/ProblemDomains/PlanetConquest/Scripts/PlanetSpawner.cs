@@ -8,6 +8,9 @@ namespace Problems.PlanetConquest
     [DisallowMultipleComponent]
     public class PlanetSpawner : Spawner
     {
+        [SerializeField] List<Vector3> LavaPlanetSpawnPositions = new List<Vector3> { new Vector3(-15, 15, 0), new Vector3(15, 15, 0), new Vector3(-15, -15, 0), new Vector3(15, -15, 0) };
+        [SerializeField] List<Vector3> IcePlanetSpawnPositions = new List<Vector3> { new Vector3(-5, 5, 0), new Vector3(5, 5, 0), new Vector3(-5, -5, 0), new Vector3(5, -5, 0) };
+
         Quaternion rotation;
         GameObject obj;
 
@@ -32,18 +35,13 @@ namespace Problems.PlanetConquest
             validateSpawnConditions(environmentController);
 
             List<T> planets = new List<T>();
-            List<Vector3> lavaPlanetSpawnPositions = new List<Vector3> { new Vector3(-15, 15, 0), new Vector3(15, 15, 0), new Vector3(-15, -15, 0), new Vector3(15, -15, 0) };
-            List<Vector3> lavaPlanetSpawnPositions2 = new List<Vector3> { new Vector3(-7, 7, 0), new Vector3(7, 7, 0), new Vector3(-7, -7, 0), new Vector3(7, -7, 0) };
-            List<Vector3> icePlanetSpawnPositions = new List<Vector3> { new Vector3(-5, 5, 0), new Vector3(5, 5, 0), new Vector3(-5, -5, 0), new Vector3(5, -5, 0) };
-            List<Vector3> icePlanetSpawnPositions2 = new List<Vector3> { new Vector3(0, 25, 0), new Vector3(25, 0, 0), new Vector3(0, -25, 0), new Vector3(-25, 0, 0) };
-
-
+            
             PlanetConquestEnvironmentController planetConquestEnvironmentController = environmentController as PlanetConquestEnvironmentController;
 
             // Spawn Lava Planets
             for (int i = 0; i < planetConquestEnvironmentController.LavaPlanetSpawnAmount; i++)
             {
-                T planet = SpawnPlanet<T>(planetConquestEnvironmentController, planetConquestEnvironmentController.LavaPlanetPrefab, lavaPlanetSpawnPositions[i]);
+                T planet = SpawnPlanet<T>(planetConquestEnvironmentController, planetConquestEnvironmentController.LavaPlanetPrefab, LavaPlanetSpawnPositions[i]);
                 PlanetComponent planetComponent = planet as PlanetComponent;
                 planetComponent.PlanetType = PlanetType.Lava;
                 planets.Add(planet);
@@ -51,7 +49,7 @@ namespace Problems.PlanetConquest
             // Spawn Ice Planets
             for (int i = 0; i < planetConquestEnvironmentController.IcePlanetSpawnAmount; i++)
             {
-                T planet = SpawnPlanet<T>(planetConquestEnvironmentController, planetConquestEnvironmentController.IcePlanetPrefab, icePlanetSpawnPositions[i]);
+                T planet = SpawnPlanet<T>(planetConquestEnvironmentController, planetConquestEnvironmentController.IcePlanetPrefab, IcePlanetSpawnPositions[i]);
                 PlanetComponent planetComponent = planet as PlanetComponent;
                 planetComponent.PlanetType = PlanetType.Ice;
                 planets.Add(planet);

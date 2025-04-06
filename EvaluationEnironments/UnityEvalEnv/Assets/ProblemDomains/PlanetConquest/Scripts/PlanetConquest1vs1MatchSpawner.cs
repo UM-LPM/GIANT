@@ -14,11 +14,6 @@ namespace Problems.PlanetConquest
         [Header("Moba_game 1vs1 Match Configuration")]
         [SerializeField] public Transform[] SpawnPoints;
 
-        [Header("Moba_game 1vs1 Agent Sprites")]
-        [SerializeField] public Sprite[] HullsLava;
-        [SerializeField] public Sprite[] HullsIce;
-        [SerializeField] public Sprite[] Guns;
-
         // Respawn variables
         Vector3 respawnPos = Vector3.zero;
         Quaternion rotation = Quaternion.identity;
@@ -33,16 +28,9 @@ namespace Problems.PlanetConquest
 
         public override void validateSpawnConditions(EnvironmentControllerBase environmentController)
         {
-            if (HullsLava == null || HullsLava.Length == 0 || HullsIce == null || HullsIce.Length == 0 || Guns == null || Guns.Length == 0)
-            {
-                throw new System.Exception("Sprites are missing");
-                // TODO add error reporting here
-            }
-
             if (environmentController.AgentPrefab == null)
             {
-                throw new System.Exception("AgentPrefab is not defined");
-                // TODO add error reporting here
+                UnityEngine.Debug.LogWarning("AgentPrefab is not defined");
             }
 
             if (environmentController.Match == null || environmentController.Match.Teams == null)
@@ -126,15 +114,20 @@ namespace Problems.PlanetConquest
             // Configure agent
             T agent = agentGameObject.GetComponent<T>();
             PlanetConquestAgentComponent agentComponent = agent as PlanetConquestAgentComponent;
-            agentComponent.AgentController = agentController.Clone(); // Clone the agent controller to prevent shared state between agents
+            agentComponent.AgentController = agentController.Clone();
+            environmentController.ConfigureAgentController(agentComponent);
             agentComponent.IndividualID = individual.IndividualId;
             agentComponent.TeamIdentifier.TeamID = teamIndex;
             agentComponent.HealthComponent.Health = PlanetConquestEnvironmentController.MAX_HEALTH;
             agentComponent.EnergyComponent.Energy = PlanetConquestEnvironmentController.MAX_ENERGY;
 
+            // Set agent color based on team
+            if (teamIndex < planetConquestEnvironmentController.TeamColors.Length)
+            {
+                SpriteRenderer sp = agentGameObject.GetComponent<SpriteRenderer>();
+                sp.color = planetConquestEnvironmentController.TeamColors[teamIndex];
+            }
 
-            // Configure agent sprites
-            ConfigureAgentSprites(agentGameObject, teamIndex, agentType);
             (agent as PlanetConquestAgentComponent).NumOfSpawns++;
             return agent;
         }
@@ -147,20 +140,20 @@ namespace Problems.PlanetConquest
                 // TODO add error reporting here
             }
 
-            PlanetConquestEnvironmentController PlanetConquestEnvironmentController = environmentController as PlanetConquestEnvironmentController;
+            planetConquestEnvironmentController = environmentController as PlanetConquestEnvironmentController;
             AgentComponent agent = respawnComponent as AgentComponent;
 
             respawnPos = Vector3.zero;
             rotation = Quaternion.identity;
 
-            if (PlanetConquestEnvironmentController.AgentRespawnType == PlanetConquestAgentRespawnType.StartPos)
+            if (planetConquestEnvironmentController.AgentRespawnType == PlanetConquestAgentRespawnType.StartPos)
             {
                 respawnPos = agent.StartPosition;
                 rotation = agent.StartRotation;
             }
-            else if (PlanetConquestEnvironmentController.AgentRespawnType == PlanetConquestAgentRespawnType.RandomPos)
+            else if (planetConquestEnvironmentController.AgentRespawnType == PlanetConquestAgentRespawnType.RandomPos)
             {
-                GetRandomSpawnPositionAndRotation(PlanetConquestEnvironmentController, out respawnPos, out rotation);
+                GetRandomSpawnPositionAndRotation(planetConquestEnvironmentController, out respawnPos, out rotation);
             }
             else
             {
@@ -172,25 +165,6 @@ namespace Problems.PlanetConquest
             agent.transform.rotation = rotation;
 
             (agent as PlanetConquestAgentComponent).NumOfSpawns++;
-        }
-
-        void ConfigureAgentSprites(GameObject agentGameObject, int teamID, AgentType agentType)
-        {
-            Sprite hull;
-
-            if (agentType == AgentType.Ice)
-            {
-                hull = HullsIce[teamID];
-            }
-            else
-            {
-                hull = HullsLava[teamID];
-            }
-
-            GameObject hullGO = agentGameObject.GetComponentInChildren<HullComponent>().gameObject;
-
-            // Set sprites
-            hullGO.GetComponent<SpriteRenderer>().sprite = hull;
         }
 
         void GetRandomSpawnPositionAndRotation(PlanetConquestEnvironmentController environmentController, out Vector3 spawnPos, out Quaternion rotation)

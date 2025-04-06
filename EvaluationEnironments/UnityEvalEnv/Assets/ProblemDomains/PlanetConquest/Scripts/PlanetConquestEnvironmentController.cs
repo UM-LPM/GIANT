@@ -68,6 +68,7 @@ namespace Problems.PlanetConquest {
         [SerializeField] public float IceAgentTourque = 0.5f;
 
         [Header("PlanetConquest Laser Configuration")]
+        [SerializeField] public float LaserRange = 10f;
         [SerializeField] public float LaserShootCooldown = 1.0f;
         [SerializeField] public static int LaserDamage = 2;
 
@@ -595,7 +596,7 @@ namespace Problems.PlanetConquest {
                 numOfFiredOpponentMissiles = Agents.Where(a => a.TeamIdentifier.TeamID != agent.TeamIdentifier.TeamID).Select(a => (a as PlanetConquestAgentComponent).LasersFired).Sum();
                 if (numOfFiredOpponentMissiles > 0)
                 {
-                    damageTakenPenalty = agent.HitByOpponentMissiles / (float)numOfFiredOpponentMissiles;
+                    damageTakenPenalty = agent.HitByOpponentLasers / (float)numOfFiredOpponentMissiles;
                     damageTakenPenalty = (float)Math.Round(PlanetConquestFitness.FitnessValues[PlanetConquestFitness.FitnessKeys.DamageTakenPenalty.ToString()] * damageTakenPenalty, 4);
                     agent.AgentFitness.UpdateFitness(damageTakenPenalty, PlanetConquestFitness.FitnessKeys.DamageTakenPenalty.ToString());
                 }
@@ -636,7 +637,6 @@ namespace Problems.PlanetConquest {
                     agent.AgentFitness.UpdateFitness(icePlanetOrbitCaptures, PlanetConquestFitness.FitnessKeys.IcePlanetOrbitCapture.ToString());
                 }
 
-
                 Debug.Log("========================================");
                 Debug.Log("Agent: Team ID" + agent.TeamIdentifier.TeamID + ", ID: " + agent.IndividualID);
                 Debug.Log("Sectors explored: " + agent.SectorsExplored + " / " + Sectors.Length + " = " + sectorExplorationFitness);
@@ -646,15 +646,8 @@ namespace Problems.PlanetConquest {
                 Debug.Log("Laser fired base accuracy: " + agent.MissilesHitBase + " / " + agent.LasersFired + " = " + opponentsDestroyedBonus);
                 Debug.Log("Opponents destroyed bonus: " + agent.OpponentsDestroyed + " / " + numOfOpponents + " = " + opponentsDestroyedBonus);
                 Debug.Log("Opponent bases destroyed bonus: " + agent.OpponentBasesDestroyed + " / " + numOfOpponentBases + " = " + opponentBasesDestroyedBonus);
-                Debug.Log("Damage taken penalty: " + agent.HitByOpponentMissiles + " / " + numOfFiredOpponentMissiles + " = " + damageTakenPenalty);
+                Debug.Log("Damage taken penalty: " + agent.HitByOpponentLasers + " / " + numOfFiredOpponentMissiles + " = " + damageTakenPenalty);
                 Debug.Log("========================================");
-
-                // Debug.Log("LavaPlanetOrbitEnter: " + agent.EnteredLavaPlanetOrbit + " / " + numOfAllLavaPlanetOrbitEnters + " = " + lavaPlanetOrbitEnters);
-                // Debug.Log("IcePlanetOrbitEnter: " + agent.EnteredIcePlanetOrbit + " / " + numOfAllIcePlanetOrbitEnters + " = " + icePlanetOrbitEnters);
-                // Debug.Log("LavaPlanetOrbitCapture: " + agent.CapturedLavaPlanet + " / " + numOfAllLavaPlanetOrbitCaptures + " = " + lavaPlanetOrbitCaptures);
-                // Debug.Log("IcePlanetOrbitCapture: " + agent.CapturedIcePlanet + " / " + numOfAllIcePlanetOrbitCaptures + " = " + icePlanetOrbitCaptures);
-
-
             }
         }
 
@@ -681,21 +674,21 @@ namespace Problems.PlanetConquest {
             {
                 if (hitAgent.TeamIdentifier.TeamID == agent.TeamIdentifier.TeamID)
                 {
-                    agent.MissileHitTeammate();
+                    agent.LaserHitTeammate();
                 }
                 else
                 {
-                    agent.MissileHitOpponent(this);
+                    agent.LaserHitOpponent(this);
                 }
-                hitAgent.HitByOpponentMissile();
+                hitAgent.HitByOpponentLaser();
                 UpdateAgentHealthLaser(agent, hitAgent);
             }
             else
             {
                 if (hitAgent.TeamIdentifier.TeamID != agent.TeamIdentifier.TeamID)
                 {
-                    agent.MissileHitOpponent(this);
-                    hitAgent.HitByOpponentMissile();
+                    agent.LaserHitOpponent(this);
+                    hitAgent.HitByOpponentLaser();
                     UpdateAgentHealthLaser(agent, hitAgent);
                 }
             }
@@ -707,7 +700,7 @@ namespace Problems.PlanetConquest {
             {
                 if (hitBase.TeamIdentifier.TeamID == agent.TeamIdentifier.TeamID)
                 {
-                    agent.MissileHitOwnBase();
+                    agent.LaserHitOwnBase();
                 }
                 else
                 {

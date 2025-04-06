@@ -1,5 +1,4 @@
 using Base;
-using Problems.Robostrike;
 using UnityEngine;
 
 namespace Problems.PlanetConquest
@@ -7,12 +6,7 @@ namespace Problems.PlanetConquest
     public class PlanetConquestAgentComponent : AgentComponent
     {
         [SerializeField]  public AgentType AgentType;
-        public HullComponent Hull { get; set; }
-        public TurretComponent Turret { get; set; }
-        public GunComponent Gun { get; set; }
-
-        public MissileSpawnPointComponent MissileSpawnPoint { get; set; }
-        public MissileSpawnPointComponent MissileSpawnPoint1 { get; set; }
+        public LaserSpawnPointComponent LaserSpawnPoint { get; set; }
         public float NextShootTime { get; set; }
 
         public HealthComponent HealthComponent { get; set; }
@@ -29,7 +23,7 @@ namespace Problems.PlanetConquest
         public int MissilesHitTeammate { get; set; }
         public int MissilesHitBase { get; set; }
         public int MissilesHitOwnBase { get; set; }
-        public int HitByOpponentMissiles { get; set; }
+        public int HitByOpponentLasers { get; set; }
         public int EnteredLavaPlanetOrbit { get; set; }
         public int EnteredIcePlanetOrbit { get; set; }
         public int CapturedLavaPlanet { get; set; }
@@ -47,28 +41,14 @@ namespace Problems.PlanetConquest
 
         protected override void DefineAdditionalDataOnAwake()
         {
-            Hull = GetComponentInChildren<HullComponent>();
-            Turret = GetComponentInChildren<TurretComponent>();
-            Gun = GetComponentInChildren<GunComponent>();
-
-            MissileSpawnPointComponent[] missileSpawnPoints = GetComponentsInChildren<MissileSpawnPointComponent>();
-            if (missileSpawnPoints.Length >= 2)
-            {
-                MissileSpawnPoint = missileSpawnPoints[0];  // First spawn point
-                MissileSpawnPoint1 = missileSpawnPoints[1]; // Second spawn point
-            }
-            else
-            {
-                MissileSpawnPoint = GetComponentInChildren<MissileSpawnPointComponent>();
-
-            }
+            LaserSpawnPoint = GetComponentInChildren<LaserSpawnPointComponent>();
 
             StatBars = GetComponent<AgentStatBars>();
 
             HealthComponent = GetComponent<HealthComponent>();
             EnergyComponent = GetComponent<EnergyComponent>();
 
-            LineRenderer = GetComponent<LineRenderer>();
+            LineRenderer = GetComponentInChildren<LineRenderer>();
 
             CheckComponentValidity();
         }
@@ -80,21 +60,9 @@ namespace Problems.PlanetConquest
 
         void CheckComponentValidity()
         {
-            if (Hull == null)
+            if (LaserSpawnPoint == null)
             {
-                throw new System.Exception("HullComponent component is missing");
-                // TODO Add error reporting here
-            }
-
-            if (Turret == null)
-            {
-                throw new System.Exception("TurretComponent component is missing");
-                // TODO Add error reporting here
-            }
-
-            if (Gun == null)
-            {
-                throw new System.Exception("GunComponent component is missing");
+                throw new System.Exception("LaserSpawnPoint component is missing");
                 // TODO Add error reporting here
             }
 
@@ -112,12 +80,6 @@ namespace Problems.PlanetConquest
             if (EnergyComponent == null)
             {
                 throw new System.Exception("EnergyComponent component is missing");
-                // TODO Add error reporting here
-            }
-
-            if (MissileSpawnPoint == null)
-            {
-                throw new System.Exception("MissileSpawnPointComponent component is missing");
                 // TODO Add error reporting here
             }
 
@@ -172,13 +134,13 @@ namespace Problems.PlanetConquest
             }
         }
 
-        public void MissileHitOpponent(PlanetConquestEnvironmentController planetConquestEnvironmentController)
+        public void LaserHitOpponent(PlanetConquestEnvironmentController planetConquestEnvironmentController)
         {
             MissilesHitOpponent++;
             EnergyComponent.Energy += planetConquestEnvironmentController.LaserHitEnergyBonus;
         }
 
-        public void MissileHitTeammate()
+        public void LaserHitTeammate()
         {
             MissilesHitTeammate++;
         }
@@ -189,14 +151,14 @@ namespace Problems.PlanetConquest
             EnergyComponent.Energy += planetConquestEnvironmentController.LaserHitEnergyBonus;
         }
 
-        public void MissileHitOwnBase()
+        public void LaserHitOwnBase()
         {
             MissilesHitOwnBase++;
         }
 
-        public void HitByOpponentMissile()
+        public void HitByOpponentLaser()
         {
-            HitByOpponentMissiles++;
+            HitByOpponentLasers++;
         }
 
         public void ResetSurvivalTime()

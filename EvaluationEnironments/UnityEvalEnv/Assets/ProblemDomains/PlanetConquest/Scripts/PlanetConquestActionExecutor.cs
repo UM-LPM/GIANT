@@ -1,7 +1,7 @@
 using AgentControllers;
 using Base;
-using Problems.Robostrike;
 using UnityEngine;
+using Utils;
 
 namespace Problems.PlanetConquest
 {
@@ -17,12 +17,9 @@ namespace Problems.PlanetConquest
         Vector3 spawnPosition;
         Vector3 localXDir;
 
-        public float laserRange = 300f;
-
-
         // Temp global variables for optimization purpose
         Vector3 laserEnd;
-        RaycastHit2D[] hits;
+        RaycastHit2D hit;
 
         private void Awake()
         {
@@ -70,12 +67,7 @@ namespace Problems.PlanetConquest
         {
             if (agent.ActionBuffer.GetDiscreteAction("shootMissile") == 1 && agent.NextShootTime <= PlanetConquestEnvironmentController.CurrentSimulationTime)
             {
-                ShootIndividualLaser(agent, agent.MissileSpawnPoint);
-
-                if (agent.AgentType == AgentType.Ice)
-                {
-                    ShootIndividualLaser(agent, agent.MissileSpawnPoint1);
-                }
+                ShootIndividualLaser(agent, agent.LaserSpawnPoint);
 
                 agent.LaserFired(PlanetConquestEnvironmentController);
 
@@ -83,20 +75,18 @@ namespace Problems.PlanetConquest
             }
         }
 
-        void ShootIndividualLaser(PlanetConquestAgentComponent agent, MissileSpawnPointComponent missileSpawnPoint)
+        void ShootIndividualLaser(PlanetConquestAgentComponent agent, LaserSpawnPointComponent laserSpawnPoint)
         {
-            spawnPosition = missileSpawnPoint.transform.position;
-            localXDir = agent.MissileSpawnPoint.transform.TransformDirection(Vector3.up);
-            laserEnd = spawnPosition + localXDir * laserRange;
-            hits = Physics2D.RaycastAll(spawnPosition, localXDir, laserRange);
-            foreach (var hit in hits)
+            spawnPosition = laserSpawnPoint.transform.position;
+            localXDir = agent.LaserSpawnPoint.transform.TransformDirection(Vector3.up);
+            laserEnd = spawnPosition + localXDir * PlanetConquestEnvironmentController.LaserRange;
+
+            hit = PhysicsUtil.PhysicsRaycast2D(agent.gameObject, spawnPosition, localXDir, PlanetConquestEnvironmentController.LaserRange, true, agent.gameObject.layer, PlanetConquestEnvironmentController.DefaultLayer);
+
+            if (hit.collider != null && agent != hit.collider.gameObject)
             {
-                if (!hit.collider.isTrigger)
-                {
-                    laserEnd = hit.point;
-                    HandleHit(hit.collider, agent);
-                    break;
-                }
+                laserEnd = hit.point;
+                HandleHit(hit.collider, agent);
             }
 
             if (agent.LineRenderer != null)
@@ -105,9 +95,27 @@ namespace Problems.PlanetConquest
             }
         }
 
+        PlanetConquestAgentComponent hitAgent;
+        BaseComponent hitBase;
+
         void HandleHit(Collider2D collider, PlanetConquestAgentComponent agent)
         {
-            // TODO Solve this using TryGetComponent instead of tag checking
+            collider.TryGetComponent(out hitAgent);
+
+            if (hitAgent != null && hitAgent != agent)
+            {
+                PlanetConquestEnvironmentController.LaserSpaceShipHit(agent, hitAgent);
+                return;
+            }
+
+            collider.TryGetComponent(out hitBase);
+            if (hitBase != null && hitBase != agent)
+            {
+                PlanetConquestEnvironmentController.LaserBaseHit(agent, hitBase);
+                return;
+            }
+
+            /*// TODO Solve this using TryGetComponent instead of tag checking
             if (collider.CompareTag("Agent"))
             {
                 PlanetConquestAgentComponent hitAgent = collider.GetComponent<PlanetConquestAgentComponent>();
@@ -117,7 +125,7 @@ namespace Problems.PlanetConquest
             {
                 BaseComponent hitBase = collider.GetComponent<BaseComponent>();
                 PlanetConquestEnvironmentController.LaserBaseHit(agent, hitBase);
-            }
+            }*/
         }
 
         System.Collections.IEnumerator ShowLaser(Vector3 spawnPosition, Vector3 endPoint, LineRenderer lineRenderer)
@@ -125,7 +133,7 @@ namespace Problems.PlanetConquest
             lineRenderer.SetPosition(0, spawnPosition);
             lineRenderer.SetPosition(1, endPoint);
             lineRenderer.enabled = true;
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.05f);
             lineRenderer.enabled = false;
         }
     }

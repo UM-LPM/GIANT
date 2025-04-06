@@ -6909,11 +6909,11 @@ MonoBehaviour:
   GridSize: {x: 10, y: 0, z: 10}
   GridSpacing: {x: 50, y: 0, z: 50}
   GameScenarios:
-  - GameSceneName: RobostrikeGameScene
+  - GameSceneName: PlanetConquestGameScene
   AgentScenarios:
-  - AgentSceneName: RobostrikeAgentScene
+  - AgentSceneName: PlanetConquestAgentScene
     GameScenarios:
-    - GameSceneName: RobostrikeGameScene
+    - GameSceneName: PlanetConquestGameScene
   TimeScale: 1
   FixedTimeStep: 0.02
   RerunTimes: 1
@@ -6946,10 +6946,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbfab60dc5a19db41828271db59adde9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CoordinatorSetup: 1
-  IndividualsSourceJSON: C:\\Users\\marko\\UnityProjects\\GIANT\\EvaluationEnironments\\UnityEvalEnv\\Assets\\Resources\\JSONs\\Robostrike
-  IndividualsSourceSO: Assets\\Resources\\SOs\\Robostrike
-  ConvertSOToJSON: 0
+  CoordinatorSetup: 0
+  IndividualsSourceJSON: Assets\\Resources\\JSONs\\PlanetConquest
+  IndividualsSourceSO: Assets\\Resources\\SOs\\PlanetConquest
+  ConvertSOToJSON: 1
   CoordinatorURI: http://localhost:4000/
   InitialSeed: 316227711
   EvaluatorType: 1
@@ -6957,7 +6957,9 @@ MonoBehaviour:
   TournamentOrganizationType: 1
   TournamentRounds: -1
   SwapTournamentMatchTeams: 0
-  Individuals: []
+  Individuals:
+  - {fileID: 11400000, guid: 6e5d53bb0d48d6144a11ff4636aa2a7e, type: 2}
+  - {fileID: 11400000, guid: 920449e5aabf85d4dbc53dbce95a58d0, type: 2}
 --- !u!114 &1798691734
 MonoBehaviour:
   m_ObjectHideFlags: 0
