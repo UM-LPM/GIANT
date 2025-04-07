@@ -112,6 +112,8 @@ namespace Problems.PlanetConquest
             }
 
             // Configure agent
+            agentGameObject.layer = environmentController.gameObject.layer;
+
             T agent = agentGameObject.GetComponent<T>();
             PlanetConquestAgentComponent agentComponent = agent as PlanetConquestAgentComponent;
             agentComponent.AgentController = agentController.Clone();
