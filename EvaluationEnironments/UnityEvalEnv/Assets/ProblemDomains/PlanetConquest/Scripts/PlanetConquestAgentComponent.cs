@@ -91,14 +91,14 @@ namespace Problems.PlanetConquest
 
         public bool SetHealth(int value)
         {
-            if (HealthComponent.Health + value <= PlanetConquestEnvironmentController.MAX_HEALTH)
+            if (HealthComponent.Health + value <= PlanetConquestEnvironmentController.MAX_AGENT_HEALTH)
             {
                 HealthComponent.Health += value;
                 return true;
             }
-            else if (HealthComponent.Health < PlanetConquestEnvironmentController.MAX_HEALTH && HealthComponent.Health + value > PlanetConquestEnvironmentController.MAX_HEALTH)
+            else if (HealthComponent.Health < PlanetConquestEnvironmentController.MAX_AGENT_HEALTH && HealthComponent.Health + value > PlanetConquestEnvironmentController.MAX_AGENT_HEALTH)
             {
-                HealthComponent.Health = PlanetConquestEnvironmentController.MAX_HEALTH;
+                HealthComponent.Health = PlanetConquestEnvironmentController.MAX_AGENT_HEALTH;
                 return true;
             }
             else

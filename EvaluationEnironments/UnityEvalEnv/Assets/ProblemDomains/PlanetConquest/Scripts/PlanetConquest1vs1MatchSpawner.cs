@@ -120,8 +120,8 @@ namespace Problems.PlanetConquest
             environmentController.ConfigureAgentController(agentComponent);
             agentComponent.IndividualID = individual.IndividualId;
             agentComponent.TeamIdentifier.TeamID = teamIndex;
-            agentComponent.HealthComponent.Health = PlanetConquestEnvironmentController.MAX_HEALTH;
-            agentComponent.EnergyComponent.Energy = PlanetConquestEnvironmentController.MAX_ENERGY;
+            agentComponent.HealthComponent.Health = PlanetConquestEnvironmentController.MAX_AGENT_HEALTH;
+            agentComponent.EnergyComponent.Energy = PlanetConquestEnvironmentController.MAX_AGENT_ENERGY;
 
             // Set agent color based on team
             if (teamIndex < planetConquestEnvironmentController.TeamColors.Length)

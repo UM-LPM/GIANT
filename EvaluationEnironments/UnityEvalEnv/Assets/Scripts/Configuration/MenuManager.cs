@@ -104,6 +104,9 @@ namespace Configuration
                 case "BombClash":
                     UnityEngine.SceneManagement.SceneManager.LoadScene("BombClashBaseScene");
                     break;
+                case "PlanetConquest":
+                    UnityEngine.SceneManagement.SceneManager.LoadScene("PlanetConquestBaseScene");
+                    break;
                 default:
                     Debug.LogError("Problem domain not found");
                     break;

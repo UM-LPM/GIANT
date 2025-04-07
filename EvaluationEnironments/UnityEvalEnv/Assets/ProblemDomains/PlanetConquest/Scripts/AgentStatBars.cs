@@ -22,8 +22,8 @@ namespace Problems.PlanetConquest
 
         public void SetStats(float health, float energy)
         {
-            HealthBar.fillAmount = health / PlanetConquestEnvironmentController.MAX_HEALTH;
-            EnergyBar.fillAmount = energy / PlanetConquestEnvironmentController.MAX_ENERGY;
+            HealthBar.fillAmount = health / PlanetConquestEnvironmentController.MAX_AGENT_HEALTH;
+            EnergyBar.fillAmount = energy / PlanetConquestEnvironmentController.MAX_AGENT_ENERGY;
         }
     }
 }

@@ -1,6 +1,7 @@
 using AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
 using Base;
 using Configuration;
+using Problems.Robostrike;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,8 +11,8 @@ namespace Problems.PlanetConquest {
     public class PlanetConquestEnvironmentController : EnvironmentControllerBase
     {
         [SerializeField] public static int MAX_BASE_HEALTH = 20;
-        [SerializeField] public static int MAX_HEALTH = 10;
-        [SerializeField] public static int MAX_ENERGY = 30;
+        [SerializeField] public static int MAX_AGENT_HEALTH = 10;
+        [SerializeField] public static int MAX_AGENT_ENERGY = 30;
 
         [Header(" PlanetConquest General Configuration")]
         [SerializeField] int AgentStartHealth = 10;
@@ -61,7 +62,6 @@ namespace Problems.PlanetConquest {
         [Header("PlanetConquest Movement Configuration")]
         [SerializeField] public float AgentMoveSpeed = 5f;
         [SerializeField] public float AgentRotationSpeed = 80f;
-        [SerializeField] public float AgentTurrentRotationSpeed = 90f;
         [SerializeField] public float LavaAgentForwardThrust = 5f;
         [SerializeField] public float LavaAgentTourque = 1f;
         [SerializeField] public float IceAgentForwardThrust = 2.5f;
@@ -331,34 +331,58 @@ namespace Problems.PlanetConquest {
 
                 PlanetConquestFitness.FitnessValues = conf.FitnessValues;
 
-                if (conf.ProblemConfiguration.ContainsKey("AgentMoveSpeed"))
+                if (conf.ProblemConfiguration.ContainsKey("MaxBaseHealth"))
                 {
-                    AgentMoveSpeed = float.Parse(conf.ProblemConfiguration["AgentMoveSpeed"]);
+                    MAX_BASE_HEALTH = int.Parse(conf.ProblemConfiguration["MaxBaseHealth"]);
                 }
 
-                if (conf.ProblemConfiguration.ContainsKey("AgentRotationSpeed"))
+                if (conf.ProblemConfiguration.ContainsKey("MaxAgentHealth"))
                 {
-                    AgentRotationSpeed = float.Parse(conf.ProblemConfiguration["AgentRotationSpeed"]);
+                    MAX_AGENT_HEALTH = int.Parse(conf.ProblemConfiguration["MaxAgentHealth"]);
                 }
 
-                if (conf.ProblemConfiguration.ContainsKey("AgentTurrentRotationSpeed"))
+                if (conf.ProblemConfiguration.ContainsKey("MaxAgentEnergy"))
                 {
-                    AgentTurrentRotationSpeed = float.Parse(conf.ProblemConfiguration["AgentTurrentRotationSpeed"]);
-                }
-
-                if (conf.ProblemConfiguration.ContainsKey("LaserShootCooldown"))
-                {
-                    LaserShootCooldown = float.Parse(conf.ProblemConfiguration["LaserShootCooldown"]);
-                }
-
-                if (conf.ProblemConfiguration.ContainsKey("LaserDamage"))
-                {
-                    LaserDamage = int.Parse(conf.ProblemConfiguration["LaserDamage"]);
+                    MAX_AGENT_ENERGY = int.Parse(conf.ProblemConfiguration["MaxAgentEnergy"]);
                 }
 
                 if (conf.ProblemConfiguration.ContainsKey("AgentStartHealth"))
                 {
                     AgentStartHealth = int.Parse(conf.ProblemConfiguration["AgentStartHealth"]);
+                }
+                if (conf.ProblemConfiguration.ContainsKey("AgentStartEnergy"))
+                {
+                    AgentStartEnergy = int.Parse(conf.ProblemConfiguration["AgentStartEnergy"]);
+                }
+                if (conf.ProblemConfiguration.ContainsKey("BaseStartHealth"))
+                {
+                    BaseStartHealth = int.Parse(conf.ProblemConfiguration["BaseStartHealth"]);
+                }
+
+                if (conf.ProblemConfiguration.ContainsKey("LaserEnergyConsumption"))
+                {
+                    LaserEnergyConsumption = int.Parse(conf.ProblemConfiguration["LaserEnergyConsumption"]);
+                }
+                if (conf.ProblemConfiguration.ContainsKey("LaserHitEnergyBonus"))
+                {
+                    LaserHitEnergyBonus = int.Parse(conf.ProblemConfiguration["LaserHitEnergyBonus"]);
+                }
+                if (conf.ProblemConfiguration.ContainsKey("UnlimitedEnergy"))
+                {
+                    UnlimitedEnergy = bool.Parse(conf.ProblemConfiguration["UnlimitedEnergy"]);
+                }
+                if (conf.ProblemConfiguration.ContainsKey("FrienlyFire"))
+                {
+                    FrienlyFire = bool.Parse(conf.ProblemConfiguration["FrienlyFire"]);
+                }
+
+                if (conf.ProblemConfiguration.ContainsKey("LavaAgentCost"))
+                {
+                    LavaAgentCost = int.Parse(conf.ProblemConfiguration["LavaAgentCost"]);
+                }
+                if (conf.ProblemConfiguration.ContainsKey("IceAgentCost"))
+                {
+                    IceAgentCost = int.Parse(conf.ProblemConfiguration["IceAgentCost"]);
                 }
 
                 if (conf.ProblemConfiguration.ContainsKey("GameScenarioType"))
@@ -371,15 +395,58 @@ namespace Problems.PlanetConquest {
                     AgentRespawnType = (PlanetConquestAgentRespawnType)int.Parse(conf.ProblemConfiguration["AgentRespawnType"]);
                 }
 
-                if (conf.ProblemConfiguration.ContainsKey("MaxHealth"))
+                if (conf.ProblemConfiguration.ContainsKey("LavaPlanetSpawnAmount"))
                 {
-                    MAX_HEALTH = int.Parse(conf.ProblemConfiguration["MaxHealth"]);
+                    LavaPlanetSpawnAmount = int.Parse(conf.ProblemConfiguration["LavaPlanetSpawnAmount"]);
+                }
+                if (conf.ProblemConfiguration.ContainsKey("IcePlanetSpawnAmount"))
+                {
+                    IcePlanetSpawnAmount = int.Parse(conf.ProblemConfiguration["IcePlanetSpawnAmount"]);
+                }
+                if (conf.ProblemConfiguration.ContainsKey("PlanetCaptureTime"))
+                {
+                    PlanetCaptureTime = float.Parse(conf.ProblemConfiguration["PlanetCaptureTime"]);
                 }
 
-                if (conf.ProblemConfiguration.ContainsKey("MaxEnergy"))
+                if (conf.ProblemConfiguration.ContainsKey("AgentMoveSpeed"))
                 {
-                    MAX_ENERGY = int.Parse(conf.ProblemConfiguration["MaxEnergy"]);
+                    AgentMoveSpeed = float.Parse(conf.ProblemConfiguration["AgentMoveSpeed"]);
                 }
+                if (conf.ProblemConfiguration.ContainsKey("AgentRotationSpeed"))
+                {
+                    AgentRotationSpeed = float.Parse(conf.ProblemConfiguration["AgentRotationSpeed"]);
+                }
+
+                if (conf.ProblemConfiguration.ContainsKey("LavaAgentForwardThrust"))
+                {
+                    LavaAgentForwardThrust = float.Parse(conf.ProblemConfiguration["LavaAgentForwardThrust"]);
+                }
+                if (conf.ProblemConfiguration.ContainsKey("LavaAgentTourque"))
+                {
+                    LavaAgentTourque = float.Parse(conf.ProblemConfiguration["LavaAgentTourque"]);
+                }
+                if (conf.ProblemConfiguration.ContainsKey("IceAgentForwardThrust"))
+                {
+                    IceAgentForwardThrust = float.Parse(conf.ProblemConfiguration["IceAgentForwardThrust"]);
+                }
+                if (conf.ProblemConfiguration.ContainsKey("IceAgentTourque"))
+                {
+                    IceAgentTourque = float.Parse(conf.ProblemConfiguration["IceAgentTourque"]);
+                }
+
+                if (conf.ProblemConfiguration.ContainsKey("LaserRange"))
+                {
+                    LaserRange = float.Parse(conf.ProblemConfiguration["LaserRange"]);
+                }
+                if (conf.ProblemConfiguration.ContainsKey("LaserShootCooldown"))
+                {
+                    LaserShootCooldown = float.Parse(conf.ProblemConfiguration["LaserShootCooldown"]);
+                }
+                if (conf.ProblemConfiguration.ContainsKey("LaserDamage"))
+                {
+                    LaserDamage = int.Parse(conf.ProblemConfiguration["LaserDamage"]);
+                }
+
             }
         }
 
