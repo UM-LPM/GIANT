@@ -148,7 +148,7 @@ namespace Problems.PlanetConquest {
             else
             {
                 // Each EnvironmentController contains its own problem environment
-                Sectors = GetComponentsInChildren<SectorComponent>();
+                Sectors = Environment.GetComponentsInChildren<SectorComponent>();
             }
 
             PlanetCaptureSpeed = 1f / PlanetCaptureTime;

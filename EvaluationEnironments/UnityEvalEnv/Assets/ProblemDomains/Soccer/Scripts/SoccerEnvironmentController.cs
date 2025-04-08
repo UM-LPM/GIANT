@@ -78,7 +78,7 @@ namespace Problems.Soccer
             else
             {
                 // Each EnvironmentController contains its own problem environment
-                Sectors = GetComponentsInChildren<SectorComponent>();
+                Sectors = Environment.GetComponentsInChildren<SectorComponent>();
             }
 
             if (SimulationSteps > 0)

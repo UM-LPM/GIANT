@@ -1,7 +1,9 @@
 using Base;
 using Configuration;
+using Problems.Robostrike;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using UnityEngine;
 using Utils;
@@ -29,19 +31,39 @@ namespace Problems.Collector
         [SerializeField] public float TargetToTargetDistance = 5f;
         [SerializeField] public Vector3 TargetColliderExtendsMultiplier = new Vector3(0.50f, 0.495f, 0.505f);
 
+        // Sectors
+        private SectorComponent[] Sectors;
+
         CollectorTargetSpawner TargetSpawner;
 
         private List<TargetComponent> Targets;
-        
+
+        public int SpawnedTargets { get; set; }
+
+        // Fitness calculation
+        private float sectorExplorationFitness;
+        private float TargetsAcquiredFitness;
+
         protected override void DefineAdditionalDataOnPostAwake()
         {
             ReadParamsFromMainConfiguration();
 
             TargetSpawner = GetComponent<CollectorTargetSpawner>();
-            if(TargetSpawner == null)
+            if (TargetSpawner == null)
             {
                 throw new Exception("TargetSpawner is not defined");
                 // TODO Add error reporting here
+            }
+
+            if (SceneLoadMode == SceneLoadMode.LayerMode)
+            {
+                // Only one problem environment exists
+                Sectors = FindObjectsOfType<SectorComponent>();
+            }
+            else
+            {
+                // Each EnvironmentController contains its own problem environment
+                Sectors = Environment.GetComponentsInChildren<SectorComponent>();
             }
         }
 
@@ -54,90 +76,30 @@ namespace Problems.Collector
 
             // Spawn target
             Targets = TargetSpawner.Spawn<TargetComponent>(this).ToList();
+            SpawnedTargets += Targets.Count;
         }
 
-        protected override void OnPostFixedUpdate()
+        public void TargetAcquired(TargetComponent acquiredTarget)
         {
-            // Check if Any agent overlaps the target
-            CheckAgentTargetOverlaps();
-
-            // Check if Any agent overlaps any Sectors
-            CheckAgentSectorOverlaps();
-        }
-
-        void CheckAgentTargetOverlaps()
-        {
-            foreach (CollectorAgentComponent agent in Agents)
+            if (GameMode == CollectorGameMode.SingleTargetPickup)
             {
-                TargetComponent component = PhysicsUtil.PhysicsOverlapTargetObject<TargetComponent>(GameType, agent.gameObject, agent.transform.position, 0, AgentColliderExtendsMultiplier, agent.transform.rotation, PhysicsOverlapType.OverlapBox, false, gameObject.layer, DefaultLayer);
-                if (component != null)
-                {
-                    // 1. Update Agent fitnss
-                    agent.AgentFitness.UpdateFitness(CollectorFitness.FitnessValues[CollectorFitness.FitnessKeys.AgentPickedTarget.ToString()], CollectorFitness.FitnessKeys.AgentPickedTarget.ToString());
-                    agent.GetComponent<CollectorAgentComponent>().TargetsAquired++;
-
-                    if (GameMode == CollectorGameMode.SingleTargetPickup)
-                    {
-                        FinishGame(); // Finish game when target is aquired
-                    }
-                    else if (GameMode == CollectorGameMode.InfiniteTargetPickup)
-                    {
-                        // Respawn target
-                        List<Vector3> targetPositions = new List<Vector3>();
-                        foreach (TargetComponent target in Targets)
-                        {
-                            targetPositions.Add(target.transform.position);
-                        }
-
-                        Targets.Add(TargetSpawner.SpawnTarget<TargetComponent>(this, targetPositions));
-                    }
-
-                    // Reset last known positions
-                    agent.LastKnownSectorPositions.Clear();
-
-                    Targets.Remove(component);
-                    Destroy(component.gameObject);
-                }
+                FinishGame(); // Finish game when target is aquired
             }
-        }
-
-        void CheckAgentSectorOverlaps()
-        {
-            foreach (CollectorAgentComponent agent in Agents)
+            else if (GameMode == CollectorGameMode.InfiniteTargetPickup)
             {
-                List<SectorComponent> components = PhysicsUtil.PhysicsOverlapTargetObjects<SectorComponent>(GameType, agent.gameObject, agent.transform.position, 0, AgentColliderExtendsMultiplier, agent.transform.rotation, PhysicsOverlapType.OverlapBox, false, gameObject.layer, DefaultLayer);
-                if (components != null && components.Count > 0)
+                // Respawn target
+                List<Vector3> targetPositions = new List<Vector3>();
+                foreach (TargetComponent target in Targets)
                 {
-                    foreach(var sectorComponent in components)
-                    {
-                        if (AgentExploredNewSector(agent, sectorComponent))
-                        {
-                            //Debug.Log("New Sector Explored"); // TODO Remove
-                            if (CollectorFitness.FitnessValues[CollectorFitness.Keys[(int)CollectorFitness.FitnessKeys.AgentExploredSector]] != 0)
-                            {
-                                agent.AgentFitness.UpdateFitness((CollectorFitness.FitnessValues[CollectorFitness.Keys[(int)CollectorFitness.FitnessKeys.AgentExploredSector]]), CollectorFitness.FitnessKeys.AgentExploredSector.ToString());
-                            }
-
-                            // Add explored sector to the list of explored Sectors
-                            agent.LastKnownSectorPositions.Add(sectorComponent.transform.position);
-                            return;
-                        }
-                        // Re-explored Sector
-                        else if (!AgentExploredNewSector(agent, sectorComponent))
-                        {
-                            if (CollectorFitness.FitnessValues[CollectorFitness.Keys[(int)CollectorFitness.FitnessKeys.AgentReExploredSector]] != 0)
-                            {
-                                agent.AgentFitness.UpdateFitness((CollectorFitness.FitnessValues[CollectorFitness.Keys[(int)CollectorFitness.FitnessKeys.AgentReExploredSector]]), CollectorFitness.FitnessKeys.AgentReExploredSector.ToString());
-                            }
-                        }
-                    }
+                    targetPositions.Add(target.transform.position);
                 }
-            }
-        }
 
-        private bool AgentExploredNewSector(CollectorAgentComponent agentComponent, SectorComponent sectorComponent)
-        {
-            return !agentComponent.LastKnownSectorPositions.Contains(sectorComponent.transform.position);
+                Targets.Add(TargetSpawner.SpawnTarget<TargetComponent>(this, targetPositions));
+                SpawnedTargets++;
+            }
+
+            Targets.Remove(acquiredTarget);
+            Destroy(acquiredTarget.gameObject);
         }
 
         void ReadParamsFromMainConfiguration()
@@ -178,6 +140,35 @@ namespace Problems.Collector
                     TargetMinDistanceFromAgents = int.Parse(conf.ProblemConfiguration["TargetMinDistanceFromAgents"]);
                 }
 
+            }
+        }
+
+        protected override void OnPreFinishGame()
+        {
+            SetAgentsFitness();
+        }
+
+        private void SetAgentsFitness()
+        {
+            foreach (CollectorAgentComponent agent in Agents)
+            {
+                // SectorExploration
+                sectorExplorationFitness = agent.SectorsExplored / (float)Sectors.Length;
+                sectorExplorationFitness = (float)Math.Round(CollectorFitness.FitnessValues[CollectorFitness.FitnessKeys.SectorExploration.ToString()] * sectorExplorationFitness, 4);
+                agent.AgentFitness.UpdateFitness(sectorExplorationFitness, CollectorFitness.FitnessKeys.SectorExploration.ToString());
+
+             
+                // TargetsAcquired
+                TargetsAcquiredFitness = agent.TargetsAcquired / (float)SpawnedTargets;
+                TargetsAcquiredFitness = (float)Math.Round(CollectorFitness.FitnessValues[CollectorFitness.FitnessKeys.TargetsAcquired.ToString()] * TargetsAcquiredFitness, 4);
+                agent.AgentFitness.UpdateFitness(TargetsAcquiredFitness, CollectorFitness.FitnessKeys.TargetsAcquired.ToString());
+
+
+                Debug.Log("========================================");
+                Debug.Log("Agent: Team ID" + agent.TeamIdentifier.TeamID + ", ID: " + agent.IndividualID);
+                Debug.Log("Sectors explored: " + agent.SectorsExplored + " / " + Sectors.Length + " = " + sectorExplorationFitness);
+                Debug.Log("Targets acquired: " + agent.TargetsAcquired + " / " + SpawnedTargets + " = " + TargetsAcquiredFitness);
+                Debug.Log("========================================");
             }
         }
     }

@@ -27,7 +27,7 @@ namespace Base
         [SerializeField] public float SimulationSteps = 10000;
         [SerializeField] public float SimulationTime = 0f;
         [SerializeField] public LayerMask DefaultLayer = 0;
-        [SerializeField] GameObject Environment;
+        [SerializeField] public GameObject Environment;
         [SerializeField] public SceneLoadMode SceneLoadMode;
 
         [Header("Agent Initializaion Configuration")]

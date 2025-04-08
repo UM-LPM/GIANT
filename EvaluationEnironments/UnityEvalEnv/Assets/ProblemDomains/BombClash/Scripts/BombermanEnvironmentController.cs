@@ -68,7 +68,7 @@ namespace Problems.Bomberman
             else
             {
                 // Each EnvironmentController contains its own problem environment
-                IndestructibleWalkableTiles = GetComponentInChildren<SectorComponent>().GetComponent<Tilemap>();
+                IndestructibleWalkableTiles = Environment.GetComponentInChildren<SectorComponent>().GetComponent<Tilemap>();
             }
 
             destructibleTilesCount = CountTiles(BombExplosionController.DestructibleTiles);

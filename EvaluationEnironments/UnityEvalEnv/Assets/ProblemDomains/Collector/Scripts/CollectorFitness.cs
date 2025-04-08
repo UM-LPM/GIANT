@@ -6,18 +6,16 @@ namespace Problems.Collector
     public class CollectorFitness
     {
         public static Dictionary<string, float> FitnessValues = new Dictionary<string, float> {
-        { "AgentPickedTarget", -50f },
-        { "AgentExploredSector", -3f },
-        { "AgentReExploredSector", -1f }
+            { "SectorExploration", -30f },
+            { "TargetsAcquired", -500f }
     };
 
         public static string[] Keys = FitnessValues.Keys.ToArray();
 
         public enum FitnessKeys
         {
-            AgentPickedTarget,
-            AgentExploredSector,
-            AgentReExploredSector
+            SectorExploration,
+            TargetsAcquired,
         }
     }
 }
