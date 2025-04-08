@@ -70,7 +70,7 @@ The platform currently supports the following problem domains: Collector, RoboSt
 
 - BombClash (see \autoref{fig:bombclash}) is a multi-agent environment inspired by the Bomberland multi-agent AI competition [@coderOne2021Bomberland], where agents strategically place bombs to destroy obstacles, eliminate opponents, and evade explosions. Success requires careful planning, opponent prediction, and tactical movement.
 	
-  ![BombClash problem domain.](../docs/images/bombclashProblemDomain/bombClash_problem_domain_main.png){#fig:bombclash width=40% }
+  ![BombClash problem domain.](../docs/images/bombClashProblemDomain/bombClash_problem_domain_main.png){#fig:bombclash width=40% }
 
 The platform's flexible control system enables both fully autonomous AI-driven gameplay and human-in-the-loop experimentation, making the platform suitable for a wide range of research and development applications in machine learning, artificial intelligence, and game AI.
 
