@@ -111,7 +111,7 @@ The platform consists of three parts: **Unity**, **Web API**, and **EARS framewo
     }
    ```
 
-### Building Unity project (windows)
+### Building Unity project (Windows)
 
 1. The project can be built by navigating to File -> Build Settings, select the "Windows" platform and press **`Build`**.
     ![Unity Windows build settings 1](/docs/images/build_settings_windows_1.png)
@@ -123,7 +123,7 @@ The platform consists of three parts: **Unity**, **Web API**, and **EARS framewo
     ./GIANT.exe  -batchmode -nographics # No GUI
     ``` 
 
-### Building Unity project (windows)
+### Building Unity project (Linux)
 
 1. In Unity Hub, under **`Installs`** select your Unity version and add the following module:
     - "Linux Build Support (either IL2CPP or Mono version can be selected)"
