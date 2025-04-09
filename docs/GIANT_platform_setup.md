@@ -160,6 +160,20 @@ The platform consists of three parts: **Unity**, **Web API**, and **EARS framewo
       }
    ```
 
+### Building Web API (Windows)
+
+1. In the VisualStudio, after opening the WebAPI.sln, select build option (Debug, Release) and build the project.
+
+### Building Web API (Linux)
+
+1. Install the following dependencies:
+    ```
+    sudo apt-get update &&   sudo apt-get install -y dotnet-sdk-8.0
+    sudo apt-get update && sudo apt-get install -y aspnetcore-runtime-8.0
+     sudo apt-get install -y dotnet-runtime-8.0
+    ```
+2. Run **`dotnet build`** or **`dotnet run`** if you want to build or run the Web API.
+
 ## Machine Learning Framework (EARS) Setup
 
 1. Install [IntelliJ IDEA](https://www.jetbrains.com/idea/) on your machine.
