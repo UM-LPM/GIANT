@@ -36,7 +36,7 @@ namespace Problems.PlanetConquest
                 T _base = baseGameObject.GetComponent<T>();
                 BaseComponent baseComponent = _base as BaseComponent;
                 baseComponent.TeamIdentifier.TeamID = environmentController.Match.Teams[i].TeamId;
-                baseComponent.HealthComponent.Health = PlanetConquestEnvironmentController.MAX_BASE_HEALTH;
+                baseComponent.HealthComponent.Health = PlanetConquestEnvironmentController.BaseStartHealth;
 
                 // Assign base sprite
                 SpriteRenderer baseRenderer = baseGameObject.GetComponent<SpriteRenderer>();

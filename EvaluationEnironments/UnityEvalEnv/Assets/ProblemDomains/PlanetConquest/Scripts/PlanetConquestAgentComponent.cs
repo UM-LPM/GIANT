@@ -1,4 +1,5 @@
 using Base;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Problems.PlanetConquest
@@ -16,7 +17,7 @@ namespace Problems.PlanetConquest
 
         private AgentStatBars StatBars;
 
-        // Agent fitness variables
+        // Fitness variables
         public int SectorsExplored { get; set; }
         public int LasersFired { get; set; }
         public int MissilesHitOpponent { get; set; }

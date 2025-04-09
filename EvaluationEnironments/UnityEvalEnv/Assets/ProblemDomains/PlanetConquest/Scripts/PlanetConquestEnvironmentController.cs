@@ -15,9 +15,9 @@ namespace Problems.PlanetConquest {
         [SerializeField] public static int MAX_AGENT_ENERGY = 30;
 
         [Header(" PlanetConquest General Configuration")]
-        [SerializeField] int AgentStartHealth = 10;
-        [SerializeField] int AgentStartEnergy = 30;
-        [SerializeField] int BaseStartHealth = 20;
+        [SerializeField] public int AgentStartHealth = 10;
+        [SerializeField] public int AgentStartEnergy = 30;
+        [SerializeField] public int BaseStartHealth = 20;
         [SerializeField] public int LaserEnergyConsumption = 5;
         [SerializeField] public int LaserHitEnergyBonus = 10;
         [SerializeField] public bool UnlimitedEnergy = false;
@@ -580,6 +580,9 @@ namespace Problems.PlanetConquest {
 
             // Restore health
             agent.HealthComponent.Health = AgentStartHealth;
+
+            // Restore energy
+            agent.EnergyComponent.Energy = AgentStartEnergy;
 
             // Update Healthbar
             agent.UpdatetStatBars();
