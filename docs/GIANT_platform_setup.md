@@ -110,7 +110,38 @@ The platform consists of three parts: **Unity**, **Web API**, and **EARS framewo
         ]
     }
    ```
-8. Build the project by navigating to File -> Build Settings, select the correct platform and press **Build**.
+
+### Building Unity project (windows)
+
+1. The project can be built by navigating to File -> Build Settings, select the "Windows" platform and press **`Build`**.
+    ![Unity Windows build settings 1](/docs/images/build_settings_windows_1.png)
+2. After the build, the **`GIANT.exe`** file and other data files will be located in the selected destination folder.
+    ![Unity Windows build settings 2](/docs/images/build_settings_windows_2.png)
+3. The **`conf.json`** file should be placed in subfolder **`GIANT_DATA`**.
+4. Program can be run by executing the GIANT.exe file. For **`headless`** mode, use the following command:
+    ```bash
+    ./GIANT.exe  -batchmode -nographics # No GUI
+    ``` 
+
+### Building Unity project (windows)
+
+1. In Unity Hub, under **`Installs`** select your Unity version and add the following module:
+    - "Linux Build Support (either IL2CPP or Mono version can be selected)"
+    ![Unity Linux build settings 1](/docs/images/build_settings_linux_1.png)
+2. In Unity Editor configure **`Player Setings`** and select the appropriate **`Scripting Backend`**.
+    ![Unity Linux build settings 2](/docs/images/build_settings_linux_2.png)
+3. After the build, the **`GIANT.x86_64`** file and other data files will be in the selected destination folder.
+    ![Unity Windows build settings 3](/docs/images/build_settings_linux_3.png) 
+4. The **`conf.json`** file should be placed in subfolder **`GIANT_DATA`**.
+5. To enable visualization, run the following command to set the **`DISPLAY`** variable:
+    ```bash
+    export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}'):0
+    ```
+6. Program can be run with the following commands:
+    ```bash
+    ./GIANT.x86_64  # With GUI
+    ./GIANT.x86_64  -batchmode -nographics # No GUI
+    ``` 
 
 ## Web API Setup
 
