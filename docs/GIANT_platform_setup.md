@@ -167,7 +167,7 @@ The platform consists of three parts: **Unity**, **Web API**, and **EARS framewo
 ### Building Web API (Linux)
 
 1. Install the following dependencies:
-    ```
+    ```bash
     sudo apt-get update &&   sudo apt-get install -y dotnet-sdk-8.0
     sudo apt-get update && sudo apt-get install -y aspnetcore-runtime-8.0
      sudo apt-get install -y dotnet-runtime-8.0
@@ -216,6 +216,18 @@ The platform consists of three parts: **Unity**, **Web API**, and **EARS framewo
 8. Start WebAPI and run GPInterface configuration. 
 9. Load **`ears_config_robostrike.json`** in the **Configuration** tab.
 10. Press **Run** to start the evolution process. After the process is successfully executed the result should be displayed in the UI.
+
+### Run EARS on Linux
+
+1. Before running EARS.jar on Linux, the following dependencies must be installed:
+    ```bash
+    sudo apt install openjdk-17-jdk-headless # No GUI
+    sudo apt install openjdk-17-jdk # GUI
+    ```
+2. Run EARS with the following command:
+    ```
+    java -Xmx8G -jar EARS.jar
+    ```
 
 # Next Steps
 
