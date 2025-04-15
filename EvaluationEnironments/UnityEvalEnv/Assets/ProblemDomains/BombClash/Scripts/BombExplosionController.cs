@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using Utils;
 
-namespace Problems.Bomberman
+namespace Problems.Bombclash
 {
     public class BombExplosionController : MonoBehaviour
     {

@@ -5,7 +5,7 @@ using Spawners;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Problems.Bomberman
+namespace Problems.Bombclash
 {
     public class Bomberman1vs1MatchSpawner : MatchSpawner
     {

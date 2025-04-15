@@ -1,7 +1,7 @@
 using AgentControllers;
 using UnityEngine;
 
-namespace Problems.Bomberman
+namespace Problems.Bombclash
 {
     [CreateAssetMenu(fileName = "BombermanManualAgentController", menuName = "AgentControllers/AIAgentControllers/ManualAgentControllers/BombermanManualAgentController")]
     public class BombermanManualAgentController : ManualAgentController

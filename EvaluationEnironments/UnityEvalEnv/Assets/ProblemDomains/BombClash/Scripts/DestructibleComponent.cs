@@ -1,7 +1,7 @@
 using Base;
 using UnityEngine;
 
-namespace Problems.Bomberman
+namespace Problems.Bombclash
 {
     public class DestructibleComponent : MonoBehaviour
     {

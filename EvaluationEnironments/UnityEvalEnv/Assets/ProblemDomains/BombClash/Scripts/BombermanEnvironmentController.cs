@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-namespace Problems.Bomberman
+namespace Problems.Bombclash
 {
     public class BombermanEnvironmentController : EnvironmentControllerBase
     {

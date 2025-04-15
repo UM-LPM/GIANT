@@ -2,7 +2,7 @@ using Base;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Problems.Bomberman
+namespace Problems.Bombclash
 {
     public class BombermanAgentComponent : AgentComponent
     {

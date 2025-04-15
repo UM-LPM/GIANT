@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Problems.Bomberman
+namespace Problems.Bombclash
 {
     public class BombermanFitness
     {

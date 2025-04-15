@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Problems.Bomberman
+namespace Problems.Bombclash
 {
     public class BombComponent : MonoBehaviour
     {

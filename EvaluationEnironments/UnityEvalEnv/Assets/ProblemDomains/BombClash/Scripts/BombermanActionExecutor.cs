@@ -2,7 +2,7 @@ using AgentControllers;
 using Base;
 using UnityEngine;
 
-namespace Problems.Bomberman
+namespace Problems.Bombclash
 {
     public class BombermanActionExecutor : ActionExecutor
     {
