@@ -28,6 +28,7 @@ namespace Problems.PlanetConquest
 
         public override void validateSpawnConditions(EnvironmentControllerBase environmentController)
         {
+            planetConquestEnvironmentController = environmentController as PlanetConquestEnvironmentController;
             if (environmentController.AgentPrefab == null)
             {
                 UnityEngine.Debug.LogWarning("AgentPrefab is not defined");
@@ -39,21 +40,9 @@ namespace Problems.PlanetConquest
                 // TODO add error reporting here
             }
 
-            if (environmentController.Match.Teams.Length != 2)
+            if (environmentController.Match.Teams.Length != 2 && !(environmentController.Match.Teams.Length == 1 && planetConquestEnvironmentController.FixedOpponent != null))
             {
                 throw new System.Exception("Match should have 2 teams");
-                // TODO add error reporting here
-            }
-
-            if (environmentController.Match.Teams[0].Individuals.Length != 1 || environmentController.Match.Teams[1].Individuals.Length != 1)
-            {
-                throw new System.Exception("Each team should have 1 individual");
-                // TODO add error reporting here
-            }
-
-            if (environmentController.Match.Teams[0].Individuals[0].AgentControllers.Length != 1 || environmentController.Match.Teams[1].Individuals[0].AgentControllers.Length != 1)
-            {
-                throw new System.Exception("Each individual should have 1 agent controller");
                 // TODO add error reporting here
             }
 
@@ -67,6 +56,8 @@ namespace Problems.PlanetConquest
         public override T[] Spawn<T>(EnvironmentControllerBase environmentController)
         {
             validateSpawnConditions(environmentController);
+
+            planetConquestEnvironmentController = environmentController as PlanetConquestEnvironmentController;
 
             List<T> agents = new List<T>();
 
@@ -85,18 +76,42 @@ namespace Problems.PlanetConquest
                     }
                 }
             }
+
+            // Spawn fixed opponent if defined
+            if (environmentController.Match.Teams.Length == 1)
+            {
+                if (planetConquestEnvironmentController.FixedOpponent == null || planetConquestEnvironmentController.FixedOpponent.AgentControllers.Length == 0)
+                {
+                    throw new System.Exception("Fixed opponent or FixedOpponent.AgentControllers is not defined");
+                    // TODO add error reporting here
+                }
+
+                int teamIndex = 1; // Fixed opponent is always on the second team
+                foreach (AgentController agentController in planetConquestEnvironmentController.FixedOpponent.AgentControllers)
+                {
+                    // Instantiate and configure fixed opponent agent
+                    T fixedOpponentAgent = SpawnAgent<T>(environmentController, teamIndex, AgentType.Lava);
+                    // Update list
+                    agents.Add(fixedOpponentAgent);
+                }
+            }
+
             return agents.ToArray();
         }
 
         public T SpawnAgent<T>(EnvironmentControllerBase environmentController, int teamIndex, AgentType agentType)
         {
-            validateSpawnConditions(environmentController);
+            planetConquestEnvironmentController = environmentController as PlanetConquestEnvironmentController;
 
-            Individual individual = environmentController.Match.Teams[teamIndex].Individuals[0];
+            bool isFixedOpponent = (planetConquestEnvironmentController.FixedOpponent != null) && environmentController.Match.Teams.Length == 1 && teamIndex > 0;
+            if (!isFixedOpponent)
+            {
+                validateSpawnConditions(environmentController);
+            }
+
+            Individual individual = isFixedOpponent ? planetConquestEnvironmentController.FixedOpponent : environmentController.Match.Teams[teamIndex].Individuals[0];
             AgentController agentController = individual.AgentControllers[0];
             GameObject agentGameObject;
-
-            planetConquestEnvironmentController = environmentController as PlanetConquestEnvironmentController;
 
             switch (agentType)
             {
@@ -122,6 +137,11 @@ namespace Problems.PlanetConquest
             agentComponent.TeamIdentifier.TeamID = teamIndex;
             agentComponent.HealthComponent.Health = planetConquestEnvironmentController.AgentStartHealth;
             agentComponent.EnergyComponent.Energy = planetConquestEnvironmentController.AgentStartEnergy;
+
+            if (isFixedOpponent)
+            {
+                agentComponent.IsFixedOpponent = true;
+            }
 
             // Set agent color based on team
             if (teamIndex < planetConquestEnvironmentController.TeamColors.Length)

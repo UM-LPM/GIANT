@@ -26,6 +26,8 @@ namespace Base
         //public int TeamID { get; set; }
         public TeamIdentifier TeamIdentifier { get; set; }
 
+        public bool IsFixedOpponent { get; set; } = false;
+
 
 
         private void Awake()

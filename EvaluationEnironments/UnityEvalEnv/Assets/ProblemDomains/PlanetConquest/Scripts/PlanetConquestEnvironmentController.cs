@@ -5,6 +5,7 @@ using Problems.Robostrike;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AgentOrganizations;
 using UnityEngine;
 
 namespace Problems.PlanetConquest {
@@ -26,6 +27,8 @@ namespace Problems.PlanetConquest {
         [SerializeField] public bool FrienlyFire = false;
         [SerializeField] private int LavaAgentCost = 5;
         [SerializeField] private int IceAgentCost = 5;
+        [SerializeField] public Individual FixedOpponent;
+        [SerializeField] public int MaxNumOfAgents = 10;
 
         [SerializeField] public GameObject LavaAgentPrefab;
         [SerializeField] public GameObject IceAgentPrefab;
@@ -76,27 +79,27 @@ namespace Problems.PlanetConquest {
         private SectorComponent[] Sectors;
 
         // Fitness calculation
-        private float sectorExplorationFitness;
-        private float allPossibleLasersFired;
-        private float lasersFired;
-        private float lasersFiredOpponentAccuracy;
-        private float lasersFiredBaseAccuracy;
-        private float survivalBonus;
+        private double sectorExplorationFitness;
+        private double allPossibleLasersFired;
+        private double lasersFired;
+        private double lasersFiredOpponentAccuracy;
+        private double lasersFiredBaseAccuracy;
+        private double survivalBonus;
         private int numOfOpponents;
         private int numOfAllLavaPlanetOrbitEnters;
-        private float lavaPlanetOrbitEnters;
+        private double lavaPlanetOrbitEnters;
         private int numOfAllIcePlanetOrbitEnters;
-        private float icePlanetOrbitEnters;
+        private double icePlanetOrbitEnters;
         private int numOfAllLavaPlanetOrbitCaptures;
-        private float lavaPlanetOrbitCaptures;
+        private double lavaPlanetOrbitCaptures;
         private int numOfAllIcePlanetOrbitCaptures;
-        private float icePlanetOrbitCaptures;
+        private double icePlanetOrbitCaptures;
         private int numOfOpponentBases;
-        private float opponentsDestroyedBonus;
-        private float opponentBasesDestroyedBonus;
+        private double opponentsDestroyedBonus;
+        private double opponentBasesDestroyedBonus;
         private int numOfFiredOpponentMissiles;
-        private float damageTakenPenalty;
-        private float opponentTrackingBonus;
+        private double damageTakenPenalty;
+        private double opponentTrackingBonus;
         private PlanetConquestAgentComponent agent;
         private Vector3 sectorPosition;
 
@@ -152,6 +155,11 @@ namespace Problems.PlanetConquest {
             }
 
             PlanetCaptureSpeed = 1f / PlanetCaptureTime;
+
+            if(FixedOpponent != null)
+            {
+                FixedOpponent = FixedOpponent.Clone();
+            }
 
         }
 
@@ -275,7 +283,7 @@ namespace Problems.PlanetConquest {
                         }
                     }
                 }
-                if (canSpawn)
+                if (canSpawn && Agents.Length < MaxNumOfAgents)
                 {
                     if (lava >= LavaAgentCost && ice >= IceAgentCost)
                     {
@@ -611,100 +619,102 @@ namespace Problems.PlanetConquest {
         {
             foreach (PlanetConquestAgentComponent agent in Agents)
             {
+                // Check if agent is 
+
                 // SectorExploration
-                sectorExplorationFitness = agent.SectorsExplored / (float)Sectors.Length;
-                sectorExplorationFitness = (float)Math.Round(PlanetConquestFitness.FitnessValues[PlanetConquestFitness.FitnessKeys.SectorExploration.ToString()] * sectorExplorationFitness, 4);
-                agent.AgentFitness.UpdateFitness(sectorExplorationFitness, PlanetConquestFitness.FitnessKeys.SectorExploration.ToString());
+                sectorExplorationFitness = agent.SectorsExplored / (double)Sectors.Length;
+                sectorExplorationFitness = (double)(Math.Round(PlanetConquestFitness.FitnessValues[PlanetConquestFitness.FitnessKeys.SectorExploration.ToString()] * sectorExplorationFitness, 4) / Agents.Length);
+                agent.AgentFitness.UpdateFitness((int)sectorExplorationFitness, PlanetConquestFitness.FitnessKeys.SectorExploration.ToString());
 
                 // SurvivalBonus
-                survivalBonus = agent.MaxSurvivalTime / (float)CurrentSimulationSteps;
-                survivalBonus = (float)Math.Round(PlanetConquestFitness.FitnessValues[PlanetConquestFitness.FitnessKeys.SurvivalBonus.ToString()] * survivalBonus, 4);
-                agent.AgentFitness.UpdateFitness(survivalBonus, PlanetConquestFitness.FitnessKeys.SurvivalBonus.ToString());
+                survivalBonus = agent.MaxSurvivalTime / (double)CurrentSimulationSteps;
+                survivalBonus = (double)(Math.Round(PlanetConquestFitness.FitnessValues[PlanetConquestFitness.FitnessKeys.SurvivalBonus.ToString()] * survivalBonus, 4) / Agents.Length);
+                agent.AgentFitness.UpdateFitness((int)survivalBonus, PlanetConquestFitness.FitnessKeys.SurvivalBonus.ToString());
                 agent.ResetSurvivalTime();
 
                 // LasersFired
                 allPossibleLasersFired = (CurrentSimulationSteps * Time.fixedDeltaTime) / LaserShootCooldown;
                 lasersFired = agent.LasersFired / allPossibleLasersFired;
-                lasersFired = (float)Math.Round(PlanetConquestFitness.FitnessValues[PlanetConquestFitness.FitnessKeys.LasersFired.ToString()] * lasersFired, 4);
-                agent.AgentFitness.UpdateFitness(lasersFired, PlanetConquestFitness.FitnessKeys.LasersFired.ToString());
+                lasersFired = (double)(Math.Round(PlanetConquestFitness.FitnessValues[PlanetConquestFitness.FitnessKeys.LasersFired.ToString()] * lasersFired, 4) / Agents.Length);
+                agent.AgentFitness.UpdateFitness((int)lasersFired, PlanetConquestFitness.FitnessKeys.LasersFired.ToString());
 
                 // LaserOpponentAccuracy
                 if (agent.LasersFired > 0)
                 {
-                    lasersFiredOpponentAccuracy = agent.MissilesHitOpponent / (float)agent.LasersFired;
-                    lasersFiredOpponentAccuracy = (float)Math.Round(PlanetConquestFitness.FitnessValues[PlanetConquestFitness.FitnessKeys.LaserOpponentAccuracy.ToString()] * lasersFiredOpponentAccuracy, 4);
-                    agent.AgentFitness.UpdateFitness(lasersFiredOpponentAccuracy, PlanetConquestFitness.FitnessKeys.LaserOpponentAccuracy.ToString());
+                    lasersFiredOpponentAccuracy = agent.MissilesHitOpponent / (double)agent.LasersFired;
+                    lasersFiredOpponentAccuracy = (double)(Math.Round(PlanetConquestFitness.FitnessValues[PlanetConquestFitness.FitnessKeys.LaserOpponentAccuracy.ToString()] * lasersFiredOpponentAccuracy, 4) / Agents.Length);
+                    agent.AgentFitness.UpdateFitness((int)lasersFiredOpponentAccuracy, PlanetConquestFitness.FitnessKeys.LaserOpponentAccuracy.ToString());
                 }
 
                 // LaserOpponentBaseLaserAccuracy
                 if (agent.LasersFired > 0)
                 {
-                    lasersFiredBaseAccuracy = agent.MissilesHitBase / (float)agent.LasersFired;
-                    lasersFiredBaseAccuracy = (float)Math.Round(PlanetConquestFitness.FitnessValues[PlanetConquestFitness.FitnessKeys.LaserOpponentBaseLaserAccuracy.ToString()] * lasersFiredBaseAccuracy, 4);
-                    agent.AgentFitness.UpdateFitness(lasersFiredBaseAccuracy, PlanetConquestFitness.FitnessKeys.LaserOpponentBaseLaserAccuracy.ToString());
+                    lasersFiredBaseAccuracy = agent.MissilesHitBase / (double)agent.LasersFired;
+                    lasersFiredBaseAccuracy = (double)(Math.Round(PlanetConquestFitness.FitnessValues[PlanetConquestFitness.FitnessKeys.LaserOpponentBaseLaserAccuracy.ToString()] * lasersFiredBaseAccuracy, 4) / Agents.Length);
+                    agent.AgentFitness.UpdateFitness((int)lasersFiredBaseAccuracy, PlanetConquestFitness.FitnessKeys.LaserOpponentBaseLaserAccuracy.ToString());
                 }
 
                 // OpponentDestroyedBonus
                 numOfOpponents = Agents.Where(a => a.TeamIdentifier.TeamID != agent.TeamIdentifier.TeamID).Select(a => (a as PlanetConquestAgentComponent).NumOfSpawns).Sum();
                 if (numOfOpponents > 0)
                 {
-                    opponentsDestroyedBonus = agent.OpponentsDestroyed / (float)numOfOpponents;
-                    opponentsDestroyedBonus = (float)Math.Round(PlanetConquestFitness.FitnessValues[PlanetConquestFitness.FitnessKeys.OpponentDestroyedBonus.ToString()] * opponentsDestroyedBonus, 4);
-                    agent.AgentFitness.UpdateFitness(opponentsDestroyedBonus, PlanetConquestFitness.FitnessKeys.OpponentDestroyedBonus.ToString());
+                    opponentsDestroyedBonus = agent.OpponentsDestroyed / (double)numOfOpponents;
+                    opponentsDestroyedBonus = (double)Math.Round(PlanetConquestFitness.FitnessValues[PlanetConquestFitness.FitnessKeys.OpponentDestroyedBonus.ToString()] * opponentsDestroyedBonus, 4);
+                    agent.AgentFitness.UpdateFitness((int)opponentsDestroyedBonus, PlanetConquestFitness.FitnessKeys.OpponentDestroyedBonus.ToString());
                 }
 
                 // OpponentBaseDestroyedBonus
                 numOfOpponentBases = Match.Teams.Length - 1;
                 if (numOfOpponentBases > 0)
                 {
-                    opponentBasesDestroyedBonus = agent.OpponentBasesDestroyed / (float)numOfOpponentBases;
-                    opponentBasesDestroyedBonus = (float)Math.Round(PlanetConquestFitness.FitnessValues[PlanetConquestFitness.FitnessKeys.OpponentBaseDestroyedBonus.ToString()] * opponentBasesDestroyedBonus, 4);
-                    agent.AgentFitness.UpdateFitness(opponentBasesDestroyedBonus, PlanetConquestFitness.FitnessKeys.OpponentBaseDestroyedBonus.ToString());
+                    opponentBasesDestroyedBonus = agent.OpponentBasesDestroyed / (double)numOfOpponentBases;
+                    opponentBasesDestroyedBonus = (double)Math.Round(PlanetConquestFitness.FitnessValues[PlanetConquestFitness.FitnessKeys.OpponentBaseDestroyedBonus.ToString()] * opponentBasesDestroyedBonus, 4);
+                    agent.AgentFitness.UpdateFitness((int)opponentBasesDestroyedBonus, PlanetConquestFitness.FitnessKeys.OpponentBaseDestroyedBonus.ToString());
                 }
 
                 // DamageTakenPenalty
                 numOfFiredOpponentMissiles = Agents.Where(a => a.TeamIdentifier.TeamID != agent.TeamIdentifier.TeamID).Select(a => (a as PlanetConquestAgentComponent).LasersFired).Sum();
                 if (numOfFiredOpponentMissiles > 0)
                 {
-                    damageTakenPenalty = agent.HitByOpponentLasers / (float)numOfFiredOpponentMissiles;
-                    damageTakenPenalty = (float)Math.Round(PlanetConquestFitness.FitnessValues[PlanetConquestFitness.FitnessKeys.DamageTakenPenalty.ToString()] * damageTakenPenalty, 4);
-                    agent.AgentFitness.UpdateFitness(damageTakenPenalty, PlanetConquestFitness.FitnessKeys.DamageTakenPenalty.ToString());
+                    damageTakenPenalty = agent.HitByOpponentLasers / (double)numOfFiredOpponentMissiles;
+                    damageTakenPenalty = (double)(Math.Round(PlanetConquestFitness.FitnessValues[PlanetConquestFitness.FitnessKeys.DamageTakenPenalty.ToString()] * damageTakenPenalty, 4) / Agents.Length);
+                    agent.AgentFitness.UpdateFitness((int)damageTakenPenalty, PlanetConquestFitness.FitnessKeys.DamageTakenPenalty.ToString());
                 }
 
                 // LavaPlanetOrbitEnter
                 numOfAllLavaPlanetOrbitEnters = Agents.Select(a => (a as PlanetConquestAgentComponent).EnteredLavaPlanetOrbit).Sum();
                 if (numOfAllLavaPlanetOrbitEnters > 0)
                 {
-                    lavaPlanetOrbitEnters = agent.EnteredLavaPlanetOrbit / (float)numOfAllLavaPlanetOrbitEnters;
-                    lavaPlanetOrbitEnters = (float)Math.Round(PlanetConquestFitness.FitnessValues[PlanetConquestFitness.FitnessKeys.LavaPlanetOrbitEnter.ToString()] * lavaPlanetOrbitEnters, 4);
-                    agent.AgentFitness.UpdateFitness(lavaPlanetOrbitEnters, PlanetConquestFitness.FitnessKeys.LavaPlanetOrbitEnter.ToString());
+                    lavaPlanetOrbitEnters = agent.EnteredLavaPlanetOrbit / (double)numOfAllLavaPlanetOrbitEnters;
+                    lavaPlanetOrbitEnters = (double)(Math.Round(PlanetConquestFitness.FitnessValues[PlanetConquestFitness.FitnessKeys.LavaPlanetOrbitEnter.ToString()] * lavaPlanetOrbitEnters, 4) / Agents.Length);
+                    agent.AgentFitness.UpdateFitness((int)lavaPlanetOrbitEnters, PlanetConquestFitness.FitnessKeys.LavaPlanetOrbitEnter.ToString());
                 }
 
                 // IcePlanetOrbitEnter
                 numOfAllIcePlanetOrbitEnters = Agents.Select(a => (a as PlanetConquestAgentComponent).EnteredIcePlanetOrbit).Sum();
                 if (numOfAllIcePlanetOrbitEnters > 0)
                 {
-                    icePlanetOrbitEnters = agent.EnteredIcePlanetOrbit / (float)numOfAllIcePlanetOrbitEnters;
-                    icePlanetOrbitEnters = (float)Math.Round(PlanetConquestFitness.FitnessValues[PlanetConquestFitness.FitnessKeys.IcePlanetOrbitEnter.ToString()] * icePlanetOrbitEnters, 4);
-                    agent.AgentFitness.UpdateFitness(icePlanetOrbitEnters, PlanetConquestFitness.FitnessKeys.IcePlanetOrbitEnter.ToString());
+                    icePlanetOrbitEnters = agent.EnteredIcePlanetOrbit / (double)numOfAllIcePlanetOrbitEnters;
+                    icePlanetOrbitEnters = (double)(Math.Round(PlanetConquestFitness.FitnessValues[PlanetConquestFitness.FitnessKeys.IcePlanetOrbitEnter.ToString()] * icePlanetOrbitEnters, 4) / Agents.Length);
+                    agent.AgentFitness.UpdateFitness((int)icePlanetOrbitEnters, PlanetConquestFitness.FitnessKeys.IcePlanetOrbitEnter.ToString());
                 }
 
                 // LavaPlanetOrbitCapture
                 numOfAllLavaPlanetOrbitCaptures = Agents.Select(a => (a as PlanetConquestAgentComponent).CapturedLavaPlanet).Sum();
                 if (numOfAllLavaPlanetOrbitCaptures > 0)
                 {
-                    lavaPlanetOrbitCaptures = agent.CapturedLavaPlanet / (float)numOfAllLavaPlanetOrbitCaptures;
-                    lavaPlanetOrbitCaptures = (float)Math.Round(PlanetConquestFitness.FitnessValues[PlanetConquestFitness.FitnessKeys.LavaPlanetOrbitCapture.ToString()] * lavaPlanetOrbitCaptures, 4);
-                    agent.AgentFitness.UpdateFitness(lavaPlanetOrbitCaptures, PlanetConquestFitness.FitnessKeys.LavaPlanetOrbitCapture.ToString());
+                    lavaPlanetOrbitCaptures = agent.CapturedLavaPlanet / (double)numOfAllLavaPlanetOrbitCaptures;
+                    lavaPlanetOrbitCaptures = (double)Math.Round(PlanetConquestFitness.FitnessValues[PlanetConquestFitness.FitnessKeys.LavaPlanetOrbitCapture.ToString()] * lavaPlanetOrbitCaptures, 4);
+                    agent.AgentFitness.UpdateFitness((int)lavaPlanetOrbitCaptures, PlanetConquestFitness.FitnessKeys.LavaPlanetOrbitCapture.ToString());
                 }
 
                 // IcePlanetOrbitCapture
                 numOfAllIcePlanetOrbitCaptures = Agents.Select(a => (a as PlanetConquestAgentComponent).CapturedIcePlanet).Sum();
                 if (numOfAllIcePlanetOrbitCaptures > 0)
                 {
-                    icePlanetOrbitCaptures = agent.CapturedIcePlanet / (float)numOfAllIcePlanetOrbitCaptures;
-                    icePlanetOrbitCaptures = (float)Math.Round(PlanetConquestFitness.FitnessValues[PlanetConquestFitness.FitnessKeys.IcePlanetOrbitCapture.ToString()] * icePlanetOrbitCaptures, 4);
-                    agent.AgentFitness.UpdateFitness(icePlanetOrbitCaptures, PlanetConquestFitness.FitnessKeys.IcePlanetOrbitCapture.ToString());
+                    icePlanetOrbitCaptures = agent.CapturedIcePlanet / (double)numOfAllIcePlanetOrbitCaptures;
+                    icePlanetOrbitCaptures = (double)Math.Round(PlanetConquestFitness.FitnessValues[PlanetConquestFitness.FitnessKeys.IcePlanetOrbitCapture.ToString()] * icePlanetOrbitCaptures, 4);
+                    agent.AgentFitness.UpdateFitness((int)icePlanetOrbitCaptures, PlanetConquestFitness.FitnessKeys.IcePlanetOrbitCapture.ToString());
                 }
 
                 Debug.Log("========================================");

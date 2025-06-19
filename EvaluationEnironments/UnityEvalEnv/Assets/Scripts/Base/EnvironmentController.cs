@@ -342,7 +342,7 @@ namespace Base
 
             for (int i = 0; i < Agents.Length; i++)
             {
-                if (Agents[i].TeamIdentifier.TeamID >= 0)
+                if (Agents[i].TeamIdentifier.TeamID >= 0 && !Agents[i].IsFixedOpponent)
                 {
                     matchFitness.AddAgentFitness(Agents[i]);
                 }
@@ -370,6 +370,7 @@ namespace Base
             {
                 if (Agents[i].gameObject.activeSelf)
                 {
+                    // If agent was spawned previous update its ActionBuffer is null
                     if (getNewDecisions)
                     {
                         ActionBuffer = new ActionBuffer();
@@ -377,13 +378,11 @@ namespace Base
                         Agents[i].ActionBuffer = ActionBuffer;
                     }
 
-                    if (Agents[i].ActionBuffer == null)
+                    if (Agents[i].ActionBuffer != null)
                     {
-                        throw new Exception("ActionBuffer is not set!");
-                        // TODO Add error reporting here
+                        ActionExecutor.ExecuteActions(Agents[i]);
                     }
 
-                    ActionExecutor.ExecuteActions(Agents[i]);
                 }
             }
         }

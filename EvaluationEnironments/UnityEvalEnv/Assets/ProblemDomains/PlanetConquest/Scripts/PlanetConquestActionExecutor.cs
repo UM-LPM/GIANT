@@ -21,6 +21,14 @@ namespace Problems.PlanetConquest
         Vector3 laserEnd;
         RaycastHit2D hit;
 
+        // Move Agent variables
+        Vector3 dirToGo = Vector3.zero;
+        Vector3 rotateDir = Vector3.zero;
+        Vector3 rotateTurrentDir = Vector3.zero;
+
+        Vector3 newAgentPos;
+        Quaternion newAgentRotation;
+
         private void Awake()
         {
             PlanetConquestEnvironmentController = GetComponentInParent<PlanetConquestEnvironmentController>();
@@ -42,7 +50,7 @@ namespace Problems.PlanetConquest
                 torque = PlanetConquestEnvironmentController.IceAgentTourque;
             }
 
-            Rigidbody2D rigidbodi = agent.GetComponent<Rigidbody2D>();
+            /*Rigidbody2D rigidbodi = agent.GetComponent<Rigidbody2D>();
             forwardAxis = agent.ActionBuffer.GetDiscreteAction("moveForwardDirection");
             switch (forwardAxis)
             {
@@ -59,6 +67,58 @@ namespace Problems.PlanetConquest
                 case 2:
                     rigidbodi.AddTorque(-torque);
                     break;
+            }
+
+            // Calculate new position and rotation
+            newAgentPos = UnityUtils.RoundToDecimals(agent.transform.position, 2);
+            newAgentRotation = Quaternion.Euler(0, 0, agent.transform.rotation.eulerAngles.z + UnityUtils.RoundToDecimals(rigidbodi.rotation * Time.fixedDeltaTime, 2));
+
+            // Check if new position and rotation are valid
+            if (PhysicsUtil.PhysicsOverlapObject(PlanetConquestEnvironmentController.GameType, agent.gameObject, newAgentPos, PlanetConquestEnvironmentController.AgentColliderExtendsMultiplier.x, Vector3.zero, newAgentRotation, PhysicsOverlapType.OverlapSphere, true, gameObject.layer, PlanetConquestEnvironmentController.DefaultLayer))
+            {
+                //agent.transform.position = newAgentPos;
+                //agent.transform.rotation = newAgentRotation;
+
+                //Se the agent's velocity to zero to prevent sliding
+                rigidbodi.velocity = Vector2.zero;
+                rigidbodi.angularVelocity = 0f;
+            }*/
+
+            dirToGo = Vector3.zero;
+            rotateDir = Vector3.zero;
+            rotateTurrentDir = Vector3.zero;
+
+            forwardAxis = agent.ActionBuffer.GetDiscreteAction("moveForwardDirection");
+            rotateAxis = agent.ActionBuffer.GetDiscreteAction("rotateDirection");
+
+            switch (forwardAxis)
+            {
+                case 1:
+                    dirToGo = agent.transform.up * thrust / 2;
+                    break;
+                case 2:
+                    dirToGo = agent.transform.up * -thrust / 2;
+                    break;
+            }
+
+            switch (rotateAxis)
+            {
+                case 1:
+                    rotateDir.z = torque;
+                    break;
+                case 2:
+                    rotateDir.z = -torque;
+                    break;
+            }
+
+            newAgentPos = UnityUtils.RoundToDecimals(agent.transform.position + (dirToGo * Time.fixedDeltaTime * thrust), 2);
+            newAgentRotation = Quaternion.Euler(0, 0, agent.transform.rotation.eulerAngles.z + UnityUtils.RoundToDecimals(rotateDir.z * Time.fixedDeltaTime * torque, 2));
+
+            // Check if agent can be moved and rotated without colliding to other objects
+            if (!PhysicsUtil.PhysicsOverlapObject(PlanetConquestEnvironmentController.GameType, agent.gameObject, newAgentPos, PlanetConquestEnvironmentController.AgentColliderExtendsMultiplier.x, Vector3.zero, newAgentRotation, PhysicsOverlapType.OverlapSphere, true, gameObject.layer, PlanetConquestEnvironmentController.DefaultLayer))
+            {
+                agent.transform.position = newAgentPos;
+                agent.transform.rotation = newAgentRotation;
             }
         }
 

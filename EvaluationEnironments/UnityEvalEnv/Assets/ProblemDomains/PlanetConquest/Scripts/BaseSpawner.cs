@@ -1,7 +1,8 @@
+using AgentControllers;
+using Base;
+using Spawners;
 using System.Collections.Generic;
 using UnityEngine;
-using Spawners;
-using Base;
 
 namespace Problems.PlanetConquest
 {
@@ -26,26 +27,60 @@ namespace Problems.PlanetConquest
 
             List<T> bases = new List<T>();
 
-            PlanetConquestEnvironmentController PlanetConquestEnvironmentController = environmentController as PlanetConquestEnvironmentController;
+            PlanetConquestEnvironmentController planetConquestEnvironmentController = environmentController as PlanetConquestEnvironmentController;
             // Spawn bases
             for (int i = 0; i < environmentController.Match.Teams.Length; i++)
             {
-                GameObject baseGameObject = Instantiate(PlanetConquestEnvironmentController.BasePrefab, BaseSpawnPoints[i].position, BaseSpawnPoints[i].rotation, gameObject.transform);
+                GameObject baseGameObject = Instantiate(planetConquestEnvironmentController.BasePrefab, BaseSpawnPoints[i].position, BaseSpawnPoints[i].rotation, gameObject.transform);
                 baseGameObject.layer = gameObject.layer;
 
                 T _base = baseGameObject.GetComponent<T>();
                 BaseComponent baseComponent = _base as BaseComponent;
-                baseComponent.TeamIdentifier.TeamID = environmentController.Match.Teams[i].TeamId;
-                baseComponent.HealthComponent.Health = PlanetConquestEnvironmentController.BaseStartHealth;
+                baseComponent.TeamIdentifier.TeamID = i;
+                baseComponent.HealthComponent.Health = planetConquestEnvironmentController.BaseStartHealth;
 
                 // Assign base sprite
                 SpriteRenderer baseRenderer = baseGameObject.GetComponent<SpriteRenderer>();
 
-                if(i < PlanetConquestEnvironmentController.TeamColors.Length)
+                if(i < planetConquestEnvironmentController.TeamColors.Length)
                 {
-                    baseRenderer.color = PlanetConquestEnvironmentController.TeamColors[i];
+                    baseRenderer.color = planetConquestEnvironmentController.TeamColors[i];
                 }
                 else 
+                {
+                    throw new System.Exception("Base color not defined");
+                    // TODO Add error reporting here
+                }
+
+                bases.Add(_base);
+            }
+
+            // Spawn base for fixed opponent if defined
+            if (environmentController.Match.Teams.Length == 1)
+            {
+                if (planetConquestEnvironmentController.FixedOpponent == null || planetConquestEnvironmentController.FixedOpponent.AgentControllers.Length == 0)
+                {
+                    throw new System.Exception("Fixed opponent or FixedOpponent.AgentControllers is not defined");
+                    // TODO add error reporting here
+                }
+
+                int teamIndex = 1; // Fixed opponent is always on the second team
+                GameObject baseGameObject = Instantiate(planetConquestEnvironmentController.BasePrefab, BaseSpawnPoints[teamIndex].position, BaseSpawnPoints[teamIndex].rotation, gameObject.transform);
+                baseGameObject.layer = gameObject.layer;
+
+                T _base = baseGameObject.GetComponent<T>();
+                BaseComponent baseComponent = _base as BaseComponent;
+                baseComponent.TeamIdentifier.TeamID = teamIndex;
+                baseComponent.HealthComponent.Health = planetConquestEnvironmentController.BaseStartHealth;
+
+                // Assign base sprite
+                SpriteRenderer baseRenderer = baseGameObject.GetComponent<SpriteRenderer>();
+
+                if (teamIndex < planetConquestEnvironmentController.TeamColors.Length)
+                {
+                    baseRenderer.color = planetConquestEnvironmentController.TeamColors[teamIndex];
+                }
+                else
                 {
                     throw new System.Exception("Base color not defined");
                     // TODO Add error reporting here
