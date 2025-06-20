@@ -33,6 +33,9 @@ namespace Problems.PlanetConquest2
         PlanetConquest2AgentComponent hitAgent;
         BaseComponent hitBase;
 
+        float agentSpeed = 0f;
+        float rotationSpeed = 0f;
+
         private void Awake()
         {
             planetConquest2EnvironmentController = GetComponentInParent<PlanetConquest2EnvironmentController>();
@@ -46,6 +49,14 @@ namespace Problems.PlanetConquest2
 
         private void MoveAgent(PlanetConquest2AgentComponent agent)
         {
+            agentSpeed = planetConquest2EnvironmentController.LavaAgentForwardThrust;
+            rotationSpeed = planetConquest2EnvironmentController.LavaAgentTourque;
+            if(agent.AgentType == AgentType.Ice)
+            {
+                agentSpeed = planetConquest2EnvironmentController.IceAgentForwardThrust;
+                rotationSpeed = planetConquest2EnvironmentController.IceAgentTourque;
+            }
+
             dirToGo = Vector3.zero;
             rotateDir = Vector3.zero;
             rotateTurrentDir = Vector3.zero;
@@ -73,8 +84,8 @@ namespace Problems.PlanetConquest2
                     break;
             }
 
-            newAgentPos = UnityUtils.RoundToDecimals(agent.transform.position + (dirToGo * Time.fixedDeltaTime * planetConquest2EnvironmentController.AgentMoveSpeed), 2);
-            newAgentRotation = Quaternion.Euler(0, 0, agent.transform.rotation.eulerAngles.z + UnityUtils.RoundToDecimals(rotateDir.z * Time.fixedDeltaTime * planetConquest2EnvironmentController.AgentRotationSpeed, 2));
+            newAgentPos = UnityUtils.RoundToDecimals(agent.transform.position + (dirToGo * Time.fixedDeltaTime * agentSpeed), 2);
+            newAgentRotation = Quaternion.Euler(0, 0, agent.transform.rotation.eulerAngles.z + UnityUtils.RoundToDecimals(rotateDir.z * Time.fixedDeltaTime * rotationSpeed, 2));
 
             // Check if agent can be moved and rotated without colliding to other objects
             if (!PhysicsUtil.PhysicsOverlapObject(planetConquest2EnvironmentController.GameType, agent.gameObject, newAgentPos, planetConquest2EnvironmentController.AgentColliderExtendsMultiplier.x, Vector3.zero, newAgentRotation, PhysicsOverlapType.OverlapSphere, true, gameObject.layer, planetConquest2EnvironmentController.DefaultLayer))
