@@ -1,7 +1,6 @@
 using AgentOrganizations;
 using Base;
 using Configuration;
-using Problems.PlanetConquest;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +27,7 @@ namespace Problems.PlanetConquest2
         [SerializeField] private int LavaAgentCost = 5;
         [SerializeField] private int IceAgentCost = 5;
         [SerializeField] public Individual FixedOpponent;
+        [HideInInspector] public int FixedOpponentTeamId = 100000; // Team ID for fixed opponent
         [SerializeField] public int MaxNumOfAgents = 10;
 
         [SerializeField] public GameObject LavaAgentPrefab;
@@ -84,6 +84,8 @@ namespace Problems.PlanetConquest2
         float lava;
         float ice;
         bool canSpawn;
+
+        int agentsNum = 0;
 
         // Fitness calculation
         private double sectorExplorationFitness;
@@ -222,7 +224,72 @@ namespace Problems.PlanetConquest2
 
         private void SpawnNewAgents()
         {
-            // TODO
+            canSpawn = true;
+            foreach (BaseComponent baseComponent in Bases)
+            {
+                lava = baseComponent.LavaAmount;
+                ice = baseComponent.IceAmount;
+
+                if (lava >= LavaAgentCost || ice >= IceAgentCost)
+                {
+                    if (Agents != null)
+                    {
+                        foreach (PlanetConquest2AgentComponent agent in Agents)
+                        {
+                            if (agent.isActiveAndEnabled)
+                            {
+                                if (Vector3.Distance(agent.transform.position, (MatchSpawner as PlanetConquest2MatchSpawner).SpawnPoints[baseComponent.TeamIdentifier.TeamID >= FixedOpponentTeamId? 1 : 0].position) < 2f)
+                                {
+                                    canSpawn = false;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (canSpawn && Agents.Length < MaxNumOfAgents)
+                {
+                    if (lava >= LavaAgentCost && ice >= IceAgentCost)
+                    {
+                        if (lava >= ice)
+                        {
+                            PlanetConquest2AgentComponent obj = (PlanetConquest2AgentComponent)(MatchSpawner as PlanetConquest2MatchSpawner).Spawn<AgentComponent>(this, baseComponent.TeamIdentifier.TeamID, AgentType.Lava);
+                            SetLayerRecursively(obj.gameObject, gameObject.layer);
+                            List<AgentComponent> agentList = Agents.ToList();
+                            agentList.Add(obj);
+                            Agents = agentList.ToArray();
+                            baseComponent.LavaAmount -= LavaAgentCost;
+                        }
+                        else
+                        {
+                            PlanetConquest2AgentComponent obj = (PlanetConquest2AgentComponent)(MatchSpawner as PlanetConquest2MatchSpawner).Spawn<AgentComponent>(this, baseComponent.TeamIdentifier.TeamID, AgentType.Ice);
+                            SetLayerRecursively(obj.gameObject, gameObject.layer);
+                            List<AgentComponent> agentList = Agents.ToList();
+                            agentList.Add(obj);
+                            Agents = agentList.ToArray();
+                            baseComponent.IceAmount -= IceAgentCost;
+                        }
+                    }
+                    else if (lava >= LavaAgentCost)
+                    {
+                       PlanetConquest2AgentComponent obj = (PlanetConquest2AgentComponent)(MatchSpawner as PlanetConquest2MatchSpawner).Spawn<AgentComponent>(this, baseComponent.TeamIdentifier.TeamID, AgentType.Lava);
+                        SetLayerRecursively(obj.gameObject, gameObject.layer);
+                        List<AgentComponent> agentList = Agents.ToList();
+                        agentList.Add(obj);
+                        Agents = agentList.ToArray();
+                        baseComponent.LavaAmount -= LavaAgentCost;
+                    }
+                    else if (ice >= IceAgentCost)
+                    {
+                        PlanetConquest2AgentComponent obj = (PlanetConquest2AgentComponent)(MatchSpawner as PlanetConquest2MatchSpawner).Spawn<AgentComponent>(this, baseComponent.TeamIdentifier.TeamID, AgentType.Ice);
+                        SetLayerRecursively(obj.gameObject, gameObject.layer);
+                        List<AgentComponent> agentList = Agents.ToList();
+                        agentList.Add(obj);
+                        Agents = agentList.ToArray();
+                        baseComponent.IceAmount -= IceAgentCost;
+                    }
+                }
+            }
         }
 
         private void UpdateBaseMoney()
@@ -413,32 +480,34 @@ namespace Problems.PlanetConquest2
             numOfAllLavaPlanets = Planets.Where(p => p.PlanetType == PlanetType.Lava).Count();
             numOfAllIcePlanets = Planets.Where(p => p.PlanetType == PlanetType.Ice).Count();
 
+            agentsNum = Agents.Where( a => !a.IsFixedOpponent).ToList().Count;
+
             foreach (PlanetConquest2AgentComponent agent in Agents)
             {
                 // Check if agent is 
 
                 // SectorExploration
                 sectorExplorationFitness = agent.SectorsExplored / (double)Sectors.Length;
-                sectorExplorationFitness = (double)(Math.Round(PlanetConquest2Fitness.FitnessValues[PlanetConquest2Fitness.FitnessKeys.SectorExploration.ToString()] * sectorExplorationFitness, 4) / Agents.Length);
+                sectorExplorationFitness = (double)(Math.Round(PlanetConquest2Fitness.FitnessValues[PlanetConquest2Fitness.FitnessKeys.SectorExploration.ToString()] * sectorExplorationFitness, 4) / agentsNum);
                 agent.AgentFitness.UpdateFitness((float)sectorExplorationFitness, PlanetConquest2Fitness.FitnessKeys.SectorExploration.ToString());
 
                 // SurvivalBonus
                 survivalBonus = agent.MaxSurvivalTime / (double)CurrentSimulationSteps;
-                survivalBonus = (double)(Math.Round(PlanetConquest2Fitness.FitnessValues[PlanetConquest2Fitness.FitnessKeys.SurvivalBonus.ToString()] * survivalBonus, 4) / Agents.Length);
+                survivalBonus = (double)(Math.Round(PlanetConquest2Fitness.FitnessValues[PlanetConquest2Fitness.FitnessKeys.SurvivalBonus.ToString()] * survivalBonus, 4) / agentsNum);
                 agent.AgentFitness.UpdateFitness((float)survivalBonus, PlanetConquest2Fitness.FitnessKeys.SurvivalBonus.ToString());
                 agent.ResetSurvivalTime();
 
                 // LasersFired
                 allPossibleLasersFired = (CurrentSimulationSteps * Time.fixedDeltaTime) / LaserShootCooldown;
                 lasersFired = agent.LasersFired / allPossibleLasersFired;
-                lasersFired = (double)(Math.Round(PlanetConquest2Fitness.FitnessValues[PlanetConquest2Fitness.FitnessKeys.LasersFired.ToString()] * lasersFired, 4) / Agents.Length);
+                lasersFired = (double)(Math.Round(PlanetConquest2Fitness.FitnessValues[PlanetConquest2Fitness.FitnessKeys.LasersFired.ToString()] * lasersFired, 4) / agentsNum);
                 agent.AgentFitness.UpdateFitness((float)lasersFired, PlanetConquest2Fitness.FitnessKeys.LasersFired.ToString());
 
                 // LaserOpponentAccuracy
                 if (agent.LasersFired > 0)
                 {
                     lasersFiredOpponentAccuracy = agent.LaserHitOpponents / (double)agent.LasersFired;
-                    lasersFiredOpponentAccuracy = (double)(Math.Round(PlanetConquest2Fitness.FitnessValues[PlanetConquest2Fitness.FitnessKeys.LaserOpponentAccuracy.ToString()] * lasersFiredOpponentAccuracy, 4) / Agents.Length);
+                    lasersFiredOpponentAccuracy = (double)(Math.Round(PlanetConquest2Fitness.FitnessValues[PlanetConquest2Fitness.FitnessKeys.LaserOpponentAccuracy.ToString()] * lasersFiredOpponentAccuracy, 4) / agentsNum);
                     agent.AgentFitness.UpdateFitness((float)lasersFiredOpponentAccuracy, PlanetConquest2Fitness.FitnessKeys.LaserOpponentAccuracy.ToString());
                 }
 
@@ -446,7 +515,7 @@ namespace Problems.PlanetConquest2
                 if (agent.LasersFired > 0)
                 {
                     lasersFiredBaseAccuracy = agent.LaserHitBases / (double)agent.LasersFired;
-                    lasersFiredBaseAccuracy = (double)(Math.Round(PlanetConquest2Fitness.FitnessValues[PlanetConquest2Fitness.FitnessKeys.LaserOpponentBaseLaserAccuracy.ToString()] * lasersFiredBaseAccuracy, 4) / Agents.Length);
+                    lasersFiredBaseAccuracy = (double)(Math.Round(PlanetConquest2Fitness.FitnessValues[PlanetConquest2Fitness.FitnessKeys.LaserOpponentBaseLaserAccuracy.ToString()] * lasersFiredBaseAccuracy, 4) / agentsNum);
                     agent.AgentFitness.UpdateFitness((float)lasersFiredBaseAccuracy, PlanetConquest2Fitness.FitnessKeys.LaserOpponentBaseLaserAccuracy.ToString());
                 }
 
@@ -473,7 +542,7 @@ namespace Problems.PlanetConquest2
                 if (numOfFiredOpponentMissiles > 0)
                 {
                     damageTakenPenalty = agent.HitByOpponentLasers / (double)numOfFiredOpponentMissiles;
-                    damageTakenPenalty = (double)(Math.Round(PlanetConquest2Fitness.FitnessValues[PlanetConquest2Fitness.FitnessKeys.DamageTakenPenalty.ToString()] * damageTakenPenalty, 4) / Agents.Length);
+                    damageTakenPenalty = (double)(Math.Round(PlanetConquest2Fitness.FitnessValues[PlanetConquest2Fitness.FitnessKeys.DamageTakenPenalty.ToString()] * damageTakenPenalty, 4) / agentsNum);
                     agent.AgentFitness.UpdateFitness((float)damageTakenPenalty, PlanetConquest2Fitness.FitnessKeys.DamageTakenPenalty.ToString());
                 }
 
@@ -482,7 +551,7 @@ namespace Problems.PlanetConquest2
                 if (numOfAllLavaPlanetOrbitEnters > 0)
                 {
                     lavaPlanetOrbitEnters = agent.EnteredLavaPlanetOrbit / (double)numOfAllLavaPlanetOrbitEnters;
-                    lavaPlanetOrbitEnters = (double)(Math.Round(PlanetConquest2Fitness.FitnessValues[PlanetConquest2Fitness.FitnessKeys.LavaPlanetOrbitEnter.ToString()] * lavaPlanetOrbitEnters, 4) / Agents.Length);
+                    lavaPlanetOrbitEnters = (double)(Math.Round(PlanetConquest2Fitness.FitnessValues[PlanetConquest2Fitness.FitnessKeys.LavaPlanetOrbitEnter.ToString()] * lavaPlanetOrbitEnters, 4) / agentsNum);
                     agent.AgentFitness.UpdateFitness((float)lavaPlanetOrbitEnters, PlanetConquest2Fitness.FitnessKeys.LavaPlanetOrbitEnter.ToString());
                 }
 
@@ -491,7 +560,7 @@ namespace Problems.PlanetConquest2
                 if (numOfAllIcePlanetOrbitEnters > 0)
                 {
                     icePlanetOrbitEnters = agent.EnteredIcePlanetOrbit / (double)numOfAllIcePlanetOrbitEnters;
-                    icePlanetOrbitEnters = (double)(Math.Round(PlanetConquest2Fitness.FitnessValues[PlanetConquest2Fitness.FitnessKeys.IcePlanetOrbitEnter.ToString()] * icePlanetOrbitEnters, 4) / Agents.Length);
+                    icePlanetOrbitEnters = (double)(Math.Round(PlanetConquest2Fitness.FitnessValues[PlanetConquest2Fitness.FitnessKeys.IcePlanetOrbitEnter.ToString()] * icePlanetOrbitEnters, 4) / agentsNum);
                     agent.AgentFitness.UpdateFitness((float)icePlanetOrbitEnters, PlanetConquest2Fitness.FitnessKeys.IcePlanetOrbitEnter.ToString());
                 }
 

@@ -216,7 +216,10 @@ namespace Problems.PlanetConquest2
             captureProgress = Mathf.Max(0, captureProgress - environmentController.PlanetCaptureSpeed * Time.fixedDeltaTime);
             if (capturingTeamID != -1)
             {
-                planetOrbRenderer.color = Color.Lerp(environmentController.PlanetOrbColor, environmentController.TeamColors[capturingTeamID], captureProgress);
+                agent = environmentController.Agents.FirstOrDefault(a => a.TeamIdentifier.TeamID == capturingTeamID) as PlanetConquest2AgentComponent;
+                agentSpriteRenderer = agent.GetComponent<SpriteRenderer>();
+
+                planetOrbRenderer.color = Color.Lerp(environmentController.PlanetOrbColor, agentSpriteRenderer.color, captureProgress);
             }
         }
     }

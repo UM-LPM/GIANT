@@ -57,6 +57,42 @@ namespace Problems.PlanetConquest2
                 bases.Add(_base);
             }
 
+            // Spawn base for fixed opponent if defined
+            if (environmentController.Match.Teams.Length == 1)
+            {
+                if (planetConquestEnvironmentController.FixedOpponent == null || planetConquestEnvironmentController.FixedOpponent.AgentControllers.Length == 0)
+                {
+                    throw new System.Exception("Fixed opponent or FixedOpponent.AgentControllers is not defined");
+                    // TODO add error reporting here
+                }
+
+                int teamId = environmentController.Match.Teams[0].TeamId + 100000;
+                int i = 1;
+
+                GameObject baseGameObject = Instantiate(planetConquestEnvironmentController.BasePrefab, BaseSpawnPoints[i].position, BaseSpawnPoints[i].rotation, gameObject.transform);
+                baseGameObject.layer = gameObject.layer;
+
+                T _base = baseGameObject.GetComponent<T>();
+                BaseComponent baseComponent = _base as BaseComponent;
+                baseComponent.TeamIdentifier.TeamID = teamId;
+                baseComponent.HealthComponent.Health = planetConquestEnvironmentController.BaseStartHealth;
+
+                // Assign base sprite
+                SpriteRenderer baseRenderer = baseGameObject.GetComponent<SpriteRenderer>();
+
+                if (i < planetConquestEnvironmentController.TeamColors.Length)
+                {
+                    baseRenderer.color = planetConquestEnvironmentController.TeamColors[i];
+                }
+                else
+                {
+                    throw new System.Exception("Base color not defined");
+                    // TODO Add error reporting here
+                }
+
+                bases.Add(_base);
+            }
+
             return bases.ToArray();
         }
 

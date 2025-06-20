@@ -9,7 +9,9 @@ namespace Configuration
         Collector,
         Robostrike,
         Soccer,
-        BombClash
+        BombClash,
+        PlanetConquest,
+        PlanetConquest2
     }
 
     public class MenuManager : MonoBehaviour
@@ -106,6 +108,9 @@ namespace Configuration
                     break;
                 case "PlanetConquest":
                     UnityEngine.SceneManagement.SceneManager.LoadScene("PlanetConquestBaseScene");
+                    break;
+                case "PlanetConquest2":
+                    UnityEngine.SceneManagement.SceneManager.LoadScene("PlanetConquest2BaseScene");
                     break;
                 default:
                     Debug.LogError("Problem domain not found");
