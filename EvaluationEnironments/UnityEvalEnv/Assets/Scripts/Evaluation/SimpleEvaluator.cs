@@ -98,6 +98,9 @@ namespace Evaluators
                         }
                     }
 
+                    // Sort finalIndividualFitnessWrapper.FinalIndividualFitnesses by IndividualID
+                    finalIndividualFitnessWrapper.FinalIndividualFitnesses.Sort((x, y) => x.IndividualID.CompareTo(y.IndividualID));
+
                     // Return the final population fitnesses and BTS node call frequencies
                     return new CoordinatorEvaluationResult()
                     {

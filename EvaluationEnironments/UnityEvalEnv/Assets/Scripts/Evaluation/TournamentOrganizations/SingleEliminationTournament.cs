@@ -1,5 +1,6 @@
 using AgentOrganizations;
 using Base;
+using Evaluators.RatingSystems;
 using Fitnesses;
 using System;
 using System.Collections.Generic;
@@ -101,7 +102,7 @@ namespace Evaluators.TournamentOrganizations
             return TournamentMatches.ToArray();
         }
 
-        public override void UpdateTeamsScore(List<MatchFitness> tournamentMatchFitnesses)
+        public override void UpdateTeamsScore(List<MatchFitness> tournamentMatchFitnesses, List<RatingPlayer> players = null)
         {
             List<MatchFitness> tournamentMatchFitnessesCopy = new List<MatchFitness>(tournamentMatchFitnesses);
             // Add played TournamentMatches to the list of played TournamentMatches (add only matchFitnesses that are not dummy)

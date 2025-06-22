@@ -6,6 +6,7 @@ using Unity.VisualScripting;
 using Google.Protobuf.WellKnownTypes;
 using System;
 using Base;
+using Evaluators.RatingSystems;
 
 namespace Evaluators.TournamentOrganizations
 {
@@ -24,7 +25,7 @@ namespace Evaluators.TournamentOrganizations
 
         public abstract Match[] GenerateTournamentMatches();
 
-        public virtual void UpdateTeamsScore(List<MatchFitness> tournamentMatchFitnesses)
+        public virtual void UpdateTeamsScore(List<MatchFitness> tournamentMatchFitnesses, List<RatingPlayer> players = null)
         {
             List<MatchFitness> tournamentMatchFitnessesCopy = new List<MatchFitness>(tournamentMatchFitnesses);
             // Add played TournamentMatches to the list of played TournamentMatches (add only matchFitnesses that are not dummy)
@@ -135,6 +136,7 @@ namespace Evaluators.TournamentOrganizations
         LastVsAll, // Special Tournament for the creation of convergence graph
         SingleElimination,
         DoubleElimination,
-        KRandomOpponents
+        KRandomOpponents,
+        SimilarStrengthOpponentSelection
     }
 }

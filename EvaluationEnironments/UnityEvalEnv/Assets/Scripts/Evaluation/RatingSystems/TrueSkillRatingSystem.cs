@@ -13,7 +13,6 @@ namespace Evaluators.RatingSystems
 {
     public class TrueSkillRatingSystem : RatingSystem
     {
-        public List<TrueSkillPlayer> Players;
         public GameInfo GameInfo;
         public SkillCalculator SkillCalculator;
         public float MinRating;
@@ -21,7 +20,6 @@ namespace Evaluators.RatingSystems
 
         public TrueSkillRatingSystem()
         {
-            Players = new List<TrueSkillPlayer>();
             GameInfo = GameInfo.DefaultGameInfo;
             SkillCalculator = new TwoTeamTrueSkillCalculator();
             MinRating = 0;
@@ -173,46 +171,35 @@ namespace Evaluators.RatingSystems
 
         public TrueSkillPlayer GetPlayer(int id)
         {
-            return Players.Find(player => player.Player.Id.Equals(id));
-        }
-
-        public override void DisplayRatings()
-        {
-            List<TrueSkillPlayer> playersSorted = new List<TrueSkillPlayer>(Players);
-            playersSorted.Sort((player1, player2) => player2.Rating.Mean.CompareTo(player1.Rating.Mean));
-
-            foreach (TrueSkillPlayer player in playersSorted)
-            {
-                UnityEngine.Debug.Log($"Player {player.Player.Id}: {player.Rating}");
-            }
+            var player = Players.FirstOrDefault(p => p.IndividualID.Equals(id) && p is TrueSkillPlayer);
+            return player as TrueSkillPlayer;
         }
 
         public override RatingSystemRating[] GetFinalRatings()
         {
             RatingSystemRating[] ratings = new RatingSystemRating[Players.Count];
-            for (int i = 0; i < ratings.Length; i++)
+
+            var i = 0;
+            foreach (TrueSkillPlayer ratingPlayer in Players.OfType<TrueSkillPlayer>())
             {
-                ratings[i] = new RatingSystemRating(Players[i].IndividualID, Players[i].IndividualMatchResults, new Dictionary<string, double> { { "Rating", Players[i].Rating.Mean }, { "StdDeviation", Players[i].Rating.StandardDeviation } });
+                ratings[i] = new RatingSystemRating(Players[i].IndividualID, Players[i].IndividualMatchResults, new Dictionary<string, double> { { "Rating", ratingPlayer.Rating.Mean }, { "StdDeviation", ratingPlayer.Rating.StandardDeviation } });
+                i++;
             }
 
             return ratings;
         }
     }
 
-    public class TrueSkillPlayer
+    public class TrueSkillPlayer : RatingPlayer
     {
-        public int IndividualID { get; set; }
         public Player Player { get; set; }
         public Rating Rating { get; set; }
 
-        public List<IndividualMatchResult> IndividualMatchResults { get; set; }
-
-        public TrueSkillPlayer(int IndividualId, Player player, Rating rating)
+        public TrueSkillPlayer(int individualId, Player player, Rating rating)
+            :base(individualId)
         {
-            IndividualID = IndividualId;
             Player = player;
             Rating = rating;
-            IndividualMatchResults = new List<IndividualMatchResult>();
         }
 
         public void UpdateRating(Rating newRating)
@@ -220,15 +207,14 @@ namespace Evaluators.RatingSystems
             Rating = newRating;
         }
 
-        public void AddIndividualMatchResult(string matchName, IndividualFitness individualFitness, int[] opponentIDs)
+        public override void DisplayRating()
         {
-            IndividualMatchResults.Add(new IndividualMatchResult()
-            {
-                MatchName = matchName,
-                Value = individualFitness.Value,
-                IndividualValues = individualFitness.IndividualValues,
-                OpponentsIDs = opponentIDs
-            }); ;
+            UnityEngine.Debug.Log($"Player {Player.Id}: {Rating}");
+        }
+
+        public override double GetRating()
+        {
+            return Rating.Mean;
         }
     }
 }

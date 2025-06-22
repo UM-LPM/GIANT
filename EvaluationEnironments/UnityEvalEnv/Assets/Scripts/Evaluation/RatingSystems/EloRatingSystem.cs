@@ -13,8 +13,6 @@ namespace Evaluators.RatingSystems
 {
     public class EloRatingSystem : RatingSystem
     {
-        public List<EloPlayer> Players;
-
         public decimal DefaultRating;
         public int KFactorBellow2100;
         public int KFactorBetween2100And2400;
@@ -24,7 +22,6 @@ namespace Evaluators.RatingSystems
 
         public EloRatingSystem(decimal defaultRating = 1000, int kFactorBellow2100 = 40, int kFactorBetween2100And2400 = 20, int kFactorAbove2400 = 10)
         {
-            Players = new List<EloPlayer>();
             DefaultRating = defaultRating;
             KFactorBellow2100 = kFactorBellow2100;
             KFactorBetween2100And2400 = kFactorBetween2100And2400;
@@ -130,23 +127,15 @@ namespace Evaluators.RatingSystems
             }
         }
 
-        public override void DisplayRatings()
-        {
-            List<EloPlayer> playersSorted = new List<EloPlayer>(Players);
-            playersSorted.Sort((player1, player2) => player2.Rating.CompareTo(player1.Rating));
-
-            foreach (EloPlayer player in playersSorted)
-            {
-                UnityEngine.Debug.Log($"Player {player.IndividualID}: Rating: {player.Rating},  K Factor:{player.KFactor}");
-            }
-        }
-
         public override RatingSystemRating[] GetFinalRatings()
         {
             RatingSystemRating[] ratings = new RatingSystemRating[Players.Count];
-            for (int i = 0; i < ratings.Length; i++)
+
+            var i = 0;
+            foreach (EloPlayer ratingPlayer in Players.OfType<EloPlayer>())
             {
-                ratings[i] = new RatingSystemRating(Players[i].IndividualID, Players[i].IndividualMatchResults, new Dictionary<string, double> { { "Rating", (double)Players[i].Rating }, { "KFactor", Players[i].KFactor } });
+                ratings[i] = new RatingSystemRating(Players[i].IndividualID, Players[i].IndividualMatchResults, new Dictionary<string, double> { { "Rating", (double)ratingPlayer.Rating }, { "KFactor", ratingPlayer.KFactor } });
+                i++;
             }
 
             return ratings;
@@ -154,7 +143,8 @@ namespace Evaluators.RatingSystems
 
         public EloPlayer GetPlayer(int id)
         {
-            return Players.Find(player => player.IndividualID.Equals(id));
+            var player = Players.FirstOrDefault(p => p.IndividualID.Equals(id) && p is EloPlayer);
+            return player as EloPlayer;
         }
 
         private decimal[] GetMatchResult(float[] teamFitnesses)
@@ -207,21 +197,16 @@ namespace Evaluators.RatingSystems
         }
     }
 
-    public class EloPlayer
+    public class EloPlayer : RatingPlayer
     {
-        public int IndividualID { get; set; }
         public decimal Rating { get; set; }
         public int KFactor { get; set; }
-        public List<IndividualMatchResult> IndividualMatchResults { get; set; }
-        public int PreviousMatchesPlayed{ get; set; }
 
-        public EloPlayer(int IndividualId, decimal initialRating, int kFactor, int previousMatchesPlayed = 0)
+        public EloPlayer(int individualId, decimal initialRating, int kFactor)
+            : base(individualId)
         {
-            IndividualID = IndividualId;
             Rating = initialRating;
             KFactor = kFactor;
-            IndividualMatchResults = new List<IndividualMatchResult>();
-            PreviousMatchesPlayed = previousMatchesPlayed;
         }
 
         public void UpdateRating(decimal newRating)
@@ -234,31 +219,30 @@ namespace Evaluators.RatingSystems
         /// </summary>
         public void UpdateKFactor(int KFactorBellow2100, int kFactorBetween2100And2400, int kFactorAbove2400)
         {
-            if(Math.Abs(Rating) < 2100)
+            if (Math.Abs(Rating) < 2100)
             {
                 KFactor = KFactorBellow2100;
             }
-            
-            if((Math.Abs(Rating) >= 2100 && Math.Abs(Rating) < 2400) || IndividualMatchResults.Count == 30)
+
+            if ((Math.Abs(Rating) >= 2100 && Math.Abs(Rating) < 2400) || IndividualMatchResults.Count == 30)
             {
                 KFactor = kFactorBetween2100And2400;
             }
 
-            if(Math.Abs(Rating) > 2400)
+            if (Math.Abs(Rating) > 2400)
             {
                 KFactor = kFactorAbove2400;
             }
         }
 
-        public void AddIndividualMatchResult(string matchName, IndividualFitness individualFitness, int[] opponentIDs)
+        public override void DisplayRating()
         {
-            IndividualMatchResults.Add(new IndividualMatchResult()
-            {
-                MatchName = matchName,
-                Value = individualFitness.Value,
-                IndividualValues = individualFitness.IndividualValues,
-                OpponentsIDs = opponentIDs
-            }); ;
+            UnityEngine.Debug.Log($"Player {IndividualID}: Rating: {Rating}, K Factor: {KFactor}");
+        }
+
+        public override double GetRating()
+        {
+            return (double)Rating;
         }
     }
 }

@@ -7,7 +7,7 @@ namespace Evaluators.TournamentOrganizations
 {
     public class TournamentTeam : Team
     {
-        public int Score { get; set; }
+        public double Score { get; set; }
         public bool HasBye { get; set; }
 
         public TournamentTeam(int teamId, string teamName, Individual[] individuals) : this(teamId, teamName, individuals, 0, false)
@@ -15,7 +15,7 @@ namespace Evaluators.TournamentOrganizations
         }
 
         [JsonConstructor]
-        public TournamentTeam(int teamId, string teamName, Individual[] individuals, int score, bool hasBye) : base(teamId, teamName, individuals)
+        public TournamentTeam(int teamId, string teamName, Individual[] individuals, double score, bool hasBye) : base(teamId, teamName, individuals)
         {
             Score = score;
             HasBye = hasBye;

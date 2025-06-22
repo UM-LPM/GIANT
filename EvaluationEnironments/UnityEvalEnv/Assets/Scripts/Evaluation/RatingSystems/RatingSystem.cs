@@ -1,16 +1,22 @@
 using Evaluators.TournamentOrganizations;
 using Fitnesses;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Evaluators.RatingSystems
 {
     public abstract class RatingSystem
     {
+        public List<RatingPlayer> Players;
+
+        public RatingSystem()
+        {
+            Players = new List<RatingPlayer>();
+        }
+
         public abstract void UpdateRatings(List<MatchFitness> tournamentMatchFitnesses);
 
         public abstract void DefinePlayers(List<TournamentTeam> teams, RatingSystemRating[] initialPlayerRaitings);
-
-        public abstract void DisplayRatings();
 
         public abstract RatingSystemRating[] GetFinalRatings();
 
@@ -33,6 +39,18 @@ namespace Evaluators.RatingSystems
             }
 
             return ratingSystemRatings;
+        }
+
+        public void DisplayRatings(bool sortPlayers = true)
+        {
+            List<RatingPlayer> playersSorted = Players;
+            if(sortPlayers)
+                playersSorted = Players.OrderByDescending(p => (p.GetRating())).ToList();
+
+            foreach (RatingPlayer player in playersSorted)
+            {
+                player.DisplayRating();
+            }
         }
     }
 

@@ -27,9 +27,19 @@ namespace Evaluators
                     break;
 
                 List<MatchFitness> matchesFitnesses = await EvaluateTournamentMatches(evalRequestData, tournamentMatches);
-                TournamentOrganization.UpdateTeamsScore(matchesFitnesses);
 
-                RatingSystem.UpdateRatings(matchesFitnesses);
+                if (TournamentOrganization is SimilarStrengthOpponentSelection)
+                {
+                    RatingSystem.UpdateRatings(matchesFitnesses);
+
+                    TournamentOrganization.UpdateTeamsScore(matchesFitnesses, RatingSystem.Players);
+                }
+                else
+                {
+                    TournamentOrganization.UpdateTeamsScore(matchesFitnesses);
+
+                    RatingSystem.UpdateRatings(matchesFitnesses);
+                }
             }
 
             TournamentOrganization.DisplayStandings();

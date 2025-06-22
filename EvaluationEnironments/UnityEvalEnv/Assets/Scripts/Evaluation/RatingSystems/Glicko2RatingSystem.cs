@@ -14,15 +14,12 @@ namespace Evaluators.RatingSystems
 {
     public class Glicko2RatingSystem : RatingSystem
     {
-        public List<Glicko2Player> Players;
-
         public double DefaultRating;
         public double DefaultRatingDeviation;
         public double DefaultVolatility;
 
         public Glicko2RatingSystem(double defaultRating = 1500, double defaultRatingDeviation = 350, double defaultVolatility = 0.06)
         {
-            Players = new List<Glicko2Player>();
             DefaultRating = defaultRating;
             DefaultRatingDeviation = defaultRatingDeviation;
             DefaultVolatility = defaultVolatility;
@@ -133,24 +130,15 @@ namespace Evaluators.RatingSystems
             }
         }
 
-        public override void DisplayRatings()
-        {
-            List<Glicko2Player> playersSorted = new List<Glicko2Player>(Players);
-            playersSorted.Sort((player1, player2) => player2.Player.Rating.CompareTo(player1.Player.Rating));
-
-            foreach (Glicko2Player player in playersSorted)
-            {
-                UnityEngine.Debug.Log("Player: " + player.IndividualID + " Rating: " + player.Player.Rating + " RD: " + player.Player.RatingDeviation + " Volatility: " + player.Player.Volatility);
-            }
-        }
-
         public override RatingSystemRating[] GetFinalRatings()
         {
             RatingSystemRating[] ratings = new RatingSystemRating[Players.Count];
-            for (int i = 0; i < ratings.Length; i++)
+
+            var i = 0;
+            foreach (Glicko2Player ratingPlayer in Players.OfType<Glicko2Player>())
             {
-                // TODO Here also volatility should be added
-                ratings[i] = new RatingSystemRating(Players[i].IndividualID, Players[i].IndividualMatchResults, new Dictionary<string, double> { { "Rating", Players[i].Player.Rating }, { "RatingDeviation", Players[i].Player.RatingDeviation }, { "Volatility", Players[i].Player.Volatility} });
+                ratings[i] = new RatingSystemRating(Players[i].IndividualID, Players[i].IndividualMatchResults, new Dictionary<string, double> { { "Rating", ratingPlayer.Player.Rating }, { "RatingDeviation", ratingPlayer.Player.RatingDeviation }, { "Volatility", ratingPlayer.Player.Volatility } });
+                i++;
             }
 
             return ratings;
@@ -158,7 +146,8 @@ namespace Evaluators.RatingSystems
 
         public Glicko2Player GetPlayer(int id)
         {
-            return Players.Find(player => player.IndividualID.Equals(id));
+            var player = Players.FirstOrDefault(p => p.IndividualID.Equals(id) && p is Glicko2Player);
+            return player as Glicko2Player;
         }
 
         private float[] GetMatchResult(float[] teamFitnesses)
@@ -179,18 +168,14 @@ namespace Evaluators.RatingSystems
         }
     }
 
-    public class Glicko2Player
+    public class Glicko2Player : RatingPlayer
     {
-        public int IndividualID { get; set; }
         public GlickoPlayer Player { get; set; }
 
-        public List<IndividualMatchResult> IndividualMatchResults { get; set; }
-
-        public Glicko2Player(int IndividualId, double rating, double ratingDeviation, double volatility)
+        public Glicko2Player(int individualId, double rating, double ratingDeviation, double volatility)
+            :base(individualId)
         {
-            IndividualID = IndividualId;
             Player = new GlickoPlayer(rating, ratingDeviation, volatility);
-            IndividualMatchResults = new List<IndividualMatchResult>();
         }
 
         public void UpdateRating(GlickoPlayer player)
@@ -198,15 +183,14 @@ namespace Evaluators.RatingSystems
             Player = player;
         }
 
-        public void AddIndividualMatchResult(string matchName, IndividualFitness individualFitness, int[] opponentIDs)
+        public override void DisplayRating()
         {
-            IndividualMatchResults.Add(new IndividualMatchResult()
-            {
-                MatchName = matchName,
-                Value = individualFitness.Value,
-                IndividualValues = individualFitness.IndividualValues,
-                OpponentsIDs = opponentIDs
-            }); ;
+            UnityEngine.Debug.Log("Player: " + IndividualID + " Rating: " + Player.Rating + " RD: " + Player.RatingDeviation + " Volatility: " + Player.Volatility);
+        }
+
+        public override double GetRating()
+        {
+            return Player.Rating;
         }
     }
 }
