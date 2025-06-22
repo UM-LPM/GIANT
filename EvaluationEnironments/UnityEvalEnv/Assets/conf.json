@@ -1,57 +1,85 @@
 {
-	"AutoStart": true,
-	"ProblemDomain": "Collector",
-	"CoordinatorURI": "http://localhost:4000/",
-	"IndividualsSourceJSON": "...\\GIANT\\EvaluationEnironments\\UnityEvalEnv\\Assets\\Resources\\JSONs\\Collector\\",
-	"IndividualsSourceSO": "Assets\\Resources\\SOs\\Collector",
-	"ConvertSOToJSON": false,
-	"StartCommunicatorURI": "http://localhost:4444/",
-	"TimeScale": 2,
-	"FixedTimeStep": 0.02,
-	"RerunTimes": 1,
-	"InitialSeed": 963852,
-	"Render": true,
-	"RandomSeedMode": 1,
-	"SimulationSteps": 3000,
-	"SimulationTime": 0,
-	"IncludeEncapsulatedNodesToFreqCount": false,
-	"EvaluatorType": 0, 
-	"RatingSystemType": -1,
-	"TournamentOrganizationType": 3,
-	"TournamentRounds": -1,
-	"SwapTournamentMatchTeams": false,
-	"GameScenarios": [
-		{"GameSceneName": "CollectorGameScene"}
-		
-	],
-	"AgentScenarios": [
-		{
-			"AgentSceneName": "CollectorAgentScene", 
-			"GameScenarios": [
-				{"GameSceneName": "CollectorGameScene"}
-			]
-		}
-	],
-	"ProblemConfiguration": {
-		"DecisionRequestInterval": 2,
-		"ArenaRadius": 18,
-		"ArenaOffset": 0.0,
-		"AgentMoveSpeed": 10,
-		"AgentRotationSpeed": 180,
-		"GameMode": 1,
-		"StartNumberOfTargets": 1,
-		"TargetMinDistanceFromAgents": 10,
-		"TargetToTargetMinDistance": 10
-	},
-	"FitnessValues": 
-	{ 
-		"AgentPickedTarget": -50,
-		"AgentExploredSector": -3,
-		"AgentReExploredSector": -1,
-		"AgentNearTarget": -2,
-		"AgentSpottedTarget": -2,
-		"AgentTouchedStaticObject": 5,
-		"AgentNotMoved": 0,
-		"TimePassedPenalty": 0
-	}
-}
+				"AutoStart": true,
+				"ProblemDomain": "PlanetConquest2",
+				"CoordinatorURI": "http://localhost:4000/",
+				"IndividualsSourceJSON": "C:\\Users\\marko\\UnityProjects\\GIANT\\Builds\\Resources\\PlanetConquest\\",
+				"IndividualsSourceSO": "Assets\\Resources\\SOs\\PlanetConquest",
+				"ConvertSOToJSON": true,
+				"StartCommunicatorURI": "http://localhost:4444/",
+				"TimeScale": 20,
+				"FixedTimeStep": 0.02,
+				"RerunTimes": 1,
+				"InitialSeed": 963852,
+				"Render": true,
+				"RandomSeedMode": 1,
+				"SimulationSteps": 20000,
+				"SimulationTime": 0,
+				"IncludeEncapsulatedNodesToFreqCount": false,
+				"EvaluatorType": 0, 
+				"RatingSystemType": -1,
+				"TournamentOrganizationType": 3,
+				"TournamentRounds": -1,
+				"SwapTournamentMatchTeams": false,
+				"GameScenarios": [
+					{"GameSceneName": "PlanetConquest2GameScene"}
+					
+				],
+				"AgentScenarios": [
+					{
+						"AgentSceneName": "PlanetConquest2AgentScene", 
+						"GameScenarios": [
+							{"GameSceneName": "PlanetConquest2GameScene"}
+						]
+					}
+				],
+				"ProblemConfiguration": {
+					"DecisionRequestInterval": 2,
+					"ArenaSizeX": 20,
+					"ArenaSizeY": 20,
+					"ArenaSizeZ": 0,
+					"ArenaOffset": 3.0,
+					"MaxBaseHealth": 20,
+					"MaxAgentHealth": 10,
+					"MaxAgentEnergy": 30,
+					"AgentStartHealth": 10,
+					"AgentStartEnergy": 30,
+					"BaseStartHealth": 20,
+					"LaserEnergyConsumption": 5,
+					"LaserHitEnergyBonus": 5,
+					"UnlimitedEnergy": true,
+					"FrienlyFire": false,
+					"LavaAgentCost": 10,
+					"IceAgentCost": 10,
+					"MaxNumOfAgents": 8,
+					"AgentRespawnType": 0,
+					"GameScenarioType": 1,
+					"LavaPlanetSpawnAmount": 4,
+					"IcePlanetSpawnAmount": 4,
+					"PlanetCaptureTime": 5,
+					"AgentMoveSpeed": 5,
+					"AgentRotationSpeed": 80,
+					"LavaAgentForwardThrust": 5.0,
+					"LavaAgentTourque": 80,
+					"IceAgentForwardThrust": 2.5,
+					"IceAgentTourque": 70,
+					"LaserRange": 10,
+					"LaserShootCooldown": 1.0,
+					"LaserDamage": 2,
+					"RayHitObjectDetectionType": 1
+				},
+				"FitnessValues": 
+				{ 
+					"SectorExploration": -10,
+					"SurvivalBonus": 0,
+					"LasersFired": -30,
+					"LaserOpponentAccuracy": -10,
+					"LaserOpponentBaseLaserAccuracy": -100,
+					"OpponentDestroyedBonus": -200,
+					"OpponentBaseDestroyedBonus": -500,
+					"DamageTakenPenalty": 15,
+					"LavaPlanetOrbitEnter": -10,
+					"IcePlanetOrbitEnter": -10,
+					"LavaPlanetOrbitCapture": -50,
+					"IcePlanetOrbitCapture": -50,
+				}
+			}
