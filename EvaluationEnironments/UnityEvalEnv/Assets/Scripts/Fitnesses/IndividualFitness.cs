@@ -1,6 +1,7 @@
 using Base;
 using System.Collections.Generic;
 using System.Linq;
+using AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
 using UnityEngine;
 
 namespace Fitnesses
@@ -12,6 +13,7 @@ namespace Fitnesses
         public Dictionary<string, float> IndividualValues { get; set; }
 
         public Dictionary<string, double> AdditionalValues { get; set; }
+        public Dictionary<string, object> IndividualPerformanceData { get; set; }
 
         public IndividualFitness()
         {
@@ -19,6 +21,7 @@ namespace Fitnesses
             Value = 0f;
             IndividualValues = new Dictionary<string, float>();
             AdditionalValues = new Dictionary<string, double>();
+            IndividualPerformanceData = new Dictionary<string, object>();
         }
 
         public void AddAgentFitness(AgentComponent agent)
@@ -31,6 +34,12 @@ namespace Fitnesses
             {
                 throw new System.Exception("Individual ID does not match");
                 // TODO Add error reporting here
+            }
+
+            // Check if agent controller is of type BehaviourController
+            if (agent.AgentController is BehaviorTreeAgentController behaviourController)
+            {
+                IndividualPerformanceData["NodeCallFrequencyCount"] = behaviourController.GetNodeCallFrequencies(false);
             }
 
             UpdateFitness(agent.AgentFitness);
@@ -102,7 +111,7 @@ namespace Fitnesses
             AdditionalValues = new Dictionary<string, double>();
         }
 
-        public void AddIndividualFitness(IndividualFitness individualFitness, string matchName, int[] opponentIDs)
+        public void AddIndividualFitness(IndividualFitness individualFitness, string matchName, int[] opponentIDs, Dictionary<string, object> individualPerformanceData)
         {
             if (IndividualID == -1)
             {
@@ -120,7 +129,8 @@ namespace Fitnesses
                 MatchName = matchName,
                 Value = individualFitness.Value,
                 IndividualValues = individualFitness.IndividualValues,
-                OpponentsIDs = opponentIDs
+                OpponentsIDs = opponentIDs,
+                IndividualPerformanceData = individualPerformanceData
             });
 
             // Update additional values
@@ -184,6 +194,7 @@ namespace Fitnesses
         public string MatchName { get; set; }
         public float Value { get; set; }
         public Dictionary<string, float> IndividualValues { get; set; }
+        public Dictionary<string, object> IndividualPerformanceData { get; set; }
     }
 
     public class FinalIndividualFitnessWrapper
@@ -195,18 +206,18 @@ namespace Fitnesses
             FinalIndividualFitnesses = new List<FinalIndividualFitness>();
         }
 
-        public void UpdateFinalIndividualFitnesses(IndividualFitness individualFitness, string matchName, int[] opponentIDs)
+        public void UpdateFinalIndividualFitnesses(IndividualFitness individualFitness, string matchName, int[] opponentIDs, Dictionary<string, object> individualPerformanceData)
         {
             FinalIndividualFitness finalIndividualFitness = FinalIndividualFitnesses.Find(x => x.IndividualID == individualFitness.IndividualID);
             if (finalIndividualFitness == null)
             {
                 finalIndividualFitness = new FinalIndividualFitness();
-                finalIndividualFitness.AddIndividualFitness(individualFitness, matchName, opponentIDs);
+                finalIndividualFitness.AddIndividualFitness(individualFitness, matchName, opponentIDs, individualPerformanceData);
                 FinalIndividualFitnesses.Add(finalIndividualFitness);
             }
             else
             {
-                finalIndividualFitness.AddIndividualFitness(individualFitness, matchName, opponentIDs);
+                finalIndividualFitness.AddIndividualFitness(individualFitness, matchName, opponentIDs, individualPerformanceData);
             }
         }
 

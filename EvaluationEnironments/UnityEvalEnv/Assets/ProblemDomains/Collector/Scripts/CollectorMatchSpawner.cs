@@ -18,9 +18,9 @@ namespace Spawners
                 throw new System.Exception("EnvironmentController is not defined");
                 // TODO Add error reporting here
             }
-            if (!(environmentController is DummyEnvironmentController))
+            if (!(environmentController is CollectorEnvironmentController))
             {
-                throw new System.Exception("EnvironmentController is not of type DummyEnvironmentController");
+                throw new System.Exception("EnvironmentController is not of type CollectorEnvironmentController");
                 // TODO Add error reporting here
             }
             if (environmentController.Match == null)

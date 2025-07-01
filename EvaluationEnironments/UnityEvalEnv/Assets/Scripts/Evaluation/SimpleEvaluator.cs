@@ -86,7 +86,12 @@ namespace Evaluators
                                 {
                                     for (int z = 0; z < communicatorEvalResponseData.MatchFitnesses[i].TeamFitnesses[j].IndividualFitness.Count; z++)
                                     {
-                                        finalIndividualFitnessWrapper.UpdateFinalIndividualFitnesses(communicatorEvalResponseData.MatchFitnesses[i].TeamFitnesses[j].IndividualFitness[z], communicatorEvalResponseData.MatchFitnesses[i].MatchName, new int[] { });
+                                        finalIndividualFitnessWrapper.UpdateFinalIndividualFitnesses(
+                                            communicatorEvalResponseData.MatchFitnesses[i].TeamFitnesses[j].IndividualFitness[z],
+                                            communicatorEvalResponseData.MatchFitnesses[i].MatchName, 
+                                            new int[] { },
+                                            communicatorEvalResponseData.MatchFitnesses[i].TeamFitnesses[j].IndividualFitness[z].IndividualPerformanceData
+                                            );
                                     }
                                 }
                             }

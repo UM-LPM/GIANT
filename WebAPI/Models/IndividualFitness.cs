@@ -6,6 +6,7 @@
         public float Value { get; set; }
         public Dictionary<string, float>? IndividualValues { get; set; }
         public Dictionary<string, float>? AdditionalValues { get; set; }
+        public Dictionary<string, Object>? IndividualPerformanceData { get; set; }
     }
 
     public class FinalIndividualFitness
@@ -23,5 +24,6 @@
         public string? MatchName { get; set; }
         public float Value { get; set; }
         public Dictionary<string, float>? IndividualValues { get; set; }
+        public Dictionary<string, int[]>? IndividualPerformanceData { get; set; }
     }
 }
