@@ -29,6 +29,7 @@ namespace Base
         [SerializeField] public LayerMask DefaultLayer = 0;
         [SerializeField] GameObject Environment;
         [SerializeField] public SceneLoadMode SceneLoadMode;
+        [SerializeField] public bool IncludeNodeCallFrequencyCounts = false;
 
         [Header("Agent Initializaion Configuration")]
         [SerializeField] public GameObject AgentPrefab;
@@ -236,6 +237,15 @@ namespace Base
                     ArenaOffset = float.Parse(MainConfiguration.ProblemConfiguration["ArenaOffset"]);
                 }
 
+                if (MainConfiguration.IncludeNodeCallFrequencyCounts)
+                {
+                    IncludeNodeCallFrequencyCounts = MainConfiguration.IncludeNodeCallFrequencyCounts;
+                }
+                else
+                {
+                    IncludeNodeCallFrequencyCounts = false;
+                }
+
                 // TODO Add support in the future
                 //IncludeEncapsulatedNodesToFreqCount = conf.IncludeEncapsulatedNodesToFreqCount;
             }
@@ -339,7 +349,7 @@ namespace Base
             {
                 if (Agents[i].TeamIdentifier.TeamID >= 0)
                 {
-                    matchFitness.AddAgentFitness(Agents[i]);
+                    matchFitness.AddAgentFitness(Agents[i], IncludeNodeCallFrequencyCounts);
                 }
             }
 

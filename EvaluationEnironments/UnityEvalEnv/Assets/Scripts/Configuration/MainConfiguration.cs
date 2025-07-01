@@ -47,6 +47,7 @@ namespace Configuration
         public int GameMode { get; set; }
         public GameScenario[] GameScenarios { get; set; }
         public AgentScenario[] AgentScenarios { get; set; }
+        public bool IncludeNodeCallFrequencyCounts { get; set; }
 
         // Environment configuration
         public int SimulationSteps { get; set; }
@@ -65,12 +66,6 @@ namespace Configuration
 
         // AgentFitness configuration
         public Dictionary<string, float> FitnessValues { get; set; }
-
-        /*
-        public FitnessStatisticType FitnessStatisticType { get; set; }
-
-        // Problem specific configuration
-        public Dictionary<string, string> ProblemSpecificConfiguration { get; set; }*/
 
         public static void Serialize(MainConfiguration mainConfiguration, string destFilePath)
         {

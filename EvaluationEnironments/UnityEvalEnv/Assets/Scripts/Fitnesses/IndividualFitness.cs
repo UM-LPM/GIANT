@@ -24,7 +24,7 @@ namespace Fitnesses
             IndividualPerformanceData = new Dictionary<string, object>();
         }
 
-        public void AddAgentFitness(AgentComponent agent)
+        public void AddAgentFitness(AgentComponent agent, bool includeNodeCallFrequencyCounts)
         {
             if (IndividualID == -1)
             {
@@ -37,7 +37,7 @@ namespace Fitnesses
             }
 
             // Check if agent controller is of type BehaviourController
-            if (agent.AgentController is BehaviorTreeAgentController behaviourController)
+            if (agent.AgentController is BehaviorTreeAgentController behaviourController && includeNodeCallFrequencyCounts)
             {
                 IndividualPerformanceData["NodeCallFrequencyCount"] = behaviourController.GetNodeCallFrequencies(false);
             }

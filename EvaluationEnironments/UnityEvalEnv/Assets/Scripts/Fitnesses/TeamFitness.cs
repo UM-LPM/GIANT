@@ -13,7 +13,7 @@ namespace Fitnesses
             IndividualFitness = new List<IndividualFitness>();
         }
 
-        public void AddAgentFitness(AgentComponent agent)
+        public void AddAgentFitness(AgentComponent agent, bool includeNodeCallFrequencyCounts)
         {
             IndividualFitness individualFitness = IndividualFitness.Find(tf => tf.IndividualID == agent.IndividualID);
             if(individualFitness == null)
@@ -23,7 +23,7 @@ namespace Fitnesses
                 IndividualFitness.Add(individualFitness);
             }
 
-            individualFitness.AddAgentFitness(agent);
+            individualFitness.AddAgentFitness(agent, includeNodeCallFrequencyCounts);
         }
 
         public Dictionary<string, float> GetTeamIndividualValues()

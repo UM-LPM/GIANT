@@ -16,7 +16,7 @@ namespace Fitnesses
             IsDummy = false;
         }
 
-        public void AddAgentFitness(AgentComponent agent)
+        public void AddAgentFitness(AgentComponent agent, bool includeNodeCallFrequencyCounts)
         {
             TeamFitness teamFitness = TeamFitnesses.Find(tf => tf.TeamID == agent.TeamIdentifier.TeamID);
             if(teamFitness == null)
@@ -26,7 +26,7 @@ namespace Fitnesses
                 TeamFitnesses.Add(teamFitness);
             }
 
-            teamFitness.AddAgentFitness(agent);
+            teamFitness.AddAgentFitness(agent, includeNodeCallFrequencyCounts);
         }
 
         public float[] GetTeamFitnesses()
