@@ -393,12 +393,6 @@ namespace Problems.Robostrike
                                 {
                                     // Agent explored new sector
                                     agent.SectorsExplored++;
-                                    // TODO Remove
-                                    /*// Agent explored new sector
-                                    if (RobostrikeFitness.FitnessValues[RobostrikeFitness.Keys[(int)RobostrikeFitness.FitnessKeys.AgentExploredSector]] != 0)
-                                    {
-                                        agent.AgentFitness.UpdateFitness((RobostrikeFitness.FitnessValues[RobostrikeFitness.Keys[(int)RobostrikeFitness.FitnessKeys.AgentExploredSector]]), RobostrikeFitness.FitnessKeys.AgentExploredSector.ToString());
-                                    }*/
 
                                     agent.LastKnownSectorPositions.Add(sectorPosition);
                                 }

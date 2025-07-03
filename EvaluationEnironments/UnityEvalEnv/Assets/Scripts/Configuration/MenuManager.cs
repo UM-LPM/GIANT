@@ -104,6 +104,9 @@ namespace Configuration
                 case "BombClash":
                     UnityEngine.SceneManagement.SceneManager.LoadScene("BombClashBaseScene");
                     break;
+                case "BoxTact": 
+                    UnityEngine.SceneManagement.SceneManager.LoadScene("BoxTactBaseScene");
+                    break;
                 default:
                     Debug.LogError("Problem domain not found");
                     break;

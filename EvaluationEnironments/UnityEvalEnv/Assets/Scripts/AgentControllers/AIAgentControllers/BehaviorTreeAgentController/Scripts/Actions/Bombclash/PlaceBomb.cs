@@ -1,5 +1,5 @@
 ﻿
-namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController.Bombclash
+namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController.BombClash
 {
     public class PlaceBomb : ActionNode
     {
