@@ -1,5 +1,6 @@
 ﻿
 using AgentControllers.AIAgentControllers.BehaviorTreeAgentController.BombClash;
+using AgentControllers.AIAgentControllers.BehaviorTreeAgentController.DodgeBall;
 using AgentControllers.AIAgentControllers.BehaviorTreeAgentController.Robostrike;
 using WebAPI.Models;
 
@@ -141,6 +142,19 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
                 // Actions - Bomberman
                 case "PlaceBomb":
                     node = new PlaceBomb(treeModelNode.Guid, treeModelNode.Name, treeModelNode.Properties, treeModelNode.NodePosition);
+                    break;
+                // Actions Dodgeball
+                case "PickUpBall":
+                    node = new PickUpBall(treeModelNode.Guid, treeModelNode.Name, treeModelNode.Properties, treeModelNode.NodePosition);
+                    break;
+                case "ThrowBall":
+                    node = new ThrowBall(treeModelNode.Guid, treeModelNode.Name, treeModelNode.Properties, treeModelNode.NodePosition);
+                    break;
+                case "BallInHand":
+                    node = new BallInHand(treeModelNode.Guid, treeModelNode.Name, treeModelNode.Properties, treeModelNode.NodePosition);
+                    break;
+                case "BallInRange":
+                    node = new BallInRange(treeModelNode.Guid, treeModelNode.Name, treeModelNode.Properties, treeModelNode.NodePosition);
                     break;
                 default:
                     throw new Exception("Node type not recognized");

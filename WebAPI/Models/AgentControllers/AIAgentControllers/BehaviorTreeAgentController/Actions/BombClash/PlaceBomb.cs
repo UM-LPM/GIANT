@@ -15,7 +15,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController.BombCl
         {
             if (properties != null)
             {
-                placeBomb = properties.Find(p => p.Name == "PlaceBomb")?.Value ?? 1;
+                placeBomb = properties.Find(p => p.Name == "placeBomb")?.Value ?? 1;
             }
         }
     }

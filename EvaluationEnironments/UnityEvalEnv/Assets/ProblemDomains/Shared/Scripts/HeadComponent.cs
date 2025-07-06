@@ -1,6 +1,9 @@
 using UnityEngine;
 
-public class HeadComponent: MonoBehaviour
+namespace Problems
 {
+    public class HeadComponent : MonoBehaviour
+    {
 
+    }
 }

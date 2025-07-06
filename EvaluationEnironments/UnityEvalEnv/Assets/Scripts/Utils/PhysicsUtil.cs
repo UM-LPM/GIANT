@@ -77,6 +77,41 @@ namespace Utils
             return false;
         }
 
+        public static T[] PhysicsOverlapSphere<T>(GameType gameType, GameObject caller, Vector3 position, float radius, bool ignoreTriggerGameObjs, int layer, int defaultLayer)
+        {
+            List<T> ts = new List<T>();
+            Component[] colliders = null;
+            if (gameType == GameType._3D)
+            {
+                colliders = Physics.OverlapSphere(position, radius, LayerMask.GetMask(LayerMask.LayerToName(layer)) + defaultLayer);
+                if (ignoreTriggerGameObjs)
+                    colliders = colliders.Where(col => !(col as Collider).isTrigger).ToArray();
+            }
+            else
+            {
+                colliders = Physics2D.OverlapCircleAll(position, radius, LayerMask.GetMask(LayerMask.LayerToName(layer)) + defaultLayer);
+
+                if (ignoreTriggerGameObjs)
+                    colliders = colliders.Where(col => !(col as Collider2D).isTrigger).ToArray();
+
+            }
+
+            if (colliders.Length > 1 || (colliders.Length == 1 && caller != colliders[0].gameObject))
+            {
+                foreach (var collider in colliders)
+                {
+                    if (caller != collider.gameObject)
+                    {
+                        T component = collider.GetComponent<T>();
+                        if (component != null)
+                            ts.Add(component);
+                    }
+                }
+            }
+
+            return ts.ToArray();
+        }
+
         public static bool PhysicsOverlapCapsule(GameType gameType, GameObject caller, Vector3 position, float radius, Quaternion rotation, bool ignoreTriggerGameObjs, int layer, int defaultLayer)
         {
             throw new System.NotImplementedException();

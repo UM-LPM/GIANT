@@ -129,6 +129,14 @@ namespace WebAPI.Models {
                     return "a380d7f9274338e4485e03ec126c5859";
                 case NodeType.AmmoLevelBellow:
                     return "3541a6a84d600d443a32c4b10ae322a3";
+                case NodeType.BallInHand:
+                    return "b5314532df644ff4a9d9817783b7d1f3";
+                case NodeType.BallInRange:
+                    return "bba9a0211020ff544a7456dc3ec38148";
+                case NodeType.PickUpBall:
+                    return "d91480bd52c88d645bd43a55498470bf";
+                case NodeType.ThrowBall:
+                    return "0b6c54db52fce4942a44d87dfdf43a37";
             }
             return "";
         }

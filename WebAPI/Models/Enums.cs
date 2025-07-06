@@ -17,5 +17,9 @@
         HealthLevelBellow,
         ShieldLevelBellow,
         AmmoLevelBellow,
+        BallInRange,
+        BallInHand,
+        PickUpBall,
+        ThrowBall
     }
 }

@@ -182,7 +182,6 @@ namespace Problems.Collector
                 sectorExplorationFitness = (float)Math.Round(CollectorFitness.FitnessValues[CollectorFitness.FitnessKeys.SectorExploration.ToString()] * sectorExplorationFitness, 4);
                 agent.AgentFitness.UpdateFitness(sectorExplorationFitness, CollectorFitness.FitnessKeys.SectorExploration.ToString());
 
-                // Missiles fired accuracy
                 if (agent.TargetsAquired > 0)
                 {
                     targetsAcquiredFitness = agent.TargetsAquired / (float)MaxTargets;

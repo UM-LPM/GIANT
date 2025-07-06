@@ -1,0 +1,54 @@
+{
+				"AutoStart": true,
+				"ProblemDomain": "DodgeBall",
+				"CoordinatorURI": "http://localhost:4000/",
+				"IndividualsSourceJSON": "...\\GIANT\\EvaluationEnironments\\UnityEvalEnv\\Assets\\Resources\\JSONs\\DodgeBall\\",
+				"IndividualsSourceSO": "Assets\\Resources\\SOs\\DodgeBall",
+				"ConvertSOToJSON": false,
+				"StartCommunicatorURI": "http://localhost:4444/",
+				"TimeScale": 1,
+				"FixedTimeStep": 0.02,
+				"RerunTimes": 1,
+				"InitialSeed": 963852,
+				"Render": true,
+				"RandomSeedMode": 1,
+				"SimulationSteps": 2000,
+				"SimulationTime": 0,
+				"IncludeEncapsulatedNodesToFreqCount": false,
+				"EvaluatorType": 1, 
+				"RatingSystemType": -1,
+				"TournamentOrganizationType": 3,
+				"TournamentRounds": -1,
+				"SwapTournamentMatchTeams": false,
+				"GameScenarios": [
+					{"GameSceneName": "DodgeBallGameScene"}
+					
+				],
+				"AgentScenarios": [
+					{
+						"AgentSceneName": "DodgeBallAgentScene", 
+						"GameScenarios": [
+							{"GameSceneName": "DodgeBallGameScene"}
+						]
+					}
+				],
+				"IncludeNodeCallFrequencyCounts": false,
+				"ProblemConfiguration": {
+					"DecisionRequestInterval": 2,
+					"AgentUpdateinterval": 0.15,
+					"AgentRunSpeed": 1.0,
+					"AgentRotationSpeed": 100,
+					"AgentThrowPower": 40,
+					"AgentBallPickupRadius": 1.2,
+					"AgentBallInterceptProbability": 0.7
+				},
+				"FitnessValues": 
+				{ 
+					"SectorExploration": -30,
+					"BallsPickedUp": -100,
+					"BallsThrown": -100,
+					"BallsIntercepted": -200,
+					"BallsHit": -500,
+					"BallsHitBy": 100
+				}
+			}
