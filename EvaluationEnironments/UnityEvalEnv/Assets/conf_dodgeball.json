@@ -40,15 +40,21 @@
 					"AgentRotationSpeed": 100,
 					"AgentThrowPower": 40,
 					"AgentBallPickupRadius": 1.2,
-					"AgentBallInterceptProbability": 0.7
+					"AgentBallInterceptProbability": 0.7,
+					"AgentBallThrowCooldown": 0.5,
+					"MaxBallToOpponentAngle": 45.0,
+					"CalculateAgentToBallDistanceEvery": 1,
+					"RayHitObjectDetectionType": 1
 				},
 				"FitnessValues": 
 				{ 
-					"SectorExploration": -30,
-					"BallsPickedUp": -100,
-					"BallsThrown": -100,
+					"SectorExploration": -0,
+					"BallsPickedUp": -50,
+					"BallsThrown": -50,
+					"BallsThrownAtOpponent": -100,
 					"BallsIntercepted": -200,
-					"BallsHit": -500,
-					"BallsHitBy": 100
+					"OpponentsHit": -500,
+					"SurvivalBonus": -30,
+					"AgentToBallDistance": -30
 				}
 			}

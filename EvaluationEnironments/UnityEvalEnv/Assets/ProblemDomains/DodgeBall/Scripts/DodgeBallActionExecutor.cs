@@ -92,7 +92,7 @@ namespace Problems.DodgeBall
 
         void ThrowBall(DodgeBallAgentComponent agent)
         {
-            if (agent.ActionBuffer.GetDiscreteAction("throwBall") == 1)
+            if (agent.ActionBuffer.GetDiscreteAction("throwBall") == 1 && agent.NextThrowTime <= DodgeBallEnvironmentController.CurrentSimulationTime)
             {
                 // Throw ball in the direction the agent is facing
                 if (agent.BallInHand)
@@ -108,6 +108,14 @@ namespace Problems.DodgeBall
                     agent.BallInHand.Rigidbody.AddForce(throwDirection, ForceMode.VelocityChange);
 
                     agent.BallInHand = null;
+
+                    agent.NextThrowTime = DodgeBallEnvironmentController.CurrentSimulationTime + DodgeBallEnvironmentController.AgentBallThrowCooldown;
+
+                    // Check if agent threw a ball in an opponent's direction
+                    if (DodgeBallEnvironmentController.OpponentInThrowDirection(agent, throwDirection))
+                    {
+                        agent.BallsThrownAtOpponent++;
+                    }
                 }
             }
         }

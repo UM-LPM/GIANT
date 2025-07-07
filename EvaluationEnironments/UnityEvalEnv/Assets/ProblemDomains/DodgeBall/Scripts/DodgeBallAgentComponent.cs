@@ -11,7 +11,7 @@ namespace Problems.DodgeBall
         public Rigidbody Rigidbody { get; set; }
         public DodgeBallBallPositionComponent BallPosition { get; private set; }
         public DodgeBallBallComponent BallInHand { get; set; }
-
+        public float NextThrowTime { get; set; }
         public DodgeBallEnvironmentController DodgeBallEnvironmentController { get; private set; }
 
         private List<SectorComponent> ExploredSectors;
@@ -21,12 +21,18 @@ namespace Problems.DodgeBall
 
         public int BallsPickedUp { get; set; }
         public int BallsThrown { get; set; }
+        public int BallsThrownAtOpponent { get; set; }
         public int BallsIntercepted { get; set; }
 
         public int OpponentsHit { get; set; }
         public int BallsHitBy { get; set; }
 
         public int NumOfSpawns { get; set; }
+
+        public int MaxSurvivalTime { get; set; }
+        public int CurrentSurvivalTime { get; set; }
+
+        public float AgentToBallDistance { get; set; }
 
         protected override void DefineAdditionalDataOnAwake()
         {
@@ -46,6 +52,8 @@ namespace Problems.DodgeBall
             Rigidbody.angularVelocity = Vector3.zero;
             transform.position = StartPosition;
             transform.rotation = StartRotation;
+
+            ResetSurvivalTime();
 
             // Reset ball state
             if (BallInHand)
@@ -101,6 +109,15 @@ namespace Problems.DodgeBall
                     SectorsExplored++;
                 }
             }
+        }
+
+        public void ResetSurvivalTime()
+        {
+            if (CurrentSurvivalTime > MaxSurvivalTime)
+            {
+                MaxSurvivalTime = CurrentSurvivalTime;
+            }
+            CurrentSurvivalTime = 0;
         }
     }
 }

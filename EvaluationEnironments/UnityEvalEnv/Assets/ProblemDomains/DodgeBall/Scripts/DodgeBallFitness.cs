@@ -12,9 +12,11 @@ namespace Problems.DodgeBall
             { "SectorExploration", -30f },
             { "BallsPickedUp", -100f },
             { "BallsThrown", -100f },
+            { "BallsThrownAtOpponent", -50 },
             { "BallsIntercepted", -200f },
             { "OpponentsHit", -500f },
-            { "BallsHitBy", 100f },
+            { "SurvivalBonus", -30f },
+            { "AgentToBallDistance", -30f }
         };
 
         public static string[] Keys = FitnessValues.Keys.ToArray();
@@ -24,9 +26,11 @@ namespace Problems.DodgeBall
             SectorExploration,
             BallsPickedUp,
             BallsThrown,
+            BallsThrownAtOpponent,
             BallsIntercepted,
-            BallsHit,
-            BallsHitBy
+            OpponentsHit,
+            SurvivalBonus,
+            AgentToBallDistance
         }
     }
 }

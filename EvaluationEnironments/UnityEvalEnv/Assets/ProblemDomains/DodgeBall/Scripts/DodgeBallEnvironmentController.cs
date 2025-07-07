@@ -23,6 +23,9 @@ namespace Problems.DodgeBall
         [SerializeField] public float AgentThrowPower = 40f;
         [SerializeField] public float AgentBallPickupRadius = 1f;
         [SerializeField] public float AgentBallInterceptProbability = 0.6f; // The probability of an agent intercepting a ball thrown at them
+        [SerializeField] public float AgentBallThrowCooldown = 0.5f; // Cooldown time between throws
+        [SerializeField] public float MaxBallToOpponentAngle = 45f; // The maximum angle between the throw direction and the opponent's position to consider them hit
+        [SerializeField] public float CalculateAgentToBallDistanceEvery = 1f;
 
         [Header("Ball configuration")]
         [SerializeField] public GameObject BallPrefab;
@@ -39,14 +42,23 @@ namespace Problems.DodgeBall
         private float distanceToClosestBall = float.MaxValue;
         private float distance;
         private Vector3 nextPosition;
+        private Vector3 directionToOpponent;
+        private float angle;
+
+        private float timeSinceLastAgentToBallDistanceCalc;
+        private float maxAgentToBallDistance;
+        private float playgroundDiagonal = 18.317f;
 
         // Fitness calculation
         private float sectorExplorationFitness;
         private float ballsPickedUpFitness;
         private float ballsThrownFitness;
+        private float ballsThrownAtOpponent;
         private float ballsInterceptedFitness;
         private float opponentsHitFitness;
         private float ballsHitByFitness;
+        private float survivalBonusFitness;
+        private float agentToBallDistanceFitness;
 
         private int numOfOpponents;
 
@@ -76,6 +88,48 @@ namespace Problems.DodgeBall
         protected override void DefineAdditionalDataOnPostStart()
         {
             Balls = BallSpawner.Spawn<DodgeBallBallComponent>(this);
+        }
+
+        protected override void OnPostFixedUpdate()
+        {
+            if (GameState == GameState.RUNNING)
+            {
+                UpdateAgentsSurvivalTime();
+
+                timeSinceLastAgentToBallDistanceCalc += Time.fixedDeltaTime;
+
+                if (timeSinceLastAgentToBallDistanceCalc >= CalculateAgentToBallDistanceEvery)
+                {
+                    UpdateAgentProxityToBalls();
+                    timeSinceLastAgentToBallDistanceCalc = 0f;
+                }
+            }
+        }
+
+        private void UpdateAgentsSurvivalTime()
+        {
+            foreach (DodgeBallAgentComponent agent in Agents)
+            {
+                if (agent.gameObject.activeSelf)
+                {
+                    agent.CurrentSurvivalTime++;
+                }
+            }
+        }
+
+        private void UpdateAgentProxityToBalls()
+        {
+            foreach (var ball in Balls)
+            {
+                maxAgentToBallDistance += playgroundDiagonal;
+                foreach (DodgeBallAgentComponent agent in Agents)
+                {
+                    if (agent.gameObject.activeSelf)
+                    {
+                        agent.AgentToBallDistance += Vector3.Distance(agent.transform.position, ball.transform.position);
+                    }
+                }
+            }
         }
 
         public void BallHitAgent(DodgeBallAgentComponent hitAgent, DodgeBallBallComponent ball)
@@ -128,6 +182,25 @@ namespace Problems.DodgeBall
             SetAgentsFitness();
         }
 
+        public bool OpponentInThrowDirection(DodgeBallAgentComponent agent, Vector3 throwDirection)
+        {
+            // Check if there are any opponents in the direction of the throw
+            foreach (DodgeBallAgentComponent opponent in Agents)
+            {
+                if (opponent.TeamIdentifier.TeamID != agent.TeamIdentifier.TeamID)
+                {
+                    directionToOpponent = opponent.transform.position - agent.transform.position;
+                    angle = Vector3.Angle(throwDirection, directionToOpponent);
+                    if (angle < MaxBallToOpponentAngle) 
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
         private void SetAgentsFitness()
         {
             float secondsPased = CurrentSimulationSteps * Time.fixedDeltaTime;
@@ -151,6 +224,14 @@ namespace Problems.DodgeBall
                 ballsThrownFitness = (float)Math.Round(DodgeBallFitness.FitnessValues[DodgeBallFitness.FitnessKeys.BallsThrown.ToString()] * ballsThrownFitness, 4);
                 agent.AgentFitness.UpdateFitness(ballsThrownFitness, DodgeBallFitness.FitnessKeys.BallsThrown.ToString());
 
+                // Balls thrown at opponent
+                if (agent.BallsThrown > 0)
+                {
+                    ballsThrownAtOpponent = agent.BallsThrownAtOpponent / (float)agent.BallsThrown;
+                    ballsThrownAtOpponent = (float)Math.Round(DodgeBallFitness.FitnessValues[DodgeBallFitness.FitnessKeys.BallsThrownAtOpponent.ToString()] * ballsThrownAtOpponent, 4);
+                    agent.AgentFitness.UpdateFitness(ballsThrownAtOpponent, DodgeBallFitness.FitnessKeys.BallsThrownAtOpponent.ToString());
+                }
+
                 // Balls intercepted
                 ballsInterceptedFitness = agent.BallsIntercepted / secondsPased; // We suggest that the agent can intercept at least 1 ball per second (Upper limit)
                 ballsInterceptedFitness = ballsInterceptedFitness > 1? 1 : ballsInterceptedFitness;
@@ -162,16 +243,22 @@ namespace Problems.DodgeBall
                 if (numOfOpponents > 0)
                 {
                     opponentsHitFitness = agent.OpponentsHit / (float)numOfOpponents;
-                    opponentsHitFitness = (float)Math.Round(DodgeBallFitness.FitnessValues[DodgeBallFitness.FitnessKeys.BallsHit.ToString()] * opponentsHitFitness, 4);
-                    agent.AgentFitness.UpdateFitness(opponentsHitFitness, DodgeBallFitness.FitnessKeys.BallsHit.ToString());
+                    opponentsHitFitness = (float)Math.Round(DodgeBallFitness.FitnessValues[DodgeBallFitness.FitnessKeys.OpponentsHit.ToString()] * opponentsHitFitness, 4);
+                    agent.AgentFitness.UpdateFitness(opponentsHitFitness, DodgeBallFitness.FitnessKeys.OpponentsHit.ToString());
 
                 }
 
-                // Balls hit by
-                ballsHitByFitness = agent.BallsHitBy / secondsPased;
-                ballsHitByFitness = ballsHitByFitness > 1? 1 : ballsHitByFitness;
-                ballsHitByFitness = (float)Math.Round(DodgeBallFitness.FitnessValues[DodgeBallFitness.FitnessKeys.BallsHitBy.ToString()] * ballsHitByFitness, 4);
-                agent.AgentFitness.UpdateFitness(ballsHitByFitness, DodgeBallFitness.FitnessKeys.BallsHitBy.ToString());
+                // Survival bonus
+                agent.ResetSurvivalTime();
+
+                survivalBonusFitness = agent.MaxSurvivalTime / (float)CurrentSimulationSteps;
+                survivalBonusFitness = (float)Math.Round(DodgeBallFitness.FitnessValues[DodgeBallFitness.FitnessKeys.SurvivalBonus.ToString()] * survivalBonusFitness, 4);
+                agent.AgentFitness.UpdateFitness(survivalBonusFitness, DodgeBallFitness.FitnessKeys.SurvivalBonus.ToString());
+
+                // Agent to ball distance
+                agentToBallDistanceFitness = (maxAgentToBallDistance - agent.AgentToBallDistance) / maxAgentToBallDistance;
+                agentToBallDistanceFitness = (float)Math.Round(DodgeBallFitness.FitnessValues[DodgeBallFitness.FitnessKeys.AgentToBallDistance.ToString()] * agentToBallDistanceFitness, 4);
+                agent.AgentFitness.UpdateFitness(agentToBallDistanceFitness, DodgeBallFitness.FitnessKeys.AgentToBallDistance.ToString());
 
                 Debug.Log("========================================");
                 Debug.Log("Agent: Team ID" + agent.TeamIdentifier.TeamID + ", ID: " + agent.IndividualID);
@@ -180,7 +267,8 @@ namespace Problems.DodgeBall
                 Debug.Log("Balls thrown: " + agent.BallsThrown + " / " + secondsPased + " = " + ballsThrownFitness);
                 Debug.Log("Balls intercepted: " + agent.BallsIntercepted + " / " + secondsPased + " = " + ballsInterceptedFitness);
                 Debug.Log("Opponents hit: " + agent.OpponentsHit + " / " + numOfOpponents + " = " + opponentsHitFitness);
-                Debug.Log("Balls hit by: " + agent.BallsHitBy + " / " + secondsPased + " = " + ballsHitByFitness);
+                Debug.Log("Survival bonus: " + agent.MaxSurvivalTime + " / " + CurrentSimulationSteps + " = " + survivalBonusFitness);
+                Debug.Log("Agent to ball distance: " + (maxAgentToBallDistance - agent.AgentToBallDistance) + " / " +  maxAgentToBallDistance + " = " + agentToBallDistanceFitness);
                 Debug.Log("========================================");
 
             }
@@ -216,6 +304,21 @@ namespace Problems.DodgeBall
                 if (conf.ProblemConfiguration.ContainsKey("AgentBallInterceptProbability"))
                 {
                     AgentBallInterceptProbability = float.Parse(conf.ProblemConfiguration["AgentBallInterceptProbability"]);
+                }
+
+                if (conf.ProblemConfiguration.ContainsKey("AgentBallThrowCooldown"))
+                {
+                    AgentBallThrowCooldown = float.Parse(conf.ProblemConfiguration["AgentBallThrowCooldown"]);
+                }
+
+                if (conf.ProblemConfiguration.ContainsKey("MaxBallToOpponentAngle"))
+                {
+                    MaxBallToOpponentAngle = float.Parse(conf.ProblemConfiguration["MaxBallToOpponentAngle"]);
+                }
+
+                if (conf.ProblemConfiguration.ContainsKey("CalculateAgentToBallDistanceEvery"))
+                {
+                    CalculateAgentToBallDistanceEvery = float.Parse(conf.ProblemConfiguration["CalculateAgentToBallDistanceEvery"]);
                 }
             }
         }
