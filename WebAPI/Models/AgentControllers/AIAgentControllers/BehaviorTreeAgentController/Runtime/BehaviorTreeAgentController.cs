@@ -156,6 +156,9 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
                 case "BallInRange":
                     node = new BallInRange(treeModelNode.Guid, treeModelNode.Name, treeModelNode.Properties, treeModelNode.NodePosition);
                     break;
+                case "GoalAhead":
+                    node = new GoalAhead(treeModelNode.Guid, treeModelNode.Name, treeModelNode.Properties, treeModelNode.NodePosition);
+                    break;
                 default:
                     throw new Exception("Node type not recognized");
             }

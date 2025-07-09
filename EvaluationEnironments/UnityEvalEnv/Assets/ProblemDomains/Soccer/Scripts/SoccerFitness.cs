@@ -13,6 +13,10 @@ namespace Problems.Soccer
              { "PassesToOponentGoal", -50f },
              { "PassesToOwnGoal", -30f },
              { "Passes", -40f },
+             { "AgentToBallDistance", -30f },
+             { "BallToOpponentGoalDistance", -30f },
+             { "TimeWithoutGoalBonus", - 50f},
+             { "TimeLookingAtBall", - 50f},
         };
 
         public static string[] Keys = FitnessValues.Keys.ToArray();
@@ -25,7 +29,11 @@ namespace Problems.Soccer
             AutoGoals,
             PassesToOponentGoal,
             PassesToOwnGoal,
-            Passes
+            Passes,
+            AgentToBallDistance,
+            TimeWithoutGoalBonus,
+            TimeLookingAtBall,
+            BallToOpponentGoalDistance
         }
     }
 }

@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using Configuration;
 using System.Linq;
+using UnityEngine.UIElements;
 
 namespace Problems.Soccer
 {
@@ -25,6 +26,11 @@ namespace Problems.Soccer
         [SerializeField] public float KickPower = 2000f;
         [SerializeField] public static float VelocityPassTreshold = 0.2f;
         [SerializeField] public float PassTolerance = 10f; // Tolerance in degrees.
+        [SerializeField] public float CalculateAgentToBallDistanceEvery = 1f;
+        [SerializeField] public float MaxAgentToBallAngle = 30f;
+        [SerializeField] public float MaxAgentToGoalAngle = 45;
+        [SerializeField] public float BallStartPushForce = 15f;
+        [SerializeField] public float CalculateBallToGoalDistanceEvery = 0.5f;
 
         // Soccer Ball
         SoccerBallSpawner SoccerBallSpawner;
@@ -37,6 +43,21 @@ namespace Problems.Soccer
         // Sectors
         private SectorComponent[] Sectors;
 
+        private float timeSinceLastAgentToBallDistanceCalc;
+        private float maxAgentToBallDistance;
+        private float playgroundDiagonal = 33.54f;
+
+        private float timeSinceLastBallToGoalDistanceCalc;
+        private float maxBallToGoalDistance;
+
+        private float distance;
+
+        private Vector3 directionToBall;
+        private float angle;
+
+        Vector3 directionToGoal;
+        float angleToGoal;
+
         // Fitness calculation
         private float sectorExplorationFitness;
         private float goalsScoredFitness;
@@ -45,6 +66,10 @@ namespace Problems.Soccer
         private float passesToOponentGoalFitness;
         private float passesToOwnGoalFitness;
         private float passesFitness;
+        private float agentToBallDistanceFitness;
+        private float ballToGoalDistanceFitness;
+        private float timeWithoutGoalBonusFitness;
+        private float timeLookingAtBallFitness;
 
         private int teamAgentCount;
 
@@ -83,11 +108,11 @@ namespace Problems.Soccer
 
             if (SimulationSteps > 0)
             {
-                MaxPasses = (int)Math.Floor((SimulationSteps * Time.fixedDeltaTime)) / 2;
+                MaxPasses = (int)Math.Floor((SimulationSteps * Time.fixedDeltaTime));
             }
             else if(SimulationTime > 0)
             {
-                MaxPasses = (int)Math.Floor(SimulationTime) / 2;
+                MaxPasses = (int)Math.Floor(SimulationTime);
             }
         }
 
@@ -97,42 +122,87 @@ namespace Problems.Soccer
             SoccerBall = SoccerBallSpawner.Spawn<SoccerBallComponent>(this)[0];
         }
 
-        public void ReadParamsFromMainConfiguration()
+        protected override void OnPostFixedUpdate()
         {
-            if (MenuManager.Instance != null && MenuManager.Instance.MainConfiguration != null)
+            if (GameState == GameState.RUNNING)
             {
-                MainConfiguration conf = MenuManager.Instance.MainConfiguration;
+                UpdateAgentTimeWithoutGoal();
 
-                SoccerFitness.FitnessValues = conf.FitnessValues;
+                // Agent to ball distance calculation
+                timeSinceLastAgentToBallDistanceCalc += Time.fixedDeltaTime;
 
-                if (conf.ProblemConfiguration.ContainsKey("AgentRunSpeed"))
+                if (timeSinceLastAgentToBallDistanceCalc >= CalculateAgentToBallDistanceEvery)
                 {
-                    AgentRunSpeed = float.Parse(conf.ProblemConfiguration["AgentRunSpeed"]);
+                    UpdateAgentProxityToBall();
+                    timeSinceLastAgentToBallDistanceCalc = 0f;
                 }
 
-                if (conf.ProblemConfiguration.ContainsKey("AgentRotationSpeed"))
+                // Ball to goal distance calculation
+                timeSinceLastBallToGoalDistanceCalc += Time.fixedDeltaTime;
+                if (timeSinceLastBallToGoalDistanceCalc >= CalculateBallToGoalDistanceEvery)
                 {
-                    AgentRotationSpeed = float.Parse(conf.ProblemConfiguration["AgentRotationSpeed"]);
+                    UpdateBallToGoalProximity();
+
+                    timeSinceLastBallToGoalDistanceCalc = 0f;
                 }
 
-                if (conf.ProblemConfiguration.ContainsKey("KickPower"))
-                {
-                    KickPower = float.Parse(conf.ProblemConfiguration["KickPower"]);
-                }
+                UpdateTimeLookingAtBall();
+            }
+        }
 
-                if (conf.ProblemConfiguration.ContainsKey("GameScenarioType"))
+        private void UpdateAgentTimeWithoutGoal()
+        {
+            foreach (SoccerAgentComponent agent in Agents)
+            {
+                if (agent.gameObject.activeSelf)
                 {
-                    GameScenarioType = (SoccerGameScenarioType)int.Parse(conf.ProblemConfiguration["GameScenarioType"]);
+                    agent.CurrentTimeWithoutGoal++;
                 }
+            }
+        }
 
-                if (conf.ProblemConfiguration.ContainsKey("PassTolerance"))
+        private void UpdateAgentProxityToBall()
+        {
+            maxAgentToBallDistance += (playgroundDiagonal / 2);
+            foreach (SoccerAgentComponent agent in Agents)
+            {
+                if (agent.gameObject.activeSelf)
                 {
-                    PassTolerance = float.Parse(conf.ProblemConfiguration["PassTolerance"]);
+                    distance = Vector3.Distance(agent.transform.position, SoccerBall.transform.position);
+                    if(distance > (playgroundDiagonal / 2))
+                        distance = playgroundDiagonal / 2;
+
+                    agent.AgentToBallDistance += distance;
                 }
+            }
+        }
 
-                if (conf.ProblemConfiguration.ContainsKey("MaxGoals"))
+        public void UpdateBallToGoalProximity()
+        {
+            maxBallToGoalDistance += (playgroundDiagonal / 2);
+            distance = Vector3.Distance(SoccerBall.transform.position, GoalBlue.transform.position);
+            if (distance > (playgroundDiagonal / 2))
+                distance = playgroundDiagonal / 2;
+            SoccerBall.BallToBlueGoalDistance += distance;
+
+            distance = Vector3.Distance(SoccerBall.transform.position, GoalPurple.transform.position);
+            if (distance > (playgroundDiagonal / 2))
+                distance = playgroundDiagonal / 2;
+            SoccerBall.BallToPurpleGoalDistance += distance;
+        }
+
+        public void UpdateTimeLookingAtBall()
+        {
+            foreach (SoccerAgentComponent agent in Agents)
+            {
+                if (agent.gameObject.activeSelf)
                 {
-                    MaxGoals = int.Parse(conf.ProblemConfiguration["MaxGoals"]);
+                    directionToBall = (SoccerBall.transform.position - agent.transform.position).normalized;
+                    angle = Vector3.Angle(agent.transform.forward, directionToBall);
+                    if (angle < MaxAgentToBallAngle)
+                    {
+                        agent.TimeLookingAtBall += Time.fixedDeltaTime;
+                    }
                 }
             }
         }
@@ -179,8 +249,23 @@ namespace Problems.Soccer
                 striker.GoalsScored++;
             }
 
+            // ResetTimeWithoutGoal for all agents in the team
+            AgentComponent[] agents = Agents.Where(x => (x as SoccerAgentComponent).Team == goalComponent.Team).ToArray();
+            foreach (SoccerAgentComponent agent in agents)
+            {
+                agent.ResetTimeWithoutGoal();
+            }
+
             // Check engind state
             CheckEndingState();
+
+            if (GameState == GameState.RUNNING)
+            {
+                // Based on the last team that scored, push the ball towards this side after ball is respawned
+                Vector3 pushDirection = (goalComponent.Team == SoccerTeam.Blue ? GoalBlue.transform.position : GoalPurple.transform.position) - SoccerBall.transform.position;
+                pushDirection.Normalize();
+                SoccerBall.Rigidbody.AddForce(pushDirection * BallStartPushForce, ForceMode.Impulse);
+            }
         }
 
         public override void CheckEndingState()
@@ -213,6 +298,30 @@ namespace Problems.Soccer
             return team == SoccerTeam.Blue ? GoalPurple.GoalsReceived : GoalBlue.GoalsReceived;
         }
 
+        public GoalComponent TeamGoalAhead(SoccerAgentComponent agent)
+        {
+            // Return teams goal if agent is facing it
+            directionToGoal = (agent.Team == SoccerTeam.Blue ? GoalBlue.transform.position : GoalPurple.transform.position) - agent.transform.position;
+            directionToGoal.Normalize();
+            angleToGoal = Vector3.Angle(agent.transform.forward, directionToGoal);
+            if (angleToGoal < MaxAgentToGoalAngle)
+            {
+                return agent.Team == SoccerTeam.Blue ? GoalBlue : GoalPurple;
+            }
+
+            // Return opponent goal if agent is facing it
+            directionToGoal = (agent.Team == SoccerTeam.Blue ? GoalPurple.transform.position : GoalBlue.transform.position) - agent.transform.position;
+            directionToGoal.Normalize();
+            angleToGoal = Vector3.Angle(agent.transform.forward, directionToGoal);
+            if (angleToGoal < MaxAgentToGoalAngle)
+            {
+                return agent.Team == SoccerTeam.Blue ? GoalPurple : GoalBlue;
+            }
+
+            // Return null if agent is not facing any goal
+            return null;
+        }
+
         private void SetAgentsFitness()
         {
             foreach (SoccerAgentComponent agent in Agents)
@@ -225,17 +334,17 @@ namespace Problems.Soccer
                 agent.AgentFitness.UpdateFitness(sectorExplorationFitness, SoccerFitness.FitnessKeys.SectorExploration.ToString());
 
                 // Goals scored
-                goalsScoredFitness = agent.GoalsScored / (float)MaxGoals;
+                goalsScoredFitness = agent.GoalsScored / (float)SoccerBall.NumOfSpawns;
                 goalsScoredFitness = (float)Math.Round(SoccerFitness.FitnessValues[SoccerFitness.FitnessKeys.GoalsScored.ToString()] * goalsScoredFitness, 4);
                 agent.AgentFitness.UpdateFitness(goalsScoredFitness, SoccerFitness.FitnessKeys.GoalsScored.ToString());
 
                 // Auto goals scored
-                autoGoalsScoredFitness = agent.AutoGoalsScored / (float)MaxGoals;
+                autoGoalsScoredFitness = agent.AutoGoalsScored / (float)SoccerBall.NumOfSpawns;
                 autoGoalsScoredFitness = (float)Math.Round(SoccerFitness.FitnessValues[SoccerFitness.FitnessKeys.AutoGoals.ToString()] * autoGoalsScoredFitness, 4);
                 agent.AgentFitness.UpdateFitness(autoGoalsScoredFitness, SoccerFitness.FitnessKeys.AutoGoals.ToString());
 
                 // Goals received (Every agents gets portion of the team goals received fitness)
-                goalsReceivedFitness = (agent.Team == SoccerTeam.Blue ? GoalBlue.GoalsReceived : GoalPurple.GoalsReceived) / (float)MaxGoals;
+                goalsReceivedFitness = (agent.Team == SoccerTeam.Blue ? GoalBlue.GoalsReceived : GoalPurple.GoalsReceived) / (float)SoccerBall.NumOfSpawns;
                 goalsReceivedFitness = (float)Math.Round(SoccerFitness.FitnessValues[SoccerFitness.FitnessKeys.GoalsReceived.ToString()] * goalsReceivedFitness, 4);
                 goalsReceivedFitness /= teamAgentCount;
                 agent.AgentFitness.UpdateFitness(goalsReceivedFitness, SoccerFitness.FitnessKeys.GoalsReceived.ToString());
@@ -263,17 +372,118 @@ namespace Problems.Soccer
                 passesFitness = (float)Math.Round(SoccerFitness.FitnessValues[SoccerFitness.FitnessKeys.Passes.ToString()] * passesFitness, 4);
                 agent.AgentFitness.UpdateFitness(passesFitness, SoccerFitness.FitnessKeys.Passes.ToString());
 
-                /*
+                // Agent to ball distance
+                agentToBallDistanceFitness = (maxAgentToBallDistance - agent.AgentToBallDistance) / maxAgentToBallDistance;
+                agentToBallDistanceFitness = (float)Math.Round(SoccerFitness.FitnessValues[SoccerFitness.FitnessKeys.AgentToBallDistance.ToString()] * agentToBallDistanceFitness, 4);
+                agentToBallDistanceFitness /= teamAgentCount;
+                agent.AgentFitness.UpdateFitness(agentToBallDistanceFitness, SoccerFitness.FitnessKeys.AgentToBallDistance.ToString());
+
+                // Ball to goal opponent goal distance
+                if (agent.Team == SoccerTeam.Blue)
+                {
+                    distance = SoccerBall.BallToPurpleGoalDistance;
+                }
+                else
+                {
+                    distance = SoccerBall.BallToBlueGoalDistance;
+                }
+
+                ballToGoalDistanceFitness = (maxBallToGoalDistance - distance) / maxBallToGoalDistance;
+                ballToGoalDistanceFitness = (float)Math.Round(SoccerFitness.FitnessValues[SoccerFitness.FitnessKeys.BallToOpponentGoalDistance.ToString()] * ballToGoalDistanceFitness, 4);
+                ballToGoalDistanceFitness /= teamAgentCount;
+                agent.AgentFitness.UpdateFitness(ballToGoalDistanceFitness, SoccerFitness.FitnessKeys.BallToOpponentGoalDistance.ToString());
+
+                // Time without goal bonus
+                agent.ResetTimeWithoutGoal();
+
+                timeWithoutGoalBonusFitness = agent.MaxTimeWithoutGoal / (float)CurrentSimulationSteps;
+                timeWithoutGoalBonusFitness = (float)Math.Round(SoccerFitness.FitnessValues[SoccerFitness.FitnessKeys.TimeWithoutGoalBonus.ToString()] * timeWithoutGoalBonusFitness, 4);
+                timeWithoutGoalBonusFitness /= teamAgentCount;
+                agent.AgentFitness.UpdateFitness(timeWithoutGoalBonusFitness, SoccerFitness.FitnessKeys.TimeWithoutGoalBonus.ToString());
+
+                // Time looking at ball
+                timeLookingAtBallFitness = agent.TimeLookingAtBall / (float)CurrentSimulationTime;
+                timeLookingAtBallFitness = (float)Math.Round(SoccerFitness.FitnessValues[SoccerFitness.FitnessKeys.TimeLookingAtBall.ToString()] * timeLookingAtBallFitness, 4);
+                timeLookingAtBallFitness /= teamAgentCount;
+                agent.AgentFitness.UpdateFitness(timeLookingAtBallFitness, SoccerFitness.FitnessKeys.TimeLookingAtBall.ToString());
+
                 Debug.Log("========================================");
-                Debug.Log("Agent: Team ID" + agent.TeamID + ", ID: " + agent.IndividualID);
+                Debug.Log("Agent: Team ID" + agent.TeamIdentifier.TeamID + ", ID: " + agent.IndividualID);
                 Debug.Log("Sectors explored: " + agent.SectorsExplored + " / " + Sectors.Length + "= " + sectorExplorationFitness);
                 Debug.Log("Goals scored: " + agent.GoalsScored + " / " + MaxGoals + "= " + goalsScoredFitness);
                 Debug.Log("Auto goals scored: " + agent.AutoGoalsScored + " / " + MaxGoals + "= " + autoGoalsScoredFitness);
                 Debug.Log("Goals received: " + (agent.Team == SoccerTeam.Blue ? GoalBlue.GoalsReceived : GoalPurple.GoalsReceived) + " / " + MaxGoals + "= " + goalsReceivedFitness);
                 Debug.Log("Passes to oponent goal: " + agent.PassesToOponentGoal + " / " + MaxPasses + "= " + passesToOponentGoalFitness);
                 Debug.Log("Passes to own goal: " + agent.PassesToOwnGoal + " / " + MaxPasses + "= " + passesToOwnGoalFitness);
-                Debug.Log("Passes: " + agent.Passes + " / " + MaxPasses + "= " + passesFitness);
-                */
+                Debug.Log("Agent to ball distance: " + (maxAgentToBallDistance - agent.AgentToBallDistance) + " / " + maxAgentToBallDistance + " = " + agentToBallDistanceFitness);
+                Debug.Log("Ball to goal distance: " + (maxBallToGoalDistance - distance) + " / " + maxBallToGoalDistance + " = " + ballToGoalDistanceFitness);
+                Debug.Log("Time without goal bonus: " + agent.MaxTimeWithoutGoal + " / " + CurrentSimulationSteps + " = " + timeWithoutGoalBonusFitness);
+                Debug.Log("Time looking at ball: " + agent.TimeLookingAtBall + " / " + CurrentSimulationSteps + " = " + timeLookingAtBallFitness);
+            }
+        }
+
+        public void ReadParamsFromMainConfiguration()
+        {
+            if (MenuManager.Instance != null && MenuManager.Instance.MainConfiguration != null)
+            {
+                MainConfiguration conf = MenuManager.Instance.MainConfiguration;
+
+                SoccerFitness.FitnessValues = conf.FitnessValues;
+
+                if (conf.ProblemConfiguration.ContainsKey("AgentRunSpeed"))
+                {
+                    AgentRunSpeed = float.Parse(conf.ProblemConfiguration["AgentRunSpeed"]);
+                }
+
+                if (conf.ProblemConfiguration.ContainsKey("AgentRotationSpeed"))
+                {
+                    AgentRotationSpeed = float.Parse(conf.ProblemConfiguration["AgentRotationSpeed"]);
+                }
+
+                if (conf.ProblemConfiguration.ContainsKey("KickPower"))
+                {
+                    KickPower = float.Parse(conf.ProblemConfiguration["KickPower"]);
+                }
+
+                if (conf.ProblemConfiguration.ContainsKey("GameScenarioType"))
+                {
+                    GameScenarioType = (SoccerGameScenarioType)int.Parse(conf.ProblemConfiguration["GameScenarioType"]);
+                }
+
+                if (conf.ProblemConfiguration.ContainsKey("PassTolerance"))
+                {
+                    PassTolerance = float.Parse(conf.ProblemConfiguration["PassTolerance"]);
+                }
+
+                if (conf.ProblemConfiguration.ContainsKey("MaxGoals"))
+                {
+                    MaxGoals = int.Parse(conf.ProblemConfiguration["MaxGoals"]);
+                }
+
+                if (conf.ProblemConfiguration.ContainsKey("CalculateAgentToBallDistanceEvery"))
+                {
+                    CalculateAgentToBallDistanceEvery = float.Parse(conf.ProblemConfiguration["CalculateAgentToBallDistanceEvery"]);
+                }
+                
+                if (conf.ProblemConfiguration.ContainsKey("MaxAgentToBallAngle"))
+                {
+                    MaxAgentToBallAngle = float.Parse(conf.ProblemConfiguration["MaxAgentToBallAngle"]);
+                }
+
+                if (conf.ProblemConfiguration.ContainsKey("MaxAgentToGoalAngle"))
+                {
+                    MaxAgentToGoalAngle = float.Parse(conf.ProblemConfiguration["MaxAgentToGoalAngle"]);
+                }
+
+                if (conf.ProblemConfiguration.ContainsKey("BallStartPushForce"))
+                {
+                    BallStartPushForce = float.Parse(conf.ProblemConfiguration["BallStartPushForce"]);
+                }
+
+                if (conf.ProblemConfiguration.ContainsKey("CalculateBallToGoalDistanceEvery"))
+                {
+                    CalculateBallToGoalDistanceEvery = float.Parse(conf.ProblemConfiguration["CalculateBallToGoalDistanceEvery"]);
+                }
             }
         }
     }

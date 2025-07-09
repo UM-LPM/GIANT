@@ -9,7 +9,12 @@ namespace Problems.Soccer
         public Quaternion StartRotation { get; set; }
         public SoccerAgentComponent LastTouchedAgent { get; set; }
 
+        public float BallToPurpleGoalDistance { get; set; }
+        public float BallToBlueGoalDistance { get; set; }
+
         SoccerEnvironmentController SoccerEnvironmentController;
+
+        public int NumOfSpawns { get; set; }
 
         private void Awake()
         {

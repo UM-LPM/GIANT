@@ -39,6 +39,8 @@ namespace Problems.Soccer
 
             obj = Instantiate(soccerEnvironmentController.SoccerBallPrefab, spawnPos, rotation, gameObject.transform);
 
+            obj.GetComponent<SoccerBallComponent>().NumOfSpawns++;
+
             obj.layer = gameObject.layer;
 
             return new T[] { obj.GetComponent<T>() };
@@ -58,6 +60,8 @@ namespace Problems.Soccer
                 rigidbody.velocity = Vector3.zero;
                 rigidbody.angularVelocity = Vector3.zero;
             }
+
+            respawnComponent.GetComponent<SoccerBallComponent>().NumOfSpawns++;
         }
 
     }

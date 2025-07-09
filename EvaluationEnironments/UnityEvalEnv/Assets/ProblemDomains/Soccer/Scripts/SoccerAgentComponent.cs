@@ -11,9 +11,10 @@ namespace Problems.Soccer
         public SoccerTeam Team;
         public float KickPower { get; set; }
 
-        SoccerEnvironmentController SoccerEnvironmentController { get; set; }
+        public SoccerEnvironmentController SoccerEnvironmentController { get; set; }
 
         List<SectorComponent> ExploredSectors;
+
         // Agent fitness variables
         public int SectorsExplored { get; set; }
         public int PassesToOponentGoal { get; set; }
@@ -21,7 +22,10 @@ namespace Problems.Soccer
         public int Passes { get; set; }
         public int GoalsScored { get; set; }
         public int AutoGoalsScored { get; set; }
-
+        public float AgentToBallDistance { get; set; }
+        public float MaxTimeWithoutGoal { get; set; }
+        public int CurrentTimeWithoutGoal { get; set; }
+        public float TimeLookingAtBall { get; set; }
 
         protected override void DefineAdditionalDataOnAwake()
         {
@@ -62,6 +66,15 @@ namespace Problems.Soccer
                     SectorsExplored++;
                 }
             }
+        }
+
+        public void ResetTimeWithoutGoal()
+        {
+            if (CurrentTimeWithoutGoal > MaxTimeWithoutGoal)
+            {
+                MaxTimeWithoutGoal = CurrentTimeWithoutGoal;
+            }
+            CurrentTimeWithoutGoal = 0;
         }
     }
 }

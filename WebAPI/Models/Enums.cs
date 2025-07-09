@@ -20,6 +20,7 @@
         BallInRange,
         BallInHand,
         PickUpBall,
-        ThrowBall
+        ThrowBall,
+        GoalAhead
     }
 }
