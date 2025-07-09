@@ -11,7 +11,6 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
     public class AmmoLevelBellow : ConditionNode
     {
         public AmmoLevel ammoLevel;
-        // TODO: Support for raw value instead of enum ??? (public int healthLevel;)
 
         protected override void OnStart()
         {
@@ -24,8 +23,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 
         protected override bool CheckConditions()
         {
-            // TODO Implement
-            /*AmmoComponent ammoComponent = context.gameObject.GetComponent<AmmoComponent>();
+            AmmoComponent ammoComponent = context.gameObject.GetComponent<AmmoComponent>();
 
             if (ammoComponent != null)
             {
@@ -33,7 +31,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
                 {
                     return true;
                 }
-            }*/
+            }
 
             return false;
         }

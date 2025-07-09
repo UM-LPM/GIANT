@@ -12,7 +12,6 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
     public class HealthLevelBellow : ConditionNode
     {
         public HealthLevel healthLevel;
-        // TODO: Support for raw value instead of enum ??? (public int healthLevel;)
 
         protected override void OnStart()
         {
@@ -25,8 +24,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 
         protected override bool CheckConditions()
         {
-            // TODO Implement
-            /*HealthComponent healthComponent = context.gameObject.GetComponent<HealthComponent>();
+            HealthComponent healthComponent = context.gameObject.GetComponent<HealthComponent>();
 
             if (healthComponent != null)
             {
@@ -34,7 +32,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
                 {
                     return true;
                 }
-            }*/
+            }
 
             return false;
         }

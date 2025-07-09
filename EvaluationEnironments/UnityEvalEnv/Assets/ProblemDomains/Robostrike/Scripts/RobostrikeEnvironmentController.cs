@@ -580,9 +580,9 @@ namespace Problems.Robostrike
                     agent.AgentFitness.UpdateFitness(damageTakenPenalty, RobostrikeFitness.FitnessKeys.DamageTakenPenalty.ToString());
                 }
 
-                /*
+                
                 Debug.Log("========================================");
-                Debug.Log("Agent: Team ID" + agent.TeamID + ", ID: " + agent.IndividualID);
+                Debug.Log("Agent: Team ID" + agent.TeamIdentifier.TeamID + ", ID: " + agent.IndividualID);
                 Debug.Log("Sectors explored: " + agent.SectorsExplored + " / " + Sectors.Length + " =");
                 Debug.Log("Health powerUps: " + agent.HealtPowerUpsCollected + " / " + PowerUpSpawner.HealthBoxSpawned + " =");
                 Debug.Log("Ammo powerUps: " + agent.AmmoPowerUpsCollected + " / " + PowerUpSpawner.AmmoBoxSpawned + " =");
@@ -594,7 +594,7 @@ namespace Problems.Robostrike
                 Debug.Log("Opponents destroyed bonus: " + agent.OpponentsDestroyed + " / " + numOfOpponents + " =");
                 Debug.Log("Damage taken: " + agent.HitByOpponentMissiles + " / " + numOfFiredOpponentMissiles + " =");
                 Debug.Log("========================================");
-                */
+                
             }
         }
 

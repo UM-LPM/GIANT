@@ -1,4 +1,6 @@
 
+using Problems.Robostrike;
+
 namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 {
     public enum ShieldLevel
@@ -11,7 +13,6 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
     public class ShieldLevelBellow : ConditionNode
     {
         public ShieldLevel shieldLevel;
-        // TODO: Support for raw value instead of enum ??? (public int healthLevel;)
 
         protected override void OnStart()
         {
@@ -24,8 +25,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 
         protected override bool CheckConditions()
         {
-            // TODO Implement
-            /*ShieldComponent shieldComponent = context.gameObject.GetComponent<ShieldComponent>();
+            ShieldComponent shieldComponent = context.gameObject.GetComponent<ShieldComponent>();
 
             if (shieldComponent != null)
             {
@@ -33,7 +33,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
                 {
                     return true;
                 }
-            }*/
+            }
 
             return false;
         }
