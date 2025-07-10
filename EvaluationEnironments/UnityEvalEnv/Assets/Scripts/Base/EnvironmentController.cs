@@ -222,6 +222,11 @@ namespace Base
                     RayHitObject.RAY_HIT_OBJECT_DETECTION_TYPE = (RayHitObjectDetectionType)Enum.Parse(typeof(RayHitObjectDetectionType), MainConfiguration.ProblemConfiguration["RayHitObjectDetectionType"]);
                 }
 
+                if (MainConfiguration.ProblemConfiguration.ContainsKey("TargetGameObjects"))
+                {
+                    ConditionNode.TargetGameObjects = MainConfiguration.ProblemConfiguration["TargetGameObjects"].Split(',');
+                }
+
                 if (MainConfiguration.ProblemConfiguration.ContainsKey("ArenaSizeX"))
                 {
                     ArenaSize.x = float.Parse(MainConfiguration.ProblemConfiguration["ArenaSizeX"]);

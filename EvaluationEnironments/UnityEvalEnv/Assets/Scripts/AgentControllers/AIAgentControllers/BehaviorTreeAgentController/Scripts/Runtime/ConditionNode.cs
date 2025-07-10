@@ -1,6 +1,52 @@
 ﻿
 namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
     public abstract class ConditionNode : Node {
+        public static string[] TargetGameObjects = new string[]
+        {
+            "Agent",
+            "Wall",
+            "Obstacle",
+            "Object1",
+            "Object2",
+            "Object3",
+            "Object4",
+            "Object5",
+            "Object6",
+            "Object7",
+            "Object8",
+            "Object9",
+            "Object10",
+            "Object11",
+            "Object12",
+            "Object13",
+            "Object14",
+            "Object15",
+            "Object16",
+            "Object17",
+            "Object18",
+            "Object19",
+            "Object20",
+            "Object21",
+            "Object22",
+            "Object23",
+            "Object24",
+            "Object25",
+            "Object26",
+            "Object27",
+            "Object28",
+            "Object29",
+            "Object30",
+            "Object31",
+            "Object32",
+            "Object33",
+            "Object34",
+            "Object35",
+            "Object36",
+            "Object37",
+            "Object38",
+            "Object39",
+            "Object40"
+        };
         protected abstract bool CheckConditions();
 
         protected override State OnUpdate() {

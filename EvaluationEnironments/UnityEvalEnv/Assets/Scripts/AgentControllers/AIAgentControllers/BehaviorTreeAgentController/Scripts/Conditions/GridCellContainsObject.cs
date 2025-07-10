@@ -5,7 +5,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 {
     public class GridCellContainsObject : ConditionNode
     {
-        public TargetGameObject targetGameObject;
+        public int targetGameObject;
         public ObjectTeamType targetTeamType;
         public int gridPositionX;
         public int gridPositionY;
@@ -38,13 +38,13 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
             {
                 foreach (GameObject obj in sensorOutputs[gridPositionX, gridPositionY].HitGameObjects)
                 {
-                    if (obj.tag.Contains(RayHitObject.TargetGameObjectsToString(targetGameObject)) && TargetTeamHit(obj))
+                    if (obj.tag.Contains(TargetGameObjects[targetGameObject]) && TargetTeamHit(obj))
                     {
                         gridContainsTarget = true;
                     }
                 }
             }
-            else if (targetGameObject == TargetGameObject.Empty)
+            else if (targetGameObject == -1)
             {
                 gridContainsTarget = true;
             }
