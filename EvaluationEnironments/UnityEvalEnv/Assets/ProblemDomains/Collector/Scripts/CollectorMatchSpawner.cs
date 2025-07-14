@@ -16,28 +16,23 @@ namespace Spawners
             if (environmentController == null)
             {
                 throw new System.Exception("EnvironmentController is not defined");
-                // TODO Add error reporting here
             }
             if (!(environmentController is CollectorEnvironmentController))
             {
                 throw new System.Exception("EnvironmentController is not of type CollectorEnvironmentController");
-                // TODO Add error reporting here
             }
             if (environmentController.Match == null)
             {
                 throw new System.Exception("Match is not defined");
-                // TODO Add error reporting here
             }
             if (environmentController.AgentPrefab == null)
             {
                 throw new System.Exception("AgentPrefab is not defined");
-                // TODO Add error reporting here
             }
 
             if(Opponent == null)
             {
                 throw new System.Exception("Opponent is not defined");
-                // TODO Add error reporting here
             }
         }
 

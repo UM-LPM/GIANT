@@ -57,37 +57,31 @@ namespace  Problems.BoxTact
             if (environmentController.AgentPrefab == null)
             {
                 throw new System.Exception("AgentPrefab is not defined");
-                // TODO add error reporting here
             }
 
             if(environmentController.Match == null || environmentController.Match.Teams == null)
             {
                 throw new System.Exception("Match is not defined");
-                // TODO add error reporting here
             }
 
             if (environmentController.Match.Teams.Length != 1)
             {
                 throw new System.Exception("Match should have 1 team");
-                // TODO add error reporting here
             }
 
             if (environmentController.Match.Teams[0].Individuals.Length != 1)
             {
                 throw new System.Exception("Each team should have 1 individual");
-                // TODO add error reporting here
             }
 
             if (environmentController.Match.Teams[0].Individuals[0].AgentControllers.Length != 1)
             {
                 throw new System.Exception("Each individual should have 1 agent controller");
-                // TODO add error reporting here
             }
 
             if (AgentSpawnPoint == null)
             {
                 throw new System.Exception("Spawn point is not defined");
-                // TODO add error reporting here
             }
         }
     }

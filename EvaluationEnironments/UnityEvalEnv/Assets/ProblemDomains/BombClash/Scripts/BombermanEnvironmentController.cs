@@ -54,6 +54,7 @@ namespace Problems.Bombclash
         private float survivalBonusFitness;
         private float lastSurvivalBonusFitness;
 
+        private string agentFitnessLog;
 
         protected override void DefineAdditionalDataOnPostAwake()
         {
@@ -371,19 +372,21 @@ namespace Problems.Bombclash
                     agent.AgentFitness.UpdateFitness(lastSurvivalBonusFitness, BombermanFitness.FitnessKeys.LastSurvivalBonus.ToString());
                 }
 
-                Debug.Log("========================================");
-                Debug.Log("Agent: Team ID" + agent.TeamIdentifier.TeamID + ", ID: " + agent.IndividualID);
-                Debug.Log("Sectors explored: " + agent.SectorsExplored + " / " + sectorCount + "= " + sectorExplorationFitness);
-                Debug.Log("Bombs placed: " + agent.BombsPlaced + " / " + allPossibleBombs + "= " + bombsPlacedFitness);
-                Debug.Log("Blocks destroyed: " + agent.BlocksDestroyed + " / " + destructibleTilesCount + "= " + blocksDestroyedFitness);
-                Debug.Log("Power ups collected: " + agent.PowerUpsCollected + " / " + (destructibleTilesCount * PowerUpSpawnChance) + "= " + powerUpsCollectedFitness);
-                Debug.Log("Bombs hit agent: " + agent.BombsHitAgent + " / " + opponentPlacedBombs + "= " + bombsHitAgentFitness);
-                Debug.Log("Agents killed: " + agent.AgentsKilled + "= " + agentsKilledFitness);
-                Debug.Log("Agent hit by bombs: " + agent.AgentHitByBombs + " / " + opponentPlacedBombs + "= " + agentHitByBombsFitness);
-                Debug.Log("Agent hit by own bombs: " + agent.AgentHitByOwnBombs + " / " + agent.BombsPlaced + "= " + agentHitByOwnBombsFitness);
-                Debug.Log("Agent death: " + agent.AgentDied + "= " + agentDeathFitness);
-                Debug.Log("Survival bonus: " + agent.SurvivalBonuses + " / " + (Agents.Length - 1) + "= " + survivalBonusFitness);
-                Debug.Log("Last survival bonus: " + agent.LastSurvivalBonus + "= " + lastSurvivalBonusFitness);
+                agentFitnessLog = "========================================\n" +
+                                  $"[Agent]: Team ID {agent.TeamIdentifier.TeamID}, ID: {agent.IndividualID}\n" +
+                                  $"Sectors explored: {agent.SectorsExplored} / {sectorCount} = {sectorExplorationFitness}\n" +
+                                  $"Bombs placed: {agent.BombsPlaced} / {allPossibleBombs} = {bombsPlacedFitness}\n" +
+                                  $"Blocks destroyed: {agent.BlocksDestroyed} / {destructibleTilesCount} = {blocksDestroyedFitness}\n" +
+                                  $"Power ups collected: {agent.PowerUpsCollected} / {(destructibleTilesCount * PowerUpSpawnChance)} = {powerUpsCollectedFitness}\n" +
+                                  $"Bombs hit agent: {agent.BombsHitAgent} / {opponentPlacedBombs} = {bombsHitAgentFitness}\n" +
+                                  $"Agents killed: {agent.AgentsKilled} = {agentsKilledFitness}\n" +
+                                  $"Agent hit by bombs: {agent.AgentHitByBombs} / {opponentPlacedBombs} = {agentHitByBombsFitness}\n" +
+                                  $"Agent hit by own bombs: {agent.AgentHitByOwnBombs} / {agent.BombsPlaced} = {agentHitByOwnBombsFitness}\n" +
+                                  $"Agent death: {agent.AgentDied} = {agentDeathFitness}\n" +
+                                  $"Survival bonus: {agent.SurvivalBonuses} / {(Agents.Length - 1)} = {survivalBonusFitness}\n" +
+                                  $"Last survival bonus: {agent.LastSurvivalBonus} = {lastSurvivalBonusFitness}";
+
+                Debug.Log(agentFitnessLog);
             }
         }
 

@@ -24,7 +24,6 @@ namespace Problems.Soccer
             if (soccerEnvironmentController.SoccerBallPrefab == null)
             {
                 throw new System.Exception("SoccerBallPrefab is not defined");
-                // TODO Add error reporting here
             }
         }
 

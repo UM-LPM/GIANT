@@ -33,7 +33,6 @@ namespace Fitnesses
             else if (IndividualID != agent.IndividualID)
             {
                 throw new System.Exception("Individual ID does not match");
-                // TODO Add error reporting here
             }
 
             // Check if agent controller is of type BehaviourController
@@ -120,7 +119,6 @@ namespace Fitnesses
             else if (IndividualID != individualFitness.IndividualID)
             {
                 throw new System.Exception("Individual ID does not match");
-                // TODO Add error reporting here
             }
 
             Value += individualFitness.Value;

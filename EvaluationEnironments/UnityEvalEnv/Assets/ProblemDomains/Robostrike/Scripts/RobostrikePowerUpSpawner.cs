@@ -29,19 +29,16 @@ namespace Problems.Robostrike
             if (robostrikeEnvironmentController.HealthBoxPrefab == null)
             {
                 throw new System.Exception("HealthBoxPrefab is not defined");
-                // TODO Add error reporting here
             }
 
             if (robostrikeEnvironmentController.AmmoBoxPrefab == null)
             {
                 throw new System.Exception("AmmoBoxPrefab is not defined");
-                // TODO Add error reporting here
             }
 
             if (robostrikeEnvironmentController.ShieldBoxPrefab == null)
             {
                 throw new System.Exception("ShieldBoxPrefab is not defined");
-                // TODO Add error reporting here
             }
         }
 

@@ -40,7 +40,6 @@ public class TestGrid2D : MonoBehaviour
         if(Grid2D == null)
         {
             Debug.LogError("Grid2D component not found.");
-            // TODO Add error handling
         }
 
         Enemys = new List<EnemyComponent>();

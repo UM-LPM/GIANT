@@ -45,6 +45,8 @@ namespace Problems.Collector
         private float targetsAcquiredFitness;
         private float timePenalty;
 
+        private string agentFitnessLog;
+
         protected override void DefineAdditionalDataOnPostAwake()
         {
             ReadParamsFromMainConfiguration();
@@ -53,7 +55,6 @@ namespace Problems.Collector
             if(TargetSpawner == null)
             {
                 throw new Exception("TargetSpawner is not defined");
-                // TODO Add error reporting here
             }
 
             if (SceneLoadMode == SceneLoadMode.LayerMode)
@@ -194,13 +195,14 @@ namespace Problems.Collector
                 timePenalty = (float)Math.Round(CollectorFitness.FitnessValues[CollectorFitness.FitnessKeys.TimePenalty.ToString()] * timePenalty, 4);
                 agent.AgentFitness.UpdateFitness(timePenalty, CollectorFitness.FitnessKeys.TimePenalty.ToString());
 
-                Debug.Log("========================================");
-                Debug.Log("Agent: Team ID" + agent.TeamIdentifier.TeamID + ", ID: " + agent.IndividualID);
-                Debug.Log("Sectors explored: " + agent.SectorsExplored + " / " + Sectors.Length + " =");
-                Debug.Log("Targets Acquired: " + agent.TargetsAquired + " / " + MaxTargets + " =");
-                Debug.Log("Time penalty: " + CurrentSimulationSteps + " / " + SimulationSteps + " =");
-                Debug.Log("========================================");
-                
+                agentFitnessLog = "========================================\n" +
+                                  $"[Agent]: TeamID {agent.TeamIdentifier.TeamID}, ID: {agent.IndividualID} \n" +
+                                  $"[Sectors explored]: {agent.SectorsExplored} / {Sectors.Length} = {sectorExplorationFitness}\n" +
+                                  $"[Targets Acquired]: {agent.TargetsAquired} / {MaxTargets} = {targetsAcquiredFitness}\n" +
+                                  $"[Time penalty]: {CurrentSimulationSteps} / {SimulationSteps} = {timePenalty}\n";
+
+                Debug.Log(agentFitnessLog);
+
             }
         }
 

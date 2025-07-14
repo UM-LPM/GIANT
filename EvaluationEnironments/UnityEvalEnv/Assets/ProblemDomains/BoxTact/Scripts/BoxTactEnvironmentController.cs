@@ -41,6 +41,8 @@ namespace Problems.BoxTact
         float boxesMovedFitness;
         float boxesMovedToTargetFitness;
 
+        private string agentFitnessLog;
+
         protected override void DefineAdditionalDataOnPostAwake()
         {
             ReadParamsFromMainConfiguration();
@@ -49,14 +51,12 @@ namespace Problems.BoxTact
             if (BoxSpawner == null)
             {
                 throw new Exception("BoxSpawner is not defined");
-                // TODO Add error reporting here
             }
 
             BoxTargetSpawner = GetComponent<BoxTactBoxTargetSpawner>();
             if (BoxTargetSpawner == null)
             {
                 throw new Exception("BoxTargetSpawner is not defined");
-                // TODO Add error reporting here
             }
 
             if (SceneLoadMode == SceneLoadMode.LayerMode)
@@ -79,20 +79,17 @@ namespace Problems.BoxTact
             if (Boxes == null || Boxes.Length == 0)
             {
                 throw new Exception("No boxes spawned");
-                // TODO Add error reporting here
             }
 
             BoxTargets = BoxTargetSpawner.Spawn<BoxTactBoxTargetComponent>(this);
             if (BoxTargets == null || BoxTargets.Length == 0)
             {
                 throw new Exception("No targets spawned");
-                // TODO Add error reporting here
             }
 
             if (Boxes.Length != BoxTargets.Length)
             {
                 throw new Exception("Number of boxes and targets do not match");
-                // TODO Add error reporting here
             }
 
             CheckBoxTargetOverlap();
@@ -193,12 +190,13 @@ namespace Problems.BoxTact
                 boxesMovedToTargetFitness = (float)Math.Round(BoxTactFitness.FitnessValues[nameof(BoxTactFitness.FitnessKeys.BoxesMovedToTarget)] * boxesMovedToTargetFitness, 4);
                 agent.AgentFitness.UpdateFitness(boxesMovedToTargetFitness, nameof(BoxTactFitness.FitnessKeys.BoxesMovedToTarget));
 
-                Debug.Log("========================================");
-                Debug.Log("Agent: Team ID" + agent.TeamIdentifier.TeamID + ", ID: " + agent.IndividualID);
-                Debug.Log("Sectors explored: " + agent.SectorsExplored + " / " + sectorCount + "= " + sectorExplorationFitness);
-                Debug.Log("Boxes moved: " + agent.BoxesMoved + " / " + maxBoxMoves + "= " + boxesMovedFitness);
-                Debug.Log("Boxes moved to target: " + boxesMovedToTarget + " / " + allBoxes + "= " + boxesMovedToTargetFitness);
-                Debug.Log("========================================");
+                agentFitnessLog = "========================================\n" +
+                                  $"[Agent]: Team ID {agent.TeamIdentifier.TeamID}, ID: {agent.IndividualID}\n" +
+                                  $"[Sectors explored]: {agent.SectorsExplored} / {sectorCount} = {sectorExplorationFitness}\n" +
+                                  $"[Boxes moved]: {agent.BoxesMoved} / {maxBoxMoves} = {boxesMovedFitness}\n" +
+                                  $"[Boxes moved to target]: {boxesMovedToTarget} / {allBoxes} = {boxesMovedToTargetFitness}\n";
+
+                Debug.Log(agentFitnessLog);
             }
         }
 

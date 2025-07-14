@@ -25,37 +25,31 @@ namespace Problems.Soccer
             if (environmentController.AgentPrefab == null)
             {
                 throw new System.Exception("AgentPrefab is not defined");
-                // TODO add error reporting here
             }
 
             if (environmentController.Match == null || environmentController.Match.Teams == null)
             {
                 throw new System.Exception("Match is not defined");
-                // TODO add error reporting here
             }
 
             if (environmentController.Match.Teams.Length != 2)
             {
                 throw new System.Exception("Match should have 2 teams");
-                // TODO add error reporting here
             }
 
             if (environmentController.Match.Teams[0].Individuals.Length != 1 || environmentController.Match.Teams[1].Individuals.Length != 1)
             {
                 throw new System.Exception("Each team should have 1 individual");
-                // TODO add error reporting here
             }
 
             if (environmentController.Match.Teams[0].Individuals[0].AgentControllers.Length != 1 || environmentController.Match.Teams[1].Individuals[0].AgentControllers.Length != 1)
             {
                 throw new System.Exception("Each individual should have 1 agent controller");
-                // TODO add error reporting here
             }
 
             if (SpawnPointsBlue == null || SpawnPointsBlue.Length != 2 || SpawnPointsPurple == null || SpawnPointsPurple.Length != 2)
             {
                 throw new System.Exception("Spawn points are not defined correctly");
-                // TODO add error reporting here
             }
         }
 

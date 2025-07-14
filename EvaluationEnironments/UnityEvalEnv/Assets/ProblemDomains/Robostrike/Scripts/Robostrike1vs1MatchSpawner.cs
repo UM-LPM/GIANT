@@ -32,37 +32,31 @@ namespace Problems.Robostrike
             if (environmentController.AgentPrefab == null)
             {
                 throw new System.Exception("AgentPrefab is not defined");
-                // TODO add error reporting here
             }
 
             if (environmentController.Match == null || environmentController.Match.Teams == null)
             {
                 throw new System.Exception("Match is not defined");
-                // TODO add error reporting here
             }
 
             if (environmentController.Match.Teams.Length != 2)
             {
                 throw new System.Exception("Match should have 2 teams");
-                // TODO add error reporting here
             }
 
             if (environmentController.Match.Teams[0].Individuals.Length != 1 || environmentController.Match.Teams[1].Individuals.Length != 1)
             {
                 throw new System.Exception("Each team should have 1 individual");
-                // TODO add error reporting here
             }
 
             if (environmentController.Match.Teams[0].Individuals[0].AgentControllers.Length != 1 || environmentController.Match.Teams[1].Individuals[0].AgentControllers.Length != 1)
             {
                 throw new System.Exception("Each individual should have 1 agent controller");
-                // TODO add error reporting here
             }
 
             if (SpawnPoints == null || SpawnPoints.Length != 2)
             {
                 throw new System.Exception("Spawn points are not defined");
-                // TODO add error reporting here
             }
         }
 
@@ -111,7 +105,6 @@ namespace Problems.Robostrike
             if(!(respawnComponent is AgentComponent))
             {
                 throw new System.Exception("Invalid respawn component");
-                // TODO add error reporting here
             }
 
             RobostrikeEnvironmentController robostrikeEnvironmentController = environmentController as RobostrikeEnvironmentController;
@@ -132,7 +125,6 @@ namespace Problems.Robostrike
             else
             {
                 throw new System.Exception("Invalid respawn type");
-                // TODO add error reporting here
             }
 
             agent.transform.position = respawnPos;

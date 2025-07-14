@@ -11,6 +11,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Evaluators
 {
@@ -106,7 +107,6 @@ namespace Evaluators
                             if (communicatorEvalResponseData == null || communicatorEvalResponseData.MatchFitnesses == null || communicatorEvalResponseData.MatchFitnesses.Count == 0)
                             {
                                 throw new Exception("Response object is null or no match results are present");
-                                // TODO Add error reporting here
                             }
 
                             MatchFitnesses.AddRange(communicatorEvalResponseData.MatchFitnesses);
@@ -114,7 +114,6 @@ namespace Evaluators
                         else
                         {
                             throw new Exception($"Request failed with status code: {response.StatusCode}");
-                            // TODO Add error reporting here
                         }
                     }
 
@@ -123,15 +122,14 @@ namespace Evaluators
             }
             catch (TaskCanceledException ex) when (ex.InnerException is TimeoutException)
             {
-                // TODO Add error reporting here (Timeout)
+                Debug.LogError("Evaluation request timed out. Please check the EvalEnvInstances and ensure they are running correctly.");
             }
             catch (Exception ex)
             {
-                // TODO Add error reporting here
+                Debug.LogError($"An error occurred while evaluating tournament matches: {ex.Message}\n{ex.StackTrace}");
             }
 
             throw new Exception("No match fitnesses were returned");
-            // TODO Add error reporting here
         }
 
         public virtual FinalIndividualFitness[] GetEvaluationResults()

@@ -44,7 +44,6 @@ namespace Utils
             if (individuals.Length == 0)
             {
                 throw new Exception("No individuals were loaded from the IndividualsSource");
-                // TODO Add error reporting here
             }
 
             return individuals;

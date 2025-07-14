@@ -60,6 +60,8 @@ namespace Problems.DodgeBall
         private float survivalBonusFitness;
         private float agentToBallDistanceFitness;
 
+        private string agentFitnessLog;
+
         private int numOfOpponents;
 
         protected override void DefineAdditionalDataOnPostAwake()
@@ -70,7 +72,6 @@ namespace Problems.DodgeBall
             if (BallSpawner == null)
             {
                 throw new Exception("BallSpawner is not defined");
-                // TODO Add error reporting here
             }
 
             if (SceneLoadMode == SceneLoadMode.LayerMode)
@@ -260,17 +261,17 @@ namespace Problems.DodgeBall
                 agentToBallDistanceFitness = (float)Math.Round(DodgeBallFitness.FitnessValues[DodgeBallFitness.FitnessKeys.AgentToBallDistance.ToString()] * agentToBallDistanceFitness, 4);
                 agent.AgentFitness.UpdateFitness(agentToBallDistanceFitness, DodgeBallFitness.FitnessKeys.AgentToBallDistance.ToString());
 
-                Debug.Log("========================================");
-                Debug.Log("Agent: Team ID" + agent.TeamIdentifier.TeamID + ", ID: " + agent.IndividualID);
-                Debug.Log("Sectors explored: " + agent.SectorsExplored + " / " + (Sectors.Length / 1.6f) + " =" + sectorExplorationFitness);
-                Debug.Log("Balls picked up: " + agent.BallsPickedUp + " / " + secondsPased + " = " + ballsPickedUpFitness);
-                Debug.Log("Balls thrown: " + agent.BallsThrown + " / " + secondsPased + " = " + ballsThrownFitness);
-                Debug.Log("Balls intercepted: " + agent.BallsIntercepted + " / " + secondsPased + " = " + ballsInterceptedFitness);
-                Debug.Log("Opponents hit: " + agent.OpponentsHit + " / " + numOfOpponents + " = " + opponentsHitFitness);
-                Debug.Log("Survival bonus: " + agent.MaxSurvivalTime + " / " + CurrentSimulationSteps + " = " + survivalBonusFitness);
-                Debug.Log("Agent to ball distance: " + (maxAgentToBallDistance - agent.AgentToBallDistance) + " / " +  maxAgentToBallDistance + " = " + agentToBallDistanceFitness);
-                Debug.Log("========================================");
-
+                agentFitnessLog = "========================================\n" +
+                                  $"[Agent]: Team ID + {agent.TeamIdentifier.TeamID} , ID: " + agent.IndividualID +
+                                  "\n" +
+                                  $"[Sectors explored]: {agent.SectorsExplored} / {(Sectors.Length / 1.6f)} = {sectorExplorationFitness}\n" +
+                                  $"[Balls picked up]: {agent.BallsPickedUp} / {secondsPased} = {ballsPickedUpFitness}\n" +
+                                  $"[Balls thrown]: {agent.BallsThrown} / {secondsPased} = {ballsThrownFitness}\n" +
+                                  $"[Balls intercepted]: {agent.BallsIntercepted} / {secondsPased} = {ballsInterceptedFitness} \n" +
+                                  $"[Opponents hit]: {agent.OpponentsHit} / {numOfOpponents} = {opponentsHitFitness} \n" +
+                                  $"[Survival bonus]: {agent.MaxSurvivalTime} / {CurrentSimulationSteps} = {survivalBonusFitness}\n" +
+                                  $"[Agent to ball distance]: {(maxAgentToBallDistance - agent.AgentToBallDistance)} / {maxAgentToBallDistance} = {agentToBallDistanceFitness}\n";
+                Debug.Log(agentFitnessLog);
             }
         }
         void ReadParamsFromMainConfiguration()

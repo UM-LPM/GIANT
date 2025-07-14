@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 using TMPro;
+using Utils;
 
 namespace Configuration
 {
@@ -28,7 +30,7 @@ namespace Configuration
         public string CommunicatorURI { get; private set; }
         public MainConfiguration MainConfiguration { get; set; }
 
-        private void Awake()
+        private async void Awake()
         {
             // Set the target frame rate to 60fps
             Application.targetFrameRate = 60;
@@ -50,6 +52,8 @@ namespace Configuration
 
             CoordinatorURIInputField.text = baseCoordinatorURI;
             CommunicatorURIInputField.text = baseCommunicatorURI;
+
+            await MqttNetLogger.Connect();
 
             ReadConfigurationFromFile();
         }
@@ -131,5 +135,9 @@ namespace Configuration
             MainConfiguration.Serialize(MainConfiguration, path);
         }
 
+        void OnDestroy()
+        {
+            MqttNetLogger.Disconnect();
+        }
     }
 }

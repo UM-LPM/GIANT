@@ -15,7 +15,6 @@ namespace Problems.Collector
             if (collectorEnvironmentController.TargetPrefab == null)
             {
                 throw new System.Exception("TargetPrefab is not defined");
-                // TODO Add error reporting here
             }
         }
 

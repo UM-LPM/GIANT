@@ -72,7 +72,6 @@ namespace Base
             if (EnvironmentControllerSetup == ComponentSetupType.MOCK && Match == null)
             {
                 throw new Exception("Match is not defined");
-                // TODO Add error reporting here
             }
 
             GameState = GameState.IDLE;
@@ -83,14 +82,12 @@ namespace Base
             if (ActionObservationProcessor == null)
             {
                 Debug.LogWarning("ActionObservationProcessor is not set!");
-                // TODO Add error reporting here
             }
 
             ActionExecutor = gameObject.GetComponent<ActionExecutor>();
             if (ActionExecutor == null)
             {
                 throw new Exception("ActionExecutor is not set!");
-                // TODO Add error reporting here
             }
 
             SetLayerGridData();
@@ -262,7 +259,6 @@ namespace Base
             if (Match == null)
             {
                 throw new Exception("Match is not defined");
-                // TODO Add error reporting here
             }
         }
 
@@ -273,7 +269,6 @@ namespace Base
                 if (Agents[i].AgentController == null)
                 {
                     throw new Exception("AgentController is not set!");
-                    // TODO Add error reporting here
                 }
 
                 // Different initialization for different types of AgentControllers
@@ -296,7 +291,6 @@ namespace Base
                     // TODO Implement other AgentController types
                     default:
                         throw new Exception("Unknown AgentController type!");
-                        // TODO Add error reporting here
                 }
             }
         }
@@ -390,7 +384,6 @@ namespace Base
                     if (Agents[i].ActionBuffer == null)
                     {
                         throw new Exception("ActionBuffer is not set!");
-                        // TODO Add error reporting here
                     }
 
                     ActionExecutor.ExecuteActions(Agents[i]);

@@ -9,6 +9,7 @@ namespace WebAPI.Controllers
     [Route("api/[controller]")]
     [ApiController]
     public class JsonToSoParserController : ControllerBase {
+        private readonly MqttClientService _mqttClientService;
 
         public static JsonSerializerSettings JSON_SERIALIZATION_SETTINGS = new JsonSerializerSettings
         {
@@ -17,13 +18,24 @@ namespace WebAPI.Controllers
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore
         };
 
+        public JsonToSoParserController(MqttClientService mqttClientService)
+        {
+            _mqttClientService = mqttClientService;
+        }
+
         [HttpPost]
         public async Task<IActionResult> ParseJson([FromBody] RequestBodyParams requestBodyParams)
         {
+            if (!_mqttClientService.GetMqttClient().IsConnected)
+            {
+                await _mqttClientService.StartAsync(CancellationToken.None);
+            }
+
             string? error = ValidateInput(requestBodyParams);
             if(error != null)
             {
                 Util.WriteErrorToFile("Failed to parse JSON", error, "0_JsonToSoParserControllerError");
+                await _mqttClientService.PublishAsync(MqttClientService.Topic, JsonConvert.SerializeObject("Failed to parse JSON"));
                 return BadRequest(new { Status = "Error", Message = "Failed to parse JSON.", Error = error });
             }
 
@@ -39,6 +51,7 @@ namespace WebAPI.Controllers
                 if (treeModels.Length == 0)
                 {
                     Util.WriteErrorToFile("Failed to parse JSON", "No behaviour trees sent in request", "1_JsonToSoParserControllerError");
+                    await _mqttClientService.PublishAsync(MqttClientService.Topic, JsonConvert.SerializeObject("Failed to parse JSON: No behaviour trees sent in request"));
                     return BadRequest(new { Status = "Error", Message = "Failed to parse JSON.", Error = "No behaviour trees sent in request" });
                 }
 
@@ -86,6 +99,7 @@ namespace WebAPI.Controllers
                             if (result == null)
                             {
                                 Util.WriteErrorToFile("Failed request", "Request failed result is null", "3_JsonToSoParserControllerError");
+                                await _mqttClientService.PublishAsync(MqttClientService.Topic, JsonConvert.SerializeObject("Failed request: Request failed result is null"));
                                 return BadRequest(new { Status = "Error", Message = $"Request failed result is null" });
                             }
 
@@ -94,6 +108,7 @@ namespace WebAPI.Controllers
                             if(response == null)
                             {
                                 Util.WriteErrorToFile("Failed request", "Request failed response is null", "4_JsonToSoParserControllerError");
+                                await _mqttClientService.PublishAsync(MqttClientService.Topic, JsonConvert.SerializeObject("Failed request: Request failed response is null"));
                                 return BadRequest(new { Status = "Error", Message = $"Request failed response is null" });
                             }
 
@@ -102,6 +117,7 @@ namespace WebAPI.Controllers
                         else
                         {
                             Util.WriteErrorToFile("Failed request", $"Request failed with status code: {responseMessage.StatusCode}", "4_JsonToSoParserControllerError");
+                            await _mqttClientService.PublishAsync(MqttClientService.Topic, JsonConvert.SerializeObject($"Failed request: Request failed with status code: {responseMessage.StatusCode}"));
                             return BadRequest(new { Status = "Error", Message = $"Request failed with status code: {responseMessage.StatusCode}" });
                         }
                     }
@@ -109,12 +125,14 @@ namespace WebAPI.Controllers
                 catch (Exception ex)
                 {
                     Util.WriteErrorToFile("Failed to parse JSON.", ex.Message, "5_JsonToSoParserControllerError");
+                    await _mqttClientService.PublishAsync(MqttClientService.Topic, JsonConvert.SerializeObject("Failed to make request to CoordinatorURI: " + ex.Message));
                     return BadRequest(new { Status = "Error", Message = "Failed to make request to CoordinatorURI.", Error = ex.Message });
                 }
             }
             catch (Exception ex)
             {
                 Util.WriteErrorToFile("Failed to parse JSON.", ex.Message, "6_JsonToSoParserControllerError");
+                await _mqttClientService.PublishAsync(MqttClientService.Topic, JsonConvert.SerializeObject("Failed to parse JSON: " + ex.Message));
                 return BadRequest(new { Status = "Error", Message = "Failed to parse JSON.", Error = ex.Message });
             }
         }

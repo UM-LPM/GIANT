@@ -78,7 +78,6 @@ namespace Problems.Collector
             if(discreteActions != null && discreteActions.length != 2)
             {
                 throw new System.Exception("Discrete actions tensor must have a length of 2!");
-                // TODO Add error reporting here
             }
 
             actionBuffer.DiscreteActions.Add("moveForwardDirection", (int)discreteActions[0]);

@@ -80,25 +80,21 @@ namespace Problems.DodgeBall
             if (!environmentController.AgentPrefab)
             {
                 throw new System.Exception("AgentPrefab is not defined");
-                // TODO add error reporting here
             }
 
             if (environmentController.Match.Teams.Length == 0)
             {
                     throw new System.Exception("No teams defined in the match");
-                // TODO add error reporting here
             }
 
             if (environmentController.Match.Teams.Length != 2)
             {
                 throw new System.Exception("DodgeBall1v1MatchSpawner requires exactly 2 teams");
-                // TODO add error reporting here
             }
 
             if (environmentController.Match.Teams[0].Individuals.Length != 1 || environmentController.Match.Teams[1].Individuals.Length != 1)
             {
                 throw new System.Exception("Each team must have at one individual");
-                // TODO add error reporting here
             }
         }
 

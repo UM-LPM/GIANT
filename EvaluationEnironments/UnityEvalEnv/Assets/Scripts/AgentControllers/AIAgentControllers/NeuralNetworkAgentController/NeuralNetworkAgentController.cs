@@ -23,13 +23,11 @@ namespace AgentControllers.AIAgentControllers.NeuralNetworkAgentController
             if (ModelAsset == null)
             {
                 throw new System.Exception("ModelAsset is not set!");
-                // TODO Add error reporting here
             }
 
             if (!initParams.ContainsKey("actionObservationProcessor"))
             {
                 throw new System.Exception("ActionObservationProcessor is not set!");
-                // TODO Add error reporting here
             }
 
             ActionObservationProcessor = (ActionObservationProcessor)initParams["actionObservationProcessor"];
@@ -69,7 +67,7 @@ namespace AgentControllers.AIAgentControllers.NeuralNetworkAgentController
             }
             catch (System.Exception ex)
             {
-                // TODO Add error reporting here
+                Debug.LogError("Error while getting discrete actions: " + ex.Message);
             }
 
             try
@@ -80,7 +78,12 @@ namespace AgentControllers.AIAgentControllers.NeuralNetworkAgentController
             }
             catch (System.Exception ex)
             {
-                // TODO Add error reporting here
+                Debug.LogError("Error while getting continuous actions: " + ex.Message);
+            }
+            finally
+            {
+                obs0Tensor.Dispose();
+                actionMasksTensor.Dispose();
             }
         }
 

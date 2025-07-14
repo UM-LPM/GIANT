@@ -71,6 +71,8 @@ namespace Problems.Soccer
         private float timeWithoutGoalBonusFitness;
         private float timeLookingAtBallFitness;
 
+        private string agentFitnessLog;
+
         private int teamAgentCount;
 
         protected override void DefineAdditionalDataOnPostAwake()
@@ -92,7 +94,6 @@ namespace Problems.Soccer
             if (SoccerBallSpawner == null)
             {
                 throw new Exception("SoccerBallSpawner is not defined");
-                // TODO Add error reporting here
             }
 
             if (SceneLoadMode == SceneLoadMode.LayerMode)
@@ -407,18 +408,22 @@ namespace Problems.Soccer
                 timeLookingAtBallFitness /= teamAgentCount;
                 agent.AgentFitness.UpdateFitness(timeLookingAtBallFitness, SoccerFitness.FitnessKeys.TimeLookingAtBall.ToString());
 
-                Debug.Log("========================================");
-                Debug.Log("Agent: Team ID" + agent.TeamIdentifier.TeamID + ", ID: " + agent.IndividualID);
-                Debug.Log("Sectors explored: " + agent.SectorsExplored + " / " + Sectors.Length + "= " + sectorExplorationFitness);
-                Debug.Log("Goals scored: " + agent.GoalsScored + " / " + MaxGoals + "= " + goalsScoredFitness);
-                Debug.Log("Auto goals scored: " + agent.AutoGoalsScored + " / " + MaxGoals + "= " + autoGoalsScoredFitness);
-                Debug.Log("Goals received: " + (agent.Team == SoccerTeam.Blue ? GoalBlue.GoalsReceived : GoalPurple.GoalsReceived) + " / " + MaxGoals + "= " + goalsReceivedFitness);
-                Debug.Log("Passes to oponent goal: " + agent.PassesToOponentGoal + " / " + MaxPasses + "= " + passesToOponentGoalFitness);
-                Debug.Log("Passes to own goal: " + agent.PassesToOwnGoal + " / " + MaxPasses + "= " + passesToOwnGoalFitness);
-                Debug.Log("Agent to ball distance: " + (maxAgentToBallDistance - agent.AgentToBallDistance) + " / " + maxAgentToBallDistance + " = " + agentToBallDistanceFitness);
-                Debug.Log("Ball to goal distance: " + (maxBallToGoalDistance - distance) + " / " + maxBallToGoalDistance + " = " + ballToGoalDistanceFitness);
-                Debug.Log("Time without goal bonus: " + agent.MaxTimeWithoutGoal + " / " + CurrentSimulationSteps + " = " + timeWithoutGoalBonusFitness);
-                Debug.Log("Time looking at ball: " + agent.TimeLookingAtBall + " / " + CurrentSimulationSteps + " = " + timeLookingAtBallFitness);
+                agentFitnessLog = "========================================\n" +
+                                  $"[Agent]: Team ID {agent.TeamIdentifier.TeamID}, ID: {agent.IndividualID}\n" +
+                                  $"[Sectors explored]: {agent.SectorsExplored} / {Sectors.Length} = {sectorExplorationFitness}\n" +
+                                  $"[Goals scored]: {agent.GoalsScored} / {MaxGoals} = {goalsScoredFitness}\n" +
+                                  $"[Auto goals scored]: {agent.AutoGoalsScored} / {MaxGoals} = {autoGoalsScoredFitness}\n" +
+                                  $"[Goals received]: {(agent.Team == SoccerTeam.Blue ? GoalBlue.GoalsReceived : GoalPurple.GoalsReceived)} / {MaxGoals} = {goalsReceivedFitness}\n" +
+                                  $"[Passes to oponent goal]: {agent.PassesToOponentGoal} / {MaxPasses} = {passesToOponentGoalFitness}\n" +
+                                  $"[Passes]:  {agent.Passes} / {MaxPasses} = {passesFitness}\n" +
+                                  $"[Passes to own goal]: {agent.PassesToOwnGoal} / {MaxPasses} = {passesToOwnGoalFitness}\n" +
+                                  $"[Agent to ball distance]: {maxAgentToBallDistance - agent.AgentToBallDistance} / {maxAgentToBallDistance} = {agentToBallDistanceFitness}\n" +
+                                  $"[Ball to goal distance]: {maxBallToGoalDistance - distance} / {maxBallToGoalDistance} = {ballToGoalDistanceFitness}\n" +
+                                  $"[Time without goal bonus]: {agent.MaxTimeWithoutGoal} / {CurrentSimulationSteps} = {timeWithoutGoalBonusFitness}\n" +
+                                  $"[Time looking at ball]: {agent.TimeLookingAtBall} / {CurrentSimulationSteps} = {timeLookingAtBallFitness}";
+
+                Debug.Log(agentFitnessLog);
+
             }
         }
 

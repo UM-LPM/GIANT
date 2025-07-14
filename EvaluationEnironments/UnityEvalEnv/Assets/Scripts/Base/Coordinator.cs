@@ -49,7 +49,7 @@ namespace Base
 
         public System.Random Random { get; private set; }
 
-        private void Awake()
+        private async void Awake()
         {
             // Singleton pattern
             if (Instance != null)
@@ -190,7 +190,6 @@ namespace Base
                         if (TeamOrganizator == null)
                         {
                             throw new Exception("TournamentTeamOrganizator is not defined");
-                            // TODO Add error reporting here
                         }
                     }
                     tournamentOrganizator = getTournamentOrganizator(TeamOrganizator.OrganizeTeams(Individuals));
@@ -208,7 +207,6 @@ namespace Base
                         if (TeamOrganizator == null)
                         {
                             throw new Exception("TournamentTeamOrganizator is not defined");
-                            // TODO Add error reporting here
                         }
                     }
                     ratingSystem = getRatingSystem();
@@ -220,7 +218,6 @@ namespace Base
                     break;
                 default:
                     throw new Exception("Invalid EvaluatorType");
-                    // TODO Add error reporting here
             }
 
             while (!evaluationResultTask.IsCompleted)
@@ -242,7 +239,6 @@ namespace Base
             if (!context.Request.HasEntityBody)
             {
                 throw new Exception("No client data was sent with the request.");
-                // TODO Add error reporting here
             }
 
             System.IO.Stream body = context.Request.InputStream;
@@ -256,7 +252,6 @@ namespace Base
             catch (Exception ex)
             {
                 throw new Exception("Error reading the request data: " + ex.Message);
-                // TODO Add error reporting here
             }
         }
 
@@ -278,7 +273,6 @@ namespace Base
             if (IndividualsSourceJSON == null || IndividualsSourceJSON.Length == 0 || IndividualsSourceSO == null || IndividualsSourceSO.Length == 0)
             {
                 throw new Exception("IndividualsSourceJSON or IndividualsSourceSO are not defined");
-                // TODO Add error reporting here
             }
 
             // Loading individuals from JSON files
@@ -293,7 +287,6 @@ namespace Base
             if (IndividualsSourceJSON == null || IndividualsSourceJSON.Length == 0)
             {
                 throw new Exception("IndividualsSourceJSON or IndividualsSourceSO are not defined");
-                // TODO Add error reporting here
             }
 
             UnityAssetParser.SaveSOIndividualsToJSON(Individuals, IndividualsSourceJSON);
@@ -310,7 +303,7 @@ namespace Base
                 case RatingSystemType.Elo:
                     return new EloRatingSystem();
                 default:
-                    Debug.LogError("Invalid rating system type");
+                    MqttNetLogger.Log("Invalid rating system type", MqttNetLogType.Error);
                     return null;
             }
         }
@@ -336,6 +329,14 @@ namespace Base
                 default:
                     Debug.LogError("Invalid tournament organization type");
                     return null;
+            }
+        }
+
+        void OnDestroy()
+        {
+            if (Listener != null)
+            {
+                StopListener();
             }
         }
     }

@@ -63,43 +63,36 @@ namespace Problems.Robostrike
             if (Hull == null)
             {
                 throw new System.Exception("HullComponent component is missing");
-                // TODO Add error reporting here
             }
 
             if (Turret == null)
             {
                 throw new System.Exception("TurretComponent component is missing");
-                // TODO Add error reporting here
             }
 
             if (StatBars == null)
             {
                 throw new System.Exception("AgentStatBars component is missing");
-                // TODO Add error reporting here
             }
 
             if (HealthComponent == null)
             {
                 throw new System.Exception("HealthComponent component is missing");
-                // TODO Add error reporting here
             }
 
             if (ShieldComponent == null)
             {
                 throw new System.Exception("ShieldComponent component is missing");
-                // TODO Add error reporting here
             }
 
             if (AmmoComponent == null)
             {
                 throw new System.Exception("AmmoComponent component is missing");
-                // TODO Add error reporting here
             }
 
             if (MissileSpawnPoint == null)
             {
                 throw new System.Exception("MissileSpawnPointComponent component is missing");
-                // TODO Add error reporting here
             }
         }
 

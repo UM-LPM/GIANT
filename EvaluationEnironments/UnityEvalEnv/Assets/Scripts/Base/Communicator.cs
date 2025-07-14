@@ -78,7 +78,7 @@ namespace Base
         MatchFitness matchFitness;
         TeamFitness teamFitness;
 
-        private void Awake()
+        private async void Awake()
         {
             // Singleton pattern
             if (Instance != null)
@@ -90,6 +90,9 @@ namespace Base
                 Instance = this;
                 DontDestroyOnLoad(this);
             }
+
+
+            // TODO
 
 
             if (CommunicatorSetup == ComponentSetupType.REAL)
@@ -151,7 +154,7 @@ namespace Base
             }
         }
 
-        void InitializeHttpListener()
+        async void InitializeHttpListener()
         {
             string[] uriParts;
             while (true)
@@ -250,7 +253,6 @@ namespace Base
             if (!context.Request.HasEntityBody)
             {
                 throw new Exception("No client data was sent with the request.");
-                // TODO Add error reporting here
             }
             System.IO.Stream body = context.Request.InputStream;
             Encoding encoding = context.Request.ContentEncoding;
@@ -264,20 +266,17 @@ namespace Base
             catch (Exception ex)
             {
                 throw new Exception("Error reading the request data: " + ex.Message);
-                // TODO Add error reporting here
             }
 
             if (evalRequestData == null || evalRequestData.Matches == null || evalRequestData.Matches.Length == 0)
             {
                 throw new Exception("Empty request or no TournamentMatches to execute");
-                // TODO Add error reporting here
             }
 
             // Check if any two TournamentMatches have the same id and throw and exception if they do
             if (evalRequestData.Matches.GroupBy(x => x.MatchId).Any(g => g.Count() > 1))
             {
                 throw new Exception("There are two or more TournamentMatches with the same id");
-                // TODO Add error reporting here
             }
 
             Matches = evalRequestData.Matches;
@@ -480,7 +479,6 @@ namespace Base
             if (Matches == null)
             {
                 throw new Exception("Matches is not defined");
-                // TODO Add error reporting here
             }
 
             return Matches[matchIndex];

@@ -90,7 +90,6 @@ namespace Problems.Robostrike
             if (PowerUpSpawner == null)
             {
                 throw new Exception("RobostrikePowerUpSpawner is not defined");
-                // TODO Add error reporting here
             }
 
             if(SceneLoadMode == SceneLoadMode.LayerMode)
@@ -108,7 +107,6 @@ namespace Problems.Robostrike
             if (MissileController == null)
             {
                 throw new Exception("MissileController is not defined");
-                // TODO Add error reporting here
             }
         }
 
@@ -313,7 +311,6 @@ namespace Problems.Robostrike
                 default:
                     {
                         throw new Exception("Unsuported PowerUpType!");
-                        // TODO Add error reporting here
                     }
             }
         }

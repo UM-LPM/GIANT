@@ -24,7 +24,6 @@ namespace Evaluators.TournamentOrganizations
             if (teams.Any(team => team.Individuals.Length != 1))
             {
                 throw new ArgumentException("All teams must have exactly one individual for SimilarStrengthOpponentSelection tournament.");
-                // TODO add error reporting
             }
 
             Teams = teams;
