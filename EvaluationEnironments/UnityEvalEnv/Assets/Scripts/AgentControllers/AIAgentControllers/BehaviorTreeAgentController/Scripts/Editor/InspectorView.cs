@@ -14,7 +14,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
 
         }
 
-        internal void UpdateSelection(NodeView nodeView) {
+        internal void UpdateSelection(BTNodeView nodeView) {
             Clear();
 
             UnityEngine.Object.DestroyImmediate(editor);

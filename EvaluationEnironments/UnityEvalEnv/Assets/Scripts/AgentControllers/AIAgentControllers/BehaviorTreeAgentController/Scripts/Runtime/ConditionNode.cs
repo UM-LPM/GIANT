@@ -1,6 +1,6 @@
 ﻿
 namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
-    public abstract class ConditionNode : Node {
+    public abstract class ConditionNode : BTNode {
         public static string[] TargetGameObjects = new string[]
         {
             "Agent",

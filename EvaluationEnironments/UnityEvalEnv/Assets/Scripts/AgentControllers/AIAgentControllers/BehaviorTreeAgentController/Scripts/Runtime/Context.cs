@@ -7,8 +7,6 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
 
     // The context is a shared object every node has access to.
     // Commonly used components and subsytems should be stored here
-    // It will be somewhat specfic to your game exactly what to add here.
-    // Feel free to extend this class 
     public class Context {
         public GameObject gameObject;
         public Transform transform;
@@ -19,7 +17,6 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
         public BoxCollider boxCollider;
         public CapsuleCollider capsuleCollider;
         public CharacterController characterController;
-        // Add other game specific systems here
 
         public static Context CreateFromGameObject(GameObject gameObject) {
             // Fetch all commonly used components
@@ -33,8 +30,6 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
             context.boxCollider = gameObject.GetComponent<BoxCollider>();
             context.capsuleCollider = gameObject.GetComponent<CapsuleCollider>();
             context.characterController = gameObject.GetComponent<CharacterController>();
-            
-            // Add whatever else you need here...
 
             return context;
         }

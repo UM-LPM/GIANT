@@ -2,9 +2,9 @@
     <uie:Toolbar>
         <uie:ToolbarMenu display-tooltip-when-elided="true" text="Assets " />
     </uie:Toolbar>
-    <AgentControllers.AIAgentControllers.BehaviorTreeAgentController.SplitView fixed-pane-initial-dimension="300">
+    <AgentControllers.AIAgentControllers.SplitView fixed-pane-initial-dimension="300">
         <ui:VisualElement name="left-panel">
-            <AgentControllers.AIAgentControllers.BehaviorTreeAgentController.SplitView orientation="Vertical" fixed-pane-initial-dimension="400">
+            <AgentControllers.AIAgentControllers.SplitView orientation="Vertical" fixed-pane-initial-dimension="400">
                 <ui:VisualElement name="inspector-container">
                     <ui:Label text="Inspector" display-tooltip-when-elided="true" style="background-color: rgb(37, 37, 37);" />
                     <AgentControllers.AIAgentControllers.BehaviorTreeAgentController.InspectorView />
@@ -13,13 +13,13 @@
                     <ui:Label text="Blackboard" display-tooltip-when-elided="true" style="background-color: rgb(37, 37, 37);" />
                     <ui:IMGUIContainer />
                 </ui:VisualElement>
-            </AgentControllers.AIAgentControllers.BehaviorTreeAgentController.SplitView>
+            </AgentControllers.AIAgentControllers.SplitView>
         </ui:VisualElement>
         <ui:VisualElement name="right-panel">
             <ui:Label text="Tree View" display-tooltip-when-elided="true" style="background-color: rgb(37, 37, 37);" />
             <AgentControllers.AIAgentControllers.BehaviorTreeAgentController.BehaviourTreeView focusable="true" style="flex-grow: 1;" />
         </ui:VisualElement>
-    </AgentControllers.AIAgentControllers.BehaviorTreeAgentController.SplitView>
+    </AgentControllers.AIAgentControllers.SplitView>
     <ui:VisualElement name="Overlay" style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.5); align-items: center; justify-content: center;">
         <ui:VisualElement style="flex-grow: 1; background-color: rgb(56, 56, 56); border-top-left-radius: 10px; border-bottom-left-radius: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; max-height: 250px; min-height: 250px; min-width: 533px; max-width: 533px;">
             <ui:VisualElement style="flex-grow: 1; margin-left: 10px; margin-right: 10px; margin-top: 10px; margin-bottom: 10px; background-color: rgba(56, 56, 56, 255);">

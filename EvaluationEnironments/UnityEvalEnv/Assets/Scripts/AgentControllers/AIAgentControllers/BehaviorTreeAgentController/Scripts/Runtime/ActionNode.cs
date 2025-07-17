@@ -4,7 +4,7 @@ using UnityEngine;
 
 
 namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
-    public abstract class ActionNode : Node {
+    public abstract class ActionNode : BTNode {
 
     }
 }

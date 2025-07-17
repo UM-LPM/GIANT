@@ -2,8 +2,8 @@ using UnityEngine;
 
 namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
 
-    public class RootNode : Node {
-        [HideInInspector] public Node child;
+    public class RootNode : BTNode {
+        [HideInInspector] public BTNode child;
 
         protected override void OnStart() {
 
@@ -17,7 +17,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
             return child.Update();
         }
 
-        public override Node Clone() {
+        public override BTNode Clone() {
             RootNode node = Instantiate(this);
             node.child = child.Clone();
             return node;

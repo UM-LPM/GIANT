@@ -46,10 +46,10 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
             if (!CanStopManipulation(evt))
                 return;
 
-            NodeView clickedElement = evt.target as NodeView;
+            BTNodeView clickedElement = evt.target as BTNodeView;
             if (clickedElement == null) {
                 var ve = evt.target as VisualElement;
-                clickedElement = ve.GetFirstAncestorOfType<NodeView>();
+                clickedElement = ve.GetFirstAncestorOfType<BTNodeView>();
                 if (clickedElement == null)
                     return;
             }

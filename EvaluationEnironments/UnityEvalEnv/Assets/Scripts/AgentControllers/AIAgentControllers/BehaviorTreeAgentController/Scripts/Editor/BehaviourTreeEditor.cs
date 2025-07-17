@@ -27,7 +27,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
         SerializedObject treeObject;
         SerializedProperty blackboardProperty;
 
-        [MenuItem("AgentControllers.AIAgentControllers.BehaviorTreeAgentController/BehaviourTreeEditor ...")]
+        [MenuItem("AI/BehaviourTreeEditor")]
         public static void OpenWindow() {
             BehaviourTreeEditor wnd = GetWindow<BehaviourTreeEditor>();
             wnd.titleContent = new GUIContent("BehaviourTreeEditor");
@@ -77,7 +77,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
             // Inspector View
             inspectorView = root.Q<InspectorView>();
 
-            // Blackboard view
+            // Blackboard View
             blackboardView = root.Q<IMGUIContainer>();
             blackboardView.onGUIHandler = () => {
                 if (treeObject != null && treeObject.targetObject != null) {
@@ -172,7 +172,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
             };
         }
 
-        void OnNodeSelectionChanged(NodeView node) {
+        void OnNodeSelectionChanged(BTNodeView node) {
             inspectorView.UpdateSelection(node);
         }
 

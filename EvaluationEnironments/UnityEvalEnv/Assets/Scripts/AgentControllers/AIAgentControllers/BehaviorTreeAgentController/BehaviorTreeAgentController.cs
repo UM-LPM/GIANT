@@ -10,9 +10,9 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
     [CreateAssetMenu(fileName = "BehaviorTreeAgentController", menuName = "AgentControllers/AIAgentControllers/BehaviorTreeAgentController")]
     public class BehaviorTreeAgentController : AIAgentController
     {
-        public Node RootNode;
-        public Node.State TreeState = Node.State.Running;
-        public List<Node> Nodes = new List<Node>();
+        public BTNode RootNode;
+        public BTNode.State TreeState = BTNode.State.Running;
+        public List<BTNode> Nodes = new List<BTNode>();
         public Blackboard Blackboard = new Blackboard(); // Blackboard for all Nodes
 
         public override void GetActions(in ActionBuffer actionsOut)
@@ -24,7 +24,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
         {
             BehaviorTreeAgentController tree = Instantiate(this);
             tree.RootNode = tree.RootNode.Clone();
-            tree.Nodes = new List<Node>();
+            tree.Nodes = new List<BTNode>();
             Traverse(tree.RootNode, (n) => {
                 tree.Nodes.Add(n);
             });
@@ -32,17 +32,17 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
             return tree;
         }
 
-        public Node.State Update()
+        public BTNode.State Update()
         {
-            if (RootNode.state == Node.State.Running)
+            if (RootNode.state == BTNode.State.Running)
             {
                 TreeState = RootNode.Update();
             }
             return TreeState;
         }
-        public static List<Node> GetChildren(Node parent)
+        public static List<BTNode> GetChildren(BTNode parent)
         {
-            List<Node> children = new List<Node>();
+            List<BTNode> children = new List<BTNode>();
 
             if (parent is DecoratorNode decorator && decorator.child != null)
             {
@@ -62,16 +62,16 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
             return children;
         }
 
-        public static void Traverse(Node node, System.Action<Node> visiter, bool includeEncapsulatedNodes = true)
+        public static void Traverse(BTNode node, System.Action<BTNode> visiter, bool includeEncapsulatedNodes = true)
         {
             if (node == null) return;
 
-            Queue<Node> queue = new Queue<Node>();
+            Queue<BTNode> queue = new Queue<BTNode>();
             queue.Enqueue(node);
 
             while (queue.Count > 0)
             {
-                Node currentNode = queue.Dequeue();
+                BTNode currentNode = queue.Dequeue();
                 visiter.Invoke(currentNode);
 
                 // If the node is an encapsulator, we don't want to traverse its children // TODO Control this with a parameter
@@ -87,18 +87,6 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
                 }
             }
         }
-
-        /*public BehaviorTreeAgentController Clone()
-        {
-            BehaviorTreeAgentController tree = Instantiate(this);
-            tree.RootNode = tree.RootNode.Clone();
-            tree.Nodes = new List<Node>();
-            Traverse(tree.RootNode, (n) => {
-                tree.Nodes.Add(n);
-            });
-
-            return tree;
-        }*/
 
         public void Bind(Context context)
         {
@@ -141,7 +129,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
                 callFrequencies.Add(node.callFrequencyCount);
             }, includeEncapsulatedNodes);
 
-            // Remove first two elements (root and first child (Repeat))
+            // Remove first two elements (root and first Child (Repeat))
             callFrequencies.RemoveRange(0, 2);
 
             return callFrequencies.ToArray();
@@ -160,9 +148,9 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
         #region Editor Compatibility
 #if UNITY_EDITOR
 
-        public Node CreateNode(System.Type type)
+        public BTNode CreateNode(System.Type type)
         {
-            Node node = ScriptableObject.CreateInstance(type) as Node;
+            BTNode node = ScriptableObject.CreateInstance(type) as BTNode;
             node.name = type.Name;
             node.guid = GUID.Generate().ToString();
 
@@ -180,7 +168,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
             return node;
         }
 
-        public void DeleteNode(Node node)
+        public void DeleteNode(BTNode node)
         {
             Undo.RecordObject(this, "Behaviour Tree (DeleteNode)");
             Nodes.Remove(node);
@@ -191,7 +179,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
             AssetDatabase.SaveAssets();
         }
 
-        public void AddChild(Node parent, Node child)
+        public void AddChild(BTNode parent, BTNode child)
         {
             if (parent is DecoratorNode decorator)
             {
@@ -215,7 +203,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
             }
         }
 
-        public void RemoveChild(Node parent, Node child)
+        public void RemoveChild(BTNode parent, BTNode child)
         {
             if (parent is DecoratorNode decorator)
             {

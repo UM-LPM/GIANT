@@ -9,16 +9,16 @@ using UnityEditor;
 
 namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
 
-    public class NodeView : UnityEditor.Experimental.GraphView.Node {
-        public Action<NodeView> OnNodeSelected;
-        public Node node;
+    public class BTNodeView : UnityEditor.Experimental.GraphView.Node {
+        public Action<BTNodeView> OnNodeSelected;
+        public BTNode node;
         public Port input;
         public Port output;
 
-        public NodeView(Node node) : base(AssetDatabase.GetAssetPath(BehaviourTreeSettings.GetOrCreateSettings().nodeXml)) {
+        public BTNodeView(BTNode node) : base(AssetDatabase.GetAssetPath(BehaviourTreeSettings.GetOrCreateSettings().nodeXml)) {
             this.node = node;
             this.node.name = node.GetType().Name;
-            this.title = node.name.Replace("(Clone)", "").Replace("Node", "");
+            this.title = node.name.Replace("(Clone)", "").Replace("BTNode", "");
             this.viewDataKey = node.guid;
 
             style.left = node.position.x;
@@ -112,7 +112,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
             }
         }
 
-        private int SortByHorizontalPosition(Node left, Node right) {
+        private int SortByHorizontalPosition(BTNode left, BTNode right) {
             return left.position.x < right.position.x ? -1 : 1;
         }
 
@@ -124,15 +124,15 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
 
             if (Application.isPlaying) {
                 switch (node.state) {
-                    case Node.State.Running:
+                    case BTNode.State.Running:
                         if (node.started) {
                             AddToClassList("running");
                         }
                         break;
-                    case Node.State.Failure:
+                    case BTNode.State.Failure:
                         AddToClassList("failure");
                         break;
-                    case Node.State.Success:
+                    case BTNode.State.Success:
                         AddToClassList("success");
                         break;
                 }

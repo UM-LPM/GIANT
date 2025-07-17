@@ -7,13 +7,12 @@ using UnityEditor.Experimental.GraphView;
 using System;
 using System.Linq;
 using System.IO;
-using AgentControllers.AIAgentControllers;
 using AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
 
 namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
     public class BehaviourTreeView : GraphView {
 
-        public Action<NodeView> OnNodeSelected;
+        public Action<BTNodeView> OnNodeSelected;
         public new class UxmlFactory : UxmlFactory<BehaviourTreeView, GraphView.UxmlTraits> { }
         BehaviorTreeAgentController tree;
         BehaviourTreeSettings settings;
@@ -54,8 +53,8 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
             AssetDatabase.SaveAssets();
         }
 
-        public NodeView FindNodeView(Node node) {
-            return GetNodeByGuid(node.guid) as NodeView;
+        public BTNodeView FindNodeView(BTNode node) {
+            return GetNodeByGuid(node.guid) as BTNodeView;
         }
 
         internal void PopulateView(BehaviorTreeAgentController tree) {
@@ -72,15 +71,15 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
                 AssetDatabase.SaveAssets();
             }
 
-            // Creates node view
+            // Creates node abisView
             tree.Nodes.ForEach(n => CreateNodeView(n));
 
             // Create edges
             tree.Nodes.ForEach(n => {
                 var children = BehaviorTreeAgentController.GetChildren(n);
                 children.ForEach(c => {
-                    NodeView parentView = FindNodeView(n);
-                    NodeView childView = FindNodeView(c);
+                    BTNodeView parentView = FindNodeView(n);
+                    BTNodeView childView = FindNodeView(c);
 
                     Edge edge = parentView.output.ConnectTo(childView.input); // Create connection
                     AddElement(edge); // Add edge to graph
@@ -98,15 +97,15 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
         private GraphViewChange OnGraphViewChanged(GraphViewChange graphViewChange) {
             if (graphViewChange.elementsToRemove != null) {
                 graphViewChange.elementsToRemove.ForEach(elem => {
-                    NodeView nodeView = elem as NodeView;
+                    BTNodeView nodeView = elem as BTNodeView;
                     if (nodeView != null) {
                         tree.DeleteNode(nodeView.node);
                     }
 
                     Edge edge = elem as Edge;
                     if (edge != null) {
-                        NodeView parentView = edge.output.node as NodeView;
-                        NodeView childView = edge.input.node as NodeView;
+                        BTNodeView parentView = edge.output.node as BTNodeView;
+                        BTNodeView childView = edge.input.node as BTNodeView;
                         tree.RemoveChild(parentView.node, childView.node);
                     }
                 });
@@ -114,14 +113,14 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
 
             if (graphViewChange.edgesToCreate != null) {
                 graphViewChange.edgesToCreate.ForEach(edge => {
-                    NodeView parentView = edge.output.node as NodeView;
-                    NodeView childView = edge.input.node as NodeView;
+                    BTNodeView parentView = edge.output.node as BTNodeView;
+                    BTNodeView childView = edge.input.node as BTNodeView;
                     tree.AddChild(parentView.node, childView.node);
                 });
             }
 
             nodes.ForEach((n) => {
-                NodeView view = n as NodeView;
+                BTNodeView view = n as BTNodeView;
                 view.SortChildren();
             });
 
@@ -133,15 +132,15 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
             //base.BuildContextualMenu(evt);
 
             // New script functions
-            evt.menu.AppendAction($"Create Script.../New Action Node", (a) => CreateNewScript(scriptFileAssets[0]));
-            evt.menu.AppendAction($"Create Script.../New Composite Node", (a) => CreateNewScript(scriptFileAssets[1]));
-            evt.menu.AppendAction($"Create Script.../New Decorator Node", (a) => CreateNewScript(scriptFileAssets[2]));
-            evt.menu.AppendAction($"Create Script.../New Condition Node", (a) => CreateNewScript(scriptFileAssets[3]));
+            evt.menu.AppendAction($"Create Script.../New Action BTNode", (a) => CreateNewScript(scriptFileAssets[0]));
+            evt.menu.AppendAction($"Create Script.../New Composite BTNode", (a) => CreateNewScript(scriptFileAssets[1]));
+            evt.menu.AppendAction($"Create Script.../New Decorator BTNode", (a) => CreateNewScript(scriptFileAssets[2]));
+            evt.menu.AppendAction($"Create Script.../New Condition BTNode", (a) => CreateNewScript(scriptFileAssets[3]));
             evt.menu.AppendSeparator();
 
             Vector2 nodePosition = this.ChangeCoordinatesTo(contentViewContainer, evt.localMousePosition);
 
-            if(selection.Count == 1 && selection[0] is NodeView)
+            if(selection.Count == 1 && selection[0] is BTNodeView)
             {
                 evt.menu.AppendAction($"Duplicate node", (a) => DuplicateNode(nodePosition));
             }
@@ -202,13 +201,13 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
         }
 
         void CreateNode(System.Type type, Vector2 position) {
-            Node node = tree.CreateNode(type);
+            BTNode node = tree.CreateNode(type);
             node.position = position;
             CreateNodeView(node);
         }
 
-        void CreateNodeView(Node node) {
-            NodeView nodeView = new NodeView(node);
+        void CreateNodeView(BTNode node) {
+            BTNodeView nodeView = new BTNodeView(node);
             nodeView.OnNodeSelected = OnNodeSelected;
             AddElement(nodeView);
         }
@@ -216,15 +215,15 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
 
         // TODO upgrade for multiple Nodes at the same time + edges
         void DuplicateNode(Vector2 position) {
-            NodeView nodeView = selection[0] as NodeView;
+            BTNodeView nodeView = selection[0] as BTNodeView;
 
-            Node node = nodeView.node.Clone();
+            BTNode node = nodeView.node.Clone();
             node.guid = GUID.Generate().ToString();
             node.position = position;
 
             if(node is CompositeNode) {
                 CompositeNode compositeNode = (CompositeNode)node;
-                compositeNode.children = new List<Node>();
+                compositeNode.children = new List<BTNode>();
             }
             else if (node is DecoratorNode) {
                 DecoratorNode decoratorNode = (DecoratorNode)node;
@@ -240,7 +239,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
 
         public void UpdateNodeStates() {
             nodes.ForEach(n => {
-                NodeView view = n as NodeView;
+                BTNodeView view = n as BTNodeView;
                 view.UpdateState();
             });
         }
