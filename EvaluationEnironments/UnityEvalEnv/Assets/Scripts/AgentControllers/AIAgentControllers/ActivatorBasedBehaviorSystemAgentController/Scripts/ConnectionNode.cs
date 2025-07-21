@@ -26,5 +26,10 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
         {
             throw new NotImplementedException();
         }
+
+        public override void RemoveChild(ABiSNode child = null)
+        {
+            child = null;
+        }
     }
 }

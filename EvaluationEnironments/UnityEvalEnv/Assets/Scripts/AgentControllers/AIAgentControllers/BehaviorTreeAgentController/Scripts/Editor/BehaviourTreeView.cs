@@ -1,13 +1,12 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using UnityEditor;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
-using UnityEditor.Experimental.GraphView;
-using System;
-using System.Linq;
-using System.IO;
-using AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
 
 namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
     public class BehaviourTreeView : GraphView {
@@ -140,9 +139,33 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
 
             Vector2 nodePosition = this.ChangeCoordinatesTo(contentViewContainer, evt.localMousePosition);
 
-            if(selection.Count == 1 && selection[0] is BTNodeView)
+            // Add Duplicate to the menu (Duplicates currently selected nodes)
             {
-                evt.menu.AppendAction($"Duplicate node", (a) => DuplicateNode(nodePosition));
+                evt.menu.AppendAction("Duplicate", (a) => {
+                    // Check if RootNode is selected, if so, do not duplicate
+                    if (selection.OfType<BTNodeView>().Any(n => n.node is RootNode)) {
+                        Debug.LogWarning("Cannot duplicate RootNode, please select other nodes to duplicate.");
+                        return;
+                    }
+
+                    var selectedNodes = selection.OfType<BTNodeView>().ToList();
+                    var newNodes = new List<BTNodeView>();
+                    selectedNodes.ForEach(nodeView => {
+                        BTNode node = tree.CreateNode(nodeView.node.GetType());
+                        node.position = nodeView.node.position + new Vector2(20, 20);
+                        CreateNodeView(node);
+                        newNodes.Add(FindNodeView(node));
+                    });
+
+                    // Deselect all nodes and select the newly created nodes
+                    selectedNodes.ForEach(n => RemoveFromSelection(n));
+
+                    // Select the newly created nodes
+                    newNodes.ForEach(n => {
+                        AddToSelection(n);
+                        OnNodeSelected?.Invoke(n);
+                    });
+                });
             }
 
             {
@@ -210,31 +233,6 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
             BTNodeView nodeView = new BTNodeView(node);
             nodeView.OnNodeSelected = OnNodeSelected;
             AddElement(nodeView);
-        }
-
-
-        // TODO upgrade for multiple Nodes at the same time + edges
-        void DuplicateNode(Vector2 position) {
-            BTNodeView nodeView = selection[0] as BTNodeView;
-
-            BTNode node = nodeView.node.Clone();
-            node.guid = GUID.Generate().ToString();
-            node.position = position;
-
-            if(node is CompositeNode) {
-                CompositeNode compositeNode = (CompositeNode)node;
-                compositeNode.children = new List<BTNode>();
-            }
-            else if (node is DecoratorNode) {
-                DecoratorNode decoratorNode = (DecoratorNode)node;
-                decoratorNode.child = null;
-            }
-            else if (node is RootNode) {
-                RootNode rootNode = (RootNode)node;
-                rootNode.child = null;
-            }
-
-            CreateNodeView(node);
         }
 
         public void UpdateNodeStates() {

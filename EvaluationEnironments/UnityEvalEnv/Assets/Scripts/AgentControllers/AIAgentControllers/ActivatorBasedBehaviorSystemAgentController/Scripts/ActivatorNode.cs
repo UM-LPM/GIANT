@@ -78,5 +78,10 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
             node.Child = Child.Clone();
             return node;
         }
+
+        public override void RemoveChild(ABiSNode child = null)
+        {
+            child = null;
+        }
     }
 }

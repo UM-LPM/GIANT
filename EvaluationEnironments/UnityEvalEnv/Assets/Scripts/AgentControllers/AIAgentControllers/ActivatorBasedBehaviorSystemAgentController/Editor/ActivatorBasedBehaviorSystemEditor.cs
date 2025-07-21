@@ -36,7 +36,7 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
         [OnOpenAsset]
         public static bool OnOpenAsset(int instanceId, int line)
         {
-            if (Selection.activeObject is ActivatorBasedBehaviorSystemEditor)
+            if (Selection.activeObject is ActivatorBasedBehaviorSystemAgentController)
             {
                 OpenWindow();
                 return true;

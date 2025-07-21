@@ -150,7 +150,35 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
 
             Vector2 nodePosition = this.ChangeCoordinatesTo(contentViewContainer, evt.localMousePosition);
 
-            // TODO: Implement duplicate node functionality
+            // Add Duplicate to the menu (Duplicates currently selected nodes)
+            {
+                evt.menu.AppendAction("Duplicate", (a) => {
+                    // Check if RootNode is selected, if so, do not duplicate
+                    if (selection.OfType<ABiSNodeView>().Any(n => n.node is RootNode))
+                    {
+                        Debug.LogWarning("Cannot duplicate RootNode. Please select other nodes to duplicate.");
+                        return;
+                    }
+
+                    var selectedNodes = selection.OfType<ABiSNodeView>().ToList();
+                    var newNodes = new List<ABiSNodeView>();
+                    selectedNodes.ForEach(nodeView => {
+                        ABiSNode node = abis.CreateNode(nodeView.node.GetType());
+                        node.position = nodeView.node.position + new Vector2(20, 20);
+                        CreateNodeView(node);
+                        newNodes.Add(FindNodeView(node));
+                    });
+
+                    // Deselect all nodes and select the newly created nodes
+                    selectedNodes.ForEach(n => RemoveFromSelection(n));
+
+                    // Select the newly created nodes
+                    newNodes.ForEach(n => {
+                        AddToSelection(n);
+                        OnNodeSelected?.Invoke(n);
+                    });
+                });
+            }
 
             {
 

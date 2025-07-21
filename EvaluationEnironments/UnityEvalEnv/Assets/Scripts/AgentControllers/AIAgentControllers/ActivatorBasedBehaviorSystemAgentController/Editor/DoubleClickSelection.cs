@@ -1,16 +1,17 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.Experimental.GraphView;
+using UnityEngine;
 using UnityEngine.UIElements;
-using static UnityEngine.GraphicsBuffer;
 
-namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentController
-{
-    public class DoubleClickSelection : MouseManipulator
-    {
+namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentController {
+    public class DoubleClickSelection : MouseManipulator {
         double time;
         double doubleClickDuration = 0.3;
 
-        public DoubleClickSelection()
-        {
+        public DoubleClickSelection() {
             time = EditorApplication.timeSinceStartup;
         }
 
@@ -21,7 +22,6 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
 
         protected override void UnregisterCallbacksFromTarget()
         {
-
             target.UnregisterCallback<MouseDownEvent>(OnMouseDown);
         }
 

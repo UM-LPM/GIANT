@@ -30,6 +30,18 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
             CreateOutputPorts();
             SetupClasses();
             SetupDataBinding();
+
+            // Subscribe to connection events
+            if (input != null)
+            {
+                (input as NodePort).OnConnected += HandleConnectionMade;
+                (input as NodePort).OnDisconnected += HandleConnectionRemoved;
+            }
+            if (output != null)
+            {
+                (output as NodePort).OnConnected += HandleConnectionMade;
+                (output as NodePort).OnDisconnected += HandleConnectionRemoved;
+            }
         }
 
         private void CreateInputPorts()
@@ -62,6 +74,7 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
             if (input != null)
             {
                 input.portName = "";
+                // Position input port at the center of the node
                 input.style.flexDirection = FlexDirection.Column;
                 inputContainer.Add(input);
             }
@@ -97,7 +110,7 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
             if (output != null)
             {
                 output.portName = "";
-                output.style.flexDirection = FlexDirection.Column;
+                output.style.flexDirection = FlexDirection.ColumnReverse;
                 outputContainer.Add(output);
             }
         }
@@ -192,6 +205,78 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
                         break;
                 }
             }
+        }
+        private void HandleConnectionMade(NodePort outputPort, NodePort inputPort, Edge edge)
+        {
+            // Get the source and target nodes
+            var outputNodeView = outputPort.node as ABiSNodeView;
+            var inputNodeView = inputPort.node as ABiSNodeView;
+
+            if (outputNodeView != null && inputNodeView != null)
+            {
+                bool isValidConnection = CheckConnectionValidity(outputNodeView.node, inputNodeView.node);
+                if (!isValidConnection)
+                {
+                    var abisGraphView = outputPort.GetFirstAncestorOfType<ActivatorBasedBehaviorSystemView>();
+                    if (abisGraphView != null)
+                    {
+                        // 1. Disconnect the edge from both ports
+                        outputPort.Disconnect(edge);
+                        inputPort.Disconnect(edge);
+
+                        // 2. Remove the child node from the parent node
+                        outputNodeView.node.RemoveChild(inputNodeView.node);
+
+                        // 3. Remove the edge from the GraphView
+                        abisGraphView.RemoveElement(edge);
+                        Debug.LogWarning("Invalid connection detected and removed.");
+                    }
+                    else
+                    {
+                        Debug.LogError("Could not find GraphView to remove invalid edge.");
+                    }
+                }
+                else
+                {
+                    Debug.Log($"New connection made from {outputNodeView.title} to {inputNodeView.title}");
+                }
+            }
+        }
+
+        private void HandleConnectionRemoved(NodePort outputPort, NodePort inputPort, Edge edge)
+        {
+            var outputNodeView = outputPort.node as ABiSNodeView;
+            var inputNodeView = inputPort.node as ABiSNodeView;
+            if (outputNodeView != null && inputNodeView != null)
+            {
+                Debug.Log($"Connection removed between {outputNodeView.title} and {inputNodeView.title}");
+            }
+        }
+
+        private bool CheckConnectionValidity(ABiSNode sourceNode, ABiSNode targetNode)
+        {
+            if(sourceNode is RootNode && targetNode is not ActivatorNode)
+            {
+                return false; // ActivatorNode can only connect to RootNode 
+            }
+            if (sourceNode is ActivatorNode && targetNode is not ConnectionNode && targetNode is not DecoratorNode)
+            {
+                return false; // ConnectionNode or DecoratorNode can connect to ActivatorNode
+            }
+            if (sourceNode is DecoratorNode && targetNode is not ConnectionNode)
+            {
+                return false; // ConnectionNode can connect to DecoratorNode
+            }
+            if (sourceNode is ConnectionNode && targetNode is not BehaviorNode)
+            {
+                return false; // BehaviorNode can only connect to ConnectionNode
+            }
+            if (sourceNode is BehaviorNode && targetNode is not BehaviorNode)
+            {
+                return false; // BehaviorNode can only connect to other BehaviorNode
+            }
+
+            return true;
         }
     }
 }

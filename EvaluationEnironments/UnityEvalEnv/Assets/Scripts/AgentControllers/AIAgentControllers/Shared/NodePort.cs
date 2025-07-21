@@ -1,16 +1,19 @@
 #if UNITY_EDITOR
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using UnityEditor.Experimental.GraphView;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace AgentControllers.AIAgentControllers {
 
     public class NodePort : Port {
 
-        // GITHUB:UnityCsReference-master\UnityCsReference-master\Modules\GraphViewEditor\Elements\Port.cs
-        private class DefaultEdgeConnectorListener : IEdgeConnectorListener {
+        public Action<NodePort, NodePort, Edge> OnConnected;
+        public Action<NodePort, NodePort, Edge> OnDisconnected;
+
+        public class DefaultEdgeConnectorListener : IEdgeConnectorListener {
             private GraphViewChange m_GraphViewChange;
             private List<Edge> m_EdgesToCreate;
             private List<GraphElement> m_EdgesToDelete;
@@ -66,6 +69,20 @@ namespace AgentControllers.AIAgentControllers {
         public override bool ContainsPoint(Vector2 localPoint) {
             Rect rect = new Rect(0, 0, layout.width, layout.height);
             return rect.Contains(localPoint);
+        }
+
+        override public void Connect(Edge edge) {
+            base.Connect(edge);
+            var inputPort = edge.input as NodePort;
+            var outputPort = edge.output as NodePort;
+            OnConnected?.Invoke(outputPort, inputPort, edge);
+        }
+
+        override public void Disconnect(Edge edge) {
+            base.Disconnect(edge);
+            var inputPort = edge.input as NodePort;
+            var outputPort = edge.output as NodePort;
+            OnDisconnected?.Invoke(outputPort, inputPort, edge);
         }
     }
 }

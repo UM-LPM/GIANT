@@ -57,5 +57,7 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
         protected abstract void OnStart();
         protected abstract void OnStop();
         protected abstract State OnUpdate();
+
+        public abstract void RemoveChild(ABiSNode child = null);
     }
 }

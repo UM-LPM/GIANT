@@ -5,5 +5,9 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
 {
     public abstract class ActionNode : BehaviorNode
     {
+        public override void RemoveChild(ABiSNode child = null)
+        {
+            // No action required for ActionNode
+        }
     }
 }

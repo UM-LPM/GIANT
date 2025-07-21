@@ -13,5 +13,17 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
             node.Children = Children.ConvertAll(c => c.Clone());
             return node;
         }
+
+        public override void RemoveChild(ABiSNode child)
+        {
+            if (Children.Contains(child))
+            {
+                Children.Remove(child);
+            }
+            else
+            {
+                Debug.LogWarning("Child not found in CompositeNode's children list.");
+            }
+        }
     }
 }
