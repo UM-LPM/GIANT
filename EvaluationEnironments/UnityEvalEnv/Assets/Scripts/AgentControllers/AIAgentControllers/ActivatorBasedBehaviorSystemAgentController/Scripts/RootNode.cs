@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentController
 {
@@ -14,8 +15,8 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
         [HideInInspector] public List<ActivatorNode> Children = new List<ActivatorNode>();
 
         List<ActivatorNode> activatedChildren = new List<ActivatorNode>();
-        List<Tuple<ConnectionNode, List<ActivatorNode>>> candidateConnectionNodeTuple = new List<Tuple<ConnectionNode, List<ActivatorNode>>>();
-        Tuple<ConnectionNode, List<ActivatorNode>> activatedConnectionTuple;
+        List<Tuple<ConnectionNode, List<Tuple<ActivatorNode, bool>>>> candidateConnectionNodeTuple = new List<Tuple<ConnectionNode, List<Tuple<ActivatorNode, bool>>>>();
+        Tuple<ConnectionNode, List<Tuple<ActivatorNode, bool>>> activatedConnectionTuple;
 
         protected override void OnStart()
         {
@@ -26,51 +27,51 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
         }
         protected override State OnUpdate()
         {
-            // 1. For every activator that has a a activator, we check if the activator is activated.
-            activatedChildren.Clear();
+            // 1. Find all connection nodes and store them in a list.
+            candidateConnectionNodeTuple.Clear();
+
             foreach (var activator in Children)
             {
                 updateState = activator.Update();
-                if (activator.Child != null && (updateState == State.Success || (updateState == State.Failure && activator.Child is Inverter)))
+                foreach (var child in activator.Children)
                 {
-                    activatedChildren.Add(activator);
-                }
-            }
-
-            // 2. Find all connection nodes that are activated and store them in a list.
-            candidateConnectionNodeTuple.Clear();
-
-            foreach (var activator in activatedChildren)
-            {
-                // Update candidateConnectionNodeTuple
-                if (activator.Child is ConnectionNode connectionNodeWithActivators)
-                {
-                    if (!candidateConnectionNodeTuple.Exists(t => t.Item1 == connectionNodeWithActivators))
+                    // Update candidateConnectionNodeTuple
+                    if (child is ConnectionNode connectionNodeWithActivators)
                     {
-                        candidateConnectionNodeTuple.Add(new Tuple<ConnectionNode, List<ActivatorNode>>(connectionNodeWithActivators, new List<ActivatorNode> { activator }));
-                    }
-                    else
-                    {
-                        var tuple = candidateConnectionNodeTuple.Find(t => t.Item1 == connectionNodeWithActivators);
-                        tuple.Item2.Add(activator);
-                    }
-                }
-                else if(activator.Child is DecoratorNode decoratorNodeWithActivators)
-                {
-                    if (decoratorNodeWithActivators.Child is ConnectionNode connectionNode)
-                    {
-                        if (!candidateConnectionNodeTuple.Exists(t => t.Item1 == connectionNode))
+                        if (!candidateConnectionNodeTuple.Exists(t => t.Item1.guid == connectionNodeWithActivators.guid))
                         {
-                            candidateConnectionNodeTuple.Add(new Tuple<ConnectionNode, List<ActivatorNode>>(connectionNode, new List<ActivatorNode> { activator }));
+                            candidateConnectionNodeTuple.Add(new Tuple<ConnectionNode, List<Tuple<ActivatorNode, bool>>>(
+                                connectionNodeWithActivators, new List<Tuple<ActivatorNode, bool>> { new Tuple<ActivatorNode, bool>(activator, updateState == State.Success) }));
                         }
                         else
                         {
-                            var tuple = candidateConnectionNodeTuple.Find(t => t.Item1 == connectionNode);
-                            tuple.Item2.Add(activator);
+                            var tuple = candidateConnectionNodeTuple.Find(t => t.Item1.guid == connectionNodeWithActivators.guid);
+                            tuple.Item2.Add(new Tuple<ActivatorNode, bool>(activator, updateState == State.Success));
+                        }
+                    }
+                    else if (child is DecoratorNode decoratorNodeWithActivators)
+                    {
+                        if (decoratorNodeWithActivators.Child is ConnectionNode connectionNode)
+                        {
+                            if (!candidateConnectionNodeTuple.Exists(t => t.Item1.guid == connectionNode.guid))
+                            {
+                                candidateConnectionNodeTuple.Add(new Tuple<ConnectionNode, List<Tuple<ActivatorNode, bool>>>(
+                                    connectionNode, new List<Tuple<ActivatorNode, bool>> { new Tuple<ActivatorNode, bool>(activator, !(updateState == State.Success)) }));
+                            }
+                            else
+                            {
+                                var tuple = candidateConnectionNodeTuple.Find(t => t.Item1.guid == connectionNode.guid);
+                                tuple.Item2.Add(new Tuple<ActivatorNode, bool>(activator, !(updateState == State.Success)));
+                            }
                         }
                     }
                 }
             }
+
+            // 2. Filter candidateConnectionNodeTuple where the activators are not activated (i.e., the second item in the tuple is false).
+            candidateConnectionNodeTuple = candidateConnectionNodeTuple
+                .Where(t => t.Item2.Any(a => a.Item2)) // Keep only tuples where at least one activator is activated
+                .ToList();
 
             // 3. For every tuple we find the one with the highest priority (weight)
             // If the weights are equal, we choose the one with the most activators (we assume that more activators mean more complex behavior).
@@ -121,7 +122,7 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
                         }
                 }
             }
-
+            
             // 5. Return Running if no activators were activated or no connection node was found.
             return State.Running;
         }

@@ -88,7 +88,7 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
             }
             if (node is ActivatorNode)
             {
-                output = new NodePort(Direction.Output, Port.Capacity.Single);
+                output = new NodePort(Direction.Output, Port.Capacity.Multi);
             }
             else if (node is DecoratorNode)
             {

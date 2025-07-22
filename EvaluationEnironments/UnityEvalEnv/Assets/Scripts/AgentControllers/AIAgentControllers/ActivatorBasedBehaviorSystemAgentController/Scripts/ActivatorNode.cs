@@ -56,7 +56,7 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
             "Object40"
         };
 
-        [HideInInspector] public ABiSNode Child;
+        [HideInInspector] public List<ABiSNode> Children = new List<ABiSNode>();
 
         protected abstract bool IsActivated();
 
@@ -75,13 +75,20 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
         public override ABiSNode Clone()
         {
             ActivatorNode node = Instantiate(this);
-            node.Child = Child.Clone();
+            node.Children = Children.ConvertAll(c => c.Clone());
             return node;
         }
 
-        public override void RemoveChild(ABiSNode child = null)
+        public override void RemoveChild(ABiSNode child)
         {
-            child = null;
+            if (Children.Contains(child))
+            {
+                Children.Remove(child);
+            }
+            else
+            {
+                Debug.LogWarning("Child not found in ActivatorNode's children list.");
+            }
         }
     }
 }

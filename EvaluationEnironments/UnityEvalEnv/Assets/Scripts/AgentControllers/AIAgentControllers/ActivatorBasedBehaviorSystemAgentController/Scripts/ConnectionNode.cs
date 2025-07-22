@@ -29,12 +29,20 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
                 case State.Running:
                     return State.Running;
                 case State.Failure:
-                    return State.Success;
-                case State.Success:
                     return State.Failure;
+                case State.Success:
+                    return State.Success;
             }
             return State.Failure;
         }
+
+        public override ABiSNode Clone()
+        {
+            ConnectionNode node = Instantiate(this);
+            node.Child = Child.Clone() as BehaviorNode;
+            return node;
+        }
+
 
         public override void RemoveChild(ABiSNode child = null)
         {

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEditor;
 using UnityEngine;
+using static Unity.VisualScripting.Metadata;
 
 namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentController
 {
@@ -31,10 +32,7 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
             abis.Nodes = new List<ABiSNode>();
             
             Traverse(abis.RootNode, (n) => {
-                if (!abis.Nodes.Contains(n))
-                {
-                    abis.Nodes.Add(n);
-                }
+                abis.Nodes.Add(n);
             });
 
             return abis;
@@ -61,9 +59,9 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
             {
                 children.AddRange(rootNode.Children);
             }
-            if (parent is ActivatorNode activator && activator.Child!= null)
+            if (parent is ActivatorNode activator && activator.Children != null)
             {
-                children.Add(activator.Child);
+                children.AddRange(activator.Children);
             }
             if (parent is ConnectionNode connetion && connetion.Child != null)
             {
@@ -97,12 +95,15 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
         /// <param name="node"></param>
         /// <param name="visiter"></param>
         /// <param name="includeEncapsulatedNodes"></param>
-        public static void Traverse(ABiSNode node, System.Action<ABiSNode> visiter, bool includeEncapsulatedNodes = true)
+        public static void Traverse(ABiSNode node, System.Action<ABiSNode> visiter)
         {
             if (node == null) return;
 
             Queue<ABiSNode> queue = new Queue<ABiSNode>();
+            HashSet<string> visitedNodeGuids = new HashSet<string>();
+            
             queue.Enqueue(node);
+            visitedNodeGuids.Add(node.guid);
 
             while (queue.Count > 0)
             {
@@ -112,7 +113,11 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
                 var children = GetChildren(currentNode);
                 foreach (var child in children)
                 {
-                    queue.Enqueue(child);
+                    if(!visitedNodeGuids.Contains(child.guid))
+                    {
+                        queue.Enqueue(child);
+                        visitedNodeGuids.Add(child.guid);
+                    }
                 }
             }
         }
@@ -182,7 +187,7 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
             if (parent is ActivatorNode activator)
             {
                 Undo.RecordObject(activator, "Abis (AddChild)");
-                activator.Child = child;
+                activator.Children.Add(child);
                 EditorUtility.SetDirty(activator);
             }
 
@@ -219,7 +224,7 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
             if (parent is ActivatorNode activator)
             {
                 Undo.RecordObject(activator, "Abis (RemoveChild)");
-                activator.Child = null;
+                activator.Children.Remove(child as ActivatorNode);
                 EditorUtility.SetDirty(activator);
             }
             if (parent is DecoratorNode decorator)
