@@ -19,7 +19,6 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
 
         public State Update()
         {
-
             if (!started)
             {
                 OnStart();
@@ -54,6 +53,7 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
             });
         }
 
+        // TODO: Implement (Do i need only need this in behavior nodes?)
         protected abstract void OnStart();
         protected abstract void OnStop();
         protected abstract State OnUpdate();

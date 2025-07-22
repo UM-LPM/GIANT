@@ -236,10 +236,6 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
                         Debug.LogError("Could not find GraphView to remove invalid edge.");
                     }
                 }
-                else
-                {
-                    Debug.Log($"New connection made from {outputNodeView.title} to {inputNodeView.title}");
-                }
             }
         }
 

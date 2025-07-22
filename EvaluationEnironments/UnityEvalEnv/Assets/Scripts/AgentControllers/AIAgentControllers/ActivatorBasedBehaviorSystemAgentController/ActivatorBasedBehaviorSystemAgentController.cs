@@ -29,10 +29,8 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
             ActivatorBasedBehaviorSystemAgentController abis = Instantiate(this);
             abis.RootNode = abis.RootNode.Clone();
             abis.Nodes = new List<ABiSNode>();
-
+            
             Traverse(abis.RootNode, (n) => {
-                // Since Roots children can be connected to the same node, we need to ensure we don't add duplicates
-                // TODO: Implement & Test!
                 if (!abis.Nodes.Contains(n))
                 {
                     abis.Nodes.Add(n);
@@ -61,7 +59,7 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
             List<ABiSNode> children = new List<ABiSNode>();
             if (parent is RootNode rootNode && rootNode.Children != null)
             {
-                return rootNode.Children;
+                children.AddRange(rootNode.Children);
             }
             if (parent is ActivatorNode activator && activator.Child!= null)
             {
@@ -77,7 +75,7 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
             }
             if (parent is CompositeNode composite)
             {
-                return composite.Children;
+                children.AddRange(composite.Children);
             }
             return children;
         }
@@ -92,6 +90,13 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
 #endif
         }
 
+        /// <summary>
+        /// Traverses the ABiSNode tree starting from the given node and applies the visiter action to each node. 
+        /// One node can be visited multiple times if it has multiple parents (e.g. different Activators can lead to one ConnectionNode).
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="visiter"></param>
+        /// <param name="includeEncapsulatedNodes"></param>
         public static void Traverse(ABiSNode node, System.Action<ABiSNode> visiter, bool includeEncapsulatedNodes = true)
         {
             if (node == null) return;
@@ -170,7 +175,7 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
             if(parent is RootNode rootNode)
             {
                 Undo.RecordObject(rootNode, "Abis (AddChild)");
-                rootNode.Children.Add(child);
+                rootNode.Children.Add(child as ActivatorNode);
                 EditorUtility.SetDirty(rootNode);
             }
 
@@ -184,21 +189,21 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
             if (parent is DecoratorNode decorator)
             {
                 Undo.RecordObject(decorator, "Abis (AddChild)");
-                decorator.Child = child;
+                decorator.Child = child as ConnectionNode;
                 EditorUtility.SetDirty(decorator);
             }
 
             if (parent is ConnectionNode connection)
             {
                 Undo.RecordObject(connection, "Abis (AddChild)");
-                connection.Child = child;
+                connection.Child = child as BehaviorNode;
                 EditorUtility.SetDirty(connection);
             }
 
             if (parent is CompositeNode composite)
             {
                 Undo.RecordObject(composite, "Abis (AddChild)");
-                composite.Children.Add(child);
+                composite.Children.Add(child as BehaviorNode);
                 EditorUtility.SetDirty(composite);
             }
         }
@@ -208,7 +213,7 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
             if (parent is RootNode rootNode)
             {
                 Undo.RecordObject(rootNode, "Abis (RemoveChild)");
-                rootNode.Children.Remove(child);
+                rootNode.Children.Remove(child as ActivatorNode);
                 EditorUtility.SetDirty(rootNode);
             }
             if (parent is ActivatorNode activator)
@@ -232,7 +237,7 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
             if (parent is CompositeNode composite)
             {
                 Undo.RecordObject(composite, "Abis (RemoveChild)");
-                composite.Children.Remove(child);
+                composite.Children.Remove(child as BehaviorNode);
                 EditorUtility.SetDirty(composite);
             }
         }

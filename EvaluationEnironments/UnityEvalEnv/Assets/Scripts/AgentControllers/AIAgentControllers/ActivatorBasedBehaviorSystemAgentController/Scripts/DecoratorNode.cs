@@ -5,12 +5,12 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
 {
     public abstract class DecoratorNode : ABiSNode
     {
-        [HideInInspector] public ABiSNode Child;
+        [HideInInspector] public ConnectionNode Child;
 
         public override ABiSNode Clone()
         {
             DecoratorNode node = Instantiate(this);
-            node.Child = Child.Clone();
+            node.Child = Child.Clone() as ConnectionNode;
             return node;
         }
 

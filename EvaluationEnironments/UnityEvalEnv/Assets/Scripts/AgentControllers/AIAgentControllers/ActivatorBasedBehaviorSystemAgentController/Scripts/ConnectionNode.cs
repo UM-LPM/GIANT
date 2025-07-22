@@ -9,22 +9,31 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
 {
     public class ConnectionNode : ABiSNode
     {
-        [HideInInspector] public ABiSNode Child; // TODO: Should this be BehaviorNode?
+        [HideInInspector] public BehaviorNode Child;
         public float Weight;
 
         protected override void OnStart()
         {
-            throw new NotImplementedException();
+            
         }
 
         protected override void OnStop()
         {
-            throw new NotImplementedException();
+            
         }
 
         protected override State OnUpdate()
         {
-            throw new NotImplementedException();
+            switch (Child.Update())
+            {
+                case State.Running:
+                    return State.Running;
+                case State.Failure:
+                    return State.Success;
+                case State.Success:
+                    return State.Failure;
+            }
+            return State.Failure;
         }
 
         public override void RemoveChild(ABiSNode child = null)

@@ -11,6 +11,7 @@ using Spawners;
 using Utils;
 using AgentControllers;
 using Configuration;
+using AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentController;
 
 namespace Base
 {
@@ -216,7 +217,8 @@ namespace Base
 
                 if (MainConfiguration.ProblemConfiguration.ContainsKey("RayHitObjectDetectionType"))
                 {
-                    RayHitObject.RAY_HIT_OBJECT_DETECTION_TYPE = (RayHitObjectDetectionType)Enum.Parse(typeof(RayHitObjectDetectionType), MainConfiguration.ProblemConfiguration["RayHitObjectDetectionType"]);
+                    AgentControllers.AIAgentControllers.BehaviorTreeAgentController.RayHitObject.RAY_HIT_OBJECT_DETECTION_TYPE = (AgentControllers.AIAgentControllers.BehaviorTreeAgentController.RayHitObjectDetectionType)Enum.Parse(typeof(AgentControllers.AIAgentControllers.BehaviorTreeAgentController.RayHitObjectDetectionType), MainConfiguration.ProblemConfiguration["RayHitObjectDetectionType"]);
+                    AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentController.RayHitObject.RAY_HIT_OBJECT_DETECTION_TYPE = (AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentController.RayHitObjectDetectionType)Enum.Parse(typeof(AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentController.RayHitObjectDetectionType), MainConfiguration.ProblemConfiguration["RayHitObjectDetectionType"]);
                 }
 
                 if (MainConfiguration.ProblemConfiguration.ContainsKey("TargetGameObjects"))
@@ -288,7 +290,9 @@ namespace Base
                         break;
                     case ManualAgentController:
                         break;
-                    // TODO Implement other AgentController types
+                    case ActivatorBasedBehaviorSystemAgentController:
+                        ((ActivatorBasedBehaviorSystemAgentController)Agents[i].AgentController).Bind(ActivatorBasedBehaviorSystemAgentController.CreateActivatorBasedBehaviorSystemContext(Agents[i].gameObject));
+                        break;
                     default:
                         throw new Exception("Unknown AgentController type!");
                 }

@@ -9,6 +9,5 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
 {
     public abstract class BehaviorNode : ABiSNode
     {
-
     }
 }
