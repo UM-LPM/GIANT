@@ -70,7 +70,7 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
 
             // 2. Filter candidateConnectionNodeTuple where the activators are not activated (i.e., the second item in the tuple is false).
             candidateConnectionNodeTuple = candidateConnectionNodeTuple
-                .Where(t => t.Item2.Any(a => a.Item2)) // Keep only tuples where at least one activator is activated
+                .Where(t => t.Item2.All(a => a.Item2)) // Keep only ConnectionNodes where all activators are activated
                 .ToList();
 
             // 3. For every tuple we find the one with the highest priority (weight)

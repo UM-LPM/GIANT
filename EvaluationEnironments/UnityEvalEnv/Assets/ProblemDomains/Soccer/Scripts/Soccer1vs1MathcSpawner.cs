@@ -107,16 +107,23 @@ namespace Problems.Soccer
 
         public override void Respawn<T>(EnvironmentControllerBase environmentController, T[] respawnComponents)
         {
-            foreach(AgentComponent agent in environmentController.Agents)
+            foreach(SoccerAgentComponent agent in environmentController.Agents)
             {
                 agent.transform.position = agent.StartPosition;
                 agent.transform.rotation = agent.StartRotation;
 
-                rigidbody = agent.GetComponent<Rigidbody>();
+                rigidbody = agent.Rigidbody;
                 if (rigidbody != null)
                 {
                     rigidbody.velocity = Vector3.zero;
                     rigidbody.angularVelocity = Vector3.zero;
+
+                    rigidbody.position = agent.StartPosition;
+                    rigidbody.rotation = agent.StartRotation;
+                }
+                else
+                {
+                    throw new System.Exception("Rigidbody not found on agent");
                 }
             }
         }

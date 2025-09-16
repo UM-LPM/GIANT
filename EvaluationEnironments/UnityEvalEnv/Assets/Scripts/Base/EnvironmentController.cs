@@ -31,6 +31,7 @@ namespace Base
         [SerializeField] GameObject Environment;
         [SerializeField] public SceneLoadMode SceneLoadMode;
         [SerializeField] public bool IncludeNodeCallFrequencyCounts = false;
+        [HideInInspector] public bool ForceNewDecisions = false;
 
         [Header("Agent Initializaion Configuration")]
         [SerializeField] public GameObject AgentPrefab;
@@ -46,6 +47,7 @@ namespace Base
         [Range(1, 100)]
         [Tooltip("Update agents BT every X steps (fixedUpdate() method call)")]
         [SerializeField] public int DecisionRequestInterval = 1;
+        private int DecisionRequestCount = 0;
 
         [Header("Match Configuration")]
         [SerializeField] public Match Match;
@@ -144,9 +146,15 @@ namespace Base
                 }
             }
 
+            if (ForceNewDecisions)
+            {
+                DecisionRequestCount = 0;
+                ForceNewDecisions = false;
+            }
+
             if (GameState == GameState.RUNNING)
             {
-                if (CurrentSimulationSteps % DecisionRequestInterval == 0)
+                if (DecisionRequestCount % DecisionRequestInterval == 0)
                 {
                     UpdateAgents(true);
                 }
@@ -158,6 +166,8 @@ namespace Base
 
             CurrentSimulationTime += Time.fixedDeltaTime;
             CurrentSimulationSteps += 1;
+
+            DecisionRequestCount += 1;
 
             OnPostFixedUpdate();
         }
@@ -374,22 +384,28 @@ namespace Base
 
         public virtual void UpdateAgents(bool getNewDecisions)
         {
-            for (int i = 0; i < Agents.Length; i++)
+            if (getNewDecisions)
             {
-                if (Agents[i].gameObject.activeSelf)
+                for (int i = 0; i < Agents.Length; i++)
                 {
-                    if (getNewDecisions)
+                    if (Agents[i].gameObject.activeSelf)
                     {
                         ActionBuffer = new ActionBuffer();
                         Agents[i].AgentController.GetActions(in ActionBuffer);
                         Agents[i].ActionBuffer = ActionBuffer;
                     }
+                }
+            }
 
-                    if (Agents[i].ActionBuffer == null)
-                    {
-                        throw new Exception("ActionBuffer is not set!");
-                    }
+            for (int i = 0; i < Agents.Length; i++)
+            {
+                if (Agents[i].ActionBuffer == null)
+                {
+                    throw new Exception("ActionBuffer is not set!");
+                }
 
+                if (Agents[i].gameObject.activeSelf)
+                {
                     ActionExecutor.ExecuteActions(Agents[i]);
                 }
             }

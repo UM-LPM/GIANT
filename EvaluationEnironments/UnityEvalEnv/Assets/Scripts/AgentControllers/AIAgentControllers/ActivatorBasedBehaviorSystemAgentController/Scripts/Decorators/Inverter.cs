@@ -12,16 +12,7 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
 
         protected override State OnUpdate()
         {
-            switch (Child.Update())
-            {
-                case State.Running:
-                    return State.Running;
-                case State.Failure:
-                    return State.Success;
-                case State.Success:
-                    return State.Failure;
-            }
-            return State.Failure;
+            return State.Success;
         }
     }
 }

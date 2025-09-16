@@ -53,11 +53,18 @@ namespace Problems.Soccer
             respawnComponent.transform.position = spawnPos;
             respawnComponent.transform.rotation = rotation;
 
-            rigidbody = respawnComponent.GetComponent<Rigidbody>();
+            rigidbody = (respawnComponent as SoccerBallComponent).Rigidbody;
             if(rigidbody != null)
             {
                 rigidbody.velocity = Vector3.zero;
                 rigidbody.angularVelocity = Vector3.zero;
+
+                rigidbody.position = spawnPos;
+                rigidbody.rotation = rotation;
+            }
+            else
+            {
+                throw new System.Exception("Rigidbody component not found on the respawnComponent");
             }
 
             respawnComponent.GetComponent<SoccerBallComponent>().NumOfSpawns++;

@@ -32,6 +32,8 @@ namespace Problems.Soccer
         [SerializeField] public float BallStartPushForce = 15f;
         [SerializeField] public float CalculateBallToGoalDistanceEvery = 0.5f;
 
+        private bool NeedsRespawn = false;
+
         // Soccer Ball
         SoccerBallSpawner SoccerBallSpawner;
         SoccerBallComponent SoccerBall;
@@ -57,6 +59,11 @@ namespace Problems.Soccer
 
         Vector3 directionToGoal;
         float angleToGoal;
+
+        float randomAngle;
+
+        Vector3 soccerBallPushDirection;
+        GoalComponent receivedGoalComponent;
 
         // Fitness calculation
         private float sectorExplorationFitness;
@@ -123,6 +130,30 @@ namespace Problems.Soccer
             SoccerBall = SoccerBallSpawner.Spawn<SoccerBallComponent>(this)[0];
         }
 
+        protected override void OnPreFixedUpdate()
+        {
+            if (NeedsRespawn)
+            {
+                MatchSpawner.Respawn<SoccerAgentComponent>(this, Agents as SoccerAgentComponent[]);
+                SoccerBallSpawner.Respawn<SoccerBallComponent>(this, SoccerBall);
+                ForceNewDecisions = true;
+                NeedsRespawn = false;
+
+                if (GameState == GameState.RUNNING)
+                {
+                    // Based on the last team that scored, push the ball towards this side after ball is respawned
+                    soccerBallPushDirection = (receivedGoalComponent.Team == SoccerTeam.Blue ? GoalBlue.transform.position : GoalPurple.transform.position) - SoccerBall.Rigidbody.position;
+                    soccerBallPushDirection.Normalize();
+
+                    // Based on the direction, select a random angle between -30 and 30 degrees to add some noise to the push direction
+                    randomAngle = Util.Rnd.Next(-30, 30);
+                    soccerBallPushDirection = Quaternion.Euler(0, randomAngle, 0) * soccerBallPushDirection;
+
+                    SoccerBall.Rigidbody.AddForce(soccerBallPushDirection * BallStartPushForce, ForceMode.Impulse);
+                }
+            }
+        }
+
         protected override void OnPostFixedUpdate()
         {
             if (GameState == GameState.RUNNING)
@@ -169,7 +200,7 @@ namespace Problems.Soccer
             {
                 if (agent.gameObject.activeSelf)
                 {
-                    distance = Vector3.Distance(agent.transform.position, SoccerBall.transform.position);
+                    distance = Vector3.Distance(agent.Rigidbody.position, SoccerBall.Rigidbody.position);
                     if(distance > (playgroundDiagonal / 2))
                         distance = playgroundDiagonal / 2;
 
@@ -181,12 +212,12 @@ namespace Problems.Soccer
         public void UpdateBallToGoalProximity()
         {
             maxBallToGoalDistance += (playgroundDiagonal / 2);
-            distance = Vector3.Distance(SoccerBall.transform.position, GoalBlue.transform.position);
+            distance = Vector3.Distance(SoccerBall.Rigidbody.position, GoalBlue.transform.position);
             if (distance > (playgroundDiagonal / 2))
                 distance = playgroundDiagonal / 2;
             SoccerBall.BallToBlueGoalDistance += distance;
 
-            distance = Vector3.Distance(SoccerBall.transform.position, GoalPurple.transform.position);
+            distance = Vector3.Distance(SoccerBall.Rigidbody.position, GoalPurple.transform.position);
             if (distance > (playgroundDiagonal / 2))
                 distance = playgroundDiagonal / 2;
             SoccerBall.BallToPurpleGoalDistance += distance;
@@ -198,7 +229,7 @@ namespace Problems.Soccer
             {
                 if (agent.gameObject.activeSelf)
                 {
-                    directionToBall = (SoccerBall.transform.position - agent.transform.position).normalized;
+                    directionToBall = (SoccerBall.Rigidbody.position - agent.Rigidbody.position).normalized;
                     angle = Vector3.Angle(agent.transform.forward, directionToBall);
                     if (angle < MaxAgentToBallAngle)
                     {
@@ -214,7 +245,7 @@ namespace Problems.Soccer
             // Only update if agent intentionaly hit the ball
             if (Mathf.Abs(SoccerBall.Rigidbody.velocity.x) > VelocityPassTreshold)
             {
-                Vector3 directionToTarget = (goal.transform.position - SoccerBall.transform.position).normalized;
+                Vector3 directionToTarget = (goal.transform.position - SoccerBall.Rigidbody.position).normalized;
                 float dotProduct = Vector3.Dot(SoccerBall.Rigidbody.velocity.normalized, directionToTarget);
 
                 if (dotProduct > PassTolerance)
@@ -257,15 +288,16 @@ namespace Problems.Soccer
                 agent.ResetTimeWithoutGoal();
             }
 
+            receivedGoalComponent = goalComponent;
+
             // Check engind state
             CheckEndingState();
 
             if (GameState == GameState.RUNNING)
             {
                 // Based on the last team that scored, push the ball towards this side after ball is respawned
-                Vector3 pushDirection = (goalComponent.Team == SoccerTeam.Blue ? GoalBlue.transform.position : GoalPurple.transform.position) - SoccerBall.transform.position;
-                pushDirection.Normalize();
-                SoccerBall.Rigidbody.AddForce(pushDirection * BallStartPushForce, ForceMode.Impulse);
+                //soccerBallPushDirection = (goalComponent.Team == SoccerTeam.Blue ? GoalBlue.transform.position : GoalPurple.transform.position) - SoccerBall.Rigidbody.position;
+                //soccerBallPushDirection.Normalize();
             }
         }
 
@@ -283,8 +315,10 @@ namespace Problems.Soccer
                 }
                 else
                 {
-                    MatchSpawner.Respawn<SoccerAgentComponent>(this, Agents as SoccerAgentComponent[]);
-                    SoccerBallSpawner.Respawn<SoccerBallComponent>(this, SoccerBall);
+                    NeedsRespawn = true;
+                    //MatchSpawner.Respawn<SoccerAgentComponent>(this, Agents as SoccerAgentComponent[]);
+                    //SoccerBallSpawner.Respawn<SoccerBallComponent>(this, SoccerBall);
+                    //ForceNewDecisions = true;
                 }
             }
         }
@@ -302,7 +336,7 @@ namespace Problems.Soccer
         public GoalComponent TeamGoalAhead(SoccerAgentComponent agent)
         {
             // Return teams goal if agent is facing it
-            directionToGoal = (agent.Team == SoccerTeam.Blue ? GoalBlue.transform.position : GoalPurple.transform.position) - agent.transform.position;
+            directionToGoal = (agent.Team == SoccerTeam.Blue ? GoalBlue.transform.position : GoalPurple.transform.position) - agent.Rigidbody.position;
             directionToGoal.Normalize();
             angleToGoal = Vector3.Angle(agent.transform.forward, directionToGoal);
             if (angleToGoal < MaxAgentToGoalAngle)
@@ -311,7 +345,7 @@ namespace Problems.Soccer
             }
 
             // Return opponent goal if agent is facing it
-            directionToGoal = (agent.Team == SoccerTeam.Blue ? GoalPurple.transform.position : GoalBlue.transform.position) - agent.transform.position;
+            directionToGoal = (agent.Team == SoccerTeam.Blue ? GoalPurple.transform.position : GoalBlue.transform.position) - agent.Rigidbody.position;
             directionToGoal.Normalize();
             angleToGoal = Vector3.Angle(agent.transform.forward, directionToGoal);
             if (angleToGoal < MaxAgentToGoalAngle)
