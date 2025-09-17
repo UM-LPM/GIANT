@@ -48,8 +48,16 @@ namespace Problems.DodgeBall
         public void ResetAgent()
         {
             // Reset agent state
+            if (Rigidbody == null)
+            {
+                throw new System.Exception("Rigidbody is null");
+            }
             Rigidbody.velocity = Vector3.zero;
             Rigidbody.angularVelocity = Vector3.zero;
+
+            Rigidbody.position = StartPosition;
+            Rigidbody.rotation = StartRotation;
+
             transform.position = StartPosition;
             transform.rotation = StartRotation;
 

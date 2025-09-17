@@ -316,9 +316,6 @@ namespace Problems.Soccer
                 else
                 {
                     NeedsRespawn = true;
-                    //MatchSpawner.Respawn<SoccerAgentComponent>(this, Agents as SoccerAgentComponent[]);
-                    //SoccerBallSpawner.Respawn<SoccerBallComponent>(this, SoccerBall);
-                    //ForceNewDecisions = true;
                 }
             }
         }

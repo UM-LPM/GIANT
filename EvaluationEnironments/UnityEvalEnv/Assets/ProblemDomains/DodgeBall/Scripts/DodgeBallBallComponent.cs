@@ -10,6 +10,7 @@ namespace Problems.DodgeBall
         public Rigidbody Rigidbody { get; private set; }
         public SphereCollider SphereCollider { get; private set; }
         public Vector3 StartPosition { get; private set; }
+        public Quaternion StartRotation { get; private set; }
         public DodgeBallAgentComponent Parent { get; set; }
 
         private DodgeBallEnvironmentController DodgeBallEnvironmentController;
@@ -20,6 +21,7 @@ namespace Problems.DodgeBall
             SphereCollider = GetComponent<SphereCollider>();
             DodgeBallEnvironmentController = GetComponentInParent<DodgeBallEnvironmentController>();
             StartPosition = transform.position;
+            StartRotation = transform.rotation;
         }
 
         public void SetBallActive(bool isActive)
@@ -38,10 +40,15 @@ namespace Problems.DodgeBall
                 Rigidbody.velocity = Vector3.zero;
                 Rigidbody.angularVelocity = Vector3.zero;
                 SphereCollider.enabled = true;
+
+                Rigidbody.position = StartPosition;
+                Rigidbody.rotation = StartRotation;
             }
             SetBallActive(true);
             Parent = null;
+
             transform.position = StartPosition;
+            transform.rotation = StartRotation;
         }
 
         private void OnCollisionEnter(Collision other)

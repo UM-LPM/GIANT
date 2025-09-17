@@ -1,5 +1,6 @@
 using Base;
 using Configuration;
+using Problems.Soccer;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Utils;
+using static Problems.Soccer.SoccerUtils;
 
 namespace Problems.DodgeBall
 {
@@ -30,6 +32,7 @@ namespace Problems.DodgeBall
         [Header("Ball configuration")]
         [SerializeField] public GameObject BallPrefab;
 
+        private bool NeedsRespawn = false;
 
         private DodgeBallBallSpawner BallSpawner;
         private DodgeBallBallComponent[] Balls;
@@ -64,6 +67,9 @@ namespace Problems.DodgeBall
 
         private int numOfOpponents;
 
+        DodgeBallAgentComponent hitAgent;
+        DodgeBallBallComponent ball;
+
         protected override void DefineAdditionalDataOnPostAwake()
         {
             ReadParamsFromMainConfiguration();
@@ -89,6 +95,18 @@ namespace Problems.DodgeBall
         protected override void DefineAdditionalDataOnPostStart()
         {
             Balls = BallSpawner.Spawn<DodgeBallBallComponent>(this);
+        }
+
+        protected override void OnPreFixedUpdate()
+        {
+            if (NeedsRespawn)
+            {
+                ForceNewDecisions = true;
+                NeedsRespawn = false;
+
+                MatchSpawner.Respawn<DodgeBallAgentComponent>(this, hitAgent);
+                ball.ResetBall();
+            }
         }
 
         protected override void OnPostFixedUpdate()
@@ -139,9 +157,9 @@ namespace Problems.DodgeBall
             {
                 hitAgent.HitByBall(ball);
 
-                MatchSpawner.Respawn<DodgeBallAgentComponent>(this, hitAgent);
-
-                ball.ResetBall();
+                NeedsRespawn = true;
+                this.hitAgent = hitAgent;
+                this.ball = ball;
             }
         }
 
