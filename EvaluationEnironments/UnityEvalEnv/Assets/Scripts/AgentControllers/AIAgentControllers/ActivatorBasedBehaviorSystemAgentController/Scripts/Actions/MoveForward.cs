@@ -29,7 +29,7 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
         {
             var discreteActionsOut = blackboard.actionsOut.DiscreteActions;
 
-            blackboard.actionsOut.AddDiscreteAction("moveForwardDirection", moveForwardDirection == MoveForwardDirection.Random ? Util.NextIntAC(3) : (int)moveForwardDirection);
+            blackboard.actionsOut.AddDiscreteAction("moveForwardDirection", moveForwardDirection == MoveForwardDirection.Random ? Util.NextIntAC(this.context.transform.GetInstanceID(), 3) : (int)moveForwardDirection);
 
             return State.Success;
         }

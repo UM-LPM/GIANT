@@ -28,7 +28,7 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
         protected override State OnUpdate()
         {
             var discreteActionsOut = blackboard.actionsOut.DiscreteActions;
-            blackboard.actionsOut.AddDiscreteAction("rotateDirection", rotateDirection == RotateDirection.Random ? Util.NextIntAC(3) : (int)rotateDirection);
+            blackboard.actionsOut.AddDiscreteAction("rotateDirection", rotateDirection == RotateDirection.Random ? Util.NextIntAC(this.context.transform.GetInstanceID(), 3) : (int)rotateDirection);
 
             return State.Success;
         }

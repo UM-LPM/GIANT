@@ -28,7 +28,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
         protected override State OnUpdate()
         {
             var discreteActionsOut = blackboard.actionsOut.DiscreteActions;
-            blackboard.actionsOut.AddDiscreteAction("moveSideDirection", moveSideDirection == MoveSideDirection.Random ? Util.NextIntAC(3) : (int)moveSideDirection);
+            blackboard.actionsOut.AddDiscreteAction("moveSideDirection", moveSideDirection == MoveSideDirection.Random ? Util.NextIntAC(this.context.transform.GetInstanceID(), 3) : (int)moveSideDirection);
 
             return State.Success;
         }

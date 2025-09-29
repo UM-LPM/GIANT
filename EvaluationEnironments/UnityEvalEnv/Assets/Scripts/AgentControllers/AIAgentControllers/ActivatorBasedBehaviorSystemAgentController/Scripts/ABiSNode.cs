@@ -8,7 +8,8 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
         {
             Running,
             Failure,
-            Success
+            Success,
+            Idle
         }
 
         [HideInInspector] public State state = State.Running;

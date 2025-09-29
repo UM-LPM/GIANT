@@ -47,6 +47,11 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
         {
             if (RootNode.state == ABiSNode.State.Running)
             {
+                Nodes.ForEach(n => {
+                    if(!(n is RootNode))
+                        n.state = ABiSNode.State.Idle;
+                });
+
                 SystemState = RootNode.Update();
             }
             return SystemState;

@@ -75,6 +75,7 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
         public override ABiSNode Clone()
         {
             ActivatorNode node = Instantiate(this);
+            node.Children = new List<ABiSNode>();
             node.Children = Children.ConvertAll(c => c.Clone());
             return node;
         }

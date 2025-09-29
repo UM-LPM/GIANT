@@ -68,7 +68,7 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
             }
             else if (node is ActionNode)
             {
-                input = new NodePort(Direction.Input, Port.Capacity.Single);
+                input = new NodePort(Direction.Input, Port.Capacity.Multi);
             }
 
             if (input != null)
@@ -171,9 +171,17 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
 
         public void SortChildren()
         {
-            if (node is CompositeNode composite)
+            if (node is RootNode root)
+            {
+                root.Children.Sort(SortByHorizontalPosition);
+            }
+            else if (node is CompositeNode composite)
             {
                 composite.Children.Sort(SortByHorizontalPosition);
+            }
+            else if (node is ActivatorNode activator)
+            {
+                activator.Children.Sort(SortByHorizontalPosition);
             }
         }
 

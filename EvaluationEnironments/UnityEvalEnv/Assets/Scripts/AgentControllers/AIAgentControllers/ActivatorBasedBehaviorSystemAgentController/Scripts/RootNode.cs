@@ -51,17 +51,18 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
                     }
                     else if (child is DecoratorNode decoratorNodeWithActivators)
                     {
+                        decoratorNodeWithActivators.state = updateState == State.Success ? State.Failure : State.Success;
                         if (decoratorNodeWithActivators.Child is ConnectionNode connectionNode)
                         {
                             if (!candidateConnectionNodeTuple.Exists(t => t.Item1.guid == connectionNode.guid))
                             {
                                 candidateConnectionNodeTuple.Add(new Tuple<ConnectionNode, List<Tuple<ActivatorNode, bool>>>(
-                                    connectionNode, new List<Tuple<ActivatorNode, bool>> { new Tuple<ActivatorNode, bool>(activator, !(updateState == State.Success)) }));
+                                    connectionNode, new List<Tuple<ActivatorNode, bool>> { new Tuple<ActivatorNode, bool>(activator, decoratorNodeWithActivators.state == State.Success) }));
                             }
                             else
                             {
                                 var tuple = candidateConnectionNodeTuple.Find(t => t.Item1.guid == connectionNode.guid);
-                                tuple.Item2.Add(new Tuple<ActivatorNode, bool>(activator, !(updateState == State.Success)));
+                                tuple.Item2.Add(new Tuple<ActivatorNode, bool>(activator, decoratorNodeWithActivators.state == State.Success));
                             }
                         }
                     }

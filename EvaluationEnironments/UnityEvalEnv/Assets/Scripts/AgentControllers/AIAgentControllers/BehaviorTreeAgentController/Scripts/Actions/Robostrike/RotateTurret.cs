@@ -20,7 +20,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController.Robost
         protected override State OnUpdate()
         {
             var discreteActionsOut = blackboard.actionsOut.DiscreteActions;
-            blackboard.actionsOut.AddDiscreteAction("rotateTurretDirection", rotateDirection == RotateDirection.Random ? Util.NextIntAC(3) : (int)rotateDirection);
+            blackboard.actionsOut.AddDiscreteAction("rotateTurretDirection", rotateDirection == RotateDirection.Random ? Util.NextIntAC(this.context.transform.GetInstanceID(), 3) : (int)rotateDirection);
 
             return State.Success;
         }
