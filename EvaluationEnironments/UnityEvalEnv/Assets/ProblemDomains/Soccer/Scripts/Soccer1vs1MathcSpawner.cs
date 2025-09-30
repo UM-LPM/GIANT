@@ -1,4 +1,5 @@
 using AgentControllers;
+using AgentControllers.AIAgentControllers;
 using AgentOrganizations;
 using Base;
 using Spawners;
@@ -42,9 +43,9 @@ namespace Problems.Soccer
                 throw new System.Exception("Each team should have 1 individual");
             }
 
-            if (environmentController.Match.Teams[0].Individuals[0].AgentControllers.Length != 1 || environmentController.Match.Teams[1].Individuals[0].AgentControllers.Length != 1)
+            if (environmentController.Match.Teams[0].Individuals[0].AgentControllers.Length > 2 || environmentController.Match.Teams[1].Individuals[0].AgentControllers.Length > 2)
             {
-                throw new System.Exception("Each individual should have 1 agent controller");
+                throw new System.Exception("Each individual should have 1 or 2 agent controllers");
             }
 
             if (SpawnPointsBlue == null || SpawnPointsBlue.Length != 2 || SpawnPointsPurple == null || SpawnPointsPurple.Length != 2)
@@ -65,34 +66,24 @@ namespace Problems.Soccer
             {
                 foreach (Individual individual in environmentController.Match.Teams[i].Individuals)
                 {
-                    foreach (AgentController agentController in individual.AgentControllers)
+                    if(individual.AgentControllers.Length == 1)
                     {
                         for (int j = 0; j < SpawnPoints.Length; j++)
                         {
-                            // Instantiate and configure agent
-                            GameObject agentGameObject = Instantiate(environmentController.AgentPrefab, SpawnPoints[i][j].position, SpawnPoints[i][j].rotation, gameObject.transform);
-
-                            // Configure agent
-                            T agent = agentGameObject.GetComponent<T>();
-                            SoccerAgentComponent agentComponent = agent as SoccerAgentComponent;
-                            agentComponent.AgentController = agentController.Clone(); // Clone the agent controller to prevent shared state between agents
-                            agentComponent.IndividualID = individual.IndividualId;
-                            agentComponent.TeamIdentifier.TeamID = environmentController.Match.Teams[i].TeamId;
-                            agentComponent.Team = i == 0 ? SoccerUtils.SoccerTeam.Blue : SoccerUtils.SoccerTeam.Purple;
-
-                            // Configure agent material
-                            if (i == 0)
-                            {
-                                agentGameObject.GetComponentInChildren<HeadComponent>()!.GetComponent<Renderer>().material = SoccerTeamMaterialBlue;
-                            }
-                            else
-                            {
-                                agentGameObject.GetComponentInChildren<HeadComponent>()!.GetComponent<Renderer>().material = SoccerTeamMaterialPurple;
-                            }
-
-                            // Update list
-                            agents.Add(agent);
+                            // Spawn agent
+                            agents.Add(SpawnAgent<T>(environmentController as SoccerEnvironmentController, SpawnPoints[i][j].position, SpawnPoints[i][j].rotation, individual.AgentControllers[0], individual.IndividualId, environmentController.Match.Teams[i].TeamId, i));
                         }
+                    }
+                    else if(individual.AgentControllers.Length == 2)
+                    {
+                        // Spawn first agent
+                        agents.Add(SpawnAgent<T>(environmentController as SoccerEnvironmentController, SpawnPoints[i][0].position, SpawnPoints[i][0].rotation, individual.AgentControllers[0], individual.IndividualId, environmentController.Match.Teams[i].TeamId, i));
+                        // Spawn second agent
+                        agents.Add(SpawnAgent<T>(environmentController as SoccerEnvironmentController, SpawnPoints[i][1].position, SpawnPoints[i][1].rotation, individual.AgentControllers[1], individual.IndividualId, environmentController.Match.Teams[i].TeamId, i));
+                    }
+                    else
+                    {
+                        throw new System.Exception("Each individual should have 1 or 2 agent controllers");
                     }
                 }
             }
@@ -126,6 +117,33 @@ namespace Problems.Soccer
                     throw new System.Exception("Rigidbody not found on agent");
                 }
             }
+        }
+
+        private T SpawnAgent<T>(SoccerEnvironmentController environmentController, Vector3 spawnPosition, Quaternion spawnRotation, AgentController agentController, int individualId, int teamId, int teamIndex)
+        {
+            // Instantiate and configure agent
+            GameObject agentGameObject = Instantiate(environmentController.AgentPrefab, spawnPosition, spawnRotation, gameObject.transform);
+
+            // Configure agent
+            T agent = agentGameObject.GetComponent<T>();
+            SoccerAgentComponent agentComponent = agent as SoccerAgentComponent;
+            agentComponent.AgentController = agentController.Clone(); // Clone the agent controller to prevent shared state between agents
+            agentComponent.IndividualID = individualId;
+            agentComponent.TeamIdentifier.TeamID = teamId;
+            agentComponent.Team = teamIndex == 0 ? SoccerUtils.SoccerTeam.Blue : SoccerUtils.SoccerTeam.Purple;
+
+            // Configure agent material
+            if (teamIndex == 0)
+            {
+                agentGameObject.GetComponentInChildren<HeadComponent>()!.GetComponent<Renderer>().material = SoccerTeamMaterialBlue;
+            }
+            else
+            {
+                agentGameObject.GetComponentInChildren<HeadComponent>()!.GetComponent<Renderer>().material = SoccerTeamMaterialPurple;
+            }
+
+            // Update list
+            return agent;
         }
     }
 }
