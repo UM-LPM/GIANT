@@ -1,13 +1,13 @@
 using AgentOrganizations;
 using Base;
-using Evaluators.RatingSystems;
+using Evaluators.CompetitionOrganizations;
 using Fitnesses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Evaluators.TournamentOrganizations
+namespace Evaluators.CompetitionOrganizations
 {
     public enum DoubleEliminationTournamentStep
     {
@@ -18,23 +18,23 @@ namespace Evaluators.TournamentOrganizations
         Finished
     }
 
-    public class DoubleEliminationTournament : TournamentOrganization
+    public class DoubleEliminationTournament : CompetitionOrganization
     {
         private DoubleEliminationTournamentStep TournamentStep;
 
         private int TeamsWhoGotBye;
-        public List<TournamentTeam> EliminatedTeams = new List<TournamentTeam>();
-        public List<TournamentTeam> WinnersBracket = new List<TournamentTeam>();
-        public List<TournamentTeam> LosersBracket = new List<TournamentTeam>();
+        public List<CompetitionTeam> EliminatedTeams = new List<CompetitionTeam>();
+        public List<CompetitionTeam> WinnersBracket = new List<CompetitionTeam>();
+        public List<CompetitionTeam> LosersBracket = new List<CompetitionTeam>();
 
         // Temp properties
-        public List<TournamentTeam> LoserTeams = new List<TournamentTeam>();
+        public List<CompetitionTeam> LoserTeams = new List<CompetitionTeam>();
         public List<Match> TournamentMatches = new List<Match>();
-        List<TournamentTeam> UnpairedTeams = new List<TournamentTeam>();
+        List<CompetitionTeam> UnpairedTeams = new List<CompetitionTeam>();
         int CurrentMatchID;
         int CurrentScore = 0;
 
-        public DoubleEliminationTournament(TournamentTeamOrganizator teamOrganizator, Individual[] individuals, bool regenerateTeamsEachRound, int rounds)
+        public DoubleEliminationTournament(CompetitionTeamOrganizator teamOrganizator, Individual[] individuals, bool regenerateTeamsEachRound, int rounds)
             : base(teamOrganizator, individuals, regenerateTeamsEachRound)
         {
             Rounds = rounds < 1 ? (int)Math.Ceiling(Math.Log(Teams.Count, 2)) : rounds;
@@ -42,14 +42,14 @@ namespace Evaluators.TournamentOrganizations
             PlayedMatches = new List<MatchFitness>();
             TournamentStep = DoubleEliminationTournamentStep.Init;
 
-            EliminatedTeams = new List<TournamentTeam>();
-            WinnersBracket = new List<TournamentTeam>();
-            LosersBracket = new List<TournamentTeam>();
-            LoserTeams = new List<TournamentTeam>();
+            EliminatedTeams = new List<CompetitionTeam>();
+            WinnersBracket = new List<CompetitionTeam>();
+            LosersBracket = new List<CompetitionTeam>();
+            LoserTeams = new List<CompetitionTeam>();
             CurrentScore = 0;
         }
 
-        public override void ResetTournament()
+        public override void ResetCompetition()
         {
             Teams.Clear();
             ExecutedRounds = 0;
@@ -62,9 +62,9 @@ namespace Evaluators.TournamentOrganizations
             CurrentScore = 0;
         }
 
-        public override Match[] GenerateTournamentMatches()
+        public override Match[] GenerateCompetitionMatches()
         {
-            if (IsTournamentFinished())
+            if (IsCompetitionFinished())
                 return new Match[] { };
             if (TeamsWhoGotBye == Teams.Count)
             {
@@ -90,7 +90,7 @@ namespace Evaluators.TournamentOrganizations
             return TournamentMatches.ToArray();
         }
 
-        public override void UpdateTeamsScore(List<MatchFitness> tournamentMatchFitnesses, List<RatingPlayer> players = null)
+        public override void UpdateTeamsScore(List<MatchFitness> tournamentMatchFitnesses, List<CompetitionPlayer> players = null)
         {
             List<MatchFitness> tournamentMatchFitnessesCopy = new List<MatchFitness>(tournamentMatchFitnesses);
             // Add played TournamentMatches to the list of played TournamentMatches (add only matchFitnesses that are not dummy)
@@ -103,7 +103,7 @@ namespace Evaluators.TournamentOrganizations
             {
                 // 1. Get all match data
                 matchFitness = new MatchFitness();
-                MatchFitness.GetMatchFitness(tournamentMatchFitnessesCopy, matchFitness, matchFitnesses, matchFitnessesSwaped, Coordinator.Instance.SwapTournamentMatchTeams);
+                MatchFitness.GetMatchFitness(tournamentMatchFitnessesCopy, matchFitness, matchFitnesses, matchFitnessesSwaped, Coordinator.Instance.SwapCompetitionMatchTeams);
 
                 teamFitnessRes1 = matchFitness.TeamFitnesses[0];
                 teamFitnessRes2 = matchFitness.TeamFitnesses[1];
@@ -242,7 +242,7 @@ namespace Evaluators.TournamentOrganizations
             }
         }
 
-        public override bool IsTournamentFinished()
+        public override bool IsCompetitionFinished()
         {
             if(TournamentStep == DoubleEliminationTournamentStep.Finished)
             {
@@ -278,35 +278,35 @@ namespace Evaluators.TournamentOrganizations
 
         private void GenerateGrandFinalsMatches()
         {
-            PairTeams(new List<TournamentTeam>() { WinnersBracket[0], LosersBracket[0] });
+            PairTeams(new List<CompetitionTeam>() { WinnersBracket[0], LosersBracket[0] });
         }
 
-        private Match[] PairTeams(List<TournamentTeam> teams)
+        private Match[] PairTeams(List<CompetitionTeam> teams)
         {
             TournamentMatches.Clear();
-            UnpairedTeams = new List<TournamentTeam>(teams);
+            UnpairedTeams = new List<CompetitionTeam>(teams);
             CurrentMatchID = 0;
 
             // If there's an odd number of players, one player gets a bye
             if (UnpairedTeams.Count % 2 != 0)
             {
-                TournamentTeam byeTeam = UnpairedTeams.FirstOrDefault(p => !p.HasBye);
+                CompetitionTeam byeTeam = UnpairedTeams.FirstOrDefault(p => !p.HasBye);
                 if (byeTeam != null)
                 {
                     byeTeam.HasBye = true;
                     TeamsWhoGotBye++;
                     UnpairedTeams.Remove(byeTeam);
-                    TournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(CurrentMatchID++, new Team[] { byeTeam, ScriptableObject.CreateInstance<TournamentTeam>().Initialize(-1, "Dummy", new Individual[] { }) })); // Add a bye pairing with dummy team
+                    TournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(CurrentMatchID++, new Team[] { byeTeam, ScriptableObject.CreateInstance<CompetitionTeam>().Initialize(-1, "Dummy", new Individual[] { }) })); // Add a bye pairing with dummy team
                 }
             }
 
             // Pair remaining players
             while (UnpairedTeams.Count > 1)
             {
-                TournamentTeam t1 = UnpairedTeams[0];
+                CompetitionTeam t1 = UnpairedTeams[0];
                 UnpairedTeams.RemoveAt(0);
 
-                TournamentTeam t2 = UnpairedTeams[0];
+                CompetitionTeam t2 = UnpairedTeams[0];
                 UnpairedTeams.RemoveAt(0);
 
                 if (Coordinator.Instance.Random.NextDouble() > 0.5)
@@ -316,7 +316,7 @@ namespace Evaluators.TournamentOrganizations
             }
 
             // If enabled: For each match that already exists, add another match with the teams swapped
-            if (Coordinator.Instance.SwapTournamentMatchTeams)
+            if (Coordinator.Instance.SwapCompetitionMatchTeams)
             {
                 List<Match> matchesSwapped = new List<Match>();
                 for (int i = 0; i < TournamentMatches.Count; i++)

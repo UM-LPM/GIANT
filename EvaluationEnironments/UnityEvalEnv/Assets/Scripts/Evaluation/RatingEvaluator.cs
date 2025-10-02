@@ -1,53 +1,52 @@
 using AgentOrganizations;
 using Base;
 using Configuration;
-using Evaluators.RatingSystems;
-using Evaluators.TournamentOrganizations;
+using Evaluators.CompetitionOrganizations;
 using Fitnesses;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Evaluators
 {
-    public class RatingEvaluator : TournamentEvaluator
+    public class RatingEvaluator : CompetitionEvaluator
     {
         protected RatingSystem RatingSystem { get; set; }
 
-        public RatingEvaluator(RatingSystem ratingSystem, TournamentOrganization tournamentOrganization) : base (tournamentOrganization)
+        public RatingEvaluator(RatingSystem ratingSystem, CompetitionOrganization competitionOrganization) : base (competitionOrganization)
         {
             RatingSystem = ratingSystem;
         }
 
         public override async Task<CoordinatorEvaluationResult> ExecuteEvaluation(CoordinatorEvalRequestData evalRequestData, Individual[] individuals)
         {
-            while (!TournamentOrganization.IsTournamentFinished())
+            while (!CompetitionOrganization.IsCompetitionFinished())
             {
-                if (TournamentOrganization.CreateNewTeamsEachRound)
+                if (CompetitionOrganization.CreateNewTeamsEachRound)
                 {
-                    TournamentOrganization.OrganizeTeams(RatingSystem.Players.ToArray());
+                    CompetitionOrganization.OrganizeTeams(RatingSystem.Players.ToArray());
                 }
 
-                Match[] tournamentMatches = TournamentOrganization.GenerateTournamentMatches();
-                if (tournamentMatches.Length == 0)
+                Match[] competitionMatches = CompetitionOrganization.GenerateCompetitionMatches();
+                if (competitionMatches.Length == 0)
                     break;
 
-                List<MatchFitness> matchesFitnesses = await EvaluateTournamentMatches(evalRequestData, tournamentMatches);
+                List<MatchFitness> matchesFitnesses = await EvaluateCompetitionMatches(evalRequestData, competitionMatches);
 
-                if (TournamentOrganization is SimilarStrengthOpponentSelection)
+                if (CompetitionOrganization is SimilarStrengthOpponentSelection)
                 {
                     RatingSystem.UpdateRatings(matchesFitnesses);
 
-                    TournamentOrganization.UpdateTeamsScore(matchesFitnesses, RatingSystem.Players);
+                    CompetitionOrganization.UpdateTeamsScore(matchesFitnesses, RatingSystem.Players);
                 }
                 else
                 {
-                    TournamentOrganization.UpdateTeamsScore(matchesFitnesses);
+                    CompetitionOrganization.UpdateTeamsScore(matchesFitnesses);
 
                     RatingSystem.UpdateRatings(matchesFitnesses);
                 }
             }
 
-            TournamentOrganization.DisplayStandings();
+            CompetitionOrganization.DisplayStandings();
             RatingSystem.DisplayRatings();
 
             // Return the final population fitnesses and BTS node call frequencies

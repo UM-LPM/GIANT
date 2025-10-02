@@ -6,8 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using Newtonsoft.Json;
-using Evaluators.RatingSystems;
-using Evaluators.TournamentOrganizations;
+using Evaluators.CompetitionOrganizations;
+using Evaluators.CompetitionOrganizations;
 using Evaluators;
 using Base;
 
@@ -58,9 +58,9 @@ namespace Configuration
         public EvaluatiorType EvaluatorType { get; set; }
         public RatingSystemType RatingSystemType { get; set; }
         public bool CreateNewTeamsEachRound { get; set; }
-        public TournamentOrganizationType TournamentOrganizationType { get; set; }
-        public int TournamentRounds { get; set; }
-        public bool SwapTournamentMatchTeams { get; set; }
+        public CompetitionOrganizationType CompetitionOrganizationType { get; set; }
+        public int CompetitionRounds { get; set; }
+        public bool SwapCompetitionMatchTeams { get; set; }
 
         // Problem Specific Configuration
         public Dictionary<string, string> ProblemConfiguration { get; set; }

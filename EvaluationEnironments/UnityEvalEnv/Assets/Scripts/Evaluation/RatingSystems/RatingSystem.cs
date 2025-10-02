@@ -1,21 +1,21 @@
 using AgentOrganizations;
-using Evaluators.TournamentOrganizations;
+using Evaluators.CompetitionOrganizations;
 using Fitnesses;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Evaluators.RatingSystems
+namespace Evaluators.CompetitionOrganizations
 {
     public abstract class RatingSystem
     {
-        public List<RatingPlayer> Players;
+        public List<CompetitionPlayer> Players;
 
         public RatingSystem()
         {
-            Players = new List<RatingPlayer>();
+            Players = new List<CompetitionPlayer>();
         }
 
-        public abstract void UpdateRatings(List<MatchFitness> tournamentMatchFitnesses);
+        public abstract void UpdateRatings(List<MatchFitness> competitionMatchFitnesses);
 
         public abstract void DefinePlayers(Individual[] individuals, RatingSystemRating[] initialPlayerRaitings);
 
@@ -44,13 +44,13 @@ namespace Evaluators.RatingSystems
 
         public void DisplayRatings(bool sortPlayers = true)
         {
-            List<RatingPlayer> playersSorted = Players;
+            List<CompetitionPlayer> playersSorted = Players;
             if(sortPlayers)
-                playersSorted = Players.OrderByDescending(p => (p.GetRating())).ToList();
+                playersSorted = Players.OrderByDescending(p => (p.GetScore())).ToList();
 
-            foreach (RatingPlayer player in playersSorted)
+            foreach (CompetitionPlayer player in playersSorted)
             {
-                player.DisplayRating();
+                player.DisplayScore();
             }
         }
     }

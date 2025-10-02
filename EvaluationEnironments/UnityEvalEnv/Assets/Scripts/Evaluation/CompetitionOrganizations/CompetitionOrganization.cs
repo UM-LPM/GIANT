@@ -6,17 +6,17 @@ using Unity.VisualScripting;
 using Google.Protobuf.WellKnownTypes;
 using System;
 using Base;
-using Evaluators.RatingSystems;
+using Evaluators.CompetitionOrganizations;
 
-namespace Evaluators.TournamentOrganizations
+namespace Evaluators.CompetitionOrganizations
 {
-    public abstract class TournamentOrganization
+    public abstract class CompetitionOrganization
     {
-        public TournamentTeamOrganizator TeamOrganizator { get; set; }
+        public CompetitionTeamOrganizator TeamOrganizator { get; set; }
         public bool CreateNewTeamsEachRound { get; set; } = false;
         public Individual[] Individuals { get; set; }
 
-        public List<TournamentTeam> Teams { get; set; }
+        public List<CompetitionTeam> Teams { get; set; }
         public int Rounds { get; set; }
         public int ExecutedRounds { get; set; }
         public List<MatchFitness> PlayedMatches { get; set; }
@@ -27,7 +27,7 @@ namespace Evaluators.TournamentOrganizations
         protected float teamFitness1;
         protected float teamFitness2;
 
-        public TournamentOrganization(TournamentTeamOrganizator teamOrganizator, Individual[] individuals, bool regenerateTeamsEachRound)
+        public CompetitionOrganization(CompetitionTeamOrganizator teamOrganizator, Individual[] individuals, bool regenerateTeamsEachRound)
         {
             TeamOrganizator = teamOrganizator;
             Individuals = individuals;
@@ -35,27 +35,27 @@ namespace Evaluators.TournamentOrganizations
             OrganizeTeams(null);
         }
 
-        public abstract Match[] GenerateTournamentMatches();
+        public abstract Match[] GenerateCompetitionMatches();
 
-        public void OrganizeTeams(RatingPlayer[] ratingPlayers)
+        public void OrganizeTeams(CompetitionPlayer[] ratingPlayers)
         {
             Teams = TeamOrganizator.OrganizeTeams(Individuals, ratingPlayers);
         }
 
-        public virtual void UpdateTeamsScore(List<MatchFitness> tournamentMatchFitnesses, List<RatingPlayer> players = null)
+        public virtual void UpdateTeamsScore(List<MatchFitness> competitionMatchFitnesses, List<CompetitionPlayer> players = null)
         {
-            List<MatchFitness> tournamentMatchFitnessesCopy = new List<MatchFitness>(tournamentMatchFitnesses);
-            // Add played TournamentMatches to the list of played TournamentMatches (add only matchFitnesses that are not dummy)
-            PlayedMatches.AddRange(tournamentMatchFitnessesCopy.FindAll(matchFitness => !matchFitness.IsDummy));
+            List<MatchFitness> competitionMatchFitnessesCopy = new List<MatchFitness>(competitionMatchFitnesses);
+            // Add played CompetitionMatches to the list of played CompetitionMatches (add only matchFitnesses that are not dummy)
+            PlayedMatches.AddRange(competitionMatchFitnessesCopy.FindAll(matchFitness => !matchFitness.IsDummy));
 
             MatchFitness matchFitness;
             List<MatchFitness> matchFitnesses = new List<MatchFitness>();
             List<MatchFitness> matchFitnessesSwaped = new List<MatchFitness>();
-            while (tournamentMatchFitnessesCopy.Count > 0)
+            while (competitionMatchFitnessesCopy.Count > 0)
             {
                 // 1. Get all match data
                 matchFitness = new MatchFitness();
-                MatchFitness.GetMatchFitness(tournamentMatchFitnessesCopy, matchFitness, matchFitnesses, matchFitnessesSwaped, Coordinator.Instance.SwapTournamentMatchTeams);
+                MatchFitness.GetMatchFitness(competitionMatchFitnessesCopy, matchFitness, matchFitnesses, matchFitnessesSwaped, Coordinator.Instance.SwapCompetitionMatchTeams);
 
                 // 2. Update teams score
                 teamFitnessRes1 = matchFitness.TeamFitnesses[0];
@@ -109,9 +109,9 @@ namespace Evaluators.TournamentOrganizations
             ExecutedRounds++;
         }
 
-        public abstract void ResetTournament();
+        public abstract void ResetCompetition();
 
-        public virtual bool IsTournamentFinished()
+        public virtual bool IsCompetitionFinished()
         {
             return ExecutedRounds >= Rounds;
         }
@@ -130,30 +130,30 @@ namespace Evaluators.TournamentOrganizations
             Teams.Clear();
         }
 
-        public void AddTeam(TournamentTeam team)
+        public void AddTeam(CompetitionTeam team)
         {
             Teams.Add(team);
         }
 
-        public void AddTeams(List<TournamentTeam> teams)
+        public void AddTeams(List<CompetitionTeam> teams)
         {
             Teams.AddRange(teams);
         }
 
-        public void SetTeams(List<TournamentTeam> teams)
+        public void SetTeams(List<CompetitionTeam> teams)
         {
             Teams = teams;
         }
     }
 
-    public enum TournamentOrganizationType
+    public enum CompetitionOrganizationType
     {
-        RoundRobin,
-        SwissSystem,
-        LastVsAll, // Special Tournament for the creation of convergence graph
-        SingleElimination,
-        DoubleElimination,
-        KRandomOpponents,
-        SimilarStrengthOpponentSelection
+        RoundRobin, // Tournament where each team plays against every other team
+        SwissSystem, // Tournament where teams are paired based on their current score
+        LastVsAll, // Special competition for the creation of convergence graph
+        SingleElimination, // Tournament where the loser of each match is immediately eliminated from the tournament
+        DoubleElimination, // Tournament where a team is not eliminated until it has lost two matches
+        KRandomOpponents, // Competition where each team plays K random opponents
+        SimilarStrengthOpponentSelection // Competition where teams are paired based on similar strength (score)
     }
 }

@@ -6,16 +6,16 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Evaluators.TournamentOrganizations
+namespace Evaluators.CompetitionOrganizations
 {
-    public class KRandomOpponentsTournament : TournamentOrganization
+    public class KRandomOpponentsTournament : CompetitionOrganization
     {
         List<Match> TournamentMatches = new List<Match>();
         int currentMatchID;
         List<int> matchedOpponentTeamIDs;
         List<int> freeOpponentTeamIDs;
 
-        public KRandomOpponentsTournament(TournamentTeamOrganizator teamOrganizator, Individual[] individuals, bool regenerateTeamsEachRound, int rounds)
+        public KRandomOpponentsTournament(CompetitionTeamOrganizator teamOrganizator, Individual[] individuals, bool regenerateTeamsEachRound, int rounds)
             : base(teamOrganizator, individuals, regenerateTeamsEachRound)
         {
             Rounds = rounds == -1 ? Teams.Count -1 : rounds >  Teams.Count -1 ? Teams.Count -1 : rounds; // If rounds is not set round robin will be performed
@@ -23,16 +23,16 @@ namespace Evaluators.TournamentOrganizations
             PlayedMatches = new List<MatchFitness>();
         }
 
-        public override void ResetTournament()
+        public override void ResetCompetition()
         {
             Teams.Clear();
             ExecutedRounds = 0;
             PlayedMatches.Clear();
         }
 
-        public override Match[] GenerateTournamentMatches()
+        public override Match[] GenerateCompetitionMatches()
         {
-            if (IsTournamentFinished())
+            if (IsCompetitionFinished())
                 return new Match[] { };
 
             TournamentMatches.Clear();
@@ -75,7 +75,7 @@ namespace Evaluators.TournamentOrganizations
             }
 
             // If enabled: For each match that already exists, add another match with the teams swapped
-            if (Coordinator.Instance.SwapTournamentMatchTeams)
+            if (Coordinator.Instance.SwapCompetitionMatchTeams)
             {
                 List<Match> matchesSwapped = new List<Match>();
                 for (int i = 0; i < TournamentMatches.Count; i++)
@@ -90,7 +90,7 @@ namespace Evaluators.TournamentOrganizations
             return TournamentMatches.ToArray();
         }
 
-        public override bool IsTournamentFinished()
+        public override bool IsCompetitionFinished()
         {
             if (ExecutedRounds == 1)
                 return true;

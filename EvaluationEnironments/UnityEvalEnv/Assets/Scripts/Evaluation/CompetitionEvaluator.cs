@@ -1,8 +1,8 @@
 using AgentOrganizations;
 using Base;
 using Configuration;
-using Evaluators.RatingSystems;
-using Evaluators.TournamentOrganizations;
+using Evaluators.CompetitionOrganizations;
+using Evaluators.CompetitionOrganizations;
 using Fitnesses;
 using Newtonsoft.Json;
 using System;
@@ -15,35 +15,35 @@ using UnityEngine;
 
 namespace Evaluators
 {
-    public class TournamentEvaluator : Evaluator
+    public class CompetitionEvaluator : Evaluator
     {
-        protected TournamentOrganization TournamentOrganization { get; set; }
+        protected CompetitionOrganization CompetitionOrganization { get; set; }
         protected List<MatchFitness> MatchFitnesses { get; set; }
 
-        public TournamentEvaluator(TournamentOrganization tournamentOrganization)
+        public CompetitionEvaluator(CompetitionOrganization competitionOrganization)
         {
-            TournamentOrganization = tournamentOrganization;
+            CompetitionOrganization = competitionOrganization;
             MatchFitnesses = new List<MatchFitness>();
         }
 
         public override async Task<CoordinatorEvaluationResult> ExecuteEvaluation(CoordinatorEvalRequestData evalRequestData, Individual[] individuals)
         {
-            while (!TournamentOrganization.IsTournamentFinished())
+            while (!CompetitionOrganization.IsCompetitionFinished())
             {
-                if (TournamentOrganization.CreateNewTeamsEachRound)
+                if (CompetitionOrganization.CreateNewTeamsEachRound)
                 {
-                    TournamentOrganization.OrganizeTeams(null);
+                    CompetitionOrganization.OrganizeTeams(null);
                 }
 
-                Match[] tournamentMatches = TournamentOrganization.GenerateTournamentMatches();
-                if (tournamentMatches.Length == 0)
+                Match[] competitionMatches = CompetitionOrganization.GenerateCompetitionMatches();
+                if (competitionMatches.Length == 0)
                     break;
 
-                List<MatchFitness> matchesFitnesses = await EvaluateTournamentMatches(evalRequestData, tournamentMatches);
-                TournamentOrganization.UpdateTeamsScore(matchesFitnesses);
+                List<MatchFitness> matchesFitnesses = await EvaluateCompetitionMatches(evalRequestData, competitionMatches);
+                CompetitionOrganization.UpdateTeamsScore(matchesFitnesses);
             }
 
-            TournamentOrganization.DisplayStandings();
+            CompetitionOrganization.DisplayStandings();
 
             // Return the final population fitnesses and BTS node call frequencies
             return new CoordinatorEvaluationResult()
@@ -52,11 +52,11 @@ namespace Evaluators
             };
         }
 
-        public override async Task<List<MatchFitness>> EvaluateTournamentMatches(CoordinatorEvalRequestData evalRequestData, Match[] matches)
+        public override async Task<List<MatchFitness>> EvaluateCompetitionMatches(CoordinatorEvalRequestData evalRequestData, Match[] matches)
         {
             MatchFitnesses.Clear();
 
-            int numOfDistinctIndividualsInTournament = matches.SelectMany(match => match.Teams).Select(team => team.Individuals).SelectMany(individuals => individuals).Distinct().Count();
+            int numOfDistinctIndividualsInCompetition = matches.SelectMany(match => match.Teams).Select(team => team.Individuals).SelectMany(individuals => individuals).Distinct().Count();
 
             int numOfMatches = matches.Length;
             int numOfInstances = evalRequestData.EvalEnvInstances.Length;
@@ -84,7 +84,7 @@ namespace Evaluators
                     Task<HttpResponseMessage>[] tasks = new Task<HttpResponseMessage>[numOfRequiredInstances];
                     for (int i = 0; i < numOfRequiredInstances; i++)
                     {
-                        // To Each EvalEnvInstance, send a request with the specified range of the TournamentMatches that need to be evaluated
+                        // To Each EvalEnvInstance, send a request with the specified range of the CompetitionMatches that need to be evaluated
                         int start = i * numOfMatchesPerInstance;
                         int end = start + numOfMatchesPerInstance + (i == numOfRequiredInstances - 1 ? remainder : 0);
 
@@ -131,7 +131,7 @@ namespace Evaluators
             }
             catch (Exception ex)
             {
-                Debug.LogError($"An error occurred while evaluating tournament matches: {ex.Message}\n{ex.StackTrace}");
+                Debug.LogError($"An error occurred while evaluating competition matches: {ex.Message}\n{ex.StackTrace}");
             }
 
             throw new Exception("No match fitnesses were returned");
@@ -141,7 +141,7 @@ namespace Evaluators
         {
             FinalIndividualFitnessWrapper finalIndividualFitnessWrapper = new FinalIndividualFitnessWrapper();
 
-            foreach(TournamentTeam team in TournamentOrganization.Teams)
+            foreach(CompetitionTeam team in CompetitionOrganization.Teams)
             {
                 foreach(Individual individual in team.Individuals)
                 {

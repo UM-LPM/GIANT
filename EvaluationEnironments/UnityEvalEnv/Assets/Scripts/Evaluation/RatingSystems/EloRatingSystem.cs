@@ -1,6 +1,6 @@
 using AgentOrganizations;
 using Base;
-using Evaluators.TournamentOrganizations;
+using Evaluators.CompetitionOrganizations;
 using Fitnesses;
 using Kezyma.EloRating;
 using Moserware.Skills;
@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.Mathematics;
 
-namespace Evaluators.RatingSystems
+namespace Evaluators.CompetitionOrganizations
 {
     public class EloRatingSystem : RatingSystem
     {
@@ -35,7 +35,7 @@ namespace Evaluators.RatingSystems
         {
             if (initialPlayerRaitings != null && initialPlayerRaitings.Length < individuals.Length)
             {
-                throw new Exception("Initial individual rating array is not the same size as the number of individuals in the tournament");
+                throw new Exception("Initial individual rating array is not the same size as the number of individuals in the competition");
             }
 
             foreach (Individual individual in individuals)
@@ -62,25 +62,25 @@ namespace Evaluators.RatingSystems
             }
         }
 
-        public override void UpdateRatings(List<MatchFitness> tournamentMatchFitnesses)
+        public override void UpdateRatings(List<MatchFitness> competitionMatchFitnesses)
         {
-            List<MatchFitness> tournamentMatchFitnessesCopy = new List<MatchFitness>(tournamentMatchFitnesses);
+            List<MatchFitness> competitionMatchFitnessesCopy = new List<MatchFitness>(competitionMatchFitnesses);
 
             MatchFitness matchFitness;
             List<MatchFitness> matchFitnesses = new List<MatchFitness>();
             List<MatchFitness> matchFitnessesSwaped = new List<MatchFitness>();
-            while (tournamentMatchFitnessesCopy.Count > 0)
+            while (competitionMatchFitnessesCopy.Count > 0)
             {
                 // 1. Get all matchFitness data
                 matchFitness = new MatchFitness();
-                MatchFitness.GetMatchFitness(tournamentMatchFitnessesCopy, matchFitness, matchFitnesses, matchFitnessesSwaped, Coordinator.Instance.SwapTournamentMatchTeams);
+                MatchFitness.GetMatchFitness(competitionMatchFitnessesCopy, matchFitness, matchFitnesses, matchFitnessesSwaped, Coordinator.Instance.SwapCompetitionMatchTeams);
 
                 if (matchFitness.IsDummy)
                 {
                     continue;
                 }
 
-                // If the matchFitness is a dummy matchFitness, skip it (this matchFitness is used for teams who got bye on a tournament
+                // If the matchFitness is a dummy matchFitness, skip it (this matchFitness is used for teams who got bye on a competition
                 if (matchFitness.IsDummy)
                     continue;
 
@@ -188,7 +188,7 @@ namespace Evaluators.RatingSystems
         }
     }
 
-    public class EloPlayer : RatingPlayer
+    public class EloPlayer : CompetitionPlayer
     {
         public decimal Rating { get; set; }
         public int KFactor { get; set; }
@@ -226,12 +226,12 @@ namespace Evaluators.RatingSystems
             }
         }
 
-        public override void DisplayRating()
+        public override void DisplayScore()
         {
             UnityEngine.Debug.Log($"Player {IndividualID}: Rating: {Rating}, K Factor: {KFactor}");
         }
 
-        public override double GetRating()
+        public override double GetScore()
         {
             return (double)Rating;
         }

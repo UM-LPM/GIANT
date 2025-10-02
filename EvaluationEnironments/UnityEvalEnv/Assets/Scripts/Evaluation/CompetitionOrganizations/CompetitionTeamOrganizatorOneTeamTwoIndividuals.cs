@@ -1,21 +1,21 @@
 using AgentOrganizations;
-using Evaluators.RatingSystems;
+using Evaluators.CompetitionOrganizations;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Evaluators.TournamentOrganizations
+namespace Evaluators.CompetitionOrganizations
 {
-    public class TournamentTeamOrganizatorOneTeamTwoIndividuals : TournamentTeamOrganizator
+    public class CompetitionTeamOrganizatorOneTeamTwoIndividuals : CompetitionTeamOrganizator
     {
-        public override List<TournamentTeam> OrganizeTeams(Individual[] individuals, RatingPlayer[] ratingPlayers)
+        public override List<CompetitionTeam> OrganizeTeams(Individual[] individuals, CompetitionPlayer[] ratingPlayers)
         {
             if( individuals.Length % 2 != 0 )
             {
                 throw new System.Exception("Number of individuals must be even for OneTeamTwoIndividuals organization.");
             }
 
-            List<TournamentTeam> teams = new List<TournamentTeam>();
+            List<CompetitionTeam> teams = new List<CompetitionTeam>();
 
             if (ratingPlayers == null || ratingPlayers.Length != individuals.Length)
             {
@@ -23,13 +23,13 @@ namespace Evaluators.TournamentOrganizations
                 for (int i = 0; i < individuals.Length; i += 2)
                 {
                     int teamId = teams.Count;
-                    teams.Add(ScriptableObject.CreateInstance<TournamentTeam>().Initialize(teamId, "Team " + teamId, new Individual[] { individuals[i], individuals[i + 1] }) as TournamentTeam);
+                    teams.Add(ScriptableObject.CreateInstance<CompetitionTeam>().Initialize(teamId, "Team " + teamId, new Individual[] { individuals[i], individuals[i + 1] }) as CompetitionTeam);
                 }
                 return teams;
             }
 
             // 1. Calculate the average player rating
-            double averagePlayerRating = ratingPlayers.Sum(p => p.GetRating()) / ratingPlayers.Length;
+            double averagePlayerRating = ratingPlayers.Sum(p => p.GetScore()) / ratingPlayers.Length;
 
             // 2. Calculate average team rating (sum of two individuals' ratings)
             double teamRating = averagePlayerRating * 2;
@@ -47,7 +47,7 @@ namespace Evaluators.TournamentOrganizations
                 {
                     if (i == j || individualAssigned[j])
                         continue;
-                    double potentialTeamRating = ratingPlayers[i].GetRating() + ratingPlayers[j].GetRating();
+                    double potentialTeamRating = ratingPlayers[i].GetScore() + ratingPlayers[j].GetScore();
                     double difference = System.Math.Abs(potentialTeamRating - teamRating);
                     if (difference < bestDifference)
                     {
@@ -58,7 +58,7 @@ namespace Evaluators.TournamentOrganizations
                 if (bestTeamateIndex != -1)
                 {
                     int teamId = teams.Count;
-                    teams.Add(ScriptableObject.CreateInstance<TournamentTeam>().Initialize(teamId, "Team " + teamId, new Individual[] { individuals[i], individuals[bestTeamateIndex] }) as TournamentTeam);
+                    teams.Add(ScriptableObject.CreateInstance<CompetitionTeam>().Initialize(teamId, "Team " + teamId, new Individual[] { individuals[i], individuals[bestTeamateIndex] }) as CompetitionTeam);
                     individualAssigned[i] = true;
                     individualAssigned[bestTeamateIndex] = true;
                 }
@@ -70,7 +70,7 @@ namespace Evaluators.TournamentOrganizations
                 team.Score = team.Individuals.Sum(ind => 
                 {
                     var player = ratingPlayers.FirstOrDefault(p => p.IndividualID == ind.IndividualId);
-                    return player != null ? player.GetRating() : 0;
+                    return player != null ? player.GetScore() : 0;
                 });
             }
 

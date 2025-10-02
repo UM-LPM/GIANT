@@ -1,7 +1,7 @@
 using AgentOrganizations;
 using Base;
-using Evaluators.RatingSystems;
-using Evaluators.TournamentOrganizations;
+using Evaluators.CompetitionOrganizations;
+using Evaluators.CompetitionOrganizations;
 using Fitnesses;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -16,7 +16,7 @@ namespace Evaluators
             throw new System.NotImplementedException();
         }
 
-        public virtual async Task<List<MatchFitness>> EvaluateTournamentMatches(CoordinatorEvalRequestData evalRequestData, Match[] matches)
+        public virtual async Task<List<MatchFitness>> EvaluateCompetitionMatches(CoordinatorEvalRequestData evalRequestData, Match[] matches)
         {
             throw new System.NotImplementedException();
         }
@@ -25,7 +25,7 @@ namespace Evaluators
     public enum EvaluatiorType
     {
         Simple,
-        Tournament,
+        Competition,
         Rating
     }
 }

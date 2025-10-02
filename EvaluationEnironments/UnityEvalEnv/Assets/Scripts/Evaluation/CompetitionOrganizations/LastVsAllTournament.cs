@@ -5,15 +5,14 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Evaluators.TournamentOrganizations
+namespace Evaluators.CompetitionOrganizations
 {
-    public class RoundRobinTournament : TournamentOrganization
+    public class LastVsAllTournament : CompetitionOrganization
     {
-
         List<Match> tournamentMatches;
         int currentMatchID;
 
-        public RoundRobinTournament(TournamentTeamOrganizator teamOrganizator, Individual[] individuals, bool regenerateTeamsEachRound, int rounds = 1)
+        public LastVsAllTournament(CompetitionTeamOrganizator teamOrganizator, Individual[] individuals, bool regenerateTeamsEachRound, int rounds = 1)
             : base(teamOrganizator, individuals, regenerateTeamsEachRound)
         {
             Rounds = rounds < 1 ? (int)Math.Ceiling(Math.Log(Teams.Count, 2)) : rounds;
@@ -23,7 +22,7 @@ namespace Evaluators.TournamentOrganizations
             tournamentMatches = new List<Match>();
         }
 
-        public override void ResetTournament()
+        public override void ResetCompetition()
         {
             Teams.Clear();
             ExecutedRounds = 0;
@@ -32,36 +31,26 @@ namespace Evaluators.TournamentOrganizations
             tournamentMatches.Clear();
         }
 
-        public override Match[] GenerateTournamentMatches()
+        public override Match[] GenerateCompetitionMatches()
         {
-            if (IsTournamentFinished())
+            if (IsCompetitionFinished())
                 return new Match[] { };
 
             tournamentMatches.Clear();
             currentMatchID = 0;
 
-            for (int i = 0; i < Teams.Count; i++)
-            {
-                for (int j = i + 1; j < Teams.Count; j++)
-                {
-                    if (Coordinator.Instance.Random.NextDouble() > 0.5)
-                        tournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { Teams[i], Teams[j] }));
-                    else
-                        tournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { Teams[j], Teams[i] }));
-                }
-            }
+            Team lastTeam = Teams[Teams.Count - 1];
 
-            // Shuffle the TournamentMatches randomly
-            for (int i = 0; i < tournamentMatches.Count; i++)
+            for (int i = 0; i < Teams.Count - 1; i++)
             {
-                int randomIndex = Coordinator.Instance.Random.Next(i, tournamentMatches.Count);
-                Match temp = tournamentMatches[i];
-                tournamentMatches[i] = tournamentMatches[randomIndex];
-                tournamentMatches[randomIndex] = temp;
+                if (Coordinator.Instance.Random.NextDouble() > 0.5)
+                    tournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { Teams[i], lastTeam }));
+                else
+                    tournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { lastTeam, Teams[i] }));
             }
 
             // If enabled: For each match that already exists, add another match with the teams swapped
-            if (Coordinator.Instance.SwapTournamentMatchTeams)
+            if (Coordinator.Instance.SwapCompetitionMatchTeams)
             {
                 List<Match> matchesSwapped = new List<Match>();
                 for (int i = 0; i < tournamentMatches.Count; i++)

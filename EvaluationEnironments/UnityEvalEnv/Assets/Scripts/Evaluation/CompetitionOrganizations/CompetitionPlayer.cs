@@ -1,23 +1,23 @@
 ﻿using Fitnesses;
 using System.Collections.Generic;
 
-namespace Evaluators.RatingSystems
+namespace Evaluators.CompetitionOrganizations
 {
-    public abstract class RatingPlayer // TODO: Rename this to CompetitionPlayer
+    public abstract class CompetitionPlayer
     {
         public int IndividualID { get; set; }
 
         public List<IndividualMatchResult> IndividualMatchResults { get; set; }
 
-        public RatingPlayer(int individualId)
+        public CompetitionPlayer(int individualId)
         {
             IndividualID = individualId;
             IndividualMatchResults = new List<IndividualMatchResult>();
         }
 
-        public abstract void DisplayRating(); // TODO: Rename this to DisplayPlayerScore
+        public abstract void DisplayScore();
 
-        public abstract double GetRating(); // TODO: Rename this to GetPlayerScore
+        public abstract double GetScore();
 
         public void AddIndividualMatchResult(string matchName, IndividualFitness individualFitness, int[] opponentIDs)
         {

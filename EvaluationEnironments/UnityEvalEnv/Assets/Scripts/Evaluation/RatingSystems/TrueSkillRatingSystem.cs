@@ -1,4 +1,4 @@
-using Evaluators.TournamentOrganizations;
+using Evaluators.CompetitionOrganizations;
 using System.Collections.Generic;
 using Moserware.Skills;
 using Moserware.Skills.TrueSkill;
@@ -9,7 +9,7 @@ using Fitnesses;
 using System.Linq;
 using Base;
 
-namespace Evaluators.RatingSystems
+namespace Evaluators.CompetitionOrganizations
 {
     public class TrueSkillRatingSystem : RatingSystem
     {
@@ -28,10 +28,10 @@ namespace Evaluators.RatingSystems
         {
             if (initialPlayerRaitings != null && initialPlayerRaitings.Length < individuals.Length)
             {
-                throw new Exception("Initial individual rating array is not the same size as the number of individuals in the tournament");
+                throw new Exception("Initial individual rating array is not the same size as the number of individuals in the competition");
             }
 
-            // Find unique tournament individuals in teams and add them to the list of individuals
+            // Find unique competition individuals in teams and add them to the list of individuals
             foreach (Individual individual in individuals)
             {
                 RatingSystemRating individualRating = initialPlayerRaitings?.FirstOrDefault(x => x.IndividualID == individual.IndividualId);
@@ -56,28 +56,29 @@ namespace Evaluators.RatingSystems
             }
         }
 
-        public override void UpdateRatings(List<MatchFitness> tournamentMatchFitnesses)
+        public override void UpdateRatings(List<MatchFitness> competitionMatchFitnesses)
         {
-            List<MatchFitness> tournamentMatchFitnessesCopy = new List<MatchFitness>(tournamentMatchFitnesses);
+            List<MatchFitness> competitionMatchFitnessesCopy = new List<MatchFitness>(competitionMatchFitnesses);
 
             MatchFitness matchFitness;
             List<MatchFitness> matchFitnesses = new List<MatchFitness>();
             List<MatchFitness> matchFitnessesSwaped = new List<MatchFitness>();
-            while (tournamentMatchFitnessesCopy.Count > 0)
+            while (competitionMatchFitnessesCopy.Count > 0)
             {
                 // 1. Get all match data
                 matchFitness = new MatchFitness();
-                MatchFitness.GetMatchFitness(tournamentMatchFitnessesCopy, matchFitness, matchFitnesses, matchFitnessesSwaped, Coordinator.Instance.SwapTournamentMatchTeams);
+                MatchFitness.GetMatchFitness(competitionMatchFitnessesCopy, matchFitness, matchFitnesses, matchFitnessesSwaped, Coordinator.Instance.SwapCompetitionMatchTeams);
 
                 if (matchFitness.IsDummy)
                 {
                     continue;
                 }
 
-                // 2.2 Define order ranking
+                // 2. Calculate new ratings
+                // 2.1 Define order ranking
                 int[] orderRanking = GetFitnessOrder(matchFitness.GetTeamFitnesses());
 
-                // 2.2.1 Calculate how much each player contributed to the team fitness
+                // 2.2 Calculate how much each player contributed to the team fitness
                 for (int i = 0; i < matchFitness.TeamFitnesses.Count; i++)
                 {
                     if (matchFitness.TeamFitnesses[i].IndividualFitness.Count > 1)
@@ -101,8 +102,7 @@ namespace Evaluators.RatingSystems
                     }
                 }
 
-                // 2. Calculate new ratings
-                // 2.1. Create teams 
+                // 2.3. Create teams 
                 Moserware.Skills.Team[] teams = new Moserware.Skills.Team[matchFitness.TeamFitnesses.Count];
 
                 for (int i = 0; i < matchFitness.TeamFitnesses.Count; i++)
@@ -123,11 +123,11 @@ namespace Evaluators.RatingSystems
                     teams[i] = team;
                 }
 
-                // 2.3 Calculate new ratings
+                // 2.4 Calculate new ratings
                 var teamsConcatinated = Teams.Concat(teams);
                 var newRatings = TrueSkillCalculator.CalculateNewRatings(GameInfo, teamsConcatinated, orderRanking);
 
-                // 2.4 Update ratings
+                // 2.5 Update ratings
                 for (int i = 0; i < matchFitness.TeamFitnesses.Count; i++)
                 {
                     for (int j = 0; j < matchFitness.TeamFitnesses[i].IndividualFitness.Count; j++)
@@ -203,7 +203,7 @@ namespace Evaluators.RatingSystems
         }
     }
 
-    public class TrueSkillPlayer : RatingPlayer
+    public class TrueSkillPlayer : CompetitionPlayer
     {
         public Player Player { get; set; }
         public Rating Rating { get; set; }
@@ -220,12 +220,12 @@ namespace Evaluators.RatingSystems
             Rating = newRating;
         }
 
-        public override void DisplayRating()
+        public override void DisplayScore()
         {
             UnityEngine.Debug.Log($"Player {Player.Id}: {Rating}");
         }
 
-        public override double GetRating()
+        public override double GetScore()
         {
             return Rating.Mean;
         }

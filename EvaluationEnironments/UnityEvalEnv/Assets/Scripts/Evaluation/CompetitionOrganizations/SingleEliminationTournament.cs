@@ -1,25 +1,25 @@
 using AgentOrganizations;
 using Base;
-using Evaluators.RatingSystems;
+using Evaluators.CompetitionOrganizations;
 using Fitnesses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Evaluators.TournamentOrganizations
+namespace Evaluators.CompetitionOrganizations
 {
-    public class SingleEliminationTournament : TournamentOrganization
+    public class SingleEliminationTournament : CompetitionOrganization
     {
         private int TeamsWhoGotBye;
 
-        public List<TournamentTeam> EliminatedTeams = new List<TournamentTeam>();
+        public List<CompetitionTeam> EliminatedTeams = new List<CompetitionTeam>();
         public List<Match> TournamentMatches = new List<Match>();
 
-        List<TournamentTeam> UnpairedTeams = new List<TournamentTeam>();
+        List<CompetitionTeam> UnpairedTeams = new List<CompetitionTeam>();
         int CurrentMatchID;
 
-        public SingleEliminationTournament(TournamentTeamOrganizator teamOrganizator, Individual[] individuals, bool regenerateTeamsEachRound, int rounds)
+        public SingleEliminationTournament(CompetitionTeamOrganizator teamOrganizator, Individual[] individuals, bool regenerateTeamsEachRound, int rounds)
             : base(teamOrganizator, individuals, regenerateTeamsEachRound)
         {
             Rounds = rounds < 1 ? (int)Math.Ceiling(Math.Log(Teams.Count, 2)) : rounds;
@@ -27,7 +27,7 @@ namespace Evaluators.TournamentOrganizations
             PlayedMatches = new List<MatchFitness>();
         }
 
-        public override void ResetTournament()
+        public override void ResetCompetition()
         {
             Teams.Clear();
             ExecutedRounds = 0;
@@ -36,9 +36,9 @@ namespace Evaluators.TournamentOrganizations
             EliminatedTeams.Clear();
         }
 
-        public override Match[] GenerateTournamentMatches()
+        public override Match[] GenerateCompetitionMatches()
         {
-            if (IsTournamentFinished())
+            if (IsCompetitionFinished())
                 return new Match[] { };
             if (TeamsWhoGotBye == Teams.Count)
             {
@@ -46,38 +46,38 @@ namespace Evaluators.TournamentOrganizations
             }
 
             // Get all Teams that were yet not eliminated
-            List<TournamentTeam> teams = new List<TournamentTeam>(Teams);
+            List<CompetitionTeam> teams = new List<CompetitionTeam>(Teams);
             teams.RemoveAll(team => EliminatedTeams.Contains(team));
 
             return PairTeams(teams);
         }
 
-        private Match[] PairTeams(List<TournamentTeam> teams)
+        private Match[] PairTeams(List<CompetitionTeam> teams)
         {
             TournamentMatches.Clear();
-            UnpairedTeams = new List<TournamentTeam>(teams);
+            UnpairedTeams = new List<CompetitionTeam>(teams);
             CurrentMatchID = 0;
 
             // If there's an odd number of players, one player gets a bye
             if (UnpairedTeams.Count % 2 != 0)
             {
-                TournamentTeam byeTeam = UnpairedTeams.FirstOrDefault(p => !p.HasBye);
+                CompetitionTeam byeTeam = UnpairedTeams.FirstOrDefault(p => !p.HasBye);
                 if (byeTeam != null)
                 {
                     byeTeam.HasBye = true;
                     TeamsWhoGotBye++;
                     UnpairedTeams.Remove(byeTeam);
-                    TournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(CurrentMatchID++, new Team[] { byeTeam, ScriptableObject.CreateInstance<TournamentTeam>().Initialize(-1, "Dummy", new Individual[] { }) })); // Add a bye pairing with dummy team
+                    TournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(CurrentMatchID++, new Team[] { byeTeam, ScriptableObject.CreateInstance<CompetitionTeam>().Initialize(-1, "Dummy", new Individual[] { }) })); // Add a bye pairing with dummy team
                 }
             }
 
             // Pair remaining players
             while (UnpairedTeams.Count > 1)
             {
-                TournamentTeam t1 = UnpairedTeams[0];
+                CompetitionTeam t1 = UnpairedTeams[0];
                 UnpairedTeams.RemoveAt(0);
 
-                TournamentTeam t2 = UnpairedTeams[0];
+                CompetitionTeam t2 = UnpairedTeams[0];
                 UnpairedTeams.RemoveAt(0);
 
                 if (Coordinator.Instance.Random.NextDouble() > 0.5)
@@ -87,7 +87,7 @@ namespace Evaluators.TournamentOrganizations
             }
 
             // If enabled: For each match that already exists, add another match with the teams swapped
-            if (Coordinator.Instance.SwapTournamentMatchTeams)
+            if (Coordinator.Instance.SwapCompetitionMatchTeams)
             {
                 List<Match> matchesSwapped = new List<Match>();
                 for (int i = 0; i < TournamentMatches.Count; i++)
@@ -102,7 +102,7 @@ namespace Evaluators.TournamentOrganizations
             return TournamentMatches.ToArray();
         }
 
-        public override void UpdateTeamsScore(List<MatchFitness> tournamentMatchFitnesses, List<RatingPlayer> players = null)
+        public override void UpdateTeamsScore(List<MatchFitness> tournamentMatchFitnesses, List<CompetitionPlayer> players = null)
         {
             List<MatchFitness> tournamentMatchFitnessesCopy = new List<MatchFitness>(tournamentMatchFitnesses);
             // Add played TournamentMatches to the list of played TournamentMatches (add only matchFitnesses that are not dummy)
@@ -115,7 +115,7 @@ namespace Evaluators.TournamentOrganizations
             {
                 // 1. Get all match data
                 matchFitness = new MatchFitness();
-                MatchFitness.GetMatchFitness(tournamentMatchFitnessesCopy, matchFitness, matchFitnesses, matchFitnessesSwaped, Coordinator.Instance.SwapTournamentMatchTeams);
+                MatchFitness.GetMatchFitness(tournamentMatchFitnessesCopy, matchFitness, matchFitnesses, matchFitnessesSwaped, Coordinator.Instance.SwapCompetitionMatchTeams);
 
                 teamFitnessRes1 = matchFitness.TeamFitnesses[0];
                 teamFitnessRes2 = matchFitness.TeamFitnesses[1];
@@ -179,7 +179,7 @@ namespace Evaluators.TournamentOrganizations
             ExecutedRounds++;
         }
 
-        public override bool IsTournamentFinished()
+        public override bool IsCompetitionFinished()
         {
             if (EliminatedTeams.Count == Teams.Count - 1)
                 return true;

@@ -47,7 +47,7 @@ namespace Evaluators
                     Task<HttpResponseMessage>[] tasks = new Task<HttpResponseMessage>[numOfRequiredInstances];
                     for (int i = 0; i < numOfRequiredInstances; i++)
                     {
-                        // To Each EvalEnvInstance, send a request with the specified range of the TournamentMatches that need to be evaluated
+                        // To Each EvalEnvInstance, send a request with the specified range of the CompetitionMatches that need to be evaluated
                         int start = i * numOfMatchesPerInstance;
                         int end = start + numOfMatchesPerInstance + (i == numOfRequiredInstances - 1 ? remainder : 0);
 
@@ -117,7 +117,7 @@ namespace Evaluators
             }
             catch (Exception ex)
             {
-                Debug.LogError($"An error occurred while evaluating tournament matches: {ex.Message}\n{ex.StackTrace}");
+                Debug.LogError($"An error occurred while evaluating competition matches: {ex.Message}\n{ex.StackTrace}");
             }
 
             throw new Exception("No match fitnesses were returned");

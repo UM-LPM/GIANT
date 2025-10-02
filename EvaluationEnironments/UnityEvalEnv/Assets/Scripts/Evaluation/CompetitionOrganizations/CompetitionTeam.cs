@@ -3,19 +3,19 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
-namespace Evaluators.TournamentOrganizations
+namespace Evaluators.CompetitionOrganizations
 {
-    public class TournamentTeam : Team
+    public class CompetitionTeam : Team
     {
         public double Score { get; set; }
         public bool HasBye { get; set; }
 
-        public TournamentTeam(int teamId, string teamName, Individual[] individuals) : this(teamId, teamName, individuals, 0, false)
+        public CompetitionTeam(int teamId, string teamName, Individual[] individuals) : this(teamId, teamName, individuals, 0, false)
         {
         }
 
         [JsonConstructor]
-        public TournamentTeam(int teamId, string teamName, Individual[] individuals, double score, bool hasBye) : base(teamId, teamName, individuals)
+        public CompetitionTeam(int teamId, string teamName, Individual[] individuals, double score, bool hasBye) : base(teamId, teamName, individuals)
         {
             Score = score;
             HasBye = hasBye;
@@ -30,7 +30,7 @@ namespace Evaluators.TournamentOrganizations
             return this;
         }
 
-        public static implicit operator List<object>(TournamentTeam v)
+        public static implicit operator List<object>(CompetitionTeam v)
         {
             throw new NotImplementedException();
         }

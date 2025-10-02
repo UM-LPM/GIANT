@@ -58,25 +58,25 @@ namespace Fitnesses
             return true;
         }
 
-        public static void GetMatchFitness(List<MatchFitness> tournamentMatchFitnesses, MatchFitness matchFitness, List<MatchFitness> matchFitnesses, List<MatchFitness> matchFitnessesSwaped, bool swapTournamentMatchTeams)
+        public static void GetMatchFitness(List<MatchFitness> competitionMatchFitnesses, MatchFitness matchFitness, List<MatchFitness> matchFitnesses, List<MatchFitness> matchFitnessesSwaped, bool swapCompetitionMatchTeams)
         {
-            matchFitnesses.Add(tournamentMatchFitnesses[0]);
-            tournamentMatchFitnesses.RemoveAt(0);
+            matchFitnesses.Add(competitionMatchFitnesses[0]);
+            competitionMatchFitnesses.RemoveAt(0);
 
-            if (swapTournamentMatchTeams)
+            if (swapCompetitionMatchTeams)
             {
                 // Find all matchFitnesses with the same TeamIDs
-                matchFitnessesSwaped = tournamentMatchFitnesses.FindAll(match => matchFitnesses[0].ContainsSameTeams(match));
+                matchFitnessesSwaped = competitionMatchFitnesses.FindAll(match => matchFitnesses[0].ContainsSameTeams(match));
 
                 if (matchFitnessesSwaped.Count > 0)
                 {
                     // Add all matchFitnesses with the same TeamIDs to the list of matchFitnesses
                     matchFitnesses.AddRange(matchFitnessesSwaped);
 
-                    // Remove all matchFitnesses with the same TeamIDs from the list of tournament matchFitnesses
+                    // Remove all matchFitnesses with the same TeamIDs from the list of competition matchFitnesses
                     foreach (MatchFitness matchSwaped in matchFitnessesSwaped)
                     {
-                        tournamentMatchFitnesses.Remove(matchSwaped);
+                        competitionMatchFitnesses.Remove(matchSwaped);
                     }
 
                     // Join all matchFitnesses with the same TeamIDs

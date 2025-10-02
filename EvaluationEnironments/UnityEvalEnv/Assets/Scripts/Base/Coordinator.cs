@@ -10,8 +10,8 @@ using System.Threading.Tasks;
 using System.Text;
 using AgentOrganizations;
 using Evaluators;
-using Evaluators.RatingSystems;
-using Evaluators.TournamentOrganizations;
+using Evaluators.CompetitionOrganizations;
+using Evaluators.CompetitionOrganizations;
 using Fitnesses;
 using Utils;
 using Configuration;
@@ -36,9 +36,9 @@ namespace Base
         [SerializeField] public EvaluatiorType EvaluatorType;
         [SerializeField] public RatingSystemType RatingSystemType;
         [SerializeField] public bool CreateNewTeamsEachRound;
-        [SerializeField] public TournamentOrganizationType TournamentOrganizationType;
-        [SerializeField] public int TournamentRounds;
-        [SerializeField] public bool SwapTournamentMatchTeams = false; // Specific for games like (Robostrike, ...)
+        [SerializeField] public CompetitionOrganizationType CompetitionOrganizationType;
+        [SerializeField] public int CompetitionRounds;
+        [SerializeField] public bool SwapCompetitionMatchTeams = false; // Specific for games like (Robostrike, ...)
 
         [Header("Individuals Configuration")]
         [SerializeField] public Individual[] Individuals;
@@ -46,7 +46,7 @@ namespace Base
         private HttpListener Listener;
         private Thread ListenerThread;
 
-        private TournamentTeamOrganizator TeamOrganizator;
+        private CompetitionTeamOrganizator TeamOrganizator;
 
         public System.Random Random { get; private set; }
 
@@ -83,10 +83,10 @@ namespace Base
                     CoordinatorURI = MenuManager.Instance.MainConfiguration.CoordinatorURI;
                     EvaluatorType = MenuManager.Instance.MainConfiguration.EvaluatorType;
                     RatingSystemType = MenuManager.Instance.MainConfiguration.RatingSystemType;
-                    SwapTournamentMatchTeams = MenuManager.Instance.MainConfiguration.SwapTournamentMatchTeams;
+                    SwapCompetitionMatchTeams = MenuManager.Instance.MainConfiguration.SwapCompetitionMatchTeams;
                     CreateNewTeamsEachRound = MenuManager.Instance.MainConfiguration.CreateNewTeamsEachRound;
-                    TournamentOrganizationType = MenuManager.Instance.MainConfiguration.TournamentOrganizationType;
-                    TournamentRounds = MenuManager.Instance.MainConfiguration.TournamentRounds;
+                    CompetitionOrganizationType = MenuManager.Instance.MainConfiguration.CompetitionOrganizationType;
+                    CompetitionRounds = MenuManager.Instance.MainConfiguration.CompetitionRounds;
                     IndividualsSourceJSON = MenuManager.Instance.MainConfiguration.IndividualsSourceJSON;
                     IndividualsSourceSO = MenuManager.Instance.MainConfiguration.IndividualsSourceSO;
                     ConvertSOToJSON = MenuManager.Instance.MainConfiguration.ConvertSOToJSON;
@@ -174,7 +174,7 @@ namespace Base
             Task<CoordinatorEvaluationResult> evaluationResultTask = null;
 
             RatingSystem ratingSystem;
-            TournamentOrganization tournamentOrganizator;
+            CompetitionOrganization competitionOrganizator;
 
             switch (EvaluatorType)
             {
@@ -183,12 +183,12 @@ namespace Base
                     evaluator = new SimpleEvaluator();
                     evaluationResultTask = evaluator.ExecuteEvaluation(evalRequestData, Individuals);
                     break;
-                case EvaluatiorType.Tournament:
+                case EvaluatiorType.Competition:
                     // Tournament evaluator
                     getTeamOrganizator();
-                    tournamentOrganizator = getTournamentOrganizator(Individuals);
+                    competitionOrganizator = getCompetitionOrganizator(Individuals);
 
-                    evaluator = new TournamentEvaluator(tournamentOrganizator);
+                    evaluator = new CompetitionEvaluator(competitionOrganizator);
                     // TODO Include LastEvalPopRatings?
                     evaluationResultTask = evaluator.ExecuteEvaluation(evalRequestData, Individuals);
                     break;
@@ -196,9 +196,9 @@ namespace Base
                     // Rating evaluator
                     getTeamOrganizator();
                     ratingSystem = getRatingSystem();
-                    tournamentOrganizator = getTournamentOrganizator(Individuals);
+                    competitionOrganizator = getCompetitionOrganizator(Individuals);
 
-                    evaluator = new RatingEvaluator(ratingSystem, tournamentOrganizator);
+                    evaluator = new RatingEvaluator(ratingSystem, competitionOrganizator);
                     ratingSystem.DefinePlayers(Individuals, ratingSystem.PrepareLastEvalPopRatings(evalRequestData.LastEvalIndividualFitnesses));
                     evaluationResultTask = evaluator.ExecuteEvaluation(evalRequestData, Individuals);
                     break;
@@ -298,54 +298,33 @@ namespace Base
         {
             if (TeamOrganizator != null) return;
 
-            /*if (!string.IsNullOrEmpty(TeamOrganizatorScript))
-            {
-                var type = Type.GetType(TeamOrganizatorScript);
-                if (type != null)
-                {
-                    // remove existing
-                    var existing = GetComponent<TournamentTeamOrganizator>();
-                    if (existing) Destroy(existing);
-
-                    try
-                    {
-                        TeamOrganizator = (TournamentTeamOrganizator)gameObject.AddComponent(type);
-                        return;
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new Exception($"Error adding TeamOrganizatorScript component: {ex.Message}", ex);
-                    }
-                }
-            }*/
-
-            TeamOrganizator = GetComponent<TournamentTeamOrganizator>();
+            TeamOrganizator = GetComponent<CompetitionTeamOrganizator>();
             if (TeamOrganizator == null)
             {
-                throw new Exception("TournamentTeamOrganizator is not defined");
+                throw new Exception("CompetitionTeamOrganizator is not defined");
             }
         }
 
-        private TournamentOrganization getTournamentOrganizator(Individual[] individuals)
+        private CompetitionOrganization getCompetitionOrganizator(Individual[] individuals)
         {
-            switch (TournamentOrganizationType)
+            switch (CompetitionOrganizationType)
             {
-                case TournamentOrganizationType.RoundRobin:
-                    return new RoundRobinTournament(TeamOrganizator, individuals, CreateNewTeamsEachRound, TournamentRounds);
-                case TournamentOrganizationType.SwissSystem:
-                    return new SwissSystemTournament(TeamOrganizator, individuals, CreateNewTeamsEachRound, TournamentRounds);
-                case TournamentOrganizationType.LastVsAll:
-                    return new LastVsAllTournament(TeamOrganizator, individuals, CreateNewTeamsEachRound, TournamentRounds);
-                case TournamentOrganizationType.SingleElimination:
-                    return new SingleEliminationTournament(TeamOrganizator, individuals, CreateNewTeamsEachRound, TournamentRounds);
-                case TournamentOrganizationType.DoubleElimination:
-                    return new DoubleEliminationTournament(TeamOrganizator, individuals, CreateNewTeamsEachRound, TournamentRounds);
-                case TournamentOrganizationType.KRandomOpponents:
-                    return new KRandomOpponentsTournament(TeamOrganizator, individuals, CreateNewTeamsEachRound, TournamentRounds);
-                case TournamentOrganizationType.SimilarStrengthOpponentSelection:
-                    return new SimilarStrengthOpponentSelection(TeamOrganizator, individuals, CreateNewTeamsEachRound, TournamentRounds);
+                case CompetitionOrganizationType.RoundRobin:
+                    return new RoundRobinTournament(TeamOrganizator, individuals, CreateNewTeamsEachRound, CompetitionRounds);
+                case CompetitionOrganizationType.SwissSystem:
+                    return new SwissSystemTournament(TeamOrganizator, individuals, CreateNewTeamsEachRound, CompetitionRounds);
+                case CompetitionOrganizationType.LastVsAll:
+                    return new LastVsAllTournament(TeamOrganizator, individuals, CreateNewTeamsEachRound, CompetitionRounds);
+                case CompetitionOrganizationType.SingleElimination:
+                    return new SingleEliminationTournament(TeamOrganizator, individuals, CreateNewTeamsEachRound, CompetitionRounds);
+                case CompetitionOrganizationType.DoubleElimination:
+                    return new DoubleEliminationTournament(TeamOrganizator, individuals, CreateNewTeamsEachRound, CompetitionRounds);
+                case CompetitionOrganizationType.KRandomOpponents:
+                    return new KRandomOpponentsTournament(TeamOrganizator, individuals, CreateNewTeamsEachRound, CompetitionRounds);
+                case CompetitionOrganizationType.SimilarStrengthOpponentSelection:
+                    return new SimilarStrengthOpponentSelection(TeamOrganizator, individuals, CreateNewTeamsEachRound, CompetitionRounds);
                 default:
-                    Debug.LogError("Invalid tournament organization type");
+                    Debug.LogError("Invalid competition organization type");
                     return null;
             }
         }
