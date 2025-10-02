@@ -14,54 +14,44 @@ namespace Evaluators.RatingSystems
     public class TrueSkillRatingSystem : RatingSystem
     {
         public GameInfo GameInfo;
-        public SkillCalculator SkillCalculator;
         public float MinRating;
         public float MaxRating;
 
         public TrueSkillRatingSystem()
         {
             GameInfo = GameInfo.DefaultGameInfo;
-            SkillCalculator = new TwoTeamTrueSkillCalculator();
             MinRating = 0;
             MaxRating = 100;
         }
 
-        public override void DefinePlayers(List<TournamentTeam> teams, RatingSystemRating[] initialPlayerRaitings)
+        public override void DefinePlayers(Individual[] individuals, RatingSystemRating[] initialPlayerRaitings)
         {
-            // Find unique tournament individuals in teams and add them to the list of individuals
-            List<Individual> individuals = new List<Individual>();
-            foreach (TournamentTeam team in teams)
+            if (initialPlayerRaitings != null && initialPlayerRaitings.Length < individuals.Length)
             {
-                foreach (Individual individual in team.Individuals)
+                throw new Exception("Initial individual rating array is not the same size as the number of individuals in the tournament");
+            }
+
+            // Find unique tournament individuals in teams and add them to the list of individuals
+            foreach (Individual individual in individuals)
+            {
+                RatingSystemRating individualRating = initialPlayerRaitings?.FirstOrDefault(x => x.IndividualID == individual.IndividualId);
+
+                if (individualRating != null && individualRating.AdditionalValues != null)
                 {
-                    if (!individuals.Contains(individual))
-                    {
-                        individuals.Add(individual);
-                        if (initialPlayerRaitings != null && initialPlayerRaitings.Length < individuals.Count)
-                        {
-                            throw new Exception("Initial individual rating array is not the same size as the number of individuals in the tournament");
-                        }
+                    double rating;
+                    double stdDeviation;
 
-                        RatingSystemRating individualRating = initialPlayerRaitings?.FirstOrDefault(x => x.IndividualID == individual.IndividualId);
-                        
-                        if(individualRating != null && individualRating.AdditionalValues != null)
-                        {
-                            double rating;
-                            double stdDeviation;
+                    if (!individualRating.AdditionalValues.TryGetValue("Rating", out rating))
+                        rating = GameInfo.DefaultRating.Mean;
 
-                            if(!individualRating.AdditionalValues.TryGetValue("Rating", out rating))
-                                rating = GameInfo.DefaultRating.Mean;
+                    if (!individualRating.AdditionalValues.TryGetValue("StdDeviation", out stdDeviation))
+                        stdDeviation = GameInfo.DefaultRating.StandardDeviation;
 
-                            if(!individualRating.AdditionalValues.TryGetValue("StdDeviation", out stdDeviation))
-                                stdDeviation = GameInfo.DefaultRating.StandardDeviation;
-
-                            Players.Add(new TrueSkillPlayer(individual.IndividualId, new Player(individual.IndividualId), new Rating(math.abs(rating), stdDeviation)));
-                        }
-                        else
-                        {
-                            Players.Add(new TrueSkillPlayer(individual.IndividualId, new Player(individual.IndividualId), GameInfo.DefaultRating));
-                        }
-                    }
+                    Players.Add(new TrueSkillPlayer(individual.IndividualId, new Player(individual.IndividualId), new Rating(math.abs(rating), stdDeviation)));
+                }
+                else
+                {
+                    Players.Add(new TrueSkillPlayer(individual.IndividualId, new Player(individual.IndividualId), GameInfo.DefaultRating));
                 }
             }
         }
@@ -82,6 +72,33 @@ namespace Evaluators.RatingSystems
                 if (matchFitness.IsDummy)
                 {
                     continue;
+                }
+
+                // 2.2 Define order ranking
+                int[] orderRanking = GetFitnessOrder(matchFitness.GetTeamFitnesses());
+
+                // 2.2.1 Calculate how much each player contributed to the team fitness
+                for (int i = 0; i < matchFitness.TeamFitnesses.Count; i++)
+                {
+                    if (matchFitness.TeamFitnesses[i].IndividualFitness.Count > 1)
+                    {
+                        float teamFitness = matchFitness.TeamFitnesses[i].GetTeamFitness();
+                        foreach (IndividualFitness individualFitness in matchFitness.TeamFitnesses[i].IndividualFitness)
+                        {
+                            float contribution = individualFitness.Value / teamFitness;
+                            TrueSkillPlayer trueSkillPlayer = GetPlayer(individualFitness.IndividualID);
+                            if (trueSkillPlayer != null)
+                            {
+                                // Check if current Team won 
+                                if (orderRanking[i] != 1)
+                                {
+                                    contribution = 1 - contribution; // If the team lost, the contribution is inverted (i.e., a player who contributed less to the team fitness should be penalized more)
+                                }
+
+                                trueSkillPlayer.Player = new Player(trueSkillPlayer.IndividualID, contribution);
+                            }
+                        }
+                    }
                 }
 
                 // 2. Calculate new ratings
@@ -106,12 +123,9 @@ namespace Evaluators.RatingSystems
                     teams[i] = team;
                 }
 
-                // 2.2 Define order ranking
-                int[] orderRanking = GetFitnessOrder(matchFitness.GetTeamFitnesses());
-
                 // 2.3 Calculate new ratings
                 var teamsConcatinated = Teams.Concat(teams);
-                var newRatings = SkillCalculator.CalculateNewRatings(GameInfo, teamsConcatinated, orderRanking);
+                var newRatings = TrueSkillCalculator.CalculateNewRatings(GameInfo, teamsConcatinated, orderRanking);
 
                 // 2.4 Update ratings
                 for (int i = 0; i < matchFitness.TeamFitnesses.Count; i++)
@@ -171,8 +185,7 @@ namespace Evaluators.RatingSystems
 
         public TrueSkillPlayer GetPlayer(int id)
         {
-            var player = Players.FirstOrDefault(p => p.IndividualID.Equals(id) && p is TrueSkillPlayer);
-            return player as TrueSkillPlayer;
+            return Players.FirstOrDefault(p => p.IndividualID.Equals(id) && p is TrueSkillPlayer) as TrueSkillPlayer;
         }
 
         public override RatingSystemRating[] GetFinalRatings()

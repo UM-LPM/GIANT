@@ -13,10 +13,10 @@ namespace Evaluators.TournamentOrganizations
         List<Match> tournamentMatches;
         int currentMatchID;
 
-        public LastVsAllTournament(List<TournamentTeam> teams, int rounds = 1)
+        public LastVsAllTournament(TournamentTeamOrganizator teamOrganizator, Individual[] individuals, bool regenerateTeamsEachRound, int rounds = 1)
+            : base(teamOrganizator, individuals, regenerateTeamsEachRound)
         {
-            Teams = teams;
-            Rounds = rounds < 1 ? (int)Math.Ceiling(Math.Log(teams.Count, 2)) : rounds;
+            Rounds = rounds < 1 ? (int)Math.Ceiling(Math.Log(Teams.Count, 2)) : rounds;
             ExecutedRounds = 0;
             PlayedMatches = new List<MatchFitness>();
 

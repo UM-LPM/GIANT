@@ -15,10 +15,10 @@ namespace Evaluators.TournamentOrganizations
         List<int> matchedOpponentTeamIDs;
         List<int> freeOpponentTeamIDs;
 
-        public KRandomOpponentsTournament(List<TournamentTeam> teams, int rounds)
+        public KRandomOpponentsTournament(TournamentTeamOrganizator teamOrganizator, Individual[] individuals, bool regenerateTeamsEachRound, int rounds)
+            : base(teamOrganizator, individuals, regenerateTeamsEachRound)
         {
-            Teams = teams;
-            Rounds = rounds == -1 ? teams.Count -1 : rounds >  teams.Count -1 ? teams.Count -1 : rounds; // If rounds is not set round robin will be performed
+            Rounds = rounds == -1 ? Teams.Count -1 : rounds >  Teams.Count -1 ? Teams.Count -1 : rounds; // If rounds is not set round robin will be performed
             ExecutedRounds = 0;
             PlayedMatches = new List<MatchFitness>();
         }

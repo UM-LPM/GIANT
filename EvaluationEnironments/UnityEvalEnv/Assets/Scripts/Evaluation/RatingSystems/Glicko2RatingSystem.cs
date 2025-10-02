@@ -26,46 +26,37 @@ namespace Evaluators.RatingSystems
         }
 
 
-        public override void DefinePlayers(List<TournamentTeam> teams, RatingSystemRating[] initialPlayerRaitings)
+        public override void DefinePlayers(Individual[] individuals, RatingSystemRating[] initialPlayerRaitings)
         {
-            // Find unique tournament individuals in teams and add them to the list of individuals
-            List<Individual> individuals = new List<Individual>();
-            foreach (TournamentTeam team in teams)
+            if (initialPlayerRaitings != null && initialPlayerRaitings.Length < individuals.Length)
             {
-                foreach (Individual individual in team.Individuals)
+                throw new Exception("Initial individual rating array is not the same size as the number of individuals in the tournament");
+            }
+
+            foreach (Individual individual in individuals)
+            {
+                RatingSystemRating individualRating = initialPlayerRaitings?.FirstOrDefault(x => x.IndividualID == individual.IndividualId);
+
+                if (individualRating != null && individualRating.AdditionalValues != null)
                 {
-                    if (!individuals.Contains(individual))
-                    {
-                        individuals.Add(individual);
-                        if (initialPlayerRaitings != null && initialPlayerRaitings.Length < individuals.Count)
-                        {
-                            throw new Exception("Initial individual rating array is not the same size as the number of individuals in the tournament");
-                        }
+                    double rating;
+                    double ratingDeviation;
+                    double volatility;
 
-                        RatingSystemRating individualRating = initialPlayerRaitings?.FirstOrDefault(x => x.IndividualID == individual.IndividualId);
+                    if (!individualRating.AdditionalValues.TryGetValue("Rating", out rating))
+                        rating = DefaultRating;
 
-                        if (individualRating != null && individualRating.AdditionalValues != null)
-                        {
-                            double rating;
-                            double ratingDeviation;
-                            double volatility;
+                    if (!individualRating.AdditionalValues.TryGetValue("RatingDeviation", out ratingDeviation))
+                        ratingDeviation = DefaultRatingDeviation;
 
-                            if (!individualRating.AdditionalValues.TryGetValue("Rating", out rating))
-                                rating = DefaultRating;
+                    if (!individualRating.AdditionalValues.TryGetValue("Volatility", out volatility))
+                        volatility = DefaultVolatility;
 
-                            if (!individualRating.AdditionalValues.TryGetValue("RatingDeviation", out ratingDeviation))
-                                ratingDeviation = DefaultRatingDeviation;
-
-                            if (!individualRating.AdditionalValues.TryGetValue("Volatility", out volatility))
-                                volatility = DefaultVolatility;
-
-                            Players.Add(new Glicko2Player(individual.IndividualId, rating, ratingDeviation, volatility));
-                        }
-                        else
-                        {
-                            Players.Add(new Glicko2Player(individual.IndividualId, DefaultRating, DefaultRatingDeviation, DefaultVolatility));
-                        }
-                    }
+                    Players.Add(new Glicko2Player(individual.IndividualId, rating, ratingDeviation, volatility));
+                }
+                else
+                {
+                    Players.Add(new Glicko2Player(individual.IndividualId, DefaultRating, DefaultRatingDeviation, DefaultVolatility));
                 }
             }
         }

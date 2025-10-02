@@ -34,10 +34,10 @@ namespace Evaluators.TournamentOrganizations
         int CurrentMatchID;
         int CurrentScore = 0;
 
-        public DoubleEliminationTournament(List<TournamentTeam> teams, int rounds)
+        public DoubleEliminationTournament(TournamentTeamOrganizator teamOrganizator, Individual[] individuals, bool regenerateTeamsEachRound, int rounds)
+            : base(teamOrganizator, individuals, regenerateTeamsEachRound)
         {
-            Teams = teams;
-            Rounds = rounds < 1 ? (int)Math.Ceiling(Math.Log(teams.Count, 2)) : rounds;
+            Rounds = rounds < 1 ? (int)Math.Ceiling(Math.Log(Teams.Count, 2)) : rounds;
             ExecutedRounds = 0;
             PlayedMatches = new List<MatchFitness>();
             TournamentStep = DoubleEliminationTournamentStep.Init;

@@ -1,4 +1,5 @@
 using AgentOrganizations;
+using Evaluators.RatingSystems;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,7 +7,7 @@ namespace Evaluators.TournamentOrganizations
 {
     public class TournamentTeamOrganizatorOneTeamOneIndividual : TournamentTeamOrganizator
     {
-        public override List<TournamentTeam> OrganizeTeams(Individual[] individuals)
+        public override List<TournamentTeam> OrganizeTeams(Individual[] individuals, RatingPlayer[] ratingPlayers)
         {
             List<TournamentTeam> teams = new List<TournamentTeam>();
 

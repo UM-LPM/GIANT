@@ -1,3 +1,4 @@
+using AgentOrganizations;
 using Evaluators.TournamentOrganizations;
 using Fitnesses;
 using System.Collections.Generic;
@@ -16,7 +17,7 @@ namespace Evaluators.RatingSystems
 
         public abstract void UpdateRatings(List<MatchFitness> tournamentMatchFitnesses);
 
-        public abstract void DefinePlayers(List<TournamentTeam> teams, RatingSystemRating[] initialPlayerRaitings);
+        public abstract void DefinePlayers(Individual[] individuals, RatingSystemRating[] initialPlayerRaitings);
 
         public abstract RatingSystemRating[] GetFinalRatings();
 

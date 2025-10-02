@@ -35,6 +35,7 @@ namespace Base
         [SerializeField] public int InitialSeed = 316227711;
         [SerializeField] public EvaluatiorType EvaluatorType;
         [SerializeField] public RatingSystemType RatingSystemType;
+        [SerializeField] public bool CreateNewTeamsEachRound;
         [SerializeField] public TournamentOrganizationType TournamentOrganizationType;
         [SerializeField] public int TournamentRounds;
         [SerializeField] public bool SwapTournamentMatchTeams = false; // Specific for games like (Robostrike, ...)
@@ -83,6 +84,7 @@ namespace Base
                     EvaluatorType = MenuManager.Instance.MainConfiguration.EvaluatorType;
                     RatingSystemType = MenuManager.Instance.MainConfiguration.RatingSystemType;
                     SwapTournamentMatchTeams = MenuManager.Instance.MainConfiguration.SwapTournamentMatchTeams;
+                    CreateNewTeamsEachRound = MenuManager.Instance.MainConfiguration.CreateNewTeamsEachRound;
                     TournamentOrganizationType = MenuManager.Instance.MainConfiguration.TournamentOrganizationType;
                     TournamentRounds = MenuManager.Instance.MainConfiguration.TournamentRounds;
                     IndividualsSourceJSON = MenuManager.Instance.MainConfiguration.IndividualsSourceJSON;
@@ -183,16 +185,8 @@ namespace Base
                     break;
                 case EvaluatiorType.Tournament:
                     // Tournament evaluator
-                    if (TeamOrganizator == null)
-                    {
-                        TeamOrganizator = gameObject.GetComponent<TournamentTeamOrganizator>();
-
-                        if (TeamOrganizator == null)
-                        {
-                            throw new Exception("TournamentTeamOrganizator is not defined");
-                        }
-                    }
-                    tournamentOrganizator = getTournamentOrganizator(TeamOrganizator.OrganizeTeams(Individuals));
+                    getTeamOrganizator();
+                    tournamentOrganizator = getTournamentOrganizator(Individuals);
 
                     evaluator = new TournamentEvaluator(tournamentOrganizator);
                     // TODO Include LastEvalPopRatings?
@@ -200,20 +194,12 @@ namespace Base
                     break;
                 case EvaluatiorType.Rating:
                     // Rating evaluator
-                    if (TeamOrganizator == null)
-                    {
-                        TeamOrganizator = gameObject.GetComponent<TournamentTeamOrganizator>();
-
-                        if (TeamOrganizator == null)
-                        {
-                            throw new Exception("TournamentTeamOrganizator is not defined");
-                        }
-                    }
+                    getTeamOrganizator();
                     ratingSystem = getRatingSystem();
-                    tournamentOrganizator = getTournamentOrganizator(TeamOrganizator.OrganizeTeams(Individuals));
+                    tournamentOrganizator = getTournamentOrganizator(Individuals);
 
                     evaluator = new RatingEvaluator(ratingSystem, tournamentOrganizator);
-                    ratingSystem.DefinePlayers(tournamentOrganizator.Teams, ratingSystem.PrepareLastEvalPopRatings(evalRequestData.LastEvalIndividualFitnesses));
+                    ratingSystem.DefinePlayers(Individuals, ratingSystem.PrepareLastEvalPopRatings(evalRequestData.LastEvalIndividualFitnesses));
                     evaluationResultTask = evaluator.ExecuteEvaluation(evalRequestData, Individuals);
                     break;
                 default:
@@ -308,24 +294,56 @@ namespace Base
             }
         }
 
-        private TournamentOrganization getTournamentOrganizator(List<TournamentTeam> teams)
+        private void getTeamOrganizator()
+        {
+            if (TeamOrganizator != null) return;
+
+            /*if (!string.IsNullOrEmpty(TeamOrganizatorScript))
+            {
+                var type = Type.GetType(TeamOrganizatorScript);
+                if (type != null)
+                {
+                    // remove existing
+                    var existing = GetComponent<TournamentTeamOrganizator>();
+                    if (existing) Destroy(existing);
+
+                    try
+                    {
+                        TeamOrganizator = (TournamentTeamOrganizator)gameObject.AddComponent(type);
+                        return;
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception($"Error adding TeamOrganizatorScript component: {ex.Message}", ex);
+                    }
+                }
+            }*/
+
+            TeamOrganizator = GetComponent<TournamentTeamOrganizator>();
+            if (TeamOrganizator == null)
+            {
+                throw new Exception("TournamentTeamOrganizator is not defined");
+            }
+        }
+
+        private TournamentOrganization getTournamentOrganizator(Individual[] individuals)
         {
             switch (TournamentOrganizationType)
             {
                 case TournamentOrganizationType.RoundRobin:
-                    return new RoundRobinTournament(teams, TournamentRounds);
+                    return new RoundRobinTournament(TeamOrganizator, individuals, CreateNewTeamsEachRound, TournamentRounds);
                 case TournamentOrganizationType.SwissSystem:
-                    return new SwissSystemTournament(teams, TournamentRounds);
+                    return new SwissSystemTournament(TeamOrganizator, individuals, CreateNewTeamsEachRound, TournamentRounds);
                 case TournamentOrganizationType.LastVsAll:
-                    return new LastVsAllTournament(teams, TournamentRounds);
-                case TournamentOrganizationType.SingleElimination:  
-                    return new SingleEliminationTournament(teams, TournamentRounds);
+                    return new LastVsAllTournament(TeamOrganizator, individuals, CreateNewTeamsEachRound, TournamentRounds);
+                case TournamentOrganizationType.SingleElimination:
+                    return new SingleEliminationTournament(TeamOrganizator, individuals, CreateNewTeamsEachRound, TournamentRounds);
                 case TournamentOrganizationType.DoubleElimination:
-                    return new DoubleEliminationTournament(teams, TournamentRounds);
+                    return new DoubleEliminationTournament(TeamOrganizator, individuals, CreateNewTeamsEachRound, TournamentRounds);
                 case TournamentOrganizationType.KRandomOpponents:
-                    return new KRandomOpponentsTournament(teams, TournamentRounds);
+                    return new KRandomOpponentsTournament(TeamOrganizator, individuals, CreateNewTeamsEachRound, TournamentRounds);
                 case TournamentOrganizationType.SimilarStrengthOpponentSelection:
-                    return new SimilarStrengthOpponentSelection(teams, TournamentRounds);
+                    return new SimilarStrengthOpponentSelection(TeamOrganizator, individuals, CreateNewTeamsEachRound, TournamentRounds);
                 default:
                     Debug.LogError("Invalid tournament organization type");
                     return null;

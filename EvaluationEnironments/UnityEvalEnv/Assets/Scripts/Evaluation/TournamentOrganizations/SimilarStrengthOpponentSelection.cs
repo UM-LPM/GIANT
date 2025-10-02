@@ -18,16 +18,10 @@ namespace Evaluators.TournamentOrganizations
         int currentMatchID;
         List<int> opponentTeamIDs;
 
-        public SimilarStrengthOpponentSelection(List<TournamentTeam> teams, int rounds)
+        public SimilarStrengthOpponentSelection(TournamentTeamOrganizator teamOrganizator, Individual[] individuals, bool regenerateTeamsEachRound, int rounds)
+            : base(teamOrganizator, individuals, regenerateTeamsEachRound)
         {
-            // Check if every team has only one individual
-            if (teams.Any(team => team.Individuals.Length != 1))
-            {
-                throw new ArgumentException("All teams must have exactly one individual for SimilarStrengthOpponentSelection tournament.");
-            }
-
-            Teams = teams;
-            Rounds = rounds < 1 ? (int)Math.Ceiling(Math.Log(teams.Count, 2)) : rounds;
+            Rounds = rounds < 1 ? (int)Math.Ceiling(Math.Log(Teams.Count, 2)) : rounds;
             ExecutedRounds = 0;
             PlayedMatches = new List<MatchFitness>();
         }
@@ -131,13 +125,25 @@ namespace Evaluators.TournamentOrganizations
             base.UpdateTeamsScore(tournamentMatchFitnesses);
 
             // Overwrite team scores based on players' ratings
-            foreach (var player in players)
+            // 1. Reset all team scores
+            foreach (var team in Teams)
             {
-                var team = Teams.FirstOrDefault(t => t.Individuals.Any(i => i.IndividualId == player.IndividualID));
-                if (team)
+                team.Score = 0;
+            }
+
+            // 2. Update team scores based on their players' ratings (sum of player ratings from each team)
+            foreach (var team in Teams)
+            {
+                double teamRating = 0;
+                foreach (var individual in team.Individuals)
                 {
-                    team.Score = player.GetRating();
+                    var player = players.FirstOrDefault(p => p.IndividualID == individual.IndividualId);
+                    if (player != null)
+                    {
+                        teamRating += player.GetRating();
+                    }
                 }
+                team.Score = teamRating;
             }
         }
 

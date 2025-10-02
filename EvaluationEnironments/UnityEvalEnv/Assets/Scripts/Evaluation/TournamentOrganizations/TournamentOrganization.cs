@@ -12,6 +12,10 @@ namespace Evaluators.TournamentOrganizations
 {
     public abstract class TournamentOrganization
     {
+        public TournamentTeamOrganizator TeamOrganizator { get; set; }
+        public bool CreateNewTeamsEachRound { get; set; } = false;
+        public Individual[] Individuals { get; set; }
+
         public List<TournamentTeam> Teams { get; set; }
         public int Rounds { get; set; }
         public int ExecutedRounds { get; set; }
@@ -23,7 +27,20 @@ namespace Evaluators.TournamentOrganizations
         protected float teamFitness1;
         protected float teamFitness2;
 
+        public TournamentOrganization(TournamentTeamOrganizator teamOrganizator, Individual[] individuals, bool regenerateTeamsEachRound)
+        {
+            TeamOrganizator = teamOrganizator;
+            Individuals = individuals;
+            CreateNewTeamsEachRound = regenerateTeamsEachRound;
+            OrganizeTeams(null);
+        }
+
         public abstract Match[] GenerateTournamentMatches();
+
+        public void OrganizeTeams(RatingPlayer[] ratingPlayers)
+        {
+            Teams = TeamOrganizator.OrganizeTeams(Individuals, ratingPlayers);
+        }
 
         public virtual void UpdateTeamsScore(List<MatchFitness> tournamentMatchFitnesses, List<RatingPlayer> players = null)
         {

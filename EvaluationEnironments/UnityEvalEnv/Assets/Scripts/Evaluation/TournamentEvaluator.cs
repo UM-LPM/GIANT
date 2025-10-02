@@ -30,6 +30,11 @@ namespace Evaluators
         {
             while (!TournamentOrganization.IsTournamentFinished())
             {
+                if (TournamentOrganization.CreateNewTeamsEachRound)
+                {
+                    TournamentOrganization.OrganizeTeams(null);
+                }
+
                 Match[] tournamentMatches = TournamentOrganization.GenerateTournamentMatches();
                 if (tournamentMatches.Length == 0)
                     break;

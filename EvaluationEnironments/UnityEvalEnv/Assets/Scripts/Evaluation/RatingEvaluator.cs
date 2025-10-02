@@ -22,6 +22,11 @@ namespace Evaluators
         {
             while (!TournamentOrganization.IsTournamentFinished())
             {
+                if (TournamentOrganization.CreateNewTeamsEachRound)
+                {
+                    TournamentOrganization.OrganizeTeams(RatingSystem.Players.ToArray());
+                }
+
                 Match[] tournamentMatches = TournamentOrganization.GenerateTournamentMatches();
                 if (tournamentMatches.Length == 0)
                     break;
