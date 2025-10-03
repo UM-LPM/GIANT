@@ -9,9 +9,9 @@ using Base;
 
 namespace Problems.Robostrike
 {
-    public class Robostrike1vs1MatchSpawner : MatchSpawner
+    public class Robostrike0vs4MatchSpawner : MatchSpawner
     {
-        [Header("Robostrike 1vs1 Match Configuration")]
+        [Header("Robostrike 0vs4 Match Configuration")]
         [SerializeField] public Transform[] SpawnPoints;
 
         // Respawn variables
@@ -39,9 +39,9 @@ namespace Problems.Robostrike
                 throw new System.Exception("Match is not defined");
             }
 
-            if (environmentController.Match.Teams.Length != 2)
+            if (environmentController.Match.Teams.Length != 4)
             {
-                throw new System.Exception("Match should have 2 teams");
+                throw new System.Exception("Match should have 4 teams");
             }
 
             if (environmentController.Match.Teams[0].Individuals.Length != 1 || environmentController.Match.Teams[1].Individuals.Length != 1)
@@ -54,7 +54,7 @@ namespace Problems.Robostrike
                 throw new System.Exception("Each individual should have 1 agent controller");
             }
 
-            if (SpawnPoints == null || SpawnPoints.Length != 2)
+            if (SpawnPoints == null || SpawnPoints.Length != 4)
             {
                 throw new System.Exception("Spawn points are not defined correctly");
             }

@@ -60,6 +60,8 @@ namespace Configuration
         public bool CreateNewTeamsEachRound { get; set; }
         public CompetitionOrganizationType CompetitionOrganizationType { get; set; }
         public int CompetitionRounds { get; set; }
+
+        public int TeamsPerMatch { get; set; }
         public bool SwapCompetitionMatchTeams { get; set; }
 
         // Problem Specific Configuration

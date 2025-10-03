@@ -15,6 +15,7 @@ namespace Evaluators.CompetitionOrganizations
         public CompetitionTeamOrganizator TeamOrganizator { get; set; }
         public bool CreateNewTeamsEachRound { get; set; } = false;
         public Individual[] Individuals { get; set; }
+        public int TeamsPerMatch { get; set; } = 2; // Default is 2 (1v1 matches)
 
         public List<CompetitionTeam> Teams { get; set; }
         public int Rounds { get; set; }
@@ -27,11 +28,12 @@ namespace Evaluators.CompetitionOrganizations
         protected float teamFitness1;
         protected float teamFitness2;
 
-        public CompetitionOrganization(CompetitionTeamOrganizator teamOrganizator, Individual[] individuals, bool regenerateTeamsEachRound)
+        public CompetitionOrganization(CompetitionTeamOrganizator teamOrganizator, Individual[] individuals, bool regenerateTeamsEachRound, int teamsPerMatch = 2)
         {
             TeamOrganizator = teamOrganizator;
             Individuals = individuals;
             CreateNewTeamsEachRound = regenerateTeamsEachRound;
+            TeamsPerMatch = teamsPerMatch < 2 ? 2 : teamsPerMatch; // Minimum is 2 (1v1 matches)
             OrganizeTeams(null);
         }
 
@@ -44,67 +46,66 @@ namespace Evaluators.CompetitionOrganizations
 
         public virtual void UpdateTeamsScore(List<MatchFitness> competitionMatchFitnesses, List<CompetitionPlayer> players = null)
         {
-            List<MatchFitness> competitionMatchFitnessesCopy = new List<MatchFitness>(competitionMatchFitnesses);
-            // Add played CompetitionMatches to the list of played CompetitionMatches (add only matchFitnesses that are not dummy)
-            PlayedMatches.AddRange(competitionMatchFitnessesCopy.FindAll(matchFitness => !matchFitness.IsDummy));
+            var competitionMatchFitnessesCopy = new List<MatchFitness>(competitionMatchFitnesses);
 
-            MatchFitness matchFitness;
-            List<MatchFitness> matchFitnesses = new List<MatchFitness>();
-            List<MatchFitness> matchFitnessesSwaped = new List<MatchFitness>();
+            // Add played matches (ignore dummy matches)
+            PlayedMatches.AddRange(competitionMatchFitnessesCopy.Where(mf => !mf.IsDummy));
+
+            var matchFitnesses = new List<MatchFitness>();
+            var matchFitnessesSwapped = new List<MatchFitness>();
+
             while (competitionMatchFitnessesCopy.Count > 0)
             {
-                // 1. Get all match data
-                matchFitness = new MatchFitness();
-                MatchFitness.GetMatchFitness(competitionMatchFitnessesCopy, matchFitness, matchFitnesses, matchFitnessesSwaped, Coordinator.Instance.SwapCompetitionMatchTeams);
-
-                // 2. Update teams score
-                teamFitnessRes1 = matchFitness.TeamFitnesses[0];
-                teamFitnessRes2 = matchFitness.TeamFitnesses[1];
-
-                teamFitness1 = teamFitnessRes1.GetTeamFitness();
-                teamFitness2 = teamFitnessRes2.GetTeamFitness();
-
-                var team1 = Teams.Find(team => team.TeamId == teamFitnessRes1.TeamID);
-                var team2 = Teams.Find(team => team.TeamId == teamFitnessRes2.TeamID);
+                // 1. Get match data
+                var matchFitness = new MatchFitness();
+                MatchFitness.GetMatchFitness(
+                    competitionMatchFitnessesCopy,
+                    matchFitness,
+                    matchFitnesses,
+                    matchFitnessesSwapped,
+                    Coordinator.Instance.SwapCompetitionMatchTeams
+                );
 
                 if (matchFitness.IsDummy)
                 {
-                    team1.Score += 2;
+                    // Bye -> award fixed points ( = TeamsPerMatch)
+                    foreach (var tf in matchFitness.TeamFitnesses)
+                    {
+                        var team = Teams.Find(t => t.TeamId == tf.TeamID);
+                        if (team != null)
+                            team.Score += TeamsPerMatch;
+                    }
                     continue;
                 }
 
-                if (teamFitness1 < teamFitness2)
-                {
-                    team1.Score += 2;
-                }
-                else if (teamFitness1 > teamFitness2)
-                {
-                    team2.Score += 2;
-                }
-                else
-                {
-                    team1.Score += 1;
-                    team2.Score += 1;
-                }
+                // 2. Collect team results for this match
+                int[] ranking = GetTeamOrders(matchFitness.TeamFitnesses);
 
-                // 3. Add individual match results to the teams
-                team1.IndividualMatchResults.Add(new IndividualMatchResult()
-                {
-                    MatchName = matchFitness.MatchName,
-                    OpponentsIDs = team2.Individuals.Select(individual => individual.IndividualId).ToArray(),
-                    Value = teamFitness1,
-                    IndividualValues = teamFitnessRes1.GetTeamIndividualValues()
-                });
+                // Point schemes
+                int[] pointsScheme = Enumerable.Range(0, TeamsPerMatch).Select(i => 2 * (TeamsPerMatch - ranking[i])).ToArray(); ;
 
-                team2.IndividualMatchResults.Add(new IndividualMatchResult()
+                // 3. Assign points
+                for (int i = 0; i < matchFitness.TeamFitnesses.Count; i++)
                 {
-                    MatchName = matchFitness.MatchName,
-                    OpponentsIDs = team1.Individuals.Select(individual => individual.IndividualId).ToArray(),
-                    Value = teamFitness2,
-                    IndividualValues = teamFitnessRes2.GetTeamIndividualValues()
-                });
+                    var team = Teams.Find(t => t.TeamId == matchFitness.TeamFitnesses[i].TeamID);
+                    int points = i < pointsScheme.Length ? pointsScheme[i] : 0;
+                    Teams.Find(t => t.TeamId == team.TeamId).Score += points;
+
+                    // 4. Record individual match results
+                    var opponents = Teams
+                        .Where(x => x.TeamId != team.TeamId)
+                        .SelectMany(x => x.Individuals.Select(ind => ind.IndividualId))
+                        .ToArray();
+
+                    team.IndividualMatchResults.Add(new IndividualMatchResult()
+                    {
+                        MatchName = matchFitness.MatchName,
+                        OpponentsIDs = opponents,
+                        Value = matchFitness.TeamFitnesses[i].GetTeamFitness(),
+                        IndividualValues = matchFitness.TeamFitnesses[i].GetTeamIndividualValues()
+                    });
+                }
             }
-
             // Increment the number of executed rounds
             ExecutedRounds++;
         }
@@ -143,6 +144,32 @@ namespace Evaluators.CompetitionOrganizations
         public void SetTeams(List<CompetitionTeam> teams)
         {
             Teams = teams;
+        }
+
+        public int[] GetTeamOrders(List<TeamFitness> teamFitnesses)
+        {
+            int[] indices = Enumerable.Range(0, teamFitnesses.Count)
+                                      .OrderBy(i => teamFitnesses[i].GetTeamFitness()) // Ascending order
+                                      .ToArray();
+            int[] orders = new int[teamFitnesses.Count];
+            int rank = 1; // Start with rank 1
+
+            for (int i = 0; i < indices.Length; i++)
+            {
+                int originalIndex = indices[i];
+
+                orders[originalIndex] = rank;
+
+                if (i < indices.Length - 1 && teamFitnesses[indices[i]].GetTeamFitness() == teamFitnesses[indices[i + 1]].GetTeamFitness())
+                {
+                    // If tied, do not increment rank
+                    continue;
+                }
+
+                rank = i + 2;
+            }
+
+            return orders;
         }
     }
 

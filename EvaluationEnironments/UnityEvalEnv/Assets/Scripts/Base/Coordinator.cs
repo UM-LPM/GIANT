@@ -38,6 +38,7 @@ namespace Base
         [SerializeField] public bool CreateNewTeamsEachRound;
         [SerializeField] public CompetitionOrganizationType CompetitionOrganizationType;
         [SerializeField] public int CompetitionRounds;
+        [SerializeField] public int TeamsPerMatch;
         [SerializeField] public bool SwapCompetitionMatchTeams = false; // Specific for games like (Robostrike, ...)
 
         [Header("Individuals Configuration")]
@@ -87,6 +88,7 @@ namespace Base
                     CreateNewTeamsEachRound = MenuManager.Instance.MainConfiguration.CreateNewTeamsEachRound;
                     CompetitionOrganizationType = MenuManager.Instance.MainConfiguration.CompetitionOrganizationType;
                     CompetitionRounds = MenuManager.Instance.MainConfiguration.CompetitionRounds;
+                    TeamsPerMatch = MenuManager.Instance.MainConfiguration.TeamsPerMatch;
                     IndividualsSourceJSON = MenuManager.Instance.MainConfiguration.IndividualsSourceJSON;
                     IndividualsSourceSO = MenuManager.Instance.MainConfiguration.IndividualsSourceSO;
                     ConvertSOToJSON = MenuManager.Instance.MainConfiguration.ConvertSOToJSON;
@@ -322,7 +324,7 @@ namespace Base
                 case CompetitionOrganizationType.KRandomOpponents:
                     return new KRandomOpponentsTournament(TeamOrganizator, individuals, CreateNewTeamsEachRound, CompetitionRounds);
                 case CompetitionOrganizationType.SimilarStrengthOpponentSelection:
-                    return new SimilarStrengthOpponentSelection(TeamOrganizator, individuals, CreateNewTeamsEachRound, CompetitionRounds);
+                    return new SimilarStrengthOpponentSelection(TeamOrganizator, individuals, CreateNewTeamsEachRound, CompetitionRounds, TeamsPerMatch);
                 default:
                     Debug.LogError("Invalid competition organization type");
                     return null;
