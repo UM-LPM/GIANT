@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Newtonsoft.Json;
 using Evaluators.CompetitionOrganizations;
-using Evaluators.CompetitionOrganizations;
 using Evaluators;
 using Base;
 

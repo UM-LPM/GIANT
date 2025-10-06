@@ -3,6 +3,7 @@ using System.Threading;
 using UnityEngine;
 using TMPro;
 using Utils;
+using UnitTests;
 
 namespace Configuration
 {
@@ -11,7 +12,8 @@ namespace Configuration
         Collector,
         Robostrike,
         Soccer,
-        BombClash
+        BombClash,
+        DodgeBall
     }
 
     public class MenuManager : MonoBehaviour
@@ -29,6 +31,8 @@ namespace Configuration
         public string CoordinatorURI { get; private set; }
         public string CommunicatorURI { get; private set; }
         public MainConfiguration MainConfiguration { get; set; }
+
+        private string ConfigPath = Application.dataPath + "/conf.json";
 
         private async void Awake()
         {
@@ -55,14 +59,18 @@ namespace Configuration
 
             await MqttNetLogger.Connect();
 
-            ReadConfigurationFromFile();
+            if(UnitTester.Instance != null && UnitTester.Instance.CurrentTestIndex > -1)
+            {
+                ConfigPath = UnitTester.Instance.UnitTests[UnitTester.Instance.CurrentTestIndex].ConfigFilePath;
+            }
+
+            ReadConfigurationFromFile(ConfigPath);
         }
 
-        private void ReadConfigurationFromFile()
+        public void ReadConfigurationFromFile(string path)
         {
             // Read configuration file
-            string path = Application.dataPath + "/conf.json";
-            MainConfiguration = ReadConfigurationFromFile(path);
+            MainConfiguration = MainConfiguration.Deserialize(path);
 
             if (MainConfiguration != null && MainConfiguration.AutoStart)
             {
@@ -123,11 +131,6 @@ namespace Configuration
         public void Quit()
         {
             Application.Quit();
-        }
-
-        public MainConfiguration ReadConfigurationFromFile(string path)
-        {
-            return MainConfiguration.Deserialize(path);
         }
 
         public void SaveConfigurationToFile(string path)

@@ -15,6 +15,7 @@ using Evaluators.CompetitionOrganizations;
 using Fitnesses;
 using Utils;
 using Configuration;
+using UnitTests;
 
 namespace Base
 {
@@ -141,10 +142,13 @@ namespace Base
 
         public void StopListener()
         {
-            Listener.Stop();
-            Listener.Close();
-            ListenerThread.Join();
-            ListenerThread.Abort();
+            if (Instance != null)
+            {
+                Instance.Listener.Stop();
+                Instance.Listener.Close();
+                Instance.ListenerThread.Join();
+                Instance.ListenerThread.Abort();
+            }
 
 
             Destroy(gameObject);
@@ -162,14 +166,21 @@ namespace Base
             CoordinatorEvalRequestData evalRequestData = ReadDataFromRequestBody(context);
             Debug.Log("Coordinator Cordinate Evaluator: EvalInstances: " + evalRequestData.EvalEnvInstancesToString());
 
-            if (CoordinatorSetup == ComponentSetupType.REAL)
+            if (UnitTester.Instance != null && UnitTester.Instance.CurrentTestIndex > -1)
             {
-                // Load Individuals from IndividualsSource
-                LoadIndividualsFromJSON(evalRequestData.EvalRangeStart.HasValue ? evalRequestData.EvalRangeStart.Value : -1, evalRequestData.EvalRangeEnd.HasValue ? evalRequestData.EvalRangeEnd.Value : -1);
+                Individuals = UnitTester.Instance.UnitTests[UnitTester.Instance.CurrentTestIndex].Individuals;
             }
-            else if (CoordinatorSetup == ComponentSetupType.MOCK && ConvertSOToJSON)
+            else
             {
-                SaveIndividualsToJSON();
+                if (CoordinatorSetup == ComponentSetupType.REAL)
+                {
+                    // Load Individuals from IndividualsSource
+                    LoadIndividualsFromJSON(evalRequestData.EvalRangeStart.HasValue ? evalRequestData.EvalRangeStart.Value : -1, evalRequestData.EvalRangeEnd.HasValue ? evalRequestData.EvalRangeEnd.Value : -1);
+                }
+                else if (CoordinatorSetup == ComponentSetupType.MOCK && ConvertSOToJSON)
+                {
+                    SaveIndividualsToJSON();
+                }
             }
 
             Evaluator evaluator;
@@ -340,6 +351,7 @@ namespace Base
         }
     }
 
+    [System.Serializable]
     public class CoordinatorEvalRequestData
     {
         public string[] EvalEnvInstances { get; set; }
@@ -361,5 +373,6 @@ namespace Base
     public class CoordinatorEvaluationResult
     {
         public FinalIndividualFitness[] IndividualFitnesses { get; set; }
+
     }
 }
