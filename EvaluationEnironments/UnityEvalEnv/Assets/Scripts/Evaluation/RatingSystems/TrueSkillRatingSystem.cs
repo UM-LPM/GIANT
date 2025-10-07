@@ -58,17 +58,9 @@ namespace Evaluators.CompetitionOrganizations
 
         public override void UpdateRatings(List<MatchFitness> competitionMatchFitnesses)
         {
-            List<MatchFitness> competitionMatchFitnessesCopy = new List<MatchFitness>(competitionMatchFitnesses);
-
-            MatchFitness matchFitness;
-            List<MatchFitness> matchFitnesses = new List<MatchFitness>();
-            List<MatchFitness> matchFitnessesSwaped = new List<MatchFitness>();
-            while (competitionMatchFitnessesCopy.Count > 0)
+            foreach(MatchFitness matchFitness in competitionMatchFitnesses)
             {
-                // 1. Get all match data
-                matchFitness = new MatchFitness();
-                MatchFitness.GetMatchFitness(competitionMatchFitnessesCopy, matchFitness, matchFitnesses, matchFitnessesSwaped, Coordinator.Instance.SwapCompetitionMatchTeams);
-
+                // 1. Check if the match is dummy
                 if (matchFitness.IsDummy)
                 {
                     continue;
@@ -86,7 +78,7 @@ namespace Evaluators.CompetitionOrganizations
                         float teamFitness = matchFitness.TeamFitnesses[i].GetTeamFitness();
                         foreach (IndividualFitness individualFitness in matchFitness.TeamFitnesses[i].IndividualFitness)
                         {
-                            float contribution = individualFitness.Value / teamFitness;
+                            float contribution = teamFitness > 0 ? (individualFitness.Value / teamFitness) : 1;
                             TrueSkillPlayer trueSkillPlayer = GetPlayer(individualFitness.IndividualID);
                             if (trueSkillPlayer != null)
                             {

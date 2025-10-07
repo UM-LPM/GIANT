@@ -2,9 +2,9 @@
 
 namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 {
-    public class RootNode : Node
+    public class RootNode : BTNode
     {
-        public Node child;
+        public BTNode child;
 
         public RootNode(Guid guid, string name, List<WebAPI.Models.Property>? properties, Position? position)
             : base(guid, name, properties, position)
@@ -19,7 +19,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
             }
         }
 
-        public override void AddChild(Node child)
+        public override void AddChild(BTNode child)
         {
             this.child = child;
         }

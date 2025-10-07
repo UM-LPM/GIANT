@@ -3,9 +3,9 @@ using WebAPI.Models;
 
 namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 {
-    public abstract class CompositeNode : Node
+    public abstract class CompositeNode : BTNode
     {
-        public List<Node> children = new List<Node>();
+        public List<BTNode> children = new List<BTNode>();
 
         protected CompositeNode(Guid guid, string name, List<Property>? properties, Position position) 
             : base(guid, name, properties, position)
@@ -16,7 +16,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
         {
         }
 
-        public override void AddChild(Node child)
+        public override void AddChild(BTNode child)
         {
             children.Add(child);
         }

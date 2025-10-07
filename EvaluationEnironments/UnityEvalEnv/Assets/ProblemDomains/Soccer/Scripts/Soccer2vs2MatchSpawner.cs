@@ -5,7 +5,6 @@ using Base;
 using Spawners;
 using System.Collections.Generic;
 using UnityEngine;
-using static Unity.VisualScripting.LudiqRootObjectEditor;
 
 namespace Problems.Soccer
 {

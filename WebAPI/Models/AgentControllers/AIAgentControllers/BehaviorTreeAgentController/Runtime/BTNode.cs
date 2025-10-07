@@ -4,7 +4,7 @@ using WebAPI.Models;
 
 namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 {
-    public abstract class Node : ScriptableObject
+    public abstract class BTNode : ScriptableObject
     {
         public enum State
         {
@@ -23,7 +23,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
         public string description;
         public bool drawGizmos = false;
 
-        public Node(Guid guid, string name, List<Property>? properties, Position? position) : base(name, 0)
+        public BTNode(Guid guid, string name, List<Property>? properties, Position? position) : base(name, 0)
         {
             this.state = State.Running;
             this.started = false;
@@ -40,6 +40,6 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 
         protected abstract void MapProperties(List<Property>? properties);
 
-        public abstract void AddChild(Node child);
+        public abstract void AddChild(BTNode child);
     }
 }

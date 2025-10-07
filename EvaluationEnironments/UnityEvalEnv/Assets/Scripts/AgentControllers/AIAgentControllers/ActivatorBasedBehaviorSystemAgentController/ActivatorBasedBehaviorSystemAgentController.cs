@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEditor;
 using UnityEngine;
-using static Unity.VisualScripting.Metadata;
 
 namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentController
 {

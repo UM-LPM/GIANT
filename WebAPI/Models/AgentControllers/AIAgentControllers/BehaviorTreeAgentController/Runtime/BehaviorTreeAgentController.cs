@@ -9,9 +9,9 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
     [Serializable]
     public class BehaviorTreeAgentController : AIAgentController
     {
-        public Node RootNode;
-        public Node.State TreeState = Node.State.Running;
-        public List<Node> Nodes = new List<Node>();
+        public BTNode RootNode;
+        public BTNode.State TreeState = BTNode.State.Running;
+        public List<BTNode> Nodes = new List<BTNode>();
         public Blackboard Blackboard = new Blackboard(); // Blackboard for all Nodes
 
         public BehaviorTreeAgentController(string name)
@@ -45,7 +45,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
             {
                 NodeModelToProcess nodesModelToProcess = nodeModelsToProcessQueue.Dequeue();
 
-                Node child = CreateNode(nodesModelToProcess.Node, nodesModelToProcess.TreeModelNode);
+                BTNode child = CreateNode(nodesModelToProcess.Node, nodesModelToProcess.TreeModelNode);
 
                 if(this.RootNode == null)
                 {
@@ -62,9 +62,9 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
             }
         }
 
-        private Node CreateNode(Node parent, TreeModelNode treeModelNode)
+        private BTNode CreateNode(BTNode parent, TreeModelNode treeModelNode)
         {
-            Node node;
+            BTNode node;
 
             switch (treeModelNode.Name)
             {
@@ -176,7 +176,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 
     class NodeModelToProcess
     {
-        public Node Node { get; set; }
+        public BTNode Node { get; set; }
         public TreeModelNode TreeModelNode { get; set; }
     }
 }
