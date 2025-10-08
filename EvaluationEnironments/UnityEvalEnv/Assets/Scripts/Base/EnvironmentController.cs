@@ -234,6 +234,7 @@ namespace Base
                 if (MainConfiguration.ProblemConfiguration.ContainsKey("TargetGameObjects"))
                 {
                     ConditionNode.TargetGameObjects = MainConfiguration.ProblemConfiguration["TargetGameObjects"].Split(',');
+                    ActivatorNode.TargetGameObjects = MainConfiguration.ProblemConfiguration["TargetGameObjects"].Split(',');
                 }
 
                 if (MainConfiguration.ProblemConfiguration.ContainsKey("ArenaSizeX"))
