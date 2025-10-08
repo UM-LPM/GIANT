@@ -1,0 +1,70 @@
+{
+				"AutoStart": true,
+				"ProblemDomain": "BoxTact",
+				"CoordinatorURI": "http://localhost:4000/",
+				"IndividualsSourceJSON": "C:\\Users\\marko\\UnityProjects\\GIANT_develop\\Builds\\Resources\\BoxTact\\",
+				"IndividualsSourceSO": "Assets\\Resources\\SOs\\BoxTact",
+				"ConvertSOToJSON": false,
+				"StartCommunicatorURI": "http://localhost:4444/",
+				"TimeScale": 5,
+				"FixedTimeStep": 0.02,
+				"RerunTimes": 1,
+				"InitialSeed": 963852,
+				"Render": true,
+				"RandomSeedMode": 1,
+				"SimulationSteps": 1500,
+				"SimulationTime": 0,
+				"IncludeEncapsulatedNodesToFreqCount": false,
+				"EvaluatorType": 0, 
+				"RatingSystemType": -1,
+				"CreateNewTeamsEachRound": false,
+				"CompetitionOrganizationType": -1,
+				"CompetitionRounds": -1,
+				"TeamsPerMatch": 2,
+				"SwapCompetitionMatchTeams": false,
+				"GameScenarios": [
+					{"GameSceneName": "BoxTactGameScene"},
+					{"GameSceneName": "BoxTactGameScene2"}
+					
+				],
+				"AgentScenarios": [
+					{
+						"AgentSceneName": "BoxTactAgentScene", 
+						"GameScenarios": [
+							{"GameSceneName": "BoxTactGameScene"}
+						]
+					},
+					{
+						"AgentSceneName": "BoxTactAgentScene2", 
+						"GameScenarios": [
+							{"GameSceneName": "BoxTactGameScene"}
+						]
+					},
+					{
+						"AgentSceneName": "BoxTactAgentScene3", 
+						"GameScenarios": [
+							{"GameSceneName": "BoxTactGameScene2"}
+						]
+					},
+					{
+						"AgentSceneName": "BoxTactAgentScene4", 
+						"GameScenarios": [
+							{"GameSceneName": "BoxTactGameScene2"}
+						]
+					}
+				],
+				"IncludeNodeCallFrequencyCounts": false,
+				"ProblemConfiguration": {
+					"DecisionRequestInterval": 2,
+					"AgentUpdateinterval": 0.15,
+					"RayHitObjectDetectionType": 1,
+					"TargetGameObjects": "Wall,Object1,Object2"
+				},
+				"FitnessValues": 
+				{ 
+					"TimePenalty": -25,
+					"SectorExploration": -50,
+					"BoxesMoved": -100,
+					"BoxesMovedToTarget": -500
+				}
+			}

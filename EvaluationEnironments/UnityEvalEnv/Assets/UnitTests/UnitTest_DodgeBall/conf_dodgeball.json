@@ -1,0 +1,62 @@
+{
+				"AutoStart": true,
+				"ProblemDomain": "DodgeBall",
+				"CoordinatorURI": "http://localhost:4000/",
+				"IndividualsSourceJSON": "C:\\Users\\marko\\UnityProjects\\GIANT_develop\\Builds\\Resources\\DodgeBall\\",
+				"IndividualsSourceSO": "Assets\\Resources\\SOs\\DodgeBall",
+				"ConvertSOToJSON": false,
+				"StartCommunicatorURI": "http://localhost:4444/",
+				"TimeScale": 5,
+				"FixedTimeStep": 0.02,
+				"RerunTimes": 1,
+				"InitialSeed": 963852,
+				"Render": true,
+				"RandomSeedMode": 1,
+				"SimulationSteps": 1500,
+				"SimulationTime": 0,
+				"IncludeEncapsulatedNodesToFreqCount": false,
+				"EvaluatorType": 2, 
+				"RatingSystemType": 0,
+				"CreateNewTeamsEachRound": false,
+				"CompetitionOrganizationType": 6,
+				"CompetitionRounds": -1,
+				"SwapCompetitionMatchTeams": false,
+				"GameScenarios": [
+					{"GameSceneName": "DodgeBallGameScene"}
+					
+				],
+				"AgentScenarios": [
+					{
+						"AgentSceneName": "DodgeBallAgentScene", 
+						"GameScenarios": [
+							{"GameSceneName": "DodgeBallGameScene"}
+						]
+					}
+				],
+				"IncludeNodeCallFrequencyCounts": false,
+				"ProblemConfiguration": {
+					"DecisionRequestInterval": 2,
+					"AgentUpdateinterval": 0.15,
+					"AgentRunSpeed": 1.0,
+					"AgentRotationSpeed": 100,
+					"AgentThrowPower": 40,
+					"AgentBallPickupRadius": 1.2,
+					"AgentBallInterceptProbability": 0.8,
+					"AgentBallThrowCooldown": 0.5,
+					"MaxBallToOpponentAngle": 45.0,
+					"CalculateAgentToBallDistanceEvery": 1,
+					"RayHitObjectDetectionType": 1,
+					"TargetGameObjects": "Agent,Wall,Object1"
+				},
+				"FitnessValues": 
+				{ 
+					"SectorExploration": -0,
+					"BallsPickedUp": -50,
+					"BallsThrown": -50,
+					"BallsThrownAtOpponent": -100,
+					"BallsIntercepted": -200,
+					"OpponentsHit": -500,
+					"SurvivalBonus": -30,
+					"AgentToBallDistance": -30
+				}
+			}
