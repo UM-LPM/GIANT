@@ -57,16 +57,7 @@ namespace Problems.Collector
                 throw new Exception("TargetSpawner is not defined");
             }
 
-            if (SceneLoadMode == SceneLoadMode.LayerMode)
-            {
-                // Only one problem environment exists
-                Sectors = FindObjectsOfType<SectorComponent>();
-            }
-            else
-            {
-                // Each EnvironmentController contains its own problem environment
-                Sectors = GetComponentsInChildren<SectorComponent>();
-            }
+            Sectors = GetComponentsInChildren<SectorComponent>();
         }
 
         protected override void DefineAdditionalDataOnPostStart()
@@ -93,7 +84,7 @@ namespace Problems.Collector
         {
             foreach (CollectorAgentComponent agent in Agents)
             {
-                TargetComponent component = PhysicsUtil.PhysicsOverlapTargetObject<TargetComponent>(GameType, agent.gameObject, agent.transform.position, 0, AgentColliderExtendsMultiplier, agent.transform.rotation, PhysicsOverlapType.OverlapBox, false, gameObject.layer, DefaultLayer);
+                TargetComponent component = PhysicsUtil.PhysicsOverlapTargetObject<TargetComponent>(PhysicsScene, PhysicsScene2D, GameType, agent.gameObject, agent.transform.position, 0, AgentColliderExtendsMultiplier, agent.transform.rotation, PhysicsOverlapType.OverlapBox, false, gameObject.layer);
                 if (component != null)
                 {
                     agent.GetComponent<CollectorAgentComponent>().TargetsAquired++;

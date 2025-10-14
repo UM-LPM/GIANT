@@ -55,20 +55,20 @@ namespace Problems.Collector
                                 collectorEnvironmentController.ArenaRadius,
                                 collectorEnvironmentController.ArenaCenterPoint,
                                 collectorEnvironmentController.ArenaOffset);
-                if (collectorEnvironmentController.SceneLoadMode == SceneLoadMode.GridMode)
-                    spawnPos += collectorEnvironmentController.GridCell.GridCellPosition;
 
                 rotation = GetRandomRotation(collectorEnvironmentController.Util, collectorEnvironmentController.GameType);
 
-                if (!SpawnPointSuitable(collectorEnvironmentController.GameType,
+                if (!SpawnPointSuitable(
+                            collectorEnvironmentController.PhysicsScene,
+                            collectorEnvironmentController.PhysicsScene2D,
+                            collectorEnvironmentController.GameType,
                             spawnPos,
                             rotation,
                             targetSpawnPositions,
                             collectorEnvironmentController.TargetColliderExtendsMultiplier,
                             collectorEnvironmentController.TargetToTargetDistance,
                             true,
-                            collectorEnvironmentController.gameObject.layer,
-                            collectorEnvironmentController.DefaultLayer))
+                            collectorEnvironmentController.gameObject.layer))
                 {
                     isFarEnough = false;
                 }

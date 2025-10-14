@@ -77,9 +77,9 @@ namespace Spawners
                 return Quaternion.Euler(0, 0, util.NextFloat(0, 360));
         }
 
-        public static bool SpawnPointSuitable(GameType gameType, Vector3 newSpawnPos, Quaternion newRotation, List<Vector3> occupiedSpawnPoints, Vector3 halfExtends, float minObjectDistance, bool ignoreTriggerGameObjs, int layer, int defaultLayer)
+        public static bool SpawnPointSuitable(PhysicsScene physicsScene, PhysicsScene2D physicsScene2D, GameType gameType, Vector3 newSpawnPos, Quaternion newRotation, List<Vector3> occupiedSpawnPoints, Vector3 halfExtends, float minObjectDistance, bool ignoreTriggerGameObjs, int layer)
         {
-            if (PhysicsUtil.PhysicsOverlapObject(gameType, null, newSpawnPos, 0, halfExtends, newRotation, PhysicsOverlapType.OverlapBox, ignoreTriggerGameObjs, layer, defaultLayer))
+            if (PhysicsUtil.PhysicsOverlapObject(physicsScene, physicsScene2D, gameType, null, newSpawnPos, 0, halfExtends, newRotation, PhysicsOverlapType.OverlapBox, ignoreTriggerGameObjs, layer))
                 return false;
 
             if (occupiedSpawnPoints != null && occupiedSpawnPoints.Count > 0)

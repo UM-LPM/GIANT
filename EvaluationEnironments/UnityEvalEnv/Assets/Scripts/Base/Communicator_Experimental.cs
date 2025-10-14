@@ -1,43 +1,30 @@
-﻿using System;
+﻿using AgentOrganizations;
+using Configuration;
+using Fitnesses;
+using Newtonsoft.Json;
+using PimDeWitte.UnityMainThreadDispatcher;
+using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using PimDeWitte.UnityMainThreadDispatcher;
-using System.Collections.Generic;
-using System.Linq;
-using Newtonsoft.Json;
-using AgentOrganizations;
-using Fitnesses;
-using Configuration;
 
 namespace Base
 {
     [RequireComponent(typeof(UnityMainThreadDispatcher))]
-    public class Communicator : MonoBehaviour
+    public class Communicator_Experimental : MonoBehaviour
     {
-        [HideInInspector] public static Communicator Instance;
+        [HideInInspector] public static Communicator_Experimental Instance;
 
         [Header("Base Configuration")]
         [SerializeField] public ComponentSetupType CommunicatorSetup = ComponentSetupType.MOCK;
-        //[SerializeField] public string IndividualsSource;
 
         [Header("HTTP Server Configuration")]
         [SerializeField] public string CommunicatorURI = "http://localhost:4444/";
-
-        [Header("Scene Loading Configuration")]
-        [SerializeField] public SceneLoadMode SceneLoadMode = SceneLoadMode.LayerMode;
-
-        [Header("LayerMode Configuration")]
-        [SerializeField] int MinLayerId = 6;
-        [SerializeField] int MaxLayerId = 26;
-        [SerializeField] private int BatchSize = 1;
-
-        [Header("GridMode Configuration")]
-        [SerializeField] Vector3Int GridSize = new Vector3Int(10, 0, 10);
-        [SerializeField] Vector3Int GridSpacing = new Vector3Int(50, 0, 50);
 
         [Header("Scenes Configuration")]
         [SerializeField] GameScenario[] GameScenarios;
@@ -56,6 +43,10 @@ namespace Base
         [Header("Initial Seed Configuration")]
         [SerializeField] public int InitialSeed = 316227711;
         [SerializeField] public RandomSeedMode RandomSeedMode = RandomSeedMode.Fixed;
+
+        [Header("Experimental Config")]
+        [SerializeField] private GameObject[] EnvironmentPrefabs;
+        [SerializeField] private int MaxSimultaneousEnvironments = 100;
 
 
         [Header("Matches Configuration")]
@@ -78,6 +69,10 @@ namespace Base
         MatchFitness matchFitness;
         TeamFitness teamFitness;
 
+        // Experimental properties
+        private readonly List<SimulationEnvironment> environments = new();
+        private bool evaluationInProgress = false;
+
         private async void Awake()
         {
             // Singleton pattern
@@ -91,16 +86,10 @@ namespace Base
                 DontDestroyOnLoad(this);
             }
 
-
-            // TODO
-
-
             if (CommunicatorSetup == ComponentSetupType.REAL)
             {
                 ReadParamsFromMainConfiguration();
             }
-
-            InitializeLayerAndGrid();
 
             InitializeHttpListener();
         }
@@ -110,10 +99,34 @@ namespace Base
             ListenerThread = new Thread(StartListener);
             ListenerThread.Start();
 
-            //EnvironmentControllerBase.OnGameFinished += EnvironmentController_OnGameFinished;
-
             Time.timeScale = TimeScale;
             Time.fixedDeltaTime = FixedTimeStep;
+
+            Physics.autoSyncTransforms = false;
+            Physics.simulationMode = SimulationMode.Script;
+            Physics2D.simulationMode = SimulationMode2D.Script;
+        }
+
+        private void FixedUpdate()
+        {
+            if(evaluationInProgress && environments.Count > 0)
+            {
+                environments.RemoveAll(env =>
+                {
+                    if (env.IsDone())
+                    {
+                        env.EnvironmentController.FinishGame();
+                        GetSimulationEnvironmentResults(env);
+                        env.Terminate();
+                        return true;  // remove it
+                    }
+                    else
+                    {
+                        env.Step();
+                        return false; // keep it
+                    }
+                });
+            }
         }
 
 
@@ -134,6 +147,7 @@ namespace Base
                         GameScenarios = MenuManager.Instance.MainConfiguration.GameScenarios;
                     if (AgentScenarios != null && AgentScenarios.Length > 0)
                         AgentScenarios = MenuManager.Instance.MainConfiguration.AgentScenarios;
+                    MaxSimultaneousEnvironments = MenuManager.Instance.MainConfiguration.MaxSimultaneousEnvironments;
                 }
                 else
                 {
@@ -142,15 +156,15 @@ namespace Base
             }
         }
 
-        void InitializeLayerAndGrid()
+        public void CreateSimulationEnvironments()
         {
-            if (SceneLoadMode == SceneLoadMode.LayerMode)
+            for (int j = 0; j < EnvironmentPrefabs.Length; j++)
             {
-                Layer = new Layer(MinLayerId, MaxLayerId, BatchSize);
-            }
-            else if (SceneLoadMode == SceneLoadMode.GridMode)
-            {
-                Grid = new Grid(GridSize, GridSpacing);
+                for (int i = 0; i < Matches.Length; i++)
+                {
+                    var env = new SimulationEnvironment(EnvironmentPrefabs[j], $"Environment_{j}_{i}", Matches[i]);
+                    environments.Add(env);
+                }
             }
         }
 
@@ -205,14 +219,16 @@ namespace Base
 
             Destroy(gameObject);
         }
+        
         private void HandleRequest(HttpListenerContext context)
         {
-            if (Layer.NumberOfUsedLayeres() > 0)
+            if (evaluationInProgress)
             {
                 context.Response.StatusCode = 888;
                 context.Response.OutputStream.Close();
                 return;
             }
+            evaluationInProgress = true;
 
             UnityMainThreadDispatcher.Instance().Enqueue(PerformEvaluation(context));
         }
@@ -231,8 +247,26 @@ namespace Base
 
             SetMatchPredefinedScores();
 
-            // Load the scenes and wait for them to be loaded and finished
-            yield return LoadEvaluationScenes();
+            for (int j = 0; j < EnvironmentPrefabs.Length; j++)
+            {
+                for (int i = 0; i < Matches.Length; i++)
+                {
+                    // Load simulation environments up to MaxSimultaneousEnvironments
+                    while (environments.Count >= MaxSimultaneousEnvironments)
+                    {
+                        yield return null;
+                    }
+
+                    var env = new SimulationEnvironment(EnvironmentPrefabs[j], $"Environment_{j}_{i}", Matches[i]);
+                    environments.Add(env);
+                }
+            }
+
+            // Wait until all environments are done
+            while (environments.Count > 0)
+            {
+                yield return null;
+            }
 
             CommunicatorEvalResponseData evalResponseData = new CommunicatorEvalResponseData() { MatchFitnesses = MatchFitnesses };
 
@@ -242,6 +276,8 @@ namespace Base
             context.Response.ContentLength64 = evalResponseBuffer.Length;
             context.Response.OutputStream.Write(evalResponseBuffer, 0, evalResponseBuffer.Length);
             context.Response.OutputStream.Close();
+
+            evaluationInProgress = false;
         }
 
         /// <summary>
@@ -336,183 +372,10 @@ namespace Base
             }
         }
 
-        /// <summary>
-        /// Loads all evaluation scenes for the given game and agent scenarios
-        /// </summary>
-        private IEnumerator LoadEvaluationScenes()
+        private void GetSimulationEnvironmentResults(SimulationEnvironment environment)
         {
-            ScenesLoadedCountRequired = Matches.Length;
-
-            for (int i = 0; i < RerunTimes; i++)
-            {
-                if (SceneLoadMode == SceneLoadMode.LayerMode)
-                {
-                    ////////////////////// LAYER MODE /////////////////////////////////
-                    foreach (GameScenario gameScenario in GameScenarios)
-                    {
-                        SceneManager.LoadScene(gameScenario.GameSceneName);
-
-                        foreach (AgentScenario scenario in AgentScenarios)
-                        {
-                            if (!scenario.ContainsGameScenario(gameScenario.GameSceneName))
-                                continue;
-
-                            ScenesLoadedCount = 0;
-                            // For each agentScenario all population must be evaluated
-                            while (ScenesLoadedCount < ScenesLoadedCountRequired)
-                            {
-                                while (!Layer.IsBatchExecuted(gameScenario.GameSceneName))
-                                {
-                                    yield return null;
-                                }
-
-                                LoadAgentScenarioLayerMode(scenario, gameScenario);
-
-                                // Check if there is available layer
-                                while (!Layer.CanUseAnotherLayer())
-                                {
-                                    yield return null;
-                                }
-                            }
-                        }
-
-                        // Wait for all agent scenarios for current game agentScenario be finished before continuing to the other one (To prevent collision detection problems)
-                        while (Layer.NumberOfUsedLayeres() > 0)
-                        {
-                            yield return null;
-                        }
-
-                        SceneManager.UnloadSceneAsync(gameScenario.GameSceneName);
-                    }
-
-                    // Wait for all scene to finish when all different game and agent scenarios have been loaded
-                    while (Layer.NumberOfUsedLayeres() > 0)
-                    {
-                        yield return null;
-                    }
-                }
-                else if (SceneLoadMode == SceneLoadMode.GridMode)
-                {
-                    ////////////////////// GRID MODE /////////////////////////////////
-                    SceneManager.LoadScene(GameScenarios[0].GameSceneName); // Dummy scene for deterministic execution
-                                                                            // In GridMode we don't load gameScenes as they are supposed to be inside of every scene
-                    foreach (AgentScenario scenario in AgentScenarios)
-                    {
-                        ScenesLoadedCount = 0;
-                        // For each agentScenario all population must be evaluated
-                        while (ScenesLoadedCount < ScenesLoadedCountRequired)
-                        {
-                            while (!Grid.IsBatchExecuted(GameScenarios[0].GameSceneName))
-                            {
-                                yield return null;
-                            }
-
-                            LoadAgentScenarioGridMode(scenario, GameScenarios[0]);
-
-                            // Check if there is available gridCell
-                            while (!Grid.CanUseAnotherGridCell())
-                            {
-                                yield return null;
-                            }
-                        }
-                    }
-
-                    // Wait for all scene to finish when all different game and agent scenarios have been loaded
-                    while (Grid.NumberOfUsedGridCells() > 0)
-                    {
-                        yield return null;
-                    }
-                    SceneManager.UnloadSceneAsync(GameScenarios[0].GameSceneName);
-                }
-
-                // Configure the random seed for each individual run
-                if (RandomSeedMode == RandomSeedMode.RandomAll)
-                    InitialSeed = InitialSeed + 1;
-            }
-
-            if (RandomSeedMode == RandomSeedMode.RandomAll)
-                InitialSeed = InitialSeed - RerunTimes;
+            MatchFitnesses.Add(environment.EnvironmentController.MapAgentFitnessesToMatchFitness());
+            SimulationStepsCombined += environment.EnvironmentController.SimulationSteps;
         }
-
-        void LoadAgentScenarioLayerMode(AgentScenario agentScenario, GameScenario gameScenario)
-        {
-            while (ScenesLoadedCount < ScenesLoadedCountRequired && Layer.GetAndReserveAvailableLayer(ScenesLoadedCount, gameScenario.GameSceneName, agentScenario.AgentSceneName) >= 0)
-            {
-                SceneManager.LoadScene(agentScenario.AgentSceneName, LoadSceneMode.Additive);
-                ScenesLoadedCount++;
-            }
-        }
-
-        void LoadAgentScenarioGridMode(AgentScenario agentScenario, GameScenario gameScenario)
-        {
-            while (ScenesLoadedCount < ScenesLoadedCountRequired && Grid.GetAndReserveAvailableGridlayer(ScenesLoadedCount, gameScenario.GameSceneName, agentScenario.AgentSceneName) != null)
-            {
-                SceneManager.LoadScene(agentScenario.AgentSceneName, LoadSceneMode.Additive);
-                ScenesLoadedCount++;
-            }
-        }
-
-        private void EnvironmentController_OnGameFinished(object sender, OnGameFinishedEventargs e)
-        {
-            MatchFitnesses.Add(e.MatchFitness);
-
-            if (SceneLoadMode == SceneLoadMode.LayerMode)
-                Layer.ReleaseLayer(e.LayerId);
-            else if (SceneLoadMode == SceneLoadMode.GridMode)
-                Grid.ReleaseGridCell(e.GridCell);
-
-            SimulationStepsCombined += e.SimulationSteps;
-        }
-
-        public LayerData GetReservedLayer()
-        {
-            return Layer.GetReservedLayer();
-        }
-
-        public GridCell GetReservedGridCell()
-        {
-            return Grid.GetReservedGridCell();
-        }
-
-        public Match GetMatch(int matchIndex)
-        {
-            if (Matches == null)
-            {
-                throw new Exception("Matches is not defined");
-            }
-
-            return Matches[matchIndex];
-        }
-    }
-
-    public class CommunicatorEvalRequestData
-    {
-        public Match[] Matches { get; set; }
-    }
-
-    public class CommunicatorEvalResponseData
-    {
-        public List<MatchFitness> MatchFitnesses { get; set; }
-    }
-
-    public class OnGameFinishedEventargs : EventArgs
-    {
-        public MatchFitness MatchFitness;
-        public int SimulationSteps;
-        public int LayerId;
-        public GridCell GridCell;
-    }
-
-    public enum SceneLoadMode
-    {
-        LayerMode,
-        GridMode
-    }
-
-    public enum RandomSeedMode
-    {
-        Fixed,
-        RandomAll,
-        RandomPerIndividual
     }
 }

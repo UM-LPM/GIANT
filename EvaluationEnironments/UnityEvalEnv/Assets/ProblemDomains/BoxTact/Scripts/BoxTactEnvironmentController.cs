@@ -59,16 +59,7 @@ namespace Problems.BoxTact
                 throw new Exception("BoxTargetSpawner is not defined");
             }
 
-            if (SceneLoadMode == SceneLoadMode.LayerMode)
-            {
-                // Only one problem environment exists
-                IndestructibleWalkableTiles = FindObjectOfType<SectorComponent>().GetComponent<Tilemap>();
-            }
-            else
-            {
-                // Each EnvironmentController contains its own problem environment
-                IndestructibleWalkableTiles = GetComponentInChildren<SectorComponent>().GetComponent<Tilemap>();
-            }
+            IndestructibleWalkableTiles = GetComponentInChildren<SectorComponent>().GetComponent<Tilemap>();
 
         }
 

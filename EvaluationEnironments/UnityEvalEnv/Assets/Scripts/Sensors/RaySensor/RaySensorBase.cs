@@ -139,11 +139,11 @@ public abstract class RaySensorBase : Sensor<SensorPerceiveOutput[]> {
 
         if (input.CastType == RayPerceptionCastType.Cast3D) {
             if (scaledCastRadius > 0f) {
-                castHit = Physics.SphereCast(startPositionWorld, scaledCastRadius, rayDirection, out rayHit,
+                castHit = PhysicsScene.SphereCast(startPositionWorld, scaledCastRadius, rayDirection, out rayHit,
                     scaledRayLength, input.LayerMask);
             }
             else {
-                castHit = Physics.Raycast(startPositionWorld, rayDirection, out rayHit,
+                castHit = PhysicsScene.Raycast(startPositionWorld, rayDirection, out rayHit,
                     scaledRayLength, input.LayerMask);
             }
 
@@ -154,11 +154,11 @@ public abstract class RaySensorBase : Sensor<SensorPerceiveOutput[]> {
         }
         else {
             if (scaledCastRadius > 0f) {
-                rayHit2D = Physics2D.CircleCast(startPositionWorld, scaledCastRadius, rayDirection,
+                rayHit2D = PhysicsScene2D.CircleCast(startPositionWorld, scaledCastRadius, rayDirection,
                     scaledRayLength, input.LayerMask);
             }
             else {
-                rayHit2D = Physics2D.Raycast(startPositionWorld, rayDirection, scaledRayLength, input.LayerMask);
+                rayHit2D = PhysicsScene2D.Raycast(startPositionWorld, rayDirection, scaledRayLength, input.LayerMask);
             }
 
             castHit = rayHit2D;

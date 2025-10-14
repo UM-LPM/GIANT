@@ -92,16 +92,7 @@ namespace Problems.Robostrike
                 throw new Exception("RobostrikePowerUpSpawner is not defined");
             }
 
-            if(SceneLoadMode == SceneLoadMode.LayerMode)
-            {
-                // Only one problem environment exists
-                Sectors = FindObjectsOfType<SectorComponent>();
-            }
-            else
-            {
-                // Each EnvironmentController contains its own problem environment
-                Sectors = GetComponentsInChildren<SectorComponent>();
-            }
+            Sectors = GetComponentsInChildren<SectorComponent>();
 
             MissileController = GetComponent<MissileController>();
             if (MissileController == null)
@@ -284,7 +275,7 @@ namespace Problems.Robostrike
             {
                 if (agent.gameObject.activeSelf)
                 {
-                    pickedPowerUps = PhysicsUtil.PhysicsOverlapTargetObjects<PowerUpComponent>(GameType, agent.gameObject, agent.transform.position, AgentColliderExtendsMultiplier.x, Vector3.zero, agent.transform.rotation, PhysicsOverlapType.OverlapSphere, false, gameObject.layer, DefaultLayer);
+                    pickedPowerUps = PhysicsUtil.PhysicsOverlapTargetObjects<PowerUpComponent>(PhysicsScene, PhysicsScene2D, GameType, agent.gameObject, agent.transform.position, AgentColliderExtendsMultiplier.x, Vector3.zero, agent.transform.rotation, PhysicsOverlapType.OverlapSphere, false, gameObject.layer);
 
                     if (pickedPowerUps != null && pickedPowerUps.Count > 0)
                     {
@@ -591,6 +582,7 @@ namespace Problems.Robostrike
                 Debug.Log("Opponents destroyed bonus: " + agent.OpponentsDestroyed + " / " + numOfOpponents + " =");
                 Debug.Log("Damage taken: " + agent.HitByOpponentMissiles + " / " + numOfFiredOpponentMissiles + " =");
                 Debug.Log("========================================");
+                
                 
             }
         }

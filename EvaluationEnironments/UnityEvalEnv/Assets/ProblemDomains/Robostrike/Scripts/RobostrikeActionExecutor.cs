@@ -81,17 +81,17 @@ namespace Problems.Robostrike
                     break;
             }
 
-            newAgentPos = UnityUtils.RoundToDecimals(agent.transform.position + (dirToGo * Time.fixedDeltaTime * RobostrikeEnvironmentController.AgentMoveSpeed), 2);
-            newAgentRotation = Quaternion.Euler(0, 0, agent.transform.rotation.eulerAngles.z + UnityUtils.RoundToDecimals(rotateDir.z * Time.fixedDeltaTime * RobostrikeEnvironmentController.AgentRotationSpeed, 2));
+            newAgentPos = agent.transform.position + (dirToGo * Time.fixedDeltaTime * RobostrikeEnvironmentController.AgentMoveSpeed);
+            newAgentRotation = Quaternion.Euler(0, 0, agent.transform.rotation.eulerAngles.z + rotateDir.z * Time.fixedDeltaTime * RobostrikeEnvironmentController.AgentRotationSpeed);
 
             // Check if agent can be moved and rotated without colliding to other objects
-            if (!PhysicsUtil.PhysicsOverlapObject(RobostrikeEnvironmentController.GameType, agent.gameObject, newAgentPos, RobostrikeEnvironmentController.AgentColliderExtendsMultiplier.x, Vector3.zero, newAgentRotation, PhysicsOverlapType.OverlapSphere, true, gameObject.layer, RobostrikeEnvironmentController.DefaultLayer)){
+            if (!PhysicsUtil.PhysicsOverlapObject(RobostrikeEnvironmentController.PhysicsScene, RobostrikeEnvironmentController.PhysicsScene2D, RobostrikeEnvironmentController.GameType, agent.gameObject, newAgentPos, RobostrikeEnvironmentController.AgentColliderExtendsMultiplier.x, Vector3.zero, newAgentRotation, PhysicsOverlapType.OverlapSphere, true, gameObject.layer)){
                 agent.transform.position = newAgentPos;
                 agent.transform.rotation = newAgentRotation;
             }
 
             // Agent turret rotation
-            agent.Turret.transform.rotation = Quaternion.Euler(0, 0, agent.Turret.transform.rotation.eulerAngles.z + UnityUtils.RoundToDecimals(rotateTurrentDir.z * Time.fixedDeltaTime * RobostrikeEnvironmentController.AgentTurrentRotationSpeed, 2));
+            agent.Turret.transform.rotation = Quaternion.Euler(0, 0, agent.Turret.transform.rotation.eulerAngles.z + rotateTurrentDir.z * Time.fixedDeltaTime * RobostrikeEnvironmentController.AgentTurrentRotationSpeed);
         }
 
         private void ShootMissile(RobostrikeAgentComponent agent)

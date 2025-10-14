@@ -66,12 +66,11 @@ namespace Spawners
                                 environmentController.ArenaCenterPoint,
                                 environmentController.ArenaOffset);
 
-                            if (environmentController.SceneLoadMode == SceneLoadMode.GridMode)
-                                spawnPos += environmentController.GridCell.GridCellPosition;
-
                             rotation = GetRandomRotation(environmentController.Util, environmentController.GameType);
 
                             if (!SpawnPointSuitable(
+                                environmentController.PhysicsScene,
+                                environmentController.PhysicsScene2D,
                                 environmentController.GameType,
                                 spawnPos,
                                 rotation,
@@ -79,8 +78,7 @@ namespace Spawners
                                 environmentController.AgentColliderExtendsMultiplier,
                                 environmentController.MinAgentDistance,
                                 true,
-                                environmentController.gameObject.layer,
-                                environmentController.DefaultLayer))
+                                environmentController.gameObject.layer))
                             {
                                 continue;
                             }
@@ -128,13 +126,13 @@ namespace Spawners
                 {
                     // Get random spawn point and rotation
                     spawnPos = GetRandomSpawnPoint(environmentController.Util,environmentController.GameType,environmentController.ArenaSize,environmentController.ArenaRadius,environmentController.ArenaCenterPoint,environmentController.ArenaOffset);
-                    if (environmentController.SceneLoadMode == SceneLoadMode.GridMode)
-                        spawnPos += environmentController.GridCell.GridCellPosition;
 
                     rotation = GetRandomRotation(environmentController.Util, environmentController.GameType);
 
                     // Validate spawn point
                     if (!SpawnPointSuitable(
+                        environmentController.PhysicsScene,
+                        environmentController.PhysicsScene2D,
                         environmentController.GameType,
                         spawnPos,
                         rotation,
@@ -142,8 +140,7 @@ namespace Spawners
                         environmentController.AgentColliderExtendsMultiplier,
                         environmentController.MinAgentDistance,
                         true,
-                        environmentController.gameObject.layer,
-                        environmentController.DefaultLayer))
+                        environmentController.gameObject.layer))
                     {
                         continue;
                     }

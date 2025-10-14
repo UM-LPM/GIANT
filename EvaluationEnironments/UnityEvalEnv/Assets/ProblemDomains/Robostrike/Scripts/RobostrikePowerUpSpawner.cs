@@ -84,20 +84,20 @@ namespace Problems.Robostrike
                                 environmentController.ArenaRadius,
                                 environmentController.ArenaCenterPoint,
                                 environmentController.ArenaOffset);
-                if (environmentController.SceneLoadMode == SceneLoadMode.GridMode)
-                    spawnPos += environmentController.GridCell.GridCellPosition;
 
                 rotation = powerUpPrefab.transform.rotation;
 
-                if (!SpawnPointSuitable(environmentController.GameType,
+                if (!SpawnPointSuitable(
+                            environmentController.PhysicsScene,
+                            environmentController.PhysicsScene2D,
+                            environmentController.GameType,
                             spawnPos,
                             rotation,
                             existingPowerUpPOsitions,
                             environmentController.PowerUpColliderExtendsMultiplier,
                             environmentController.MinPowerUpDistance,
                             true,
-                            environmentController.gameObject.layer,
-                            environmentController.DefaultLayer))
+                            environmentController.gameObject.layer))
                 {
                     isFarEnough = false;
                 }

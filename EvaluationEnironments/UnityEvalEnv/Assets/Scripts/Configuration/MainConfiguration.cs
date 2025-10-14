@@ -46,6 +46,7 @@ namespace Configuration
         public int GameMode { get; set; }
         public GameScenario[] GameScenarios { get; set; }
         public AgentScenario[] AgentScenarios { get; set; }
+        public int MaxSimultaneousEnvironments { get; set; }
         public bool IncludeNodeCallFrequencyCounts { get; set; }
 
         // Environment configuration

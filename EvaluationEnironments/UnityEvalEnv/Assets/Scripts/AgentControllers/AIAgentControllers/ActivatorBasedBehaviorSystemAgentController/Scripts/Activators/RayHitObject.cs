@@ -64,7 +64,7 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
             if (raySensor == null)
             {
                 raySensor = context.gameObject.GetComponentInChildren<RaySensorBase>();
-                raySensor.SetLayerMask((1 << context.gameObject.layer) + 1); // base layer + default
+                raySensor.SetLayerMask((1 << context.gameObject.layer));
 
                 GetBaseGameObjectTeam();
             }

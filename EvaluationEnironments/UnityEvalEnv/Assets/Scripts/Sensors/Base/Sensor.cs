@@ -3,7 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [DisallowMultipleComponent]
-public abstract class Sensor<T> : MonoBehaviour {
+public abstract class Sensor : MonoBehaviour
+{
+    public PhysicsScene PhysicsScene { get; set; }
+    public PhysicsScene2D PhysicsScene2D { get; set; }
+}
+
+public abstract class Sensor<T> : Sensor {
 
     [Header("Base sensor configuration")]
     [SerializeField] public LayerMask LayerMask;

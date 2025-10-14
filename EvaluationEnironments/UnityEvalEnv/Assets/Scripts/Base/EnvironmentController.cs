@@ -20,16 +20,13 @@ namespace Base
     public abstract class EnvironmentControllerBase : MonoBehaviour
     {
 
-        public static event EventHandler<OnGameFinishedEventargs> OnGameFinished;
-
         [Header("Base Configuration")]
         [SerializeField] public ComponentSetupType EnvironmentControllerSetup = ComponentSetupType.MOCK;
         [SerializeField] public GameType GameType = GameType._3D;
-        [SerializeField] public float SimulationSteps = 10000;
+        [SerializeField] public int SimulationSteps = 10000;
         [SerializeField] public float SimulationTime = 0f;
         [SerializeField] public LayerMask DefaultLayer = 0;
         [SerializeField] GameObject Environment;
-        [SerializeField] public SceneLoadMode SceneLoadMode;
         [SerializeField] public bool IncludeNodeCallFrequencyCounts = false;
         [HideInInspector] public bool ForceNewDecisions = false;
 
@@ -52,6 +49,9 @@ namespace Base
         [Header("Match Configuration")]
         [SerializeField] public Match Match;
 
+        [HideInInspector] public PhysicsScene PhysicsScene { get; set; }
+        [HideInInspector] public PhysicsScene2D PhysicsScene2D { get; set; }
+
         public AgentComponent[] Agents { get; set; }
         public int CurrentSimulationSteps { get; set; }
         public float CurrentSimulationTime { get; set; }
@@ -59,9 +59,6 @@ namespace Base
         public Util Util { get; set; }
         public ActionObservationProcessor ActionObservationProcessor { get; set; }
         public ActionExecutor ActionExecutor { get; set; }
-
-        public LayerData LayerBTIndex { get; set; }
-        public GridCell GridCell { get; set; }
 
         protected MatchSpawner MatchSpawner { get; set; }
 
@@ -93,8 +90,6 @@ namespace Base
                 throw new Exception("ActionExecutor is not set!");
             }
 
-            SetLayerGridData();
-
             if (EnvironmentControllerSetup == ComponentSetupType.REAL)
             {
                 ReadParamsFromMainConfiguration();
@@ -106,11 +101,6 @@ namespace Base
         private void Start()
         {
             DefineAdditionalDataOnPreStart();
-
-            if (EnvironmentControllerSetup == ComponentSetupType.REAL)
-            {
-                GetMatch(SceneLoadMode == SceneLoadMode.LayerMode ? LayerBTIndex.MatchIndex : GridCell.MatchIndex);
-            }
 
             Agents = MatchSpawner.Spawn<AgentComponent>(this);
 
@@ -126,25 +116,9 @@ namespace Base
             OnUpdate();
         }
 
-        private void FixedUpdate()
+        public void OnStep()
         {
             OnPreFixedUpdate();
-
-            // Check game termination criteria
-            if (SimulationTime > 0)
-            {
-                if (CurrentSimulationTime >= SimulationTime)
-                {
-                    FinishGame();
-                }
-            }
-            else if (SimulationSteps > 0)
-            {
-                if (CurrentSimulationSteps >= SimulationSteps)
-                {
-                    FinishGame();
-                }
-            }
 
             if (ForceNewDecisions)
             {
@@ -170,38 +144,6 @@ namespace Base
             DecisionRequestCount += 1;
 
             OnPostFixedUpdate();
-        }
-
-        void SetLayerGridData()
-        {
-            if (EnvironmentControllerSetup == ComponentSetupType.REAL)
-            {
-                SceneLoadMode = Communicator.Instance.SceneLoadMode;
-
-                if (SceneLoadMode == SceneLoadMode.LayerMode)
-                {
-                    LayerBTIndex = Communicator.Instance.GetReservedLayer();
-                    if (Environment != null)
-                        Environment.SetActive(false);
-                }
-                else
-                {
-                    GridCell = Communicator.Instance.GetReservedGridCell();
-                    transform.position = GridCell.GridCellPosition;
-                    Environment.SetActive(true);
-                }
-            }
-            else
-            {
-                if (SceneLoadMode == SceneLoadMode.LayerMode)
-                {
-                    LayerBTIndex = new LayerData(6, -1);
-                }
-                else
-                {
-                    GridCell = new GridCell(new Vector3(0, 0, 0)); ;
-                }
-            }
         }
 
         void ReadParamsFromMainConfiguration()
@@ -266,15 +208,6 @@ namespace Base
             }
         }
 
-        void GetMatch(int BTIndex)
-        {
-            Match = Communicator.Instance.GetMatch(BTIndex);
-            if (Match == null)
-            {
-                throw new Exception("Match is not defined");
-            }
-        }
-
         void InitializeAgents()
         {
             for (int i = 0; i < Agents.Length; i++)
@@ -307,6 +240,14 @@ namespace Base
                     default:
                         throw new Exception("Unknown AgentController type!");
                 }
+
+                var sensor = Agents[i].GetComponentInChildren<Sensor>();
+                if(sensor != null)
+                {
+                    sensor.PhysicsScene = PhysicsScene;
+                    sensor.PhysicsScene2D = PhysicsScene2D;
+                }
+
             }
         }
 
@@ -315,8 +256,6 @@ namespace Base
             GameState = GameState.RUNNING;
             CurrentSimulationTime = 0f;
             CurrentSimulationSteps = 0;
-
-            SetLayerRecursively(gameObject, SceneLoadMode == SceneLoadMode.LayerMode ? LayerBTIndex.LayerId : GridCell.Layer);
         }
 
         public static void SetLayerRecursively(GameObject obj, int newLayer)
@@ -330,33 +269,36 @@ namespace Base
 
         public void FinishGame()
         {
-            if (GameState == GameState.RUNNING)
-            {
-                OnPreFinishGame();
-
-                string guid = Guid.NewGuid().ToString();
-                OnGameFinished?.Invoke(this, new OnGameFinishedEventargs()
-                {
-                    MatchFitness = MapAgentFitnessesToMatchFitness(),
-                    SimulationSteps = CurrentSimulationSteps,
-                    LayerId = gameObject.layer,
-                    GridCell = GridCell,
-                });
-            }
-
+            OnPreFinishGame();
             GameState = GameState.FINISHED;
-
-            // Unload scene asynchronously when game is finished
-            SceneManager.UnloadSceneAsync(gameObject.scene);
         }
 
-        private MatchFitness MapAgentFitnessesToMatchFitness()
+        public bool IsSimulationFinished()
+        {
+            if (SimulationTime > 0)
+            {
+                if (CurrentSimulationTime >= SimulationTime)
+                {
+                    return true;
+                }
+            }
+            else if (SimulationSteps > 0)
+            {
+                if (CurrentSimulationSteps >= SimulationSteps)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public MatchFitness MapAgentFitnessesToMatchFitness()
         {
             MatchFitness matchFitness = new MatchFitness();
             matchFitness.MatchId = Match.MatchId;
 
             Guid guid = Guid.NewGuid();
-            string scenarioName = SceneLoadMode == SceneLoadMode.LayerMode ? LayerBTIndex.GameSceneName + "_" + LayerBTIndex.AgentSceneName + "_" + guid : GridCell.GameSceneName + "_" + GridCell.AgentSceneName + "_" + guid;
+            string scenarioName = guid.ToString();
             matchFitness.MatchName = Match.MatchId + "_" + scenarioName;
 
             for (int i = 0; i < Agents.Length; i++)

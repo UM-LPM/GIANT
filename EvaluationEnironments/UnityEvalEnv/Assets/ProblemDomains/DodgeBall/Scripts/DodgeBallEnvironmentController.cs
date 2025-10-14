@@ -80,16 +80,7 @@ namespace Problems.DodgeBall
                 throw new Exception("BallSpawner is not defined");
             }
 
-            if (SceneLoadMode == SceneLoadMode.LayerMode)
-            {
-                // Only one problem environment exists
-                Sectors = FindObjectsOfType<SectorComponent>();
-            }
-            else
-            {
-                // Each EnvironmentController contains its own problem environment
-                Sectors = GetComponentsInChildren<SectorComponent>();
-            }
+            Sectors = GetComponentsInChildren<SectorComponent>();
         }
 
         protected override void DefineAdditionalDataOnPostStart()

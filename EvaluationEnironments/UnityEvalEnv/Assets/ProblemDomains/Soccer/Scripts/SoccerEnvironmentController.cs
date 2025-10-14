@@ -86,16 +86,8 @@ namespace Problems.Soccer
         {
             ReadParamsFromMainConfiguration();
 
-            if (SceneLoadMode == SceneLoadMode.LayerMode)
-            {
-                GoalBlue = FindObjectsByType<GoalComponent>(FindObjectsSortMode.InstanceID).Where(a => a.Team == SoccerTeam.Blue).First();
-                GoalPurple = FindObjectsByType<GoalComponent>(FindObjectsSortMode.InstanceID).Where(a => a.Team == SoccerTeam.Purple).First();
-            }
-            else
-            {
-                GoalBlue = GetComponentsInChildren<GoalComponent>().Where(a => a.Team == SoccerTeam.Blue).First();
-                GoalPurple = GetComponentsInChildren<GoalComponent>().Where(a => a.Team == SoccerTeam.Purple).First();
-            }
+            GoalBlue = GetComponentsInChildren<GoalComponent>().Where(a => a.Team == SoccerTeam.Blue).First();
+            GoalPurple = GetComponentsInChildren<GoalComponent>().Where(a => a.Team == SoccerTeam.Purple).First();
 
             SoccerBallSpawner = GetComponent<SoccerBallSpawner>();
             if (SoccerBallSpawner == null)
@@ -103,16 +95,7 @@ namespace Problems.Soccer
                 throw new Exception("SoccerBallSpawner is not defined");
             }
 
-            if (SceneLoadMode == SceneLoadMode.LayerMode)
-            {
-                // Only one problem environment exists
-                Sectors = FindObjectsOfType<SectorComponent>();
-            }
-            else
-            {
-                // Each EnvironmentController contains its own problem environment
-                Sectors = GetComponentsInChildren<SectorComponent>();
-            }
+            Sectors = GetComponentsInChildren<SectorComponent>();
 
             if (SimulationSteps > 0)
             {
