@@ -34,19 +34,22 @@ namespace Utils
             Application.logMessageReceived -= HandleLog;
         }
 
-        void HandleLog(string logString, string stackTrace, LogType type)
+        async void HandleLog(string logString, string stackTrace, LogType type)
         {
             // Only logs, errors and exceptions (not warnings) are sent to MQTT broker to prevent spamming.
             if (type != LogType.Warning)
             {
-                MqttNetLogger.Log(logString, MqttNetLogger.MapLogTypeToMqttLogType(type));
-
+                await MqttNetLogger.Log(logString, MqttNetLogger.MapLogTypeToMqttLogType(type));
             }
 
             if (type == LogType.Error || type == LogType.Exception)
             {
                 string logEntry = $"{System.DateTime.Now}: {type}\n{logString}\n{stackTrace}\n";
                 File.AppendAllText(logFilePath, logEntry);
+            }
+
+            if(type == LogType.Exception){
+                DebugSystem.LogError(logString);
             }
         }
     }

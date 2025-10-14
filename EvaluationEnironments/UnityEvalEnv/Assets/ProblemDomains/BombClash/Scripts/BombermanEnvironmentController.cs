@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using Utils;
 
 namespace Problems.Bombclash
 {
@@ -377,7 +378,7 @@ namespace Problems.Bombclash
                                   $"Survival bonus: {agent.SurvivalBonuses} / {(Agents.Length - 1)} = {survivalBonusFitness}\n" +
                                   $"Last survival bonus: {agent.LastSurvivalBonus} = {lastSurvivalBonusFitness}";
 
-                Debug.Log(agentFitnessLog);
+                DebugSystem.LogVerbose(agentFitnessLog);
             }
         }
 

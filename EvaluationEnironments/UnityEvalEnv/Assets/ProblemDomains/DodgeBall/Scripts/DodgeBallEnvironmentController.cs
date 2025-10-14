@@ -280,7 +280,7 @@ namespace Problems.DodgeBall
                                   $"[Opponents hit]: {agent.OpponentsHit} / {numOfOpponents} = {opponentsHitFitness} \n" +
                                   $"[Survival bonus]: {agent.MaxSurvivalTime} / {CurrentSimulationSteps} = {survivalBonusFitness}\n" +
                                   $"[Agent to ball distance]: {(maxAgentToBallDistance - agent.AgentToBallDistance)} / {maxAgentToBallDistance} = {agentToBallDistanceFitness}\n";
-                Debug.Log(agentFitnessLog);
+                DebugSystem.LogVerbose(agentFitnessLog);
             }
         }
         void ReadParamsFromMainConfiguration()

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using Utils;
 
 namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentController
 {
@@ -88,7 +89,7 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
             }
             else
             {
-                Debug.LogWarning("Child not found in ActivatorNode's children list.");
+                DebugSystem.LogWarning("Child not found in ActivatorNode's children list.");
             }
         }
     }

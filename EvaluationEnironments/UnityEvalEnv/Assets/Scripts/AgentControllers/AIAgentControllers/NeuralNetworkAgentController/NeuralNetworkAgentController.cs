@@ -5,6 +5,7 @@ using AgentControllers.AIAgentControllers.NeuralNetworkAgentController.ActionObs
 using Unity.VisualScripting;
 using System;
 using UnityEditor;
+using Utils;
 
 namespace AgentControllers.AIAgentControllers.NeuralNetworkAgentController
 {
@@ -67,7 +68,7 @@ namespace AgentControllers.AIAgentControllers.NeuralNetworkAgentController
             }
             catch (System.Exception ex)
             {
-                Debug.LogError("Error while getting discrete actions: " + ex.Message);
+                DebugSystem.LogError("Error while getting discrete actions: " + ex.Message);
             }
 
             try
@@ -78,7 +79,7 @@ namespace AgentControllers.AIAgentControllers.NeuralNetworkAgentController
             }
             catch (System.Exception ex)
             {
-                Debug.LogError("Error while getting continuous actions: " + ex.Message);
+                DebugSystem.LogError("Error while getting continuous actions: " + ex.Message);
             }
             finally
             {

@@ -7,6 +7,7 @@ using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Utils;
 
 namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
     public class BehaviourTreeView : GraphView {
@@ -144,7 +145,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
                 evt.menu.AppendAction("Duplicate", (a) => {
                     // Check if RootNode is selected, if so, do not duplicate
                     if (selection.OfType<BTNodeView>().Any(n => n.node is RootNode)) {
-                        Debug.LogWarning("Cannot duplicate RootNode, please select other nodes to duplicate.");
+                        DebugSystem.LogWarning("Cannot duplicate RootNode, please select other nodes to duplicate.");
                         return;
                     }
 

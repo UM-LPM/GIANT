@@ -15,7 +15,7 @@ namespace Problems.Soccer
         Quaternion rotation;
 
         private GameObject obj;
-        private Rigidbody rigidbody; 
+        private Rigidbody rb; 
 
         public override void validateSpawnConditions(EnvironmentControllerBase environmentController)
         {
@@ -53,14 +53,14 @@ namespace Problems.Soccer
             respawnComponent.transform.position = spawnPos;
             respawnComponent.transform.rotation = rotation;
 
-            rigidbody = (respawnComponent as SoccerBallComponent).Rigidbody;
-            if(rigidbody != null)
+            rb = (respawnComponent as SoccerBallComponent).Rigidbody;
+            if(rb != null)
             {
-                rigidbody.velocity = Vector3.zero;
-                rigidbody.angularVelocity = Vector3.zero;
+                rb.velocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
 
-                rigidbody.position = spawnPos;
-                rigidbody.rotation = rotation;
+                rb.position = spawnPos;
+                rb.rotation = rotation;
             }
             else
             {

@@ -11,7 +11,6 @@ using System.Text;
 using AgentOrganizations;
 using Evaluators;
 using Evaluators.CompetitionOrganizations;
-using Evaluators.CompetitionOrganizations;
 using Fitnesses;
 using Utils;
 using Configuration;
@@ -52,7 +51,7 @@ namespace Base
 
         public System.Random Random { get; private set; }
 
-        private async void Awake()
+        private void Awake()
         {
             // Singleton pattern
             if (Instance != null)
@@ -109,12 +108,12 @@ namespace Base
                 Listener.Prefixes.Add(CoordinatorURI);
                 Listener.Start();
 
-                Debug.Log("Coordinator HTTP server is running");
+                DebugSystem.Log("Coordinator HTTP server is running");
 
             }
-            catch (Exception e)
+            catch
             {
-                Debug.Log("Coordinator HTTP server is already running");
+                DebugSystem.Log("Coordinator HTTP server is already running");
             }
         }
 
@@ -164,7 +163,7 @@ namespace Base
 
             // Read body from the request
             CoordinatorEvalRequestData evalRequestData = ReadDataFromRequestBody(context);
-            Debug.Log("Coordinator Cordinate Evaluator: EvalInstances: " + evalRequestData.EvalEnvInstancesToString());
+            DebugSystem.LogDetailed("Coordinator Cordinate Evaluator: EvalInstances: " + evalRequestData.EvalEnvInstancesToString());
 
             if (UnitTester.Instance != null && UnitTester.Instance.CurrentTestIndex > -1)
             {
@@ -302,8 +301,7 @@ namespace Base
                 case RatingSystemType.Elo:
                     return new EloRatingSystem();
                 default:
-                    MqttNetLogger.Log("Invalid rating system type", MqttNetLogType.Error);
-                    return null;
+                    throw new Exception("Invalid rating system type");
             }
         }
 
@@ -337,7 +335,7 @@ namespace Base
                 case CompetitionOrganizationType.SimilarStrengthOpponentSelection:
                     return new SimilarStrengthOpponentSelection(TeamOrganizator, individuals, CreateNewTeamsEachRound, CompetitionRounds, TeamsPerMatch);
                 default:
-                    Debug.LogError("Invalid competition organization type");
+                    DebugSystem.LogError("Invalid competition organization type");
                     return null;
             }
         }

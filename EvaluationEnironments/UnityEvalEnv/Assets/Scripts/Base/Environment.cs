@@ -4,6 +4,7 @@ using Base;
 using Spawners;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Utils;
 
 namespace Base
 {
@@ -24,7 +25,7 @@ namespace Base
             EnvironmentControllerBase tempEnvController = environmentPrefab.GetComponent<EnvironmentControllerBase>();
             if (tempEnvController == null)
             {
-                Debug.LogError("Environment prefab must have an EnvironmentControllerBase component.");
+                DebugSystem.LogError("Environment prefab must have an EnvironmentControllerBase component.");
                 return;
             }
 
@@ -41,7 +42,7 @@ namespace Base
             EnvironmentController = RootObject.GetComponent<EnvironmentControllerBase>();
             if (EnvironmentController == null)
             {
-                Debug.LogError("Environment prefab must have an EnvironmentControllerBase component.");
+                DebugSystem.LogError("Environment prefab must have an EnvironmentControllerBase component.");
             }
 
             EnvironmentController.Match = match;
@@ -74,14 +75,14 @@ namespace Base
             if (Scene.IsValid())
             {
                 if(IsDebug)
-                    Debug.Log($"Terminating environment: {Scene.name}");
+                    DebugSystem.Log($"Terminating environment: {Scene.name}");
                 foreach (var rootObj in Scene.GetRootGameObjects())
                 {
                     // Print all child objects being destroyed
                     if(IsDebug)
                         foreach (var obj in rootObj.GetComponentsInChildren<Transform>())
                         {
-                            Debug.Log($"Destroying object: {obj.name}, position: {obj.position}");
+                            DebugSystem.Log($"Destroying object: {obj.name}, position: {obj.position}");
                         }
                     Object.Destroy(rootObj);
                 }

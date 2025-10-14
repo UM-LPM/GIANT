@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UIElements;
+using Utils;
 
 namespace Problems.BoxTact
 {
@@ -13,7 +14,7 @@ namespace Problems.BoxTact
             BoxSpriteRenderer = GetComponent<SpriteRenderer>();
             if (!BoxSpriteRenderer)
             {
-                Debug.LogError("BoxTactBoxComponent requires a SpriteRenderer component.");
+                DebugSystem.LogError("BoxTactBoxComponent requires a SpriteRenderer component.");
             }
         }
     }

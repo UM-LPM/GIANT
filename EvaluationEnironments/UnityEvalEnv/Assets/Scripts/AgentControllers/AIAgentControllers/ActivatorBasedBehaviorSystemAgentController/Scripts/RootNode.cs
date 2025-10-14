@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using Utils;
 
 namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentController
 {
@@ -146,7 +147,7 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
             }
             else
             {
-                Debug.LogWarning("Child not found in RootNode's children list.");
+                DebugSystem.LogWarning("Child not found in RootNode's children list.");
             }
         }
     }

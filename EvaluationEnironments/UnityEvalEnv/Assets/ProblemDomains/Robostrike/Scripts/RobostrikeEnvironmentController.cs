@@ -82,6 +82,8 @@ namespace Problems.Robostrike
         private RobostrikeAgentComponent targetAgent;
         private RobostrikeAgentComponent senderAgent;
 
+        private string agentFitnessLog;
+
         protected override void DefineAdditionalDataOnPostAwake()
         {
             ReadParamsFromMainConfiguration();
@@ -458,7 +460,7 @@ namespace Problems.Robostrike
             }
         }
 
-        public int GetNumOfActiveAgents()
+        public override int GetNumOfActiveAgents()
         {
             int counter = 0;
 
@@ -568,22 +570,21 @@ namespace Problems.Robostrike
                     agent.AgentFitness.UpdateFitness(damageTakenPenalty, RobostrikeFitness.FitnessKeys.DamageTakenPenalty.ToString());
                 }
 
-                
-                Debug.Log("========================================");
-                Debug.Log("Agent: Team ID" + agent.TeamIdentifier.TeamID + ", ID: " + agent.IndividualID);
-                Debug.Log("Sectors explored: " + agent.SectorsExplored + " / " + Sectors.Length + " =");
-                Debug.Log("Health powerUps: " + agent.HealtPowerUpsCollected + " / " + PowerUpSpawner.HealthBoxSpawned + " =");
-                Debug.Log("Ammo powerUps: " + agent.AmmoPowerUpsCollected + " / " + PowerUpSpawner.AmmoBoxSpawned + " =");
-                Debug.Log("Shield powerUps: " + agent.ShieldPowerUpsCollected + " / " + PowerUpSpawner.ShieldBoxSpawned + " =");
-                Debug.Log("Missiles fired: " + agent.MissilesFired + " / " + allPossibleMissilesFired + " =");
-                Debug.Log("Missiles fired accuracy: " + agent.MissilesHitOpponent + " / " + agent.MissilesFired + " =");
-                Debug.Log("Survival bonus: " + agent.MaxSurvivalTime + " / " + CurrentSimulationSteps + " =");
-                Debug.Log("Opponent tracking bonus: " + agent.OpponentTrackCounter + " / " + (CurrentSimulationSteps / (float)DecisionRequestInterval) + " =");
-                Debug.Log("Opponents destroyed bonus: " + agent.OpponentsDestroyed + " / " + numOfOpponents + " =");
-                Debug.Log("Damage taken: " + agent.HitByOpponentMissiles + " / " + numOfFiredOpponentMissiles + " =");
-                Debug.Log("========================================");
-                
-                
+                agentFitnessLog = "========================================\n" +
+                    $"[Agent]: Team ID + {agent.TeamIdentifier.TeamID} , ID: " + agent.IndividualID + "\n" +
+                    $"[Sectors explored]: " + agent.SectorsExplored + " / " + Sectors.Length + " = " + sectorExplorationFitness + "\n" +
+                    $"[Health powerUps]: " + agent.HealtPowerUpsCollected + " / " + PowerUpSpawner.HealthBoxSpawned + " = " + healthPowerUpsFitness + "\n" +
+                    $"[Ammo powerUps]: " + agent.AmmoPowerUpsCollected + " / " + PowerUpSpawner.AmmoBoxSpawned + " = " + ammoPowerUpsFitness + "\n" +
+                    $"[Shield powerUps]: " + agent.ShieldPowerUpsCollected + " / " + PowerUpSpawner.ShieldBoxSpawned + " = " + shieldPowerUpsFitness + "\n" +
+                    $"[Missiles fired]: " + agent.MissilesFired + " / " + allPossibleMissilesFired + " = " + missilesFired + "\n" +
+                    $"[Missiles fired accuracy]: " + agent.MissilesHitOpponent + " / " + agent.MissilesFired + " = " + missilesFiredAccuracy + "\n" +
+                    $"[Survival bonus]: " + agent.MaxSurvivalTime + " / " + CurrentSimulationSteps + " = " + survivalBonus + "\n" + 
+                    $"[Opponent tracking bonus]: " + agent.OpponentTrackCounter + " / " + (CurrentSimulationSteps / (float)DecisionRequestInterval) + " = " + opponentTrackingBonus + "\n" +
+                    $"[Opponents destroyed bonus]: " + agent.OpponentsDestroyed + " / " + numOfOpponents + " = " + opponentsDestroyedBonus + "\n" +
+                    $"[Damage taken]: " + agent.HitByOpponentMissiles + " / " + numOfFiredOpponentMissiles + " = " + damageTakenPenalty + "\n" +
+                    "========================================\n";
+
+                DebugSystem.LogVerbose(agentFitnessLog);                
             }
         }
 

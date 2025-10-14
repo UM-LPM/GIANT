@@ -9,6 +9,7 @@ using AgentOrganizations;
 using Fitnesses;
 using Configuration;
 using Base;
+using Utils;
 
 namespace Evaluators
 {
@@ -113,11 +114,11 @@ namespace Evaluators
             }
             catch (TaskCanceledException ex) when (ex.InnerException is TimeoutException)
             {
-                Debug.LogError("Evaluation request timed out. Please check the EvalEnvInstances and ensure they are running correctly.");
+                DebugSystem.LogError("Evaluation request timed out. Please check the EvalEnvInstances and ensure they are running correctly.");
             }
             catch (Exception ex)
             {
-                Debug.LogError($"An error occurred while evaluating competition matches: {ex.Message}\n{ex.StackTrace}");
+                DebugSystem.LogError($"An error occurred while evaluating competition matches: {ex.Message}\n{ex.StackTrace}");
             }
 
             throw new Exception("No match fitnesses were returned");

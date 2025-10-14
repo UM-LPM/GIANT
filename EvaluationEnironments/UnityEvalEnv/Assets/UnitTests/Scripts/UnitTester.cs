@@ -59,23 +59,23 @@ namespace UnitTests {
 
             if(!Instance.UnitTestResultsOutputed && Instance.CurrentTestIndex == UnitTests.Length - 1 && !Instance.UnitTestRunning)
             {
-                UnitTestDebug.Log("All UnitTests have been executed.");
+                DebugSystem.Log("All UnitTests have been executed.");
                 for (int i = 0; i < Instance.TestResults.Length; i++)
                 {
                     if(Instance.TestResults[i] != null)
                     {
                         if (Instance.TestResults[i].Passed)
                         {
-                            UnitTestDebug.LogSuccess($"{Instance.TestResults[i].TestName} Passed");
+                            DebugSystem.LogSuccess($"{Instance.TestResults[i].TestName} Passed");
                         }
                         else
                         {
-                            UnitTestDebug.LogError($"{Instance.TestResults[i].TestName} Failed. Error: {Instance.TestResults[i].ErrorMessage}");
+                            DebugSystem.LogError($"{Instance.TestResults[i].TestName} Failed. Error: {Instance.TestResults[i].ErrorMessage}");
                         }
                     }
                     else
                     {
-                        UnitTestDebug.LogError($"{UnitTests[i].Name} did not run.");
+                        DebugSystem.LogError($"{UnitTests[i].Name} did not run.");
                     }
                 }
                 Instance.UnitTestResultsOutputed = true;
@@ -84,7 +84,7 @@ namespace UnitTests {
 
         public void RunTest(UnitTest unitTest)
         {
-            UnitTestDebug.Log($"Starting {Instance.CurrentTestIndex + 1}/{UnitTests.Length}: {unitTest.Name}");
+            DebugSystem.Log($"Starting {Instance.CurrentTestIndex + 1}/{UnitTests.Length}: {unitTest.Name}");
             Instance.UnitTestRunning = true;
 
             string validationError = IsTestValid(unitTest);
@@ -92,7 +92,7 @@ namespace UnitTests {
             {
                 Instance.TestResults[Instance.CurrentTestIndex] = new UnitTestResult(unitTest.Name, false, validationError);
                 Instance.UnitTestRunning = false;
-                UnitTestDebug.LogError(validationError);
+                DebugSystem.LogError(validationError);
                 return;
             }
             else
@@ -127,7 +127,7 @@ namespace UnitTests {
             // Check if scene.name corresponds to pattern "ProblemName + BaseScene"(e.g., "RoboStrikeBaseScene" or "SoccerBaseScene") but is not exactly "BaseScene"
             if (scene.name != "BaseScene" && scene.name.EndsWith("BaseScene"))
             {
-                UnitTestDebug.Log("Scene Loaded: " + scene.name);
+                DebugSystem.Log("Scene Loaded: " + scene.name);
 
                 // Send request to the Coordinator to evaluate the individuals
                 SendEvaluationRequest();
@@ -139,19 +139,19 @@ namespace UnitTests {
             // Check if scene.name corresponds to pattern "ProblemName + BaseScene"(e.g., "RoboStrikeBaseScene" or "SoccerBaseScene") but is not exactly "BaseScene"
             if (scene.name != "BaseScene" && scene.name.EndsWith("BaseScene"))
             {
-                UnitTestDebug.Log("Scene Unloaded: " + scene.name);
+                DebugSystem.Log("Scene Unloaded: " + scene.name);
                 // Scene is unloaded
             }
         }
 
-        public async void SendEvaluationRequest()
+        public void SendEvaluationRequest()
         {
             // Send GET request to the Coordinator to evaluate the individuals
             if (MenuManager.Instance != null && MenuManager.Instance.MainConfiguration != null)
             {
                 if (Coordinator.Instance != null && Coordinator.Instance.CoordinatorURI != null)
                 {
-                    UnitTestDebug.Log($"Sending evaluation request to Coordinator on URI: {Coordinator.Instance.CoordinatorURI}");
+                    DebugSystem.Log($"Sending evaluation request to Coordinator on URI: {Coordinator.Instance.CoordinatorURI}");
 
                     // Send post request to Coordinator.Instance.CoordinatorURI
                     string json = JsonConvert.SerializeObject(new
@@ -181,7 +181,7 @@ namespace UnitTests {
 
             if (request.result == UnityWebRequest.Result.Success)
             {
-                UnitTestDebug.Log($"Evaluation for UnitTest: { UnitTests[Instance.CurrentTestIndex].Name } completed successfully.");
+                DebugSystem.Log($"Evaluation for UnitTest: { UnitTests[Instance.CurrentTestIndex].Name } completed successfully.");
 
                 string expectedOutputJson = System.IO.File.ReadAllText(UnitTests[Instance.CurrentTestIndex].ExpectedOutputFilePath);
 
@@ -198,12 +198,12 @@ namespace UnitTests {
                 if(output == expectedOutput)
                 {
                     Instance.TestResults[Instance.CurrentTestIndex] = new UnitTestResult(UnitTests[Instance.CurrentTestIndex].Name, true);
-                    UnitTestDebug.LogSuccess($"UnitTest { UnitTests[Instance.CurrentTestIndex].Name } Passed.");
+                    DebugSystem.LogSuccess($"UnitTest { UnitTests[Instance.CurrentTestIndex].Name } Passed.");
                 }
                 else
                 {
                     Instance.TestResults[Instance.CurrentTestIndex] = new UnitTestResult(UnitTests[Instance.CurrentTestIndex].Name, false, "Output does not match expected output.");
-                    UnitTestDebug.LogError($"UnitTest { UnitTests[Instance.CurrentTestIndex].Name } Failed. Output does not match expected output.");
+                    DebugSystem.LogError($"UnitTest { UnitTests[Instance.CurrentTestIndex].Name } Failed. Output does not match expected output.");
                 }
 
                 FinishUnitTest();
@@ -211,7 +211,7 @@ namespace UnitTests {
             else
             {
                 Instance.TestResults[CurrentTestIndex] = new UnitTestResult(UnitTests[CurrentTestIndex].Name, false, request.error);
-                UnitTestDebug.LogError($"Error occured during the UnitTest: { UnitTests[CurrentTestIndex].Name }. Error: { request.error }");
+                DebugSystem.LogError($"Error occured during the UnitTest: { UnitTests[CurrentTestIndex].Name }. Error: { request.error }");
             }
         }
 
@@ -254,24 +254,6 @@ namespace UnitTests {
             TestName = testName;
             Passed = passed;
             ErrorMessage = errorMessage;
-        }
-    }
-
-    public static class UnitTestDebug
-    {
-        public static void Log(string message, string color = "#ffff00")
-        {
-            Debug.Log($"<color={color}>TESTING =={message}</color>");
-        }
-
-        public static void LogSuccess(string message, string color = "#00ff00")
-        {
-            Debug.Log($"<color={color}>TESTING =={message}</color>");
-        }
-
-        public static void LogError(string message, string color= "#ff0000ff")
-        {
-            Debug.LogError($"<color={color}>TESTING =={message}</color>");
         }
     }
 }

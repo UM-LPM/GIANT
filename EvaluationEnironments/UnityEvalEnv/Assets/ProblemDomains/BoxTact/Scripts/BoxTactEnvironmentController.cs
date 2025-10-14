@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using Utils;
 
 namespace Problems.BoxTact
 {
@@ -187,7 +188,7 @@ namespace Problems.BoxTact
                                   $"[Boxes moved]: {agent.BoxesMoved} / {maxBoxMoves} = {boxesMovedFitness}\n" +
                                   $"[Boxes moved to target]: {boxesMovedToTarget} / {allBoxes} = {boxesMovedToTargetFitness}\n";
 
-                Debug.Log(agentFitnessLog);
+                DebugSystem.LogVerbose(agentFitnessLog);
             }
         }
 

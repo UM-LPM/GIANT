@@ -5,6 +5,7 @@ using System;
 using Configuration;
 using System.Linq;
 using UnityEngine.UIElements;
+using Utils;
 
 namespace Problems.Soccer
 {
@@ -436,7 +437,7 @@ namespace Problems.Soccer
                                   $"[Time without goal bonus]: {agent.MaxTimeWithoutGoal} / {CurrentSimulationSteps} = {timeWithoutGoalBonusFitness}\n" +
                                   $"[Time looking at ball]: {agent.TimeLookingAtBall} / {CurrentSimulationSteps} = {timeLookingAtBallFitness}";
 
-                Debug.Log(agentFitnessLog);
+                DebugSystem.LogVerbose(agentFitnessLog);
 
             }
         }

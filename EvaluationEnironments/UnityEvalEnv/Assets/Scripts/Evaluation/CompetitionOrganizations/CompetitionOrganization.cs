@@ -7,6 +7,7 @@ using Google.Protobuf.WellKnownTypes;
 using System;
 using Base;
 using Evaluators.CompetitionOrganizations;
+using Utils;
 
 namespace Evaluators.CompetitionOrganizations
 {
@@ -119,10 +120,10 @@ namespace Evaluators.CompetitionOrganizations
 
         public void DisplayStandings()
         {
-            UnityEngine.Debug.Log("Standings:");
+            DebugSystem.LogDetailed("Standings:");
             foreach (var team in Teams)
             {
-                UnityEngine.Debug.Log($"{team.GetTeamName()} - {team.Score} points");
+                DebugSystem.LogDetailed($"{team.GetTeamName()} - {team.Score} points");
             }
         }
 

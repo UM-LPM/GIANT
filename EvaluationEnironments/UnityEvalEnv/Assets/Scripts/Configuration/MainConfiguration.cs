@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using Evaluators.CompetitionOrganizations;
 using Evaluators;
 using Base;
+using Utils;
 
 namespace Configuration
 {
@@ -45,6 +46,7 @@ namespace Configuration
         public RandomSeedMode RandomSeedMode { get; set; }
         public int GameMode { get; set; }
         public int MaxSimultaneousEnvironments { get; set; }
+        public string[] DebugCategories { get; set; }
         public bool IncludeNodeCallFrequencyCounts { get; set; }
 
         // Environment configuration
@@ -84,7 +86,7 @@ namespace Configuration
             }
             catch (Exception e)
             {
-                Debug.Log("Configuration file not found: " + e.Message);
+                DebugSystem.LogWarning("Configuration file not found: " + e.Message);
                 return null;
             }
         }

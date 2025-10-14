@@ -6,6 +6,7 @@ using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Utils;
 
 namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentController
 {
@@ -237,11 +238,11 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
 
                         // 3. Remove the edge from the GraphView
                         abisGraphView.RemoveElement(edge);
-                        Debug.LogWarning("Invalid connection detected and removed.");
+                        DebugSystem.LogWarning("Invalid connection detected and removed.");
                     }
                     else
                     {
-                        Debug.LogError("Could not find GraphView to remove invalid edge.");
+                        DebugSystem.LogError("Could not find GraphView to remove invalid edge.");
                     }
                 }
             }
@@ -253,7 +254,7 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
             var inputNodeView = inputPort.node as ABiSNodeView;
             if (outputNodeView != null && inputNodeView != null)
             {
-                Debug.Log($"Connection removed between {outputNodeView.title} and {inputNodeView.title}");
+                DebugSystem.LogVerbose($"Connection removed between {outputNodeView.title} and {inputNodeView.title}");
             }
         }
 

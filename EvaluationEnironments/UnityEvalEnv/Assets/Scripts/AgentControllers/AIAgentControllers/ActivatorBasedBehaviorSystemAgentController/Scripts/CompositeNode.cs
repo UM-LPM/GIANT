@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Utils;
 
 namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentController
 {
@@ -22,7 +23,7 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
             }
             else
             {
-                Debug.LogWarning("Child not found in CompositeNode's children list.");
+                DebugSystem.LogWarning("Child not found in CompositeNode's children list.");
             }
         }
     }

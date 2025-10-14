@@ -2,6 +2,7 @@ using Problems.TowerDefense;
 using Problems.Utils.GridSystem;
 using System.Collections.Generic;
 using UnityEngine;
+using Utils;
 
 [RequireComponent(typeof(Grid2D))]
 public class TestGrid2D : MonoBehaviour
@@ -39,7 +40,7 @@ public class TestGrid2D : MonoBehaviour
 
         if(Grid2D == null)
         {
-            Debug.LogError("Grid2D component not found.");
+            DebugSystem.LogError("Grid2D component not found.");
         }
 
         Enemys = new List<EnemyComponent>();
@@ -60,12 +61,12 @@ public class TestGrid2D : MonoBehaviour
             int gridX, gridY;
             if (Grid2D.IsMousePositionInGrid(out gridX, out gridY))
             {
-                Debug.Log($"Clicked on grid cell: ({gridX}, {gridY})");
+                DebugSystem.LogVerbose($"Clicked on grid cell: ({gridX}, {gridY})");
 
                 GameObject g = Grid2D.GetGridObject(gridX, gridY);
                 if(g != null)
                 {
-                    Debug.Log($"Grid already contains an object: {g.name}");
+                    DebugSystem.LogVerbose($"Grid already contains an object: {g.name}");
                 }
                 else
                 {

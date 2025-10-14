@@ -2,7 +2,6 @@ using AgentOrganizations;
 using Base;
 using Configuration;
 using Evaluators.CompetitionOrganizations;
-using Evaluators.CompetitionOrganizations;
 using Fitnesses;
 using Newtonsoft.Json;
 using System;
@@ -12,6 +11,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using Utils;
 
 namespace Evaluators
 {
@@ -127,11 +127,11 @@ namespace Evaluators
             }
             catch (TaskCanceledException ex) when (ex.InnerException is TimeoutException)
             {
-                Debug.LogError("Evaluation request timed out. Please check the EvalEnvInstances and ensure they are running correctly.");
+                DebugSystem.LogError("Evaluation request timed out. Please check the EvalEnvInstances and ensure they are running correctly.");
             }
             catch (Exception ex)
             {
-                Debug.LogError($"An error occurred while evaluating competition matches: {ex.Message}\n{ex.StackTrace}");
+                DebugSystem.LogError($"An error occurred while evaluating competition matches: {ex.Message}\n{ex.StackTrace}");
             }
 
             throw new Exception("No match fitnesses were returned");

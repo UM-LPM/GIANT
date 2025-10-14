@@ -8,6 +8,7 @@ using AgentOrganizations;
 using Fitnesses;
 using System.Linq;
 using Base;
+using Utils;
 
 namespace Evaluators.CompetitionOrganizations
 {
@@ -214,7 +215,7 @@ namespace Evaluators.CompetitionOrganizations
 
         public override void DisplayScore()
         {
-            UnityEngine.Debug.Log($"Player {Player.Id}: {Rating}");
+            DebugSystem.LogDetailed($"Player {Player.Id}: {Rating}");
         }
 
         public override double GetScore()

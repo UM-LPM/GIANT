@@ -19,7 +19,7 @@ namespace Problems.Soccer
         [SerializeField] public Material SoccerTeamMaterialPurple;
 
         Transform[][] SpawnPoints;
-        private Rigidbody rigidbody;
+        private Rigidbody rb;
 
         public override void validateSpawnConditions(EnvironmentControllerBase environmentController)
         {
@@ -103,14 +103,14 @@ namespace Problems.Soccer
                 agent.transform.position = agent.StartPosition;
                 agent.transform.rotation = agent.StartRotation;
 
-                rigidbody = agent.Rigidbody;
-                if (rigidbody != null)
+                rb = agent.Rigidbody;
+                if (rb != null)
                 {
-                    rigidbody.velocity = Vector3.zero;
-                    rigidbody.angularVelocity = Vector3.zero;
+                    rb.velocity = Vector3.zero;
+                    rb.angularVelocity = Vector3.zero;
 
-                    rigidbody.position = agent.StartPosition;
-                    rigidbody.rotation = agent.StartRotation;
+                    rb.position = agent.StartPosition;
+                    rb.rotation = agent.StartRotation;
                 }
                 else
                 {

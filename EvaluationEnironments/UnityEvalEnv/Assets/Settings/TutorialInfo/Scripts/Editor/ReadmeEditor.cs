@@ -5,6 +5,7 @@ using UnityEditor;
 using System;
 using System.IO;
 using System.Reflection;
+using Utils;
 
 [CustomEditor(typeof(Readme))]
 [InitializeOnLoad]
@@ -36,7 +37,7 @@ public class ReadmeEditor : Editor
             }
             else
             {
-                Debug.Log($"Could not find the Readme folder at {s_ReadmeSourceDirectory}");
+                DebugSystem.Log($"Could not find the Readme folder at {s_ReadmeSourceDirectory}");
             }
 
             var readmeAsset = SelectReadme();
@@ -87,7 +88,7 @@ public class ReadmeEditor : Editor
         }
         else
         {
-            Debug.Log("Couldn't find a readme");
+            DebugSystem.LogWarning("Couldn't find a readme");
             return null;
         }
     }

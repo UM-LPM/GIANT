@@ -8,6 +8,7 @@ using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Utils;
 using static UnityEditor.Experimental.GraphView.GraphView;
 
 namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentController
@@ -156,7 +157,7 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
                     // Check if RootNode is selected, if so, do not duplicate
                     if (selection.OfType<ABiSNodeView>().Any(n => n.node is RootNode))
                     {
-                        Debug.LogWarning("Cannot duplicate RootNode. Please select other nodes to duplicate.");
+                        DebugSystem.LogWarning("Cannot duplicate RootNode. Please select other nodes to duplicate.");
                         return;
                     }
 

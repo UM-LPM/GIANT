@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Utils;
 
 namespace Base
 {
@@ -60,7 +61,7 @@ namespace Base
         private bool evaluationInProgress = false;
         private string[] IncludedEnvironments = null;
 
-        private async void Awake()
+        private void Awake()
         {
             // Singleton pattern
             if (Instance != null)
@@ -155,7 +156,7 @@ namespace Base
             }
         }
 
-        async void InitializeHttpListener()
+        void InitializeHttpListener()
         {
             string[] uriParts;
             while (true)
@@ -166,11 +167,11 @@ namespace Base
                     Listener.Prefixes.Add(CommunicatorURI);
                     Listener.Start();
 
-                    Debug.Log("Communicator HTTP server is running");
+                    DebugSystem.Log("Communicator HTTP server is running");
 
                     break;
                 }
-                catch (Exception e)
+                catch
                 {
                     uriParts = CommunicatorURI.Split(':');
                     uriParts[2] = uriParts[2].Split('/')[0];
@@ -227,7 +228,7 @@ namespace Base
                 SetEvalRequestMatches(context);
             }
 
-            Debug.Log("PerformEvaluation  with " + Matches.Length + " Matches.");
+            DebugSystem.LogDetailed("PerformEvaluation  with " + Matches.Length + " Matches.");
 
             MatchFitnesses = new List<MatchFitness>();
             SimulationStepsCombined = 0;

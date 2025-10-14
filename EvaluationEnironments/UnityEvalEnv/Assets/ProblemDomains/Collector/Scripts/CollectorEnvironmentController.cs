@@ -192,7 +192,7 @@ namespace Problems.Collector
                                   $"[Targets Acquired]: {agent.TargetsAquired} / {MaxTargets} = {targetsAcquiredFitness}\n" +
                                   $"[Time penalty]: {CurrentSimulationSteps} / {SimulationSteps} = {timePenalty}\n";
 
-                Debug.Log(agentFitnessLog);
+                DebugSystem.LogVerbose(agentFitnessLog);
 
             }
         }

@@ -1,6 +1,7 @@
 using Problems.Utils.PathFinding;
 using System.Collections.Generic;
 using UnityEngine;
+using Utils;
 
 namespace Problems.Utils.GridSystem
 {
@@ -30,7 +31,7 @@ namespace Problems.Utils.GridSystem
             PathFindingAlgorithm = GetComponent<PathFindingAlgorithm>();
             if(PathFindingAlgorithm == null)
             {
-                UnityEngine.Debug.LogWarning("PathFindingAlgorithm component is missing on the GridBase object.");
+                DebugSystem.LogWarning("PathFindingAlgorithm component is missing on the GridBase object.");
             }
         }
 

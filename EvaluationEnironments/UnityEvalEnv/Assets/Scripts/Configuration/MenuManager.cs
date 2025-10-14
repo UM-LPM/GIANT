@@ -80,6 +80,9 @@ namespace Configuration
 
         public void Play()
         {
+            // Configure debug modes
+            ConfigureDebugModes();
+
             string problemDomain = ProblemDropdown.options[ProblemDropdown.value].text;
             if (MainConfiguration != null)
             {
@@ -91,13 +94,13 @@ namespace Configuration
 
             if (string.IsNullOrEmpty(problemDomain))
             {
-                Debug.LogError("Problem domain is empty");
+                DebugSystem.LogError("Problem domain is empty");
                 return;
             }
 
             if (string.IsNullOrEmpty(CoordinatorURI) || string.IsNullOrEmpty(CommunicatorURI))
             {
-                Debug.LogError("CoordinatorURI or CommunicatorURI is empty");
+                DebugSystem.LogError("CoordinatorURI or CommunicatorURI is empty");
                 return;
             }
 
@@ -123,7 +126,7 @@ namespace Configuration
                     UnityEngine.SceneManagement.SceneManager.LoadScene("DodgeBallBaseScene");
                     break;
                 default:
-                    Debug.LogError("Problem domain not found");
+                    DebugSystem.LogError("Problem domain not found");
                     break;
             }
         }
@@ -141,6 +144,24 @@ namespace Configuration
         void OnDestroy()
         {
             MqttNetLogger.Disconnect();
+        }
+
+        void ConfigureDebugModes()
+        {
+            if(MainConfiguration == null || MainConfiguration.DebugCategories == null || MainConfiguration.DebugCategories.Length == 0)
+            {
+                DebugSystem.EnableAll(true);
+                return;
+            }
+            DebugSystem.EnableAll(false);
+
+            foreach (var category in MainConfiguration.DebugCategories)
+            {
+                if (System.Enum.TryParse(category, out DebugCategory debugCategory))
+                {
+                    DebugSystem.EnableCategory(debugCategory, true);
+                }
+            }
         }
     }
 }

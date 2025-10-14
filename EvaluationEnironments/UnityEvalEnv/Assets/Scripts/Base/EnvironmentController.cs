@@ -81,7 +81,7 @@ namespace Base
             ActionObservationProcessor = gameObject.GetComponent<ActionObservationProcessor>();
             if (ActionObservationProcessor == null)
             {
-                Debug.LogWarning("ActionObservationProcessor is not set!");
+                DebugSystem.LogWarning("ActionObservationProcessor is not set!");
             }
 
             ActionExecutor = gameObject.GetComponent<ActionExecutor>();
@@ -354,7 +354,7 @@ namespace Base
             }
         }
 
-        public int GetNumOfActiveAgents()
+        public virtual int GetNumOfActiveAgents()
         {
             int counter = 0;
 

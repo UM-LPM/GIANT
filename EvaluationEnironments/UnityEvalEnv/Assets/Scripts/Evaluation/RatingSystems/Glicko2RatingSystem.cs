@@ -9,6 +9,7 @@ using System;
 using Unity.Mathematics;
 using Kezyma.EloRating;
 using Base;
+using Utils;
 
 namespace Evaluators.CompetitionOrganizations
 {
@@ -176,7 +177,7 @@ namespace Evaluators.CompetitionOrganizations
 
         public override void DisplayScore()
         {
-            UnityEngine.Debug.Log("Player: " + IndividualID + " Rating: " + Player.Rating + " RD: " + Player.RatingDeviation + " Volatility: " + Player.Volatility);
+            DebugSystem.LogDetailed("Player: " + IndividualID + " Rating: " + Player.Rating + " RD: " + Player.RatingDeviation + " Volatility: " + Player.Volatility);
         }
 
         public override double GetScore()

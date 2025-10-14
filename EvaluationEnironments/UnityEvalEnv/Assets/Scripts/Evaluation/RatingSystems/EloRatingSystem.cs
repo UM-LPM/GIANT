@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Mathematics;
+using Utils;
 
 namespace Evaluators.CompetitionOrganizations
 {
@@ -228,7 +229,7 @@ namespace Evaluators.CompetitionOrganizations
 
         public override void DisplayScore()
         {
-            UnityEngine.Debug.Log($"Player {IndividualID}: Rating: {Rating}, K Factor: {KFactor}");
+            DebugSystem.LogDetailed($"Player {IndividualID}: Rating: {Rating}, K Factor: {KFactor}");
         }
 
         public override double GetScore()

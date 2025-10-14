@@ -5,6 +5,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEditor.UIElements;
+using Utils;
 
 namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 {
@@ -26,7 +27,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
             var guids = AssetDatabase.FindAssets("t:BehaviourTreeSettings");
             if (guids.Length > 1)
             {
-                Debug.LogWarning($"Found multiple settings files, using the first.");
+                DebugSystem.LogWarning($"Found multiple settings files, using the first.");
             }
 
             switch (guids.Length)
