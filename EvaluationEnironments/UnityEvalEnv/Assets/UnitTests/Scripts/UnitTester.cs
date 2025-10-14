@@ -59,7 +59,7 @@ namespace UnitTests {
 
             if(!Instance.UnitTestResultsOutputed && Instance.CurrentTestIndex == UnitTests.Length - 1 && !Instance.UnitTestRunning)
             {
-                DebugSystem.Log("All UnitTests have been executed.");
+                DebugSystem.LogSuccess("All UnitTests have been executed.");
                 for (int i = 0; i < Instance.TestResults.Length; i++)
                 {
                     if(Instance.TestResults[i] != null)
@@ -127,7 +127,7 @@ namespace UnitTests {
             // Check if scene.name corresponds to pattern "ProblemName + BaseScene"(e.g., "RoboStrikeBaseScene" or "SoccerBaseScene") but is not exactly "BaseScene"
             if (scene.name != "BaseScene" && scene.name.EndsWith("BaseScene"))
             {
-                DebugSystem.Log("Scene Loaded: " + scene.name);
+                DebugSystem.LogDetailed("Scene Loaded: " + scene.name);
 
                 // Send request to the Coordinator to evaluate the individuals
                 SendEvaluationRequest();
@@ -139,7 +139,7 @@ namespace UnitTests {
             // Check if scene.name corresponds to pattern "ProblemName + BaseScene"(e.g., "RoboStrikeBaseScene" or "SoccerBaseScene") but is not exactly "BaseScene"
             if (scene.name != "BaseScene" && scene.name.EndsWith("BaseScene"))
             {
-                DebugSystem.Log("Scene Unloaded: " + scene.name);
+                DebugSystem.LogDetailed("Scene Unloaded: " + scene.name);
                 // Scene is unloaded
             }
         }
@@ -151,7 +151,7 @@ namespace UnitTests {
             {
                 if (Coordinator.Instance != null && Coordinator.Instance.CoordinatorURI != null)
                 {
-                    DebugSystem.Log($"Sending evaluation request to Coordinator on URI: {Coordinator.Instance.CoordinatorURI}");
+                    DebugSystem.LogDetailed($"Sending evaluation request to Coordinator on URI: {Coordinator.Instance.CoordinatorURI}");
 
                     // Send post request to Coordinator.Instance.CoordinatorURI
                     string json = JsonConvert.SerializeObject(new
@@ -181,7 +181,7 @@ namespace UnitTests {
 
             if (request.result == UnityWebRequest.Result.Success)
             {
-                DebugSystem.Log($"Evaluation for UnitTest: { UnitTests[Instance.CurrentTestIndex].Name } completed successfully.");
+                DebugSystem.LogDetailed($"Evaluation for UnitTest: { UnitTests[Instance.CurrentTestIndex].Name } completed successfully.");
 
                 string expectedOutputJson = System.IO.File.ReadAllText(UnitTests[Instance.CurrentTestIndex].ExpectedOutputFilePath);
 

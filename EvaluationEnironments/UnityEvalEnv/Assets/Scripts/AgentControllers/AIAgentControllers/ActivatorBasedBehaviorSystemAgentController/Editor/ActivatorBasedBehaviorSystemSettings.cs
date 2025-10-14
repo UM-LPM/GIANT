@@ -6,6 +6,7 @@ using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Utils;
 
 namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentController
 {
@@ -30,7 +31,7 @@ namespace AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentC
             var guids = AssetDatabase.FindAssets("t:ActivatorBasedBehaviorSystemSettings");
             if (guids.Length > 1)
             {
-                Debug.LogWarning($"Found multiple settings files, using the first.");
+                DebugSystem.LogWarning($"Found multiple settings files, using the first.");
             }
 
             switch (guids.Length)

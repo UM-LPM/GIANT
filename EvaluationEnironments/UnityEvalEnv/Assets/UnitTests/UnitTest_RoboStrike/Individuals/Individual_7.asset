@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-7940533680704193084
+--- !u!114 &-9067632802255007561
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9,18 +9,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e7005ef9ca3dafc4b86928393e168f40, type: 3}
-  m_Name: HealthLevelBellow
+  m_Script: {fileID: 11500000, guid: 2896f3e48c4d62d40be88fb007bb6361, type: 3}
+  m_Name: RayHitObject
   m_EditorClassIdentifier: 
-  position: {x: 510, y: 840}
+  position: {x: 3400, y: 980}
   description: 
-  guid: 69ec461a-f6d9-4358-9b4a-36be4fbe58ab
+  guid: a23a0f47-b615-49d5-b0e3-ab0eb821aff8
   drawGizmos: 0
   state: 0
   started: 0
   callFrequencyCount: 0
-  healthLevel: 0
---- !u!114 &-7811757613632882310
+  targetGameObject: 1
+  side: 2
+  rayIndex: 7
+  targetTeamType: 1
+  raySensor: {fileID: 0}
+--- !u!114 &-9031733206211398198
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -29,38 +33,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1fd1e85f30abba2499f6834e124b1450, type: 3}
-  m_Name: MoveForward
+  m_Script: {fileID: 11500000, guid: 2896f3e48c4d62d40be88fb007bb6361, type: 3}
+  m_Name: RayHitObject
   m_EditorClassIdentifier: 
-  position: {x: 170, y: 980}
+  position: {x: 1360, y: 840}
   description: 
-  guid: f92dfb23-f8df-42be-a45f-a85c9c2e18af
+  guid: 194bc299-c709-403c-ab69-28ccaa77354c
   drawGizmos: 0
   state: 0
   started: 0
   callFrequencyCount: 0
-  moveForwardDirection: 1
---- !u!114 &-7131677622630957964
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 163c147d123e4a945b688eddc64e3ea5, type: 3}
-  m_Name: RootNode
-  m_EditorClassIdentifier: 
-  position: {x: 170, y: 0}
-  description: 
-  guid: 239add7a-19be-47bf-bc4d-5655798ad9d1
-  drawGizmos: 0
-  state: 0
-  started: 0
-  callFrequencyCount: 0
-  child: {fileID: -4145288471479691099}
---- !u!114 &-6958717045886957271
+  targetGameObject: 3
+  side: 2
+  rayIndex: 1
+  targetTeamType: 1
+  raySensor: {fileID: 0}
+--- !u!114 &-8973744167977907370
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -72,18 +60,415 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
   m_Name: Sequencer
   m_EditorClassIdentifier: 
-  position: {x: 340, y: 1120}
+  position: {x: 3230, y: 840}
   description: 
-  guid: 550b2a57-3fbc-43ae-998c-7a16e284f434
+  guid: 7a407d89-b943-42a3-85e1-a3a26ad25f8c
   drawGizmos: 0
   state: 0
   started: 0
   callFrequencyCount: 0
   children:
-  - {fileID: -1797161490668716565}
-  - {fileID: -4105557561228500341}
-  - {fileID: -598059766001559533}
---- !u!114 &-6490674634337642088
+  - {fileID: -8925488530374531112}
+  - {fileID: 1293777810127006943}
+  - {fileID: -6069811425546324168}
+--- !u!114 &-8925488530374531112
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7005ef9ca3dafc4b86928393e168f40, type: 3}
+  m_Name: HealthLevelBellow
+  m_EditorClassIdentifier: 
+  position: {x: 3740, y: 980}
+  description: 
+  guid: 8601cdbe-ef8e-48da-80b3-6641ac250d80
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  healthLevel: 1
+--- !u!114 &-8806959303902240571
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fd1e85f30abba2499f6834e124b1450, type: 3}
+  m_Name: MoveForward
+  m_EditorClassIdentifier: 
+  position: {x: 2890, y: 840}
+  description: 
+  guid: ad58e2fa-2044-43a3-9fbf-01e267d46f75
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  moveForwardDirection: 2
+--- !u!114 &-8393357695792188839
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e7922a36c65b824f95d4e76c192add0, type: 3}
+  m_Name: AgentController
+  m_EditorClassIdentifier: 
+  AgentControllerId: 0
+  ControllerType: 0
+  RootNode: {fileID: 3202627620277875997}
+  TreeState: 0
+  Nodes:
+  - {fileID: 3202627620277875997}
+  - {fileID: 37540652538039484}
+  - {fileID: 6930864179596059886}
+  - {fileID: 6830128521818793579}
+  - {fileID: -1219199669365730889}
+  - {fileID: 9075667025420742443}
+  - {fileID: 4739066880276852117}
+  - {fileID: 7552700353299078308}
+  - {fileID: -8346062690056466720}
+  - {fileID: 7724176622855938485}
+  - {fileID: 6626363661714751398}
+  - {fileID: 7255725190849695995}
+  - {fileID: 8177844386637670599}
+  - {fileID: 7943133390500914567}
+  - {fileID: -6899914534572468727}
+  - {fileID: -5280635841628440799}
+  - {fileID: 2501490154133849264}
+  - {fileID: 2225725996838073811}
+  - {fileID: -2676113050457187556}
+  - {fileID: 4682157099976364049}
+  - {fileID: 956353873098156198}
+  - {fileID: -7738183206946029958}
+  - {fileID: 3952448535331135647}
+  - {fileID: 5235274677515090320}
+  - {fileID: -1785218217536857204}
+  - {fileID: -9031733206211398198}
+  - {fileID: 7091794341452907181}
+  - {fileID: 3323519543989075819}
+  - {fileID: 4349353852676398517}
+  - {fileID: -3376582851476287315}
+  - {fileID: 6847083314329981074}
+  - {fileID: 3536583982338442566}
+  - {fileID: -6585630910958298000}
+  - {fileID: -4855806008303255072}
+  - {fileID: -8806959303902240571}
+  - {fileID: 4075323625732185677}
+  - {fileID: -8973744167977907370}
+  - {fileID: -5910314953590826483}
+  - {fileID: -5247445051932706083}
+  - {fileID: -7296932147801223062}
+  - {fileID: 2607471363271212907}
+  - {fileID: -2638087210552263117}
+  - {fileID: 5830434555546230681}
+  - {fileID: 6769052438435295029}
+  - {fileID: -5265741319139810388}
+  - {fileID: 1725851421336301285}
+  - {fileID: -7698940197139230232}
+  - {fileID: 2841868525669650121}
+  - {fileID: -757514563303696289}
+  - {fileID: -2127703818192216522}
+  - {fileID: -2035929866756900878}
+  - {fileID: 5751490138572398041}
+  - {fileID: -6917251034721678398}
+  - {fileID: -5724427919346455773}
+  - {fileID: 2450356897847470072}
+  - {fileID: -4427800558348520151}
+  - {fileID: -9067632802255007561}
+  - {fileID: -1659059154036970048}
+  - {fileID: -8925488530374531112}
+  - {fileID: 1293777810127006943}
+  - {fileID: -6069811425546324168}
+  - {fileID: -1456768729210713244}
+  - {fileID: 7500326565811842642}
+  - {fileID: -4670669726771765204}
+  - {fileID: 5636715705926375586}
+  - {fileID: 8237733589991440992}
+  - {fileID: 7082290884049773618}
+  - {fileID: 1968958877130133064}
+  - {fileID: -7068615990497012402}
+  - {fileID: 2402687641646841182}
+  - {fileID: -4162057261914812651}
+  - {fileID: -3708277790150153346}
+  - {fileID: 5959232209750639343}
+  - {fileID: -4300814177455626627}
+  - {fileID: -4295716588381857889}
+  - {fileID: 7144196041381775676}
+  - {fileID: -1932436280764672187}
+  - {fileID: -4269707034461737674}
+  - {fileID: -6663368719957741240}
+  - {fileID: 3652999767078140608}
+  - {fileID: -208036427207874946}
+  - {fileID: 289473142317436444}
+--- !u!114 &-8346062690056466720
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
+  m_Name: Sequencer
+  m_EditorClassIdentifier: 
+  position: {x: 510, y: 560}
+  description: 
+  guid: 78580097-62cb-46dc-a303-e8febf938b2f
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  children:
+  - {fileID: -5280635841628440799}
+  - {fileID: 2501490154133849264}
+  - {fileID: 2225725996838073811}
+--- !u!114 &-7738183206946029958
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7005ef9ca3dafc4b86928393e168f40, type: 3}
+  m_Name: HealthLevelBellow
+  m_EditorClassIdentifier: 
+  position: {x: 680, y: 840}
+  description: 
+  guid: 914fbda5-ce56-4b52-886b-0391e05288dd
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  healthLevel: 0
+--- !u!114 &-7698940197139230232
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fd1e85f30abba2499f6834e124b1450, type: 3}
+  m_Name: MoveForward
+  m_EditorClassIdentifier: 
+  position: {x: 1700, y: 980}
+  description: 
+  guid: 50e0d409-310a-4e79-8593-23e2186247ab
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  moveForwardDirection: 2
+--- !u!114 &-7296932147801223062
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2896f3e48c4d62d40be88fb007bb6361, type: 3}
+  m_Name: RayHitObject
+  m_EditorClassIdentifier: 
+  position: {x: 510, y: 980}
+  description: 
+  guid: 5610bb36-171b-499f-81e9-c029ee5844fe
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  targetGameObject: 0
+  side: 0
+  rayIndex: 9
+  targetTeamType: 0
+  raySensor: {fileID: 0}
+--- !u!114 &-7068615990497012402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
+  m_Name: Rotate
+  m_EditorClassIdentifier: 
+  position: {x: 1360, y: 1120}
+  description: 
+  guid: 1eed796f-e4b7-496d-bb40-009e7ab497bc
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  rotateDirection: 1
+--- !u!114 &-6917251034721678398
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
+  m_Name: Rotate
+  m_EditorClassIdentifier: 
+  position: {x: 2720, y: 980}
+  description: 
+  guid: 7be7691b-f7ff-4b7b-ada4-795a3a0bcc76
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  rotateDirection: 2
+--- !u!114 &-6899914534572468727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
+  m_Name: Sequencer
+  m_EditorClassIdentifier: 
+  position: {x: 1020, y: 700}
+  description: 
+  guid: e26efa94-2a45-4265-bc6b-d9b35ac16d7b
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  children:
+  - {fileID: -3376582851476287315}
+  - {fileID: 6847083314329981074}
+  - {fileID: 3536583982338442566}
+--- !u!114 &-6663368719957741240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7005ef9ca3dafc4b86928393e168f40, type: 3}
+  m_Name: HealthLevelBellow
+  m_EditorClassIdentifier: 
+  position: {x: 1020, y: 1260}
+  description: 
+  guid: 675f9f7c-a3ca-46af-aff0-b55c8ea06e86
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  healthLevel: 0
+--- !u!114 &-6585630910958298000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2896f3e48c4d62d40be88fb007bb6361, type: 3}
+  m_Name: RayHitObject
+  m_EditorClassIdentifier: 
+  position: {x: 2550, y: 840}
+  description: 
+  guid: 575a7aee-8a0a-4f6f-b45a-48f3a45c3bf5
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  targetGameObject: 3
+  side: 1
+  rayIndex: 9
+  targetTeamType: 0
+  raySensor: {fileID: 0}
+--- !u!114 &-6069811425546324168
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2896f3e48c4d62d40be88fb007bb6361, type: 3}
+  m_Name: RayHitObject
+  m_EditorClassIdentifier: 
+  position: {x: 4080, y: 980}
+  description: 
+  guid: 65e5fe9b-3509-46dc-a130-232c7d42f008
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  targetGameObject: 2
+  side: 2
+  rayIndex: 7
+  targetTeamType: 1
+  raySensor: {fileID: 0}
+--- !u!114 &-5910314953590826483
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
+  m_Name: Rotate
+  m_EditorClassIdentifier: 
+  position: {x: 170, y: 980}
+  description: 
+  guid: abf6c2c3-e67a-4fe0-8bfe-aacb62008fac
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  rotateDirection: 2
+--- !u!114 &-5724427919346455773
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3541a6a84d600d443a32c4b10ae322a3, type: 3}
+  m_Name: AmmoLevelBellow
+  m_EditorClassIdentifier: 
+  position: {x: 2890, y: 980}
+  description: 
+  guid: 89a68300-1131-4e6e-b80d-85e09decfb07
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  ammoLevel: 0
+--- !u!114 &-5280635841628440799
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -95,15 +480,75 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
   m_Name: Inverter
   m_EditorClassIdentifier: 
-  position: {x: 1870, y: 840}
+  position: {x: 1190, y: 700}
   description: 
-  guid: 78929928-c882-4548-900d-69a2183774c9
+  guid: 3163f67f-2104-4deb-8717-81b1c6176498
   drawGizmos: 0
   state: 0
   started: 0
   callFrequencyCount: 0
-  child: {fileID: -1296087330882209043}
---- !u!114 &-6433578035406634886
+  child: {fileID: -6585630910958298000}
+--- !u!114 &-5265741319139810388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3dc491c3b458a945b4bd32e24ed7627, type: 3}
+  m_Name: Shoot
+  m_EditorClassIdentifier: 
+  position: {x: 1360, y: 980}
+  description: 
+  guid: f7cd01e4-3945-45ee-9d91-2ac7529ae193
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  shoot: 1
+--- !u!114 &-5247445051932706083
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3541a6a84d600d443a32c4b10ae322a3, type: 3}
+  m_Name: AmmoLevelBellow
+  m_EditorClassIdentifier: 
+  position: {x: 340, y: 980}
+  description: 
+  guid: e3bcb0f5-8307-4285-be33-92f67d771518
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  ammoLevel: 0
+--- !u!114 &-4855806008303255072
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
+  m_Name: Inverter
+  m_EditorClassIdentifier: 
+  position: {x: 2720, y: 840}
+  description: 
+  guid: bee3ab63-ad74-4825-89f1-7b32dc6344dc
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  child: {fileID: -9067632802255007561}
+--- !u!114 &-4670669726771765204
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -117,16 +562,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   position: {x: 510, y: 1120}
   description: 
-  guid: fbeb61f3-fb95-4ed3-8276-f9288a2d6aeb
+  guid: 3a881bf0-c908-4e2f-b149-ec8663631beb
   drawGizmos: 0
   state: 0
   started: 0
   callFrequencyCount: 0
   children:
-  - {fileID: -5096563502202424218}
-  - {fileID: 8437667381511360157}
-  - {fileID: 1302859436140037075}
---- !u!114 &-6147832428957623853
+  - {fileID: -4300814177455626627}
+  - {fileID: -4295716588381857889}
+  - {fileID: 7144196041381775676}
+--- !u!114 &-4427800558348520151
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -135,64 +580,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
-  m_Name: Sequencer
+  m_Script: {fileID: 11500000, guid: 3541a6a84d600d443a32c4b10ae322a3, type: 3}
+  m_Name: AmmoLevelBellow
   m_EditorClassIdentifier: 
-  position: {x: 2720, y: 840}
+  position: {x: 3230, y: 980}
   description: 
-  guid: 71d2dc7a-dd38-4deb-9639-566f8fe60e6e
+  guid: 135b0574-4d70-4c32-8a2e-c788a3a32ec6
   drawGizmos: 0
   state: 0
   started: 0
   callFrequencyCount: 0
-  children:
-  - {fileID: -1368881120269283197}
-  - {fileID: 9013407867805821846}
-  - {fileID: 8916432350691977167}
---- !u!114 &-5877182800978714672
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1fd1e85f30abba2499f6834e124b1450, type: 3}
-  m_Name: MoveForward
-  m_EditorClassIdentifier: 
-  position: {x: 170, y: 1260}
-  description: 
-  guid: a5bf3454-687e-40f7-b88c-98dbcbad2de4
-  drawGizmos: 0
-  state: 0
-  started: 0
-  callFrequencyCount: 0
-  moveForwardDirection: 1
---- !u!114 &-5862075876296839533
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
-  m_Name: Sequencer
-  m_EditorClassIdentifier: 
-  position: {x: 1190, y: 700}
-  description: 
-  guid: 4e8be4f6-5e83-43e2-8693-190a0d92c9e3
-  drawGizmos: 0
-  state: 0
-  started: 0
-  callFrequencyCount: 0
-  children:
-  - {fileID: 2162903096526091169}
-  - {fileID: -6147832428957623853}
-  - {fileID: 3960612490942073761}
---- !u!114 &-5652360908951183924
+  ammoLevel: 1
+--- !u!114 &-4300814177455626627
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -204,39 +603,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2896f3e48c4d62d40be88fb007bb6361, type: 3}
   m_Name: RayHitObject
   m_EditorClassIdentifier: 
-  position: {x: 1020, y: 840}
+  position: {x: 170, y: 1260}
   description: 
-  guid: 446df51b-8139-48f3-8c76-ee047974e2af
+  guid: 2dd79834-30bc-47f8-a266-b9768a063fd2
   drawGizmos: 0
   state: 0
   started: 0
   callFrequencyCount: 0
-  targetGameObject: 4
-  side: 0
-  rayIndex: 15
-  targetTeamType: 1
+  targetGameObject: 3
+  side: 2
+  rayIndex: 8
+  targetTeamType: 0
   raySensor: {fileID: 0}
---- !u!114 &-5251800758359791033
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
-  m_Name: Inverter
-  m_EditorClassIdentifier: 
-  position: {x: 2040, y: 840}
-  description: 
-  guid: f8474f33-1576-40bc-aa06-269665fe0dac
-  drawGizmos: 0
-  state: 0
-  started: 0
-  callFrequencyCount: 0
-  child: {fileID: -3892355796074430324}
---- !u!114 &-5096563502202424218
+--- !u!114 &-4295716588381857889
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -248,15 +627,75 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
   m_Name: Rotate
   m_EditorClassIdentifier: 
-  position: {x: 1190, y: 1260}
+  position: {x: 340, y: 1260}
   description: 
-  guid: b3c950d9-00b1-4690-8026-3d586b1a7936
+  guid: 78799d92-268d-439d-b106-d2b841380009
   drawGizmos: 0
   state: 0
   started: 0
   callFrequencyCount: 0
   rotateDirection: 2
---- !u!114 &-4575032346736922593
+--- !u!114 &-4269707034461737674
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fd1e85f30abba2499f6834e124b1450, type: 3}
+  m_Name: MoveForward
+  m_EditorClassIdentifier: 
+  position: {x: 850, y: 1260}
+  description: 
+  guid: 910da66e-a203-4961-bc9c-155dc95fb0a4
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  moveForwardDirection: 1
+--- !u!114 &-4162057261914812651
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fd1e85f30abba2499f6834e124b1450, type: 3}
+  m_Name: MoveForward
+  m_EditorClassIdentifier: 
+  position: {x: 1700, y: 1120}
+  description: 
+  guid: dc8b396b-ff81-40a1-a9b6-9b931d5334c9
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  moveForwardDirection: 1
+--- !u!114 &-3708277790150153346
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7005ef9ca3dafc4b86928393e168f40, type: 3}
+  m_Name: HealthLevelBellow
+  m_EditorClassIdentifier: 
+  position: {x: 1870, y: 1120}
+  description: 
+  guid: 117ffaa2-ce72-4ab1-bd68-8916a8d539c9
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  healthLevel: 0
+--- !u!114 &-3376582851476287315
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -268,18 +707,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 460be9e34c566ea45b9e282b1adcb028, type: 3}
   m_Name: Selector
   m_EditorClassIdentifier: 
-  position: {x: 170, y: 560}
+  position: {x: 2040, y: 840}
   description: 
-  guid: 364dd30f-0f9d-4bd8-8e5e-ae4df87930f3
+  guid: 5dff6335-9c37-4c0e-ad8f-6188ff6ff0d8
   drawGizmos: 0
   state: 0
   started: 0
   callFrequencyCount: 0
   children:
-  - {fileID: -226892255779609607}
-  - {fileID: 517127267326582698}
-  - {fileID: 1438768320225484365}
---- !u!114 &-4269299473154582122
+  - {fileID: -6917251034721678398}
+  - {fileID: -5724427919346455773}
+  - {fileID: 2450356897847470072}
+--- !u!114 &-2676113050457187556
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -288,163 +727,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
-  m_Name: Rotate
+  m_Script: {fileID: 11500000, guid: 460be9e34c566ea45b9e282b1adcb028, type: 3}
+  m_Name: Selector
   m_EditorClassIdentifier: 
-  position: {x: 170, y: 1400}
+  position: {x: 170, y: 840}
   description: 
-  guid: fb452db1-b9f2-4449-aa04-3b698c60a7d0
-  drawGizmos: 0
-  state: 0
-  started: 0
-  callFrequencyCount: 0
-  rotateDirection: 1
---- !u!114 &-4145288471479691099
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: afb5496e8cd973748a10b3e3ef436ebd, type: 3}
-  m_Name: Repeat
-  m_EditorClassIdentifier: 
-  position: {x: 170, y: 140}
-  description: 
-  guid: 075e00b8-132a-4f03-8b96-15f2f53cdf2b
-  drawGizmos: 0
-  state: 0
-  started: 0
-  callFrequencyCount: 0
-  child: {fileID: 9171253259795594356}
-  restartOnSuccess: 1
-  restartOnFailure: 1
---- !u!114 &-4105557561228500341
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
-  m_Name: Rotate
-  m_EditorClassIdentifier: 
-  position: {x: 850, y: 1260}
-  description: 
-  guid: 1ddb44b6-5cd0-4250-9d18-9b5c60b86cb2
-  drawGizmos: 0
-  state: 0
-  started: 0
-  callFrequencyCount: 0
-  rotateDirection: 1
---- !u!114 &-3892355796074430324
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a3dc491c3b458a945b4bd32e24ed7627, type: 3}
-  m_Name: Shoot
-  m_EditorClassIdentifier: 
-  position: {x: 1020, y: 980}
-  description: 
-  guid: 6bc8dfcb-604f-40cb-9195-0f2888069263
-  drawGizmos: 0
-  state: 0
-  started: 0
-  callFrequencyCount: 0
-  shoot: 1
---- !u!114 &-3457355060073642940
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
-  m_Name: Rotate
-  m_EditorClassIdentifier: 
-  position: {x: 1360, y: 840}
-  description: 
-  guid: c7d492a9-c22e-4400-857b-4cd15de60034
-  drawGizmos: 0
-  state: 0
-  started: 0
-  callFrequencyCount: 0
-  rotateDirection: 1
---- !u!114 &-1958444909149590402
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a3dc491c3b458a945b4bd32e24ed7627, type: 3}
-  m_Name: Shoot
-  m_EditorClassIdentifier: 
-  position: {x: 850, y: 840}
-  description: 
-  guid: fff6706d-0349-4ab5-85fa-9e41f78fd93a
-  drawGizmos: 0
-  state: 0
-  started: 0
-  callFrequencyCount: 0
-  shoot: 1
---- !u!114 &-1797161490668716565
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
-  m_Name: Sequencer
-  m_EditorClassIdentifier: 
-  position: {x: 680, y: 1260}
-  description: 
-  guid: ee47c47f-e0c6-493b-a51d-08cbda45cc1a
+  guid: 606cd153-cf37-40e2-a1c3-18ad83793a1f
   drawGizmos: 0
   state: 0
   started: 0
   callFrequencyCount: 0
   children:
-  - {fileID: -4269299473154582122}
-  - {fileID: 1062492854708605061}
-  - {fileID: 5328515116296967114}
---- !u!114 &-1368881120269283197
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
-  m_Name: Rotate
-  m_EditorClassIdentifier: 
-  position: {x: 1190, y: 980}
-  description: 
-  guid: e03ba7de-35e3-4b80-b145-a8bd46b30cc8
-  drawGizmos: 0
-  state: 0
-  started: 0
-  callFrequencyCount: 0
-  rotateDirection: 1
---- !u!114 &-1296087330882209043
+  - {fileID: -5910314953590826483}
+  - {fileID: -5247445051932706083}
+  - {fileID: -7296932147801223062}
+--- !u!114 &-2638087210552263117
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -458,16 +755,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   position: {x: 850, y: 980}
   description: 
-  guid: ae77623e-2c0e-4608-856c-bf645138dbfa
+  guid: 6249f16d-4915-4726-b322-c7a84bcc1f76
   drawGizmos: 0
   state: 0
   started: 0
   callFrequencyCount: 0
   children:
-  - {fileID: 3339500516436440256}
-  - {fileID: -6958717045886957271}
-  - {fileID: -6433578035406634886}
---- !u!114 &-1086859237441104207
+  - {fileID: 5636715705926375586}
+  - {fileID: 8237733589991440992}
+  - {fileID: 7082290884049773618}
+--- !u!114 &-2127703818192216522
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -479,38 +776,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 460be9e34c566ea45b9e282b1adcb028, type: 3}
   m_Name: Selector
   m_EditorClassIdentifier: 
-  position: {x: 850, y: 700}
+  position: {x: 2210, y: 980}
   description: 
-  guid: e8fa4fca-83ad-461f-9262-c191f3f1cf8f
+  guid: 7176f31e-64ab-4735-a155-881bc1a090e7
   drawGizmos: 0
   state: 0
   started: 0
   callFrequencyCount: 0
   children:
-  - {fileID: -6490674634337642088}
-  - {fileID: -5251800758359791033}
-  - {fileID: 1119522695474472416}
---- !u!114 &-598059766001559533
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a380d7f9274338e4485e03ec126c5859, type: 3}
-  m_Name: ShieldLevelBellow
-  m_EditorClassIdentifier: 
-  position: {x: 1020, y: 1260}
-  description: 
-  guid: fa7d26c6-5c9c-4892-8190-262ba114c3bd
-  drawGizmos: 0
-  state: 0
-  started: 0
-  callFrequencyCount: 0
-  shieldLevel: 0
---- !u!114 &-285832796035938019
+  - {fileID: -4162057261914812651}
+  - {fileID: -3708277790150153346}
+  - {fileID: 5959232209750639343}
+--- !u!114 &-2035929866756900878
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -522,15 +799,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3dc491c3b458a945b4bd32e24ed7627, type: 3}
   m_Name: Shoot
   m_EditorClassIdentifier: 
-  position: {x: 2380, y: 840}
+  position: {x: 2380, y: 980}
   description: 
-  guid: 72c87fc3-fcaf-4dc1-b25d-3c27e35db670
+  guid: a9d12426-f7ab-4555-8cce-5b7d2ce579a5
   drawGizmos: 0
   state: 0
   started: 0
   callFrequencyCount: 0
   shoot: 1
---- !u!114 &-226892255779609607
+--- !u!114 &-1932436280764672187
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -539,20 +816,144 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
-  m_Name: Sequencer
+  m_Script: {fileID: 11500000, guid: 3541a6a84d600d443a32c4b10ae322a3, type: 3}
+  m_Name: AmmoLevelBellow
   m_EditorClassIdentifier: 
-  position: {x: 170, y: 700}
+  position: {x: 680, y: 1260}
   description: 
-  guid: 16f40976-e05e-43f1-9260-71243f9ae0ec
+  guid: 44a59ff5-2eb4-423e-a9df-5d3390dd8216
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  ammoLevel: 1
+--- !u!114 &-1785218217536857204
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 460be9e34c566ea45b9e282b1adcb028, type: 3}
+  m_Name: Selector
+  m_EditorClassIdentifier: 
+  position: {x: 1190, y: 840}
+  description: 
+  guid: 735cf96c-f171-403f-9656-08181dd8dd20
   drawGizmos: 0
   state: 0
   started: 0
   callFrequencyCount: 0
   children:
-  - {fileID: 6268755263888087608}
-  - {fileID: 6166855996046165968}
-  - {fileID: -7940533680704193084}
+  - {fileID: -7698940197139230232}
+  - {fileID: 2841868525669650121}
+  - {fileID: -757514563303696289}
+--- !u!114 &-1659059154036970048
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2896f3e48c4d62d40be88fb007bb6361, type: 3}
+  m_Name: RayHitObject
+  m_EditorClassIdentifier: 
+  position: {x: 3570, y: 980}
+  description: 
+  guid: 93207baa-7149-47aa-97c8-2316fe0aea73
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  targetGameObject: 3
+  side: 1
+  rayIndex: 9
+  targetTeamType: 0
+  raySensor: {fileID: 0}
+--- !u!114 &-1456768729210713244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3dc491c3b458a945b4bd32e24ed7627, type: 3}
+  m_Name: Shoot
+  m_EditorClassIdentifier: 
+  position: {x: 170, y: 1120}
+  description: 
+  guid: 43cbafe4-7df0-4ea0-85bc-a2a9c5a7feda
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  shoot: 1
+--- !u!114 &-1219199669365730889
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
+  m_Name: Inverter
+  m_EditorClassIdentifier: 
+  position: {x: 340, y: 420}
+  description: 
+  guid: fd3c31f0-1b2f-4b04-b0c7-21cbab188dc3
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  child: {fileID: 7552700353299078308}
+--- !u!114 &-757514563303696289
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7005ef9ca3dafc4b86928393e168f40, type: 3}
+  m_Name: HealthLevelBellow
+  m_EditorClassIdentifier: 
+  position: {x: 2040, y: 980}
+  description: 
+  guid: 37872267-eee7-4f88-bc85-b01eba0aa2c5
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  healthLevel: 0
+--- !u!114 &-208036427207874946
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3dc491c3b458a945b4bd32e24ed7627, type: 3}
+  m_Name: Shoot
+  m_EditorClassIdentifier: 
+  position: {x: 1360, y: 1260}
+  description: 
+  guid: 7ee68502-eff2-4c57-b161-c4e3940b3e6a
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  shoot: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -567,8 +968,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IndividualId: 7
   AgentControllers:
-  - {fileID: 6188795082424786475}
---- !u!114 &33433115971793645
+  - {fileID: -8393357695792188839}
+--- !u!114 &37540652538039484
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -577,18 +978,40 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a380d7f9274338e4485e03ec126c5859, type: 3}
-  m_Name: ShieldLevelBellow
+  m_Script: {fileID: 11500000, guid: afb5496e8cd973748a10b3e3ef436ebd, type: 3}
+  m_Name: Repeat
   m_EditorClassIdentifier: 
-  position: {x: 680, y: 1120}
+  position: {x: 170, y: 140}
   description: 
-  guid: 4b5aa366-2681-45f7-a304-064d063563f2
+  guid: 37249c8b-6172-4294-aa63-16923659593b
   drawGizmos: 0
   state: 0
   started: 0
   callFrequencyCount: 0
-  shieldLevel: 0
---- !u!114 &169543126338748547
+  child: {fileID: 6930864179596059886}
+  restartOnSuccess: 1
+  restartOnFailure: 1
+--- !u!114 &289473142317436444
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3dc491c3b458a945b4bd32e24ed7627, type: 3}
+  m_Name: Shoot
+  m_EditorClassIdentifier: 
+  position: {x: 1530, y: 1260}
+  description: 
+  guid: 73d747f7-67a1-46bd-a7e0-2761ed7997eb
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  shoot: 1
+--- !u!114 &956353873098156198
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -600,18 +1023,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
   m_Name: Sequencer
   m_EditorClassIdentifier: 
-  position: {x: 510, y: 560}
+  position: {x: 510, y: 840}
   description: 
-  guid: a5b5efbf-4709-4938-bc13-5559e355d273
+  guid: 33b64556-24a8-40e5-b3f8-ae50afc2bfcb
   drawGizmos: 0
   state: 0
   started: 0
   callFrequencyCount: 0
   children:
-  - {fileID: -1086859237441104207}
-  - {fileID: 7765527209240659653}
-  - {fileID: -5862075876296839533}
---- !u!114 &442816733508318361
+  - {fileID: 2607471363271212907}
+  - {fileID: -2638087210552263117}
+  - {fileID: 5830434555546230681}
+--- !u!114 &1293777810127006943
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -620,18 +1043,131 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e7005ef9ca3dafc4b86928393e168f40, type: 3}
-  m_Name: HealthLevelBellow
+  m_Script: {fileID: 11500000, guid: a3dc491c3b458a945b4bd32e24ed7627, type: 3}
+  m_Name: Shoot
   m_EditorClassIdentifier: 
-  position: {x: 510, y: 980}
+  position: {x: 3910, y: 980}
   description: 
-  guid: c9f63280-c864-43b0-b0cc-5619917f7ce9
+  guid: 6aa77d8b-e82c-4dd9-9589-01ea483c3829
   drawGizmos: 0
   state: 0
   started: 0
   callFrequencyCount: 0
-  healthLevel: 1
---- !u!114 &517127267326582698
+  shoot: 1
+--- !u!114 &1725851421336301285
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3dc491c3b458a945b4bd32e24ed7627, type: 3}
+  m_Name: Shoot
+  m_EditorClassIdentifier: 
+  position: {x: 1530, y: 980}
+  description: 
+  guid: 2a00ec86-be01-4926-8d2d-ee6118ba393d
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  shoot: 1
+--- !u!114 &1968958877130133064
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
+  m_Name: Sequencer
+  m_EditorClassIdentifier: 
+  position: {x: 1190, y: 1120}
+  description: 
+  guid: 8b77e06a-3ba4-4ff7-8ac9-f27d1c161935
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  children:
+  - {fileID: -1932436280764672187}
+  - {fileID: -4269707034461737674}
+  - {fileID: -6663368719957741240}
+--- !u!114 &2225725996838073811
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 460be9e34c566ea45b9e282b1adcb028, type: 3}
+  m_Name: Selector
+  m_EditorClassIdentifier: 
+  position: {x: 1530, y: 700}
+  description: 
+  guid: 5de817cf-9b8a-4b3b-a822-e09327068a12
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  children:
+  - {fileID: -8806959303902240571}
+  - {fileID: 4075323625732185677}
+  - {fileID: -8973744167977907370}
+--- !u!114 &2402687641646841182
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 460be9e34c566ea45b9e282b1adcb028, type: 3}
+  m_Name: Selector
+  m_EditorClassIdentifier: 
+  position: {x: 1530, y: 1120}
+  description: 
+  guid: b8f67d85-044e-4430-9896-8dd601d25806
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  children:
+  - {fileID: 3652999767078140608}
+  - {fileID: -208036427207874946}
+  - {fileID: 289473142317436444}
+--- !u!114 &2450356897847470072
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2896f3e48c4d62d40be88fb007bb6361, type: 3}
+  m_Name: RayHitObject
+  m_EditorClassIdentifier: 
+  position: {x: 3060, y: 980}
+  description: 
+  guid: bf88c84c-4c3c-4e6c-ac9b-0f780149dee7
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  targetGameObject: 0
+  side: 0
+  rayIndex: 9
+  targetTeamType: 0
+  raySensor: {fileID: 0}
+--- !u!114 &2501490154133849264
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -643,15 +1179,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
   m_Name: Inverter
   m_EditorClassIdentifier: 
-  position: {x: 340, y: 700}
+  position: {x: 1360, y: 700}
   description: 
-  guid: 5a254462-4d24-4b85-abd2-52e5b0e791c4
+  guid: 4987d46d-62ce-480d-aedd-8ec32846852b
   drawGizmos: 0
   state: 0
   started: 0
   callFrequencyCount: 0
-  child: {fileID: 1187179610247192653}
---- !u!114 &1062492854708605061
+  child: {fileID: -4855806008303255072}
+--- !u!114 &2607471363271212907
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -660,18 +1196,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
-  m_Name: Inverter
+  m_Script: {fileID: 11500000, guid: 460be9e34c566ea45b9e282b1adcb028, type: 3}
+  m_Name: Selector
   m_EditorClassIdentifier: 
-  position: {x: 340, y: 1400}
+  position: {x: 680, y: 980}
   description: 
-  guid: 6527eb39-f15a-4a49-9ff5-c94eaa4ec071
+  guid: 56576a1f-a855-443f-975d-f850ed15398a
   drawGizmos: 0
   state: 0
   started: 0
   callFrequencyCount: 0
-  child: {fileID: 1805700205213572666}
---- !u!114 &1119522695474472416
+  children:
+  - {fileID: -1456768729210713244}
+  - {fileID: 7500326565811842642}
+  - {fileID: -4670669726771765204}
+--- !u!114 &2841868525669650121
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -683,15 +1222,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
   m_Name: Rotate
   m_EditorClassIdentifier: 
-  position: {x: 2210, y: 840}
+  position: {x: 1870, y: 980}
   description: 
-  guid: 0deb9b61-bc3c-467c-8093-5da5172fd784
+  guid: 4ee38b6a-0573-4aaf-aeea-8e4a2eeacacf
   drawGizmos: 0
   state: 0
   started: 0
   callFrequencyCount: 0
   rotateDirection: 2
---- !u!114 &1187179610247192653
+--- !u!114 &3202627620277875997
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 163c147d123e4a945b688eddc64e3ea5, type: 3}
+  m_Name: RootNode
+  m_EditorClassIdentifier: 
+  position: {x: 170, y: 0}
+  description: 
+  guid: fd55f274-ae09-4538-85e3-f65aa43916d8
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  child: {fileID: 37540652538039484}
+--- !u!114 &3323519543989075819
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -703,15 +1262,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
   m_Name: Rotate
   m_EditorClassIdentifier: 
-  position: {x: 680, y: 840}
+  position: {x: 1700, y: 840}
   description: 
-  guid: f15bffa7-101c-4954-8263-e1c648cfe560
+  guid: dbb2de35-4af0-48bd-bebd-e228cf758842
   drawGizmos: 0
   state: 0
   started: 0
   callFrequencyCount: 0
-  rotateDirection: 1
---- !u!114 &1302859436140037075
+  rotateDirection: 2
+--- !u!114 &3536583982338442566
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
+  m_Name: Inverter
+  m_EditorClassIdentifier: 
+  position: {x: 2380, y: 840}
+  description: 
+  guid: 8722f800-6b69-4def-a2d3-f015768ee9e5
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  child: {fileID: -4427800558348520151}
+--- !u!114 &3652999767078140608
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -723,15 +1302,401 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fd1e85f30abba2499f6834e124b1450, type: 3}
   m_Name: MoveForward
   m_EditorClassIdentifier: 
-  position: {x: 1530, y: 1260}
+  position: {x: 1190, y: 1260}
   description: 
-  guid: ff276042-dffe-40db-b730-2d3f66de13cf
+  guid: 6fecdb7d-6c93-4b42-b763-4c3cb7645ac3
   drawGizmos: 0
   state: 0
   started: 0
   callFrequencyCount: 0
   moveForwardDirection: 2
---- !u!114 &1438768320225484365
+--- !u!114 &3952448535331135647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
+  m_Name: Sequencer
+  m_EditorClassIdentifier: 
+  position: {x: 850, y: 840}
+  description: 
+  guid: f4be6ba8-c597-4bed-bfb0-d06b384df134
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  children:
+  - {fileID: 6769052438435295029}
+  - {fileID: -5265741319139810388}
+  - {fileID: 1725851421336301285}
+--- !u!114 &4075323625732185677
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
+  m_Name: Inverter
+  m_EditorClassIdentifier: 
+  position: {x: 3060, y: 840}
+  description: 
+  guid: 788f327c-c7ec-4b21-bef1-eb38df06bf78
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  child: {fileID: -1659059154036970048}
+--- !u!114 &4349353852676398517
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2896f3e48c4d62d40be88fb007bb6361, type: 3}
+  m_Name: RayHitObject
+  m_EditorClassIdentifier: 
+  position: {x: 1870, y: 840}
+  description: 
+  guid: 1e9d08ca-421f-4e2e-b3ee-c812b3b5fe49
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  targetGameObject: 3
+  side: 2
+  rayIndex: 1
+  targetTeamType: 1
+  raySensor: {fileID: 0}
+--- !u!114 &4682157099976364049
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a380d7f9274338e4485e03ec126c5859, type: 3}
+  m_Name: ShieldLevelBellow
+  m_EditorClassIdentifier: 
+  position: {x: 340, y: 840}
+  description: 
+  guid: d068e4f6-ca8d-4d32-ba87-70be22e1a230
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  shieldLevel: 0
+--- !u!114 &4739066880276852117
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 460be9e34c566ea45b9e282b1adcb028, type: 3}
+  m_Name: Selector
+  m_EditorClassIdentifier: 
+  position: {x: 170, y: 560}
+  description: 
+  guid: d50d4947-db7f-41cd-81f9-5ca13e78eded
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  children:
+  - {fileID: 7724176622855938485}
+  - {fileID: 6626363661714751398}
+  - {fileID: 7255725190849695995}
+--- !u!114 &5235274677515090320
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2896f3e48c4d62d40be88fb007bb6361, type: 3}
+  m_Name: RayHitObject
+  m_EditorClassIdentifier: 
+  position: {x: 1020, y: 840}
+  description: 
+  guid: 85ffbe8c-019a-49c8-aafc-bc06bda95aca
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  targetGameObject: 2
+  side: 0
+  rayIndex: 10
+  targetTeamType: 0
+  raySensor: {fileID: 0}
+--- !u!114 &5636715705926375586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fd1e85f30abba2499f6834e124b1450, type: 3}
+  m_Name: MoveForward
+  m_EditorClassIdentifier: 
+  position: {x: 680, y: 1120}
+  description: 
+  guid: ee6b7495-7fb5-44f3-a81c-f383163319ef
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  moveForwardDirection: 2
+--- !u!114 &5751490138572398041
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3dc491c3b458a945b4bd32e24ed7627, type: 3}
+  m_Name: Shoot
+  m_EditorClassIdentifier: 
+  position: {x: 2550, y: 980}
+  description: 
+  guid: 6d674740-36e8-45e4-9b6d-41bfb78d8eb3
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  shoot: 1
+--- !u!114 &5830434555546230681
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 460be9e34c566ea45b9e282b1adcb028, type: 3}
+  m_Name: Selector
+  m_EditorClassIdentifier: 
+  position: {x: 1020, y: 980}
+  description: 
+  guid: d9531b6e-66b6-461e-bc2e-6dbd06ef35ba
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  children:
+  - {fileID: 1968958877130133064}
+  - {fileID: -7068615990497012402}
+  - {fileID: 2402687641646841182}
+--- !u!114 &5959232209750639343
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7005ef9ca3dafc4b86928393e168f40, type: 3}
+  m_Name: HealthLevelBellow
+  m_EditorClassIdentifier: 
+  position: {x: 2040, y: 1120}
+  description: 
+  guid: ce204464-94c2-4007-aacb-8dc5035e9853
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  healthLevel: 1
+--- !u!114 &6626363661714751398
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
+  m_Name: Sequencer
+  m_EditorClassIdentifier: 
+  position: {x: 340, y: 700}
+  description: 
+  guid: ba9a7ba4-2803-4bd7-ba9a-715cc0cb0d8d
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  children:
+  - {fileID: -7738183206946029958}
+  - {fileID: 3952448535331135647}
+  - {fileID: 5235274677515090320}
+--- !u!114 &6769052438435295029
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7005ef9ca3dafc4b86928393e168f40, type: 3}
+  m_Name: HealthLevelBellow
+  m_EditorClassIdentifier: 
+  position: {x: 1190, y: 980}
+  description: 
+  guid: 1bd4a34a-da4d-481f-916c-5466fa90a762
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  healthLevel: 2
+--- !u!114 &6830128521818793579
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
+  m_Name: Inverter
+  m_EditorClassIdentifier: 
+  position: {x: 170, y: 420}
+  description: 
+  guid: c90a10b8-8421-4d0e-8ba3-ee75e7e84a5d
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  child: {fileID: 4739066880276852117}
+--- !u!114 &6847083314329981074
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3541a6a84d600d443a32c4b10ae322a3, type: 3}
+  m_Name: AmmoLevelBellow
+  m_EditorClassIdentifier: 
+  position: {x: 2210, y: 840}
+  description: 
+  guid: 89c650f1-6a92-4ab9-88df-1a36ff23fa3e
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  ammoLevel: 1
+--- !u!114 &6930864179596059886
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 460be9e34c566ea45b9e282b1adcb028, type: 3}
+  m_Name: Selector
+  m_EditorClassIdentifier: 
+  position: {x: 170, y: 280}
+  description: 
+  guid: ab1bb444-5e9f-4b1f-a425-288a91b9d71f
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  children:
+  - {fileID: 6830128521818793579}
+  - {fileID: -1219199669365730889}
+  - {fileID: 9075667025420742443}
+--- !u!114 &7082290884049773618
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7005ef9ca3dafc4b86928393e168f40, type: 3}
+  m_Name: HealthLevelBellow
+  m_EditorClassIdentifier: 
+  position: {x: 1020, y: 1120}
+  description: 
+  guid: 4c5d341b-ad9d-4625-9276-0d100fb3888e
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  healthLevel: 0
+--- !u!114 &7091794341452907181
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
+  m_Name: Sequencer
+  m_EditorClassIdentifier: 
+  position: {x: 1530, y: 840}
+  description: 
+  guid: 920442f5-a51a-48a0-b543-7e5217c65edb
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  children:
+  - {fileID: -2127703818192216522}
+  - {fileID: -2035929866756900878}
+  - {fileID: 5751490138572398041}
+--- !u!114 &7144196041381775676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3dc491c3b458a945b4bd32e24ed7627, type: 3}
+  m_Name: Shoot
+  m_EditorClassIdentifier: 
+  position: {x: 510, y: 1260}
+  description: 
+  guid: ef0f3ba1-3c0f-4647-818c-8354f4329a40
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  shoot: 1
+--- !u!114 &7255725190849695995
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -745,16 +1710,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   position: {x: 510, y: 700}
   description: 
-  guid: 2e87073e-3ed2-4da8-87e6-316aa6b3b6d9
+  guid: 9a721497-24f3-4127-a33a-f3978de74666
   drawGizmos: 0
   state: 0
   started: 0
   callFrequencyCount: 0
   children:
-  - {fileID: -1958444909149590402}
-  - {fileID: -5652360908951183924}
-  - {fileID: 7156268587849743219}
---- !u!114 &1805700205213572666
+  - {fileID: -1785218217536857204}
+  - {fileID: -9031733206211398198}
+  - {fileID: 7091794341452907181}
+--- !u!114 &7500326565811842642
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -763,18 +1728,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e7005ef9ca3dafc4b86928393e168f40, type: 3}
-  m_Name: HealthLevelBellow
+  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
+  m_Name: Rotate
   m_EditorClassIdentifier: 
-  position: {x: 170, y: 1540}
+  position: {x: 340, y: 1120}
   description: 
-  guid: 637eabc7-cdcb-4620-b52c-d3d0161daa3f
+  guid: 1fe279f4-f322-4e92-a9bf-c7bdaa536f4e
   drawGizmos: 0
   state: 0
   started: 0
   callFrequencyCount: 0
-  healthLevel: 0
---- !u!114 &2162903096526091169
+  rotateDirection: 2
+--- !u!114 &7552700353299078308
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -783,38 +1748,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a3dc491c3b458a945b4bd32e24ed7627, type: 3}
-  m_Name: Shoot
-  m_EditorClassIdentifier: 
-  position: {x: 2550, y: 840}
-  description: 
-  guid: 81648a35-f31a-4ec3-96fc-89f800770b1f
-  drawGizmos: 0
-  state: 0
-  started: 0
-  callFrequencyCount: 0
-  shoot: 1
---- !u!114 &3257929881434717566
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
-  m_Name: Inverter
+  m_Script: {fileID: 11500000, guid: 460be9e34c566ea45b9e282b1adcb028, type: 3}
+  m_Name: Selector
   m_EditorClassIdentifier: 
   position: {x: 340, y: 560}
   description: 
-  guid: fee7b998-7894-48d7-a46f-19c18c9bccfa
+  guid: d94ea73c-fb50-4e25-b949-75bc20912d9a
   drawGizmos: 0
   state: 0
   started: 0
   callFrequencyCount: 0
-  child: {fileID: 7606725521950447994}
---- !u!114 &3339500516436440256
+  children:
+  - {fileID: 8177844386637670599}
+  - {fileID: 7943133390500914567}
+  - {fileID: -6899914534572468727}
+--- !u!114 &7724176622855938485
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -826,38 +1774,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
   m_Name: Sequencer
   m_EditorClassIdentifier: 
-  position: {x: 170, y: 1120}
+  position: {x: 170, y: 700}
   description: 
-  guid: 5b4ad5e3-acc9-4863-8c5b-e4d1c7b985b1
+  guid: 99eafae8-6daf-488c-b142-2ac4b9686cc3
   drawGizmos: 0
   state: 0
   started: 0
   callFrequencyCount: 0
   children:
-  - {fileID: -5877182800978714672}
-  - {fileID: 6331949714038065859}
-  - {fileID: 4522719863052778755}
---- !u!114 &3960612490942073761
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a3dc491c3b458a945b4bd32e24ed7627, type: 3}
-  m_Name: Shoot
-  m_EditorClassIdentifier: 
-  position: {x: 2890, y: 840}
-  description: 
-  guid: 18dba345-c183-43fd-8f83-2eb3325b6fbb
-  drawGizmos: 0
-  state: 0
-  started: 0
-  callFrequencyCount: 0
-  shoot: 1
---- !u!114 &4068038243080452629
+  - {fileID: -2676113050457187556}
+  - {fileID: 4682157099976364049}
+  - {fileID: 956353873098156198}
+--- !u!114 &7943133390500914567
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -869,15 +1797,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
   m_Name: Inverter
   m_EditorClassIdentifier: 
-  position: {x: 1530, y: 840}
+  position: {x: 850, y: 700}
   description: 
-  guid: 4a38acc3-1696-4137-af5f-f4208fb6ccda
+  guid: ecd19c6a-a93c-4bda-adc7-4530c3176960
   drawGizmos: 0
   state: 0
   started: 0
   callFrequencyCount: 0
-  child: {fileID: 6232660777095750807}
---- !u!114 &4522719863052778755
+  child: {fileID: 4349353852676398517}
+--- !u!114 &8177844386637670599
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -886,353 +1814,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1fd1e85f30abba2499f6834e124b1450, type: 3}
-  m_Name: MoveForward
-  m_EditorClassIdentifier: 
-  position: {x: 510, y: 1260}
-  description: 
-  guid: 7d100f60-d227-45c0-8abf-3fb6794884b8
-  drawGizmos: 0
-  state: 0
-  started: 0
-  callFrequencyCount: 0
-  moveForwardDirection: 1
---- !u!114 &5083045397453536326
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e7005ef9ca3dafc4b86928393e168f40, type: 3}
-  m_Name: HealthLevelBellow
-  m_EditorClassIdentifier: 
-  position: {x: 340, y: 980}
-  description: 
-  guid: 8e0e61f4-299a-4b64-b819-0be1e5910991
-  drawGizmos: 0
-  state: 0
-  started: 0
-  callFrequencyCount: 0
-  healthLevel: 0
---- !u!114 &5270641438032722003
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 460be9e34c566ea45b9e282b1adcb028, type: 3}
-  m_Name: Selector
-  m_EditorClassIdentifier: 
-  position: {x: 170, y: 420}
-  description: 
-  guid: 0ec76905-9d08-4644-a8a4-529fbea6f9dc
-  drawGizmos: 0
-  state: 0
-  started: 0
-  callFrequencyCount: 0
-  children:
-  - {fileID: -4575032346736922593}
-  - {fileID: 3257929881434717566}
-  - {fileID: 169543126338748547}
---- !u!114 &5328515116296967114
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2896f3e48c4d62d40be88fb007bb6361, type: 3}
-  m_Name: RayHitObject
-  m_EditorClassIdentifier: 
-  position: {x: 510, y: 1400}
-  description: 
-  guid: 893dc217-33b3-452f-82ba-3734ef2a0e33
-  drawGizmos: 0
-  state: 0
-  started: 0
-  callFrequencyCount: 0
-  targetGameObject: 3
-  side: 2
-  rayIndex: 13
-  targetTeamType: 1
-  raySensor: {fileID: 0}
---- !u!114 &6166855996046165968
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
-  m_Name: Rotate
-  m_EditorClassIdentifier: 
-  position: {x: 340, y: 840}
-  description: 
-  guid: 37d501e5-2c22-446b-a45d-31bfd4ca6058
-  drawGizmos: 0
-  state: 0
-  started: 0
-  callFrequencyCount: 0
-  rotateDirection: 1
---- !u!114 &6188795082424786475
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0e7922a36c65b824f95d4e76c192add0, type: 3}
-  m_Name: AgentController
-  m_EditorClassIdentifier: 
-  AgentControllerId: 0
-  ControllerType: 0
-  RootNode: {fileID: -7131677622630957964}
-  TreeState: 0
-  Nodes:
-  - {fileID: -7131677622630957964}
-  - {fileID: -4145288471479691099}
-  - {fileID: 9171253259795594356}
-  - {fileID: 5270641438032722003}
-  - {fileID: -4575032346736922593}
-  - {fileID: 3257929881434717566}
-  - {fileID: 169543126338748547}
-  - {fileID: -226892255779609607}
-  - {fileID: 517127267326582698}
-  - {fileID: 1438768320225484365}
-  - {fileID: 7606725521950447994}
-  - {fileID: -1086859237441104207}
-  - {fileID: 7765527209240659653}
-  - {fileID: -5862075876296839533}
-  - {fileID: 6268755263888087608}
-  - {fileID: 6166855996046165968}
-  - {fileID: -7940533680704193084}
-  - {fileID: 1187179610247192653}
-  - {fileID: -1958444909149590402}
-  - {fileID: -5652360908951183924}
-  - {fileID: 7156268587849743219}
-  - {fileID: -3457355060073642940}
-  - {fileID: 4068038243080452629}
-  - {fileID: 6862196647261600876}
-  - {fileID: -6490674634337642088}
-  - {fileID: -5251800758359791033}
-  - {fileID: 1119522695474472416}
-  - {fileID: -285832796035938019}
-  - {fileID: 2162903096526091169}
-  - {fileID: -6147832428957623853}
-  - {fileID: 3960612490942073761}
-  - {fileID: -7811757613632882310}
-  - {fileID: 5083045397453536326}
-  - {fileID: 442816733508318361}
-  - {fileID: 6232660777095750807}
-  - {fileID: -1296087330882209043}
-  - {fileID: -3892355796074430324}
-  - {fileID: -1368881120269283197}
-  - {fileID: 9013407867805821846}
-  - {fileID: 8916432350691977167}
-  - {fileID: 3339500516436440256}
-  - {fileID: -6958717045886957271}
-  - {fileID: -6433578035406634886}
-  - {fileID: 33433115971793645}
-  - {fileID: -5877182800978714672}
-  - {fileID: 6331949714038065859}
-  - {fileID: 4522719863052778755}
-  - {fileID: -1797161490668716565}
-  - {fileID: -4105557561228500341}
-  - {fileID: -598059766001559533}
-  - {fileID: -5096563502202424218}
-  - {fileID: 8437667381511360157}
-  - {fileID: 1302859436140037075}
-  - {fileID: -4269299473154582122}
-  - {fileID: 1062492854708605061}
-  - {fileID: 5328515116296967114}
-  - {fileID: 1805700205213572666}
---- !u!114 &6232660777095750807
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e7005ef9ca3dafc4b86928393e168f40, type: 3}
-  m_Name: HealthLevelBellow
-  m_EditorClassIdentifier: 
-  position: {x: 680, y: 980}
-  description: 
-  guid: df575ee7-55c8-4878-85e0-1f7ea053a561
-  drawGizmos: 0
-  state: 0
-  started: 0
-  callFrequencyCount: 0
-  healthLevel: 0
---- !u!114 &6268755263888087608
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 460be9e34c566ea45b9e282b1adcb028, type: 3}
-  m_Name: Selector
-  m_EditorClassIdentifier: 
-  position: {x: 170, y: 840}
-  description: 
-  guid: 6b2f9a60-ad94-4dac-ac5f-481cb25b027c
-  drawGizmos: 0
-  state: 0
-  started: 0
-  callFrequencyCount: 0
-  children:
-  - {fileID: -7811757613632882310}
-  - {fileID: 5083045397453536326}
-  - {fileID: 442816733508318361}
---- !u!114 &6331949714038065859
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e7005ef9ca3dafc4b86928393e168f40, type: 3}
-  m_Name: HealthLevelBellow
-  m_EditorClassIdentifier: 
-  position: {x: 340, y: 1260}
-  description: 
-  guid: 4874837b-0e11-4fd7-9b97-3dfc6b78ef87
-  drawGizmos: 0
-  state: 0
-  started: 0
-  callFrequencyCount: 0
-  healthLevel: 1
---- !u!114 &6862196647261600876
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2896f3e48c4d62d40be88fb007bb6361, type: 3}
-  m_Name: RayHitObject
-  m_EditorClassIdentifier: 
-  position: {x: 1700, y: 840}
-  description: 
-  guid: 43288761-4a46-4e68-91ce-3d342ca28ee3
-  drawGizmos: 0
-  state: 0
-  started: 0
-  callFrequencyCount: 0
-  targetGameObject: 3
-  side: 2
-  rayIndex: 13
-  targetTeamType: 1
-  raySensor: {fileID: 0}
---- !u!114 &7156268587849743219
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2896f3e48c4d62d40be88fb007bb6361, type: 3}
-  m_Name: RayHitObject
-  m_EditorClassIdentifier: 
-  position: {x: 1190, y: 840}
-  description: 
-  guid: 8089c330-21b7-4c76-b0f8-7a9ec7ce62c4
-  drawGizmos: 0
-  state: 0
-  started: 0
-  callFrequencyCount: 0
-  targetGameObject: 0
-  side: 2
-  rayIndex: 15
-  targetTeamType: 0
-  raySensor: {fileID: 0}
---- !u!114 &7606725521950447994
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
-  m_Name: Sequencer
+  m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
+  m_Name: Inverter
   m_EditorClassIdentifier: 
   position: {x: 680, y: 700}
   description: 
-  guid: 53a789aa-b8b0-41f7-8b14-8f255e876d01
+  guid: b9311bb5-063a-4f7b-afef-04f5e4cb59a6
   drawGizmos: 0
   state: 0
   started: 0
   callFrequencyCount: 0
-  children:
-  - {fileID: -3457355060073642940}
-  - {fileID: 4068038243080452629}
-  - {fileID: 6862196647261600876}
---- !u!114 &7765527209240659653
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
-  m_Name: Inverter
-  m_EditorClassIdentifier: 
-  position: {x: 1020, y: 700}
-  description: 
-  guid: 73bf46ee-882d-44b9-b673-b8fa96e2efcd
-  drawGizmos: 0
-  state: 0
-  started: 0
-  callFrequencyCount: 0
-  child: {fileID: -285832796035938019}
---- !u!114 &8437667381511360157
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e7005ef9ca3dafc4b86928393e168f40, type: 3}
-  m_Name: HealthLevelBellow
-  m_EditorClassIdentifier: 
-  position: {x: 1360, y: 1260}
-  description: 
-  guid: 4aad2f34-65ed-4b89-b7e0-24b84ece752b
-  drawGizmos: 0
-  state: 0
-  started: 0
-  callFrequencyCount: 0
-  healthLevel: 0
---- !u!114 &8916432350691977167
+  child: {fileID: 3323519543989075819}
+--- !u!114 &8237733589991440992
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1244,15 +1837,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef843663b73a3c544b520ab90e69c9f4, type: 3}
   m_Name: Rotate
   m_EditorClassIdentifier: 
-  position: {x: 1530, y: 980}
+  position: {x: 850, y: 1120}
   description: 
-  guid: e874c058-2fad-4a5b-afa2-c169b5a349b5
+  guid: 49d6e699-4fb7-4b48-a72b-4104e7e7b3c9
   drawGizmos: 0
   state: 0
   started: 0
   callFrequencyCount: 0
-  rotateDirection: 1
---- !u!114 &9013407867805821846
+  rotateDirection: 2
+--- !u!114 &9075667025420742443
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1264,31 +1857,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
   m_Name: Inverter
   m_EditorClassIdentifier: 
-  position: {x: 1360, y: 980}
+  position: {x: 510, y: 420}
   description: 
-  guid: db2429e7-56c6-4087-b7af-93a04ca8a1df
+  guid: f9e445aa-c1b3-407c-af20-a75aa28c2807
   drawGizmos: 0
   state: 0
   started: 0
   callFrequencyCount: 0
-  child: {fileID: 33433115971793645}
---- !u!114 &9171253259795594356
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
-  m_Name: Inverter
-  m_EditorClassIdentifier: 
-  position: {x: 170, y: 280}
-  description: 
-  guid: 0f95d27d-73f6-463a-a33b-f99f42842e24
-  drawGizmos: 0
-  state: 0
-  started: 0
-  callFrequencyCount: 0
-  child: {fileID: 5270641438032722003}
+  child: {fileID: -8346062690056466720}

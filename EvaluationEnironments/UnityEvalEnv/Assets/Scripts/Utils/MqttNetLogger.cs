@@ -62,6 +62,11 @@ namespace Utils
         {
             await mqttClient.DisconnectAsync();
         }
+
+        public static bool IsConnected()
+        {
+            return mqttClient != null && mqttClient.IsConnected;
+        }
     }
 
     [Serializable]

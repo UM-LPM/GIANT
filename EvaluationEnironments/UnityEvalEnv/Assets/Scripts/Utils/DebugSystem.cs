@@ -13,6 +13,7 @@ namespace Utils
         Error = 1 << 3,
         Detailed = 1 << 4,
         Verbose = 1 << 5,
+        Temporary = 1 << 6,
         All = ~0
     }
 
@@ -29,6 +30,8 @@ namespace Utils
         private const string ERROR_COLOR = "#FF4500";     // OrangeRed
         private const string DETAIL_COLOR = "#ADFF2F";    // GreenYellow
         private const string VERBOSE_COLOR = "#d99df2";   // Light Purple
+        private const string TEMPORARY_COLOR = "#947853"; // Light Brown
+
 
         // Enable/Disable entire categories
         public static void EnableCategory(DebugCategory category, bool enabled)
@@ -87,10 +90,16 @@ namespace Utils
                 Debug.Log(FormatMessage("VERBOSE", message, VERBOSE_COLOR));
         }
 
+        public static void LogTemporary(string message)
+        {
+            if (IsCategoryEnabled(DebugCategory.Temporary))
+                Debug.Log(FormatMessage("TEMP", message, TEMPORARY_COLOR));
+        }
+
         // Helper for color formatting
         private static string FormatMessage(string tag, string message, string hexColor)
         {
-            return $"<color={hexColor}>[{tag}]</color> {message}";
+            return $"<color={hexColor}><b>[{tag}]</b></color> {message}";
         }
     }
 

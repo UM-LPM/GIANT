@@ -37,7 +37,7 @@ namespace Utils
         async void HandleLog(string logString, string stackTrace, LogType type)
         {
             // Only logs, errors and exceptions (not warnings) are sent to MQTT broker to prevent spamming.
-            if (type != LogType.Warning)
+            if (type != LogType.Warning && MqttNetLogger.IsConnected())
             {
                 await MqttNetLogger.Log(logString, MqttNetLogger.MapLogTypeToMqttLogType(type));
             }

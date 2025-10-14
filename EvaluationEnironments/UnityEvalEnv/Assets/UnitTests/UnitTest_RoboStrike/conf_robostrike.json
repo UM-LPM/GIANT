@@ -6,7 +6,7 @@
 				"IndividualsSourceSO": "Assets\\Resources\\SOs\\Robostrike",
 				"ConvertSOToJSON": false,
 				"StartCommunicatorURI": "http://localhost:4444/",
-				"TimeScale": 10,
+				"TimeScale": 20,
 				"FixedTimeStep": 0.02,
 				"RerunTimes": 1,
 				"InitialSeed": 963852,
@@ -14,6 +14,7 @@
 				"RandomSeedMode": 1,
 				"SimulationSteps": 2000,
 				"SimulationTime": 0,
+				"DebugCategories": ["Info","Success","Warning","Error"],
 				"IncludeEncapsulatedNodesToFreqCount": false,
 				"EvaluatorType": 2, 
 				"RatingSystemType": 0,
@@ -21,20 +22,10 @@
 				"CompetitionOrganizationType": 6,
 				"CompetitionRounds": -1,
 				"TeamsPerMatch": 2,
-				"SwapCompetitionMatchTeams": true,
-				"GameScenarios": [
-					{"GameSceneName": "RobostrikeGameScene"}
-					
-				],
-				"AgentScenarios": [
-					{
-						"AgentSceneName": "RobostrikeAgentScene", 
-						"GameScenarios": [
-							{"GameSceneName": "RobostrikeGameScene"}
-						]
-					}
-				],
-				"IncludeNodeCallFrequencyCounts": false,
+				"SwapCompetitionMatchTeams": false,
+				"IncludedEnvironments": ["1v1"],
+				"MaxSimultaneousEnvironments": 10,
+				"IncludeNodeCallFrequencyCounts": true,
 				"ProblemConfiguration": {
 					"DecisionRequestInterval": 2,
 					"ArenaSizeX": 20,
