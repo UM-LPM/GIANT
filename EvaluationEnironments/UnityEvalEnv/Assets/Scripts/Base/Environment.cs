@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 
 namespace Base
 {
-    public class SimulationEnvironment
+    public class Environment
     {
         public EnvironmentControllerBase EnvironmentController { get; private set; }
 
@@ -18,7 +18,7 @@ namespace Base
         private bool IsDebug = false;
 
 
-        public SimulationEnvironment(GameObject environmentPrefab, string sceneName, Match match, bool isDebug = false)
+        public Environment(GameObject environmentPrefab, string sceneName, Match match, bool isDebug = false)
         {
             // Create independent physics scene
             EnvironmentControllerBase tempEnvController = environmentPrefab.GetComponent<EnvironmentControllerBase>();

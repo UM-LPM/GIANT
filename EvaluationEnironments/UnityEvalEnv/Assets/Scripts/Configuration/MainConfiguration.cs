@@ -44,8 +44,6 @@ namespace Configuration
         public bool Render { get; set; }
         public RandomSeedMode RandomSeedMode { get; set; }
         public int GameMode { get; set; }
-        public GameScenario[] GameScenarios { get; set; }
-        public AgentScenario[] AgentScenarios { get; set; }
         public int MaxSimultaneousEnvironments { get; set; }
         public bool IncludeNodeCallFrequencyCounts { get; set; }
 
@@ -63,6 +61,7 @@ namespace Configuration
 
         public int TeamsPerMatch { get; set; }
         public bool SwapCompetitionMatchTeams { get; set; }
+        public string[] IncludedEnvironments { get; set; }
 
         // Problem Specific Configuration
         public Dictionary<string, string> ProblemConfiguration { get; set; }

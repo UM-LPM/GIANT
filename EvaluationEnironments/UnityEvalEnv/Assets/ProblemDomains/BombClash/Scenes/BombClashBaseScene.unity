@@ -6863,9 +6863,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1798691730}
   - component: {fileID: 1798691732}
-  - component: {fileID: 1798691731}
   - component: {fileID: 1798691733}
   - component: {fileID: 1798691734}
+  - component: {fileID: 1798691735}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Untagged
@@ -6888,40 +6888,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1798691731
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1798691729}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e80d176e2f31d4f4abec2e5f8a9853c5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CommunicatorSetup: 1
-  CommunicatorURI: http://localhost:4444/
-  SceneLoadMode: 0
-  MinLayerId: 6
-  MaxLayerId: 26
-  BatchSize: 20
-  GridSize: {x: 10, y: 0, z: 10}
-  GridSpacing: {x: 50, y: 0, z: 50}
-  GameScenarios:
-  - GameSceneName: BombClashGameScene
-  AgentScenarios:
-  - AgentSceneName: BombClashAgentScene
-    GameScenarios:
-    - GameSceneName: BombClashGameScene
-  TimeScale: 1
-  FixedTimeStep: 0.02
-  RerunTimes: 1
-  PredefinedMatchFitnessWinner: -1000
-  PredefinedMatchFitnessLoser: 1000
-  InitialSeed: 316227711
-  RandomSeedMode: 1
-  Matches: []
 --- !u!114 &1798691732
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6973,6 +6939,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TeamSize: 1
+--- !u!114 &1798691735
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1798691729}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8fd76e5099369e47a32b7fec336c806, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CommunicatorSetup: 1
+  CommunicatorURI: http://localhost:4444/
+  GameScenarios: []
+  AgentScenarios: []
+  TimeScale: 1
+  FixedTimeStep: 0.02
+  RerunTimes: 1
+  PredefinedMatchFitnessWinner: -1000
+  PredefinedMatchFitnessLoser: 1000
+  InitialSeed: 316227711
+  RandomSeedMode: 0
+  EnvironmentPrefabs: []
+  MaxSimultaneousEnvironments: 100
+  Matches: []
 --- !u!1 &1850808320
 GameObject:
   m_ObjectHideFlags: 0
