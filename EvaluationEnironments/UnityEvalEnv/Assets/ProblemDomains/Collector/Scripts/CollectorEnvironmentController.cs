@@ -47,6 +47,8 @@ namespace Problems.Collector
 
         private string agentFitnessLog;
 
+        private bool allTargetsAquired = false;
+
         protected override void DefineAdditionalDataOnPostAwake()
         {
             ReadParamsFromMainConfiguration();
@@ -62,11 +64,6 @@ namespace Problems.Collector
 
         protected override void DefineAdditionalDataOnPostStart()
         {
-            foreach (CollectorAgentComponent agent in Agents)
-            {
-                agent.Rigidbody = agent.GetComponent<Rigidbody>();
-            }
-
             // Spawn target
             Targets = TargetSpawner.Spawn<TargetComponent>(this).ToList();
         }
@@ -91,23 +88,25 @@ namespace Problems.Collector
 
                     if (GameMode == CollectorGameMode.SingleTargetPickup)
                     {
-                        FinishGame(); // Finish game when target is aquired
+                        allTargetsAquired = true;
                     }
                     else if (GameMode == CollectorGameMode.InfiniteTargetPickup)
                     {
                         if(agent.TargetsAquired == MaxTargets)
                         {
-                            FinishGame(); // Finish game when max targets are acquired
+                            allTargetsAquired = true;
                         }
-
-                        // Respawn target
-                        List<Vector3> targetPositions = new List<Vector3>();
-                        foreach (TargetComponent target in Targets)
+                        else
                         {
-                            targetPositions.Add(target.transform.position);
-                        }
+                            // Respawn target
+                            List<Vector3> targetPositions = new List<Vector3>();
+                            foreach (TargetComponent target in Targets)
+                            {
+                                targetPositions.Add(target.transform.position);
+                            }
 
-                        Targets.Add(TargetSpawner.SpawnTarget<TargetComponent>(this, targetPositions));
+                            Targets.Add(TargetSpawner.SpawnTarget<TargetComponent>(this, targetPositions));
+                        }
                     }
 
                     Targets.Remove(component);
@@ -163,6 +162,11 @@ namespace Problems.Collector
         protected override void OnPreFinishGame()
         {
             SetAgentsFitness();
+        }
+
+        public override bool IsSimulationFinished()
+        {
+            return base.IsSimulationFinished() || allTargetsAquired;
         }
 
         private void SetAgentsFitness()

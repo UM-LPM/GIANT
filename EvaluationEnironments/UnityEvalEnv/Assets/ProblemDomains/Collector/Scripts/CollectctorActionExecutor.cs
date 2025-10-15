@@ -1,12 +1,14 @@
 using AgentControllers;
 using Base;
+using Problems.Robostrike;
 using UnityEngine;
+using Utils;
 
 namespace Problems.Collector
 {
     public class DummyActionExecutor: ActionExecutor
     {
-        private CollectorEnvironmentController _collectorEnvironmentController;
+        private CollectorEnvironmentController CollectorEnvironmentController;
 
         // Move Agent variables
         Vector3 dirToGo;
@@ -14,9 +16,12 @@ namespace Problems.Collector
         int forwardAxis;
         int rotateAxis;
 
+        Vector3 newAgentPos;
+        Quaternion newAgentRotation;
+
         private void Awake()
         {
-            _collectorEnvironmentController = GetComponentInParent<CollectorEnvironmentController>();
+            CollectorEnvironmentController = GetComponentInParent<CollectorEnvironmentController>();
         }
 
         public override void ExecuteActions(AgentComponent agent)
@@ -35,10 +40,10 @@ namespace Problems.Collector
             switch (forwardAxis)
             {
                 case 1:
-                    dirToGo = agent.transform.forward * _collectorEnvironmentController.ForwardSpeed;
+                    dirToGo = agent.transform.forward * CollectorEnvironmentController.ForwardSpeed;
                     break;
                 case 2:
-                    dirToGo = agent.transform.forward * -_collectorEnvironmentController.ForwardSpeed;
+                    dirToGo = agent.transform.forward * -CollectorEnvironmentController.ForwardSpeed;
                     break;
             }
 
@@ -52,14 +57,17 @@ namespace Problems.Collector
                     break;
             }
 
-            // Movement Version 1 
-            /*Agent.transform.Translate(dirToGo * Time.fixedDeltaTime * AgentMoveSpeed);
-            Agent.transform.Rotate(rotateDir, Time.fixedDeltaTime * AgentRotationSpeed);*/
+            // 1. Calculate the new position and rotation
+            newAgentPos = agent.transform.position + (dirToGo * Time.fixedDeltaTime * CollectorEnvironmentController.AgentMoveSpeed);
+            newAgentRotation = Quaternion.Euler(0, agent.transform.rotation.eulerAngles.y + rotateDir.y * Time.fixedDeltaTime * CollectorEnvironmentController.AgentRotationSpeed, 0);
 
-            // Movement Version 2
-            agent.Rigidbody.MovePosition(agent.Rigidbody.position + (dirToGo * _collectorEnvironmentController.AgentMoveSpeed * Time.fixedDeltaTime));
-            Quaternion turnRotation = Quaternion.Euler(0.0f, rotateDir.y * Time.fixedDeltaTime * _collectorEnvironmentController.AgentRotationSpeed, 0.0f);
-            agent.Rigidbody.MoveRotation(agent.Rigidbody.rotation * turnRotation);
+            // 2. Check if agent can be moved and rotated without colliding to other objects
+            if (!PhysicsUtil.PhysicsOverlapObject(CollectorEnvironmentController.PhysicsScene, CollectorEnvironmentController.PhysicsScene2D, CollectorEnvironmentController.GameType, agent.gameObject, newAgentPos, CollectorEnvironmentController.AgentColliderExtendsMultiplier.x, Vector3.zero, newAgentRotation, PhysicsOverlapType.OverlapSphere, true, gameObject.layer))
+            {
+                agent.transform.position = newAgentPos;
+                agent.transform.rotation = newAgentRotation;
+            }
+
         }
     }
 }

@@ -1,57 +1,49 @@
 {
-				"AutoStart": true,
-				"ProblemDomain": "Collector",
-				"CoordinatorURI": "http://localhost:4000/",
-				"IndividualsSourceJSON": "C:\\Users\\marko\\UnityProjects\\GIANT_develop\\Builds\\Resources\\Collector\\",
-				"IndividualsSourceSO": "Assets\\Resources\\SOs\\Collector",
-				"ConvertSOToJSON": false,
-				"StartCommunicatorURI": "http://localhost:4444/",
-				"TimeScale": 5,
-				"FixedTimeStep": 0.02,
-				"RerunTimes": 1,
-				"InitialSeed": 963852,
-				"Render": true,
-				"RandomSeedMode": 1,
-				"SimulationSteps": 3000,
-				"SimulationTime": 0,
-				"IncludeEncapsulatedNodesToFreqCount": false,
-				"EvaluatorType": 0, 
-				"RatingSystemType": -1,
-				"CreateNewTeamsEachRound": false,
-				"CompetitionOrganizationType": -1,
-				"CompetitionRounds": -1,
-				"TeamsPerMatch": 2,
-				"SwapCompetitionMatchTeams": false,
-				"GameScenarios": [
-					{"GameSceneName": "CollectorGameScene"}
-				],
-				"AgentScenarios": [
-					{
-						"AgentSceneName": "CollectorAgentScene", 
-						"GameScenarios": [
-							{"GameSceneName": "CollectorGameScene"}
-						]
-					}
-				],
-				"IncludeNodeCallFrequencyCounts": false,
-				"ProblemConfiguration": {
-					"DecisionRequestInterval": 2,
-					"ArenaRadius": 18,
-					"ArenaOffset": 0.0,
-					"AgentMoveSpeed": 10,
-					"AgentRotationSpeed": 180,
-					"GameMode": 1,
-					"StartNumberOfTargets": 1,
-					"TargetMinDistanceFromAgents": 10,
-					"TargetToTargetMinDistance": 10,
-					"MaxTargets": 20,
-					"RayHitObjectDetectionType": 1,
-					"TargetGameObjects": "Wall,Obstacle,Object1"
-				},
-				"FitnessValues": 
-				{ 
-					"TimePenalty": 25,
-					"SectorExploration": -50,
-					"TargetsAcquired": -500
-				}
-			}
+	"AutoStart": true,
+	"ProblemDomain": "Collector",
+	"CoordinatorURI": "http://localhost:4000/",
+	"IndividualsSourceJSON": "C:\\Users\\marko\\UnityProjects\\GIANT_develop\\Builds\\Resources\\Collector\\",
+	"IndividualsSourceSO": "Assets\\Resources\\SOs\\Collector",
+	"ConvertSOToJSON": false,
+	"StartCommunicatorURI": "http://localhost:4444/",
+	"TimeScale": 15,
+	"FixedTimeStep": 0.02,
+	"RerunTimes": 1,
+	"InitialSeed": 963852,
+	"Render": true,
+	"RandomSeedMode": 1,
+	"SimulationSteps": 3000,
+	"SimulationTime": 0,
+	"DebugCategories": ["Info","Success","Warning","Error"],					  
+	"IncludeEncapsulatedNodesToFreqCount": false,
+	"EvaluatorType": 0, 
+	"RatingSystemType": -1,
+	"CreateNewTeamsEachRound": false,
+	"CompetitionOrganizationType": 3,
+	"CompetitionRounds": -1,
+	"TeamsPerMatch": 1,
+	"SwapCompetitionMatchTeams": false,
+	"IncludedEnvironments": ["Base"],
+	"MaxSimultaneousEnvironments": 20,
+	"IncludeNodeCallFrequencyCounts": false,
+	"ProblemConfiguration": {
+		"DecisionRequestInterval": 2,
+		"ArenaRadius": 18,
+		"ArenaOffset": 0.0,
+		"AgentMoveSpeed": 10,
+		"AgentRotationSpeed": 180,
+		"GameMode": 1,
+		"StartNumberOfTargets": 1,
+		"TargetMinDistanceFromAgents": 10,
+		"TargetToTargetMinDistance": 10,
+		"MaxTargets": 10,
+		"RayHitObjectDetectionType": 1,
+		"TargetGameObjects": "Wall,Obstacle,Object1"
+	},
+	"FitnessValues": 
+	{ 
+		"TimePenalty": 25,
+		"SectorExploration": -50,
+		"TargetsAcquired": -500
+	}
+}

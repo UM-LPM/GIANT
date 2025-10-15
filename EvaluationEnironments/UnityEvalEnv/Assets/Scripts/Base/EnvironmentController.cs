@@ -273,7 +273,7 @@ namespace Base
             GameState = GameState.FINISHED;
         }
 
-        public bool IsSimulationFinished()
+        public virtual bool IsSimulationFinished()
         {
             if (SimulationTime > 0)
             {
