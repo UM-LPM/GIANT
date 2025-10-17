@@ -62,6 +62,7 @@ namespace Configuration
         public int CompetitionRounds { get; set; }
 
         public int TeamsPerMatch { get; set; }
+        public int TeamSize { get; set; }
         public bool SwapCompetitionMatchTeams { get; set; }
         public string[] IncludedEnvironments { get; set; }
 

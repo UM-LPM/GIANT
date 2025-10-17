@@ -64,6 +64,7 @@ namespace Problems.Collector
             // 2. Check if agent can be moved and rotated without colliding to other objects
             if (!PhysicsUtil.PhysicsOverlapObject(CollectorEnvironmentController.PhysicsScene, CollectorEnvironmentController.PhysicsScene2D, CollectorEnvironmentController.GameType, agent.gameObject, newAgentPos, CollectorEnvironmentController.AgentColliderExtendsMultiplier.x, Vector3.zero, newAgentRotation, PhysicsOverlapType.OverlapSphere, true, gameObject.layer))
             {
+                // 3. Move and rotate the agent
                 agent.transform.position = newAgentPos;
                 agent.transform.rotation = newAgentRotation;
             }

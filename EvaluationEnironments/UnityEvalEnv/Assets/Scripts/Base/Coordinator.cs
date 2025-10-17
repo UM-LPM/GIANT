@@ -89,6 +89,10 @@ namespace Base
                     CompetitionOrganizationType = MenuManager.Instance.MainConfiguration.CompetitionOrganizationType;
                     CompetitionRounds = MenuManager.Instance.MainConfiguration.CompetitionRounds;
                     TeamsPerMatch = MenuManager.Instance.MainConfiguration.TeamsPerMatch;
+                    if (getTeamOrganizator() && MenuManager.Instance.MainConfiguration.TeamSize > 0)
+                    {
+                        TeamOrganizator.SetTeamSize(MenuManager.Instance.MainConfiguration.TeamSize);
+                    }
                     IndividualsSourceJSON = MenuManager.Instance.MainConfiguration.IndividualsSourceJSON;
                     IndividualsSourceSO = MenuManager.Instance.MainConfiguration.IndividualsSourceSO;
                     ConvertSOToJSON = MenuManager.Instance.MainConfiguration.ConvertSOToJSON;
@@ -197,7 +201,6 @@ namespace Base
                     break;
                 case EvaluatiorType.Competition:
                     // Tournament evaluator
-                    getTeamOrganizator();
                     competitionOrganizator = getCompetitionOrganizator(Individuals);
 
                     evaluator = new CompetitionEvaluator(competitionOrganizator);
@@ -206,7 +209,6 @@ namespace Base
                     break;
                 case EvaluatiorType.Rating:
                     // Rating evaluator
-                    getTeamOrganizator();
                     ratingSystem = getRatingSystem();
                     competitionOrganizator = getCompetitionOrganizator(Individuals);
 
@@ -305,15 +307,16 @@ namespace Base
             }
         }
 
-        private void getTeamOrganizator()
+        private bool getTeamOrganizator()
         {
-            if (TeamOrganizator != null) return;
+            if(TeamOrganizator != null)
+                return true;
 
             TeamOrganizator = GetComponent<CompetitionTeamOrganizator>();
             if (TeamOrganizator == null)
-            {
-                throw new Exception("CompetitionTeamOrganizator is not defined");
-            }
+                return false;
+            else
+                return true;
         }
 
         private CompetitionOrganization getCompetitionOrganizator(Individual[] individuals)
