@@ -120,6 +120,9 @@ namespace Base
         {
             OnPreFixedUpdate();
 
+            PhysicsScene.Simulate(Time.fixedDeltaTime);
+            PhysicsScene2D.Simulate(Time.fixedDeltaTime);
+
             if (ForceNewDecisions)
             {
                 DecisionRequestCount = 0;

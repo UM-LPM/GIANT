@@ -13,7 +13,8 @@ namespace Configuration
         Robostrike,
         Soccer,
         BombClash,
-        DodgeBall
+        DodgeBall,
+        Soccer2D
     }
 
     public class MenuManager : MonoBehaviour
@@ -124,6 +125,9 @@ namespace Configuration
                     break;
                 case "DodgeBall":
                     UnityEngine.SceneManagement.SceneManager.LoadScene("DodgeBallBaseScene");
+                    break;
+                case "Soccer2D":
+                    UnityEngine.SceneManagement.SceneManager.LoadScene("Soccer2DBaseScene");
                     break;
                 default:
                     DebugSystem.LogError("Problem domain not found");

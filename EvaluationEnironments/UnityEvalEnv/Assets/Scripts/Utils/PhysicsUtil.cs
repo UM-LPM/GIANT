@@ -382,6 +382,38 @@ namespace Utils
             throw new System.NotImplementedException();
         }
 
+        public static RaycastHit2D[] PhysicsCircleCast2D(
+            PhysicsScene2D physicsScene2D,
+            GameType gameType,
+            GameObject caller,
+            Vector3 position,
+            float radius,
+            Vector2 direction,
+            float distance,
+            bool ignoreTriggerGameObjs,
+            int layer)
+        {
+            List<RaycastHit2D> ts = new List<RaycastHit2D>();
+
+            RaycastHit2D[] hits = new RaycastHit2D[DefaultColliderArraySize];
+            ContactFilter2D contactFilter = new ContactFilter2D()
+            {
+                layerMask = 1 << layer,
+                useTriggers = !ignoreTriggerGameObjs,
+            };
+            physicsScene2D.CircleCast(position, radius, direction, distance, contactFilter, hits);
+
+            foreach (var hit in hits)
+            {
+                if (hit.collider != null && caller != hit.collider.gameObject)
+                {
+                    ts.Add(hit);
+                }
+            }
+
+            return ts.ToArray();
+        }
+
 
         private static bool HasCollision(GameObject caller, Component[] colliders)
         {
