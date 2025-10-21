@@ -1,7 +1,6 @@
 using Base;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Utils
@@ -9,6 +8,11 @@ namespace Utils
     public static class PhysicsUtil
     {
         public static int DefaultColliderArraySize = 32;
+
+        // Reusable buffers to avoid allocations.
+        private static readonly Collider[] ColliderBuffer3D = new Collider[DefaultColliderArraySize];
+        private static readonly Collider2D[] ColliderBuffer2D = new Collider2D[DefaultColliderArraySize];
+        private static readonly RaycastHit2D[] RaycastHit2DBuffer = new RaycastHit2D[DefaultColliderArraySize];
 
         public static bool PhysicsOverlapObject(
             PhysicsScene physicsScene,
@@ -47,21 +51,39 @@ namespace Utils
             bool ignoreTriggerGameObjs,
             int layer)
         {
+            int layerMask = 1 << layer;
+
             if (gameType == GameType._3D)
             {
-                Collider[] colliders = new Collider[DefaultColliderArraySize];
-                physicsScene.OverlapBox(position, halfExtends, colliders, rotation, LayerMask.GetMask(LayerMask.LayerToName(layer)), ignoreTriggerGameObjs ? QueryTriggerInteraction.Ignore : QueryTriggerInteraction.Collide);
-                return HasCollision(caller, colliders);
+                // PhysicsScene.OverlapBox returns number of hits and writes into provided buffer
+                int count = physicsScene.OverlapBox(position, halfExtends, ColliderBuffer3D, rotation, layerMask,
+                    ignoreTriggerGameObjs ? QueryTriggerInteraction.Ignore : QueryTriggerInteraction.Collide);
+
+                for (int i = 0; i < count; i++)
+                {
+                    var c = ColliderBuffer3D[i];
+                    if (c != null && c.gameObject != caller) return true;
+                }
+
+                return false;
             }
             else
             {
-                Collider2D[] colliders = new Collider2D[DefaultColliderArraySize];
-                ContactFilter2D contactFilter = new ContactFilter2D() {
-                    layerMask = 1 << layer,
-                    useTriggers = !ignoreTriggerGameObjs,
+                var filter = new ContactFilter2D
+                {
+                    layerMask = layerMask,
+                    useTriggers = !ignoreTriggerGameObjs
                 };
-                physicsScene2D.OverlapBox(position, halfExtends, rotation.eulerAngles.z, contactFilter, colliders);
-                return HasCollision(caller, colliders);
+
+                int count = physicsScene2D.OverlapBox(position, halfExtends, rotation.eulerAngles.z, filter, ColliderBuffer2D);
+
+                for (int i = 0; i < count; i++)
+                {
+                    var c = ColliderBuffer2D[i];
+                    if (c != null && c.gameObject != caller) return true;
+                }
+
+                return false;
             }
         }
 
@@ -75,22 +97,38 @@ namespace Utils
             bool ignoreTriggerGameObjs,
             int layer)
         {
+            int layerMask = 1 << layer;
+
             if (gameType == GameType._3D)
             {
-                Collider[] colliders = new Collider[DefaultColliderArraySize];
-                physicsScene.OverlapSphere(position, radius, colliders, LayerMask.GetMask(LayerMask.LayerToName(layer)), ignoreTriggerGameObjs ? QueryTriggerInteraction.Ignore : QueryTriggerInteraction.Collide);
-                return HasCollision(caller, colliders);
+                int count = physicsScene.OverlapSphere(position, radius, ColliderBuffer3D, layerMask,
+                    ignoreTriggerGameObjs ? QueryTriggerInteraction.Ignore : QueryTriggerInteraction.Collide);
+
+                for (int i = 0; i < count; i++)
+                {
+                    var c = ColliderBuffer3D[i];
+                    if (c != null && c.gameObject != caller) return true;
+                }
+
+                return false;
             }
             else
             {
-                Collider2D[] colliders = new Collider2D[DefaultColliderArraySize];
-                ContactFilter2D contactFilter = new ContactFilter2D()
+                var filter = new ContactFilter2D
                 {
-                    layerMask = 1 << layer,
-                    useTriggers = !ignoreTriggerGameObjs,
+                    layerMask = layerMask,
+                    useTriggers = !ignoreTriggerGameObjs
                 };
-                physicsScene2D.OverlapCircle(position, radius, contactFilter, colliders);
-                return HasCollision(caller, colliders);
+
+                int count = physicsScene2D.OverlapCircle(position, radius, filter, ColliderBuffer2D);
+
+                for (int i = 0; i < count; i++)
+                {
+                    var c = ColliderBuffer2D[i];
+                    if (c != null && c.gameObject != caller) return true;
+                }
+
+                return false;
             }
         }
 
@@ -104,40 +142,41 @@ namespace Utils
             bool ignoreTriggerGameObjs,
             int layer)
         {
-            List<T> ts = new List<T>();
-            Component[] components = new Component[]{};
+            var results = new List<T>(8);
+            int layerMask = 1 << layer;
+
             if (gameType == GameType._3D)
             {
-                Collider[] colliders = new Collider[DefaultColliderArraySize];
-                physicsScene.OverlapSphere(position, radius, colliders, LayerMask.GetMask(LayerMask.LayerToName(layer)), ignoreTriggerGameObjs ? QueryTriggerInteraction.Ignore : QueryTriggerInteraction.Collide);
-                components = colliders;
+                int count = physicsScene.OverlapSphere(position, radius, ColliderBuffer3D, layerMask,
+                    ignoreTriggerGameObjs ? QueryTriggerInteraction.Ignore : QueryTriggerInteraction.Collide);
+
+                for (int i = 0; i < count; i++)
+                {
+                    var c = ColliderBuffer3D[i];
+                    if (c == null || c.gameObject == caller) continue;
+                    var comp = c.GetComponent<T>();
+                    if (comp != null) results.Add(comp);
+                }
             }
             else
             {
-                Collider2D[] colliders = new Collider2D[DefaultColliderArraySize];
-                ContactFilter2D contactFilter = new ContactFilter2D()
+                var filter = new ContactFilter2D
                 {
-                    layerMask = 1 << layer,
-                    useTriggers = !ignoreTriggerGameObjs,
+                    layerMask = layerMask,
+                    useTriggers = !ignoreTriggerGameObjs
                 };
-                physicsScene2D.OverlapCircle(position, radius, contactFilter, colliders);
-                components = colliders;
-            }
 
-            if (components.Length > 1 || (components.Length == 1 && caller != components[0].gameObject))
-            {
-                foreach (var collider in components)
+                int count = physicsScene2D.OverlapCircle(position, radius, filter, ColliderBuffer2D);
+                for (int i = 0; i < count; i++)
                 {
-                    if (collider != null && caller != collider.gameObject)
-                    {
-                        T component = collider.GetComponent<T>();
-                        if (component != null)
-                            ts.Add(component);
-                    }
+                    var c = ColliderBuffer2D[i];
+                    if (c == null || c.gameObject == caller) continue;
+                    var comp = c.GetComponent<T>();
+                    if (comp != null) results.Add(comp);
                 }
             }
 
-            return ts.ToArray();
+            return results.Count == 0 ? Array.Empty<T>() : results.ToArray();
         }
 
         public static bool PhysicsOverlapCapsule(
@@ -151,7 +190,7 @@ namespace Utils
             bool ignoreTriggerGameObjs,
             int layer)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public static T PhysicsOverlapTargetObject<T>(
@@ -182,35 +221,34 @@ namespace Utils
 
         public static T PhysicsOverlapBoxTargetObject<T>(
             PhysicsScene physicsScene,
-            PhysicsScene2D physicsScene2D,GameType gameType, GameObject caller, Vector3 position, Quaternion rotation, Vector3 halfExtends, bool ignoreTriggerGameObjs, int layer) where T : Component
+            PhysicsScene2D physicsScene2D, GameType gameType, GameObject caller, Vector3 position, Quaternion rotation, Vector3 halfExtends, bool ignoreTriggerGameObjs, int layer) where T : Component
         {
-            Component[] components = new Component[]{};
+            int layerMask = 1 << layer;
+
             if (gameType == GameType._3D)
             {
-                Collider[] colliders = new Collider[DefaultColliderArraySize];
-                physicsScene.OverlapBox(position, halfExtends, colliders, rotation, LayerMask.GetMask(LayerMask.LayerToName(layer)), ignoreTriggerGameObjs ? QueryTriggerInteraction.Ignore : QueryTriggerInteraction.Collide);
-                components = colliders;
+                int count = physicsScene.OverlapBox(position, halfExtends, ColliderBuffer3D, rotation, layerMask,
+                    ignoreTriggerGameObjs ? QueryTriggerInteraction.Ignore : QueryTriggerInteraction.Collide);
+
+                for (int i = 0; i < count; i++)
+                {
+                    var col = ColliderBuffer3D[i];
+                    if (col == null || col.gameObject == caller) continue;
+                    var comp = col.GetComponent<T>();
+                    if (comp != null) return comp;
+                }
             }
             else
             {
-                Collider2D[] colliders = new Collider2D[DefaultColliderArraySize];
-                ContactFilter2D contactFilter = new ContactFilter2D()
-                {
-                    layerMask = 1 << layer,
-                    useTriggers = !ignoreTriggerGameObjs,
-                };
+                var filter = new ContactFilter2D { layerMask = layerMask, useTriggers = !ignoreTriggerGameObjs };
+                int count = physicsScene2D.OverlapBox(position, halfExtends, rotation.eulerAngles.z, filter, ColliderBuffer2D);
 
-                physicsScene2D.OverlapBox(position, halfExtends, rotation.eulerAngles.z, contactFilter, colliders);
-                components = colliders;
-            }
-
-            foreach (var collider in components)
-            {
-                if (collider != null && caller != collider.gameObject)
+                for (int i = 0; i < count; i++)
                 {
-                    T component = collider.GetComponent<T>();
-                    if (component != null)
-                        return component;
+                    var col = ColliderBuffer2D[i];
+                    if (col == null || col.gameObject == caller) continue;
+                    var comp = col.GetComponent<T>();
+                    if (comp != null) return comp;
                 }
             }
 
@@ -227,33 +265,32 @@ namespace Utils
             bool ignoreTriggerGameObjs,
             int layer) where T : Component
         {
-            Component[] components = new Component[]{};
+            int layerMask = 1 << layer;
+
             if (gameType == GameType._3D)
             {
-                Collider[] colliders = new Collider[DefaultColliderArraySize];
-                physicsScene.OverlapSphere(position, radius, colliders, LayerMask.GetMask(LayerMask.LayerToName(layer)), ignoreTriggerGameObjs ? QueryTriggerInteraction.Ignore : QueryTriggerInteraction.Collide);
-                components = colliders;
+                int count = physicsScene.OverlapSphere(position, radius, ColliderBuffer3D, layerMask,
+                    ignoreTriggerGameObjs ? QueryTriggerInteraction.Ignore : QueryTriggerInteraction.Collide);
+
+                for (int i = 0; i < count; i++)
+                {
+                    var col = ColliderBuffer3D[i];
+                    if (col == null || col.gameObject == caller) continue;
+                    var comp = col.GetComponent<T>();
+                    if (comp != null) return comp;
+                }
             }
             else
             {
-                Collider2D[] colliders = new Collider2D[DefaultColliderArraySize];
-                ContactFilter2D contactFilter = new ContactFilter2D()
-                {
-                    layerMask = 1 << layer,
-                    useTriggers = !ignoreTriggerGameObjs,
-                };
+                var filter = new ContactFilter2D { layerMask = layerMask, useTriggers = !ignoreTriggerGameObjs };
+                int count = physicsScene2D.OverlapCircle(position, radius, filter, ColliderBuffer2D);
 
-                physicsScene2D.OverlapCircle(position, radius, contactFilter, colliders);
-                components = colliders;
-            }
-
-            foreach (var collider in components)
-            {
-                if (collider != null && caller != collider.gameObject)
+                for (int i = 0; i < count; i++)
                 {
-                    T component = collider.GetComponent<T>();
-                    if (component != null)
-                        return component;
+                    var col = ColliderBuffer2D[i];
+                    if (col == null || col.gameObject == caller) continue;
+                    var comp = col.GetComponent<T>();
+                    if (comp != null) return comp;
                 }
             }
 
@@ -271,9 +308,8 @@ namespace Utils
             bool ignoreTriggerGameObjs,
             int layer) where T : Component
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
-
 
         public static List<T> PhysicsOverlapTargetObjects<T>(
             PhysicsScene physicsScene,
@@ -296,7 +332,7 @@ namespace Utils
                 case PhysicsOverlapType.OverlapCapsule:
                     return PhysicsOverlapCapsuleTargetObjects<T>(physicsScene, physicsScene2D, gameType, caller, position, radius, rotation, ignoreTriggerGameObjs, layer);
                 default:
-                    return null;
+                    return new List<T>();
             }
         }
 
@@ -311,28 +347,37 @@ namespace Utils
             bool ignoreTriggerGameObjs,
             int layer) where T : Component
         {
-            Component[] components = new Component[]{};
+            var results = new List<T>(4);
+            int layerMask = 1 << layer;
+
             if (gameType == GameType._3D)
             {
-                Collider[] colliders = new Collider[DefaultColliderArraySize];
-                physicsScene.OverlapBox(position, halfExtends, colliders, rotation, LayerMask.GetMask(LayerMask.LayerToName(layer)), ignoreTriggerGameObjs ? QueryTriggerInteraction.Ignore : QueryTriggerInteraction.Collide);
-                components = colliders;
+                int count = physicsScene.OverlapBox(position, halfExtends, ColliderBuffer3D, rotation, layerMask,
+                    ignoreTriggerGameObjs ? QueryTriggerInteraction.Ignore : QueryTriggerInteraction.Collide);
+
+                for (int i = 0; i < count; i++)
+                {
+                    var col = ColliderBuffer3D[i];
+                    if (col == null || col.gameObject == caller) continue;
+                    var comp = col.GetComponent<T>();
+                    if (comp != null) results.Add(comp);
+                }
             }
             else
             {
-                Collider2D[] colliders = new Collider2D[DefaultColliderArraySize];
-                ContactFilter2D contactFilter = new ContactFilter2D()
+                var filter = new ContactFilter2D { layerMask = layerMask, useTriggers = !ignoreTriggerGameObjs };
+                int count = physicsScene2D.OverlapBox(position, halfExtends, rotation.eulerAngles.z, filter, ColliderBuffer2D);
+
+                for (int i = 0; i < count; i++)
                 {
-                    layerMask = 1 << layer,
-                    useTriggers = !ignoreTriggerGameObjs,
-                };
-
-                physicsScene2D.OverlapBox(position, halfExtends, rotation.eulerAngles.z, contactFilter, colliders);
-                components = colliders;
-
+                    var col = ColliderBuffer2D[i];
+                    if (col == null || col.gameObject == caller) continue;
+                    var comp = col.GetComponent<T>();
+                    if (comp != null) results.Add(comp);
+                }
             }
 
-            return components.NotNull().Select(col => col.GetComponent<T>()).Where(component => component != null && caller != component.gameObject).ToList();
+            return results;
         }
 
         public static List<T> PhysicsOverlapSphereTargetObjects<T>(
@@ -345,27 +390,37 @@ namespace Utils
             bool ignoreTriggerGameObjs,
             int layer) where T : Component
         {
-            Component[] components = new Component[]{};
+            var results = new List<T>(4);
+            int layerMask = 1 << layer;
+
             if (gameType == GameType._3D)
             {
-                Collider[] colliders = new Collider[DefaultColliderArraySize];
-                physicsScene.OverlapSphere(position, radius, colliders, LayerMask.GetMask(LayerMask.LayerToName(layer)), ignoreTriggerGameObjs ? QueryTriggerInteraction.Ignore : QueryTriggerInteraction.Collide);
-                components = colliders;
+                int count = physicsScene.OverlapSphere(position, radius, ColliderBuffer3D, layerMask,
+                    ignoreTriggerGameObjs ? QueryTriggerInteraction.Ignore : QueryTriggerInteraction.Collide);
+
+                for (int i = 0; i < count; i++)
+                {
+                    var col = ColliderBuffer3D[i];
+                    if (col == null || col.gameObject == caller) continue;
+                    var comp = col.GetComponent<T>();
+                    if (comp != null) results.Add(comp);
+                }
             }
             else
             {
-                Collider2D[] colliders = new Collider2D[DefaultColliderArraySize];
-                ContactFilter2D contactFilter = new ContactFilter2D()
-                {
-                    layerMask = 1 << layer,
-                    useTriggers = !ignoreTriggerGameObjs,
-                };
+                var filter = new ContactFilter2D { layerMask = layerMask, useTriggers = !ignoreTriggerGameObjs };
+                int count = physicsScene2D.OverlapCircle(position, radius, filter, ColliderBuffer2D);
 
-                physicsScene2D.OverlapCircle(position, radius, contactFilter, colliders);
-                components = colliders;
+                for (int i = 0; i < count; i++)
+                {
+                    var col = ColliderBuffer2D[i];
+                    if (col == null || col.gameObject == caller) continue;
+                    var comp = col.GetComponent<T>();
+                    if (comp != null) results.Add(comp);
+                }
             }
 
-            return components.NotNull().Select(col => col.GetComponent<T>()).Where(component => component != null && caller != component.gameObject).ToList();
+            return results;
         }
 
         public static List<T> PhysicsOverlapCapsuleTargetObjects<T>(
@@ -379,7 +434,7 @@ namespace Utils
             bool ignoreTriggerGameObjs,
             int layer) where T : Component
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public static RaycastHit2D[] PhysicsCircleCast2D(
@@ -393,31 +448,19 @@ namespace Utils
             bool ignoreTriggerGameObjs,
             int layer)
         {
-            List<RaycastHit2D> ts = new List<RaycastHit2D>();
+            var results = new List<RaycastHit2D>(4);
+            var filter = new ContactFilter2D { layerMask = 1 << layer, useTriggers = !ignoreTriggerGameObjs };
 
-            RaycastHit2D[] hits = new RaycastHit2D[DefaultColliderArraySize];
-            ContactFilter2D contactFilter = new ContactFilter2D()
-            {
-                layerMask = 1 << layer,
-                useTriggers = !ignoreTriggerGameObjs,
-            };
-            physicsScene2D.CircleCast(position, radius, direction, distance, contactFilter, hits);
+            int count = physicsScene2D.CircleCast(position, radius, direction, distance, filter, RaycastHit2DBuffer);
 
-            foreach (var hit in hits)
+            for (int i = 0; i < count; i++)
             {
-                if (hit.collider != null && caller != hit.collider.gameObject)
-                {
-                    ts.Add(hit);
-                }
+                var hit = RaycastHit2DBuffer[i];
+                if (hit.collider == null || hit.collider.gameObject == caller) continue;
+                results.Add(hit);
             }
 
-            return ts.ToArray();
-        }
-
-
-        private static bool HasCollision(GameObject caller, Component[] colliders)
-        {
-            return colliders.Any(c => c != null && c.gameObject != caller);
+            return results.Count == 0 ? Array.Empty<RaycastHit2D>() : results.ToArray();
         }
     }
 

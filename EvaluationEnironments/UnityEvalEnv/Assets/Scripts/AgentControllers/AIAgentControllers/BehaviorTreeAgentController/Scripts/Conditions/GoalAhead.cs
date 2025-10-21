@@ -1,4 +1,4 @@
-using Problems.Soccer;
+using Problems.Soccer2D;
 
 namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 {
@@ -12,7 +12,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 
         public GoalType goalType;
 
-        private GoalComponent goalComponent;
+        private Soccer2DGoalComponent goalComponent;
 
         protected override void OnStart()
         {
@@ -24,10 +24,10 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 
         protected override bool CheckConditions()
         {
-            context.gameObject.TryGetComponent(out SoccerAgentComponent agentComponent);
+            context.gameObject.TryGetComponent(out Soccer2DAgentComponent agentComponent);
             if (agentComponent)
             {
-                goalComponent = agentComponent.SoccerEnvironmentController.TeamGoalAhead(agentComponent);
+                goalComponent = agentComponent.Soccer2DEnvironmentController.TeamGoalAhead(agentComponent);
 
                 if (goalComponent)
                 {

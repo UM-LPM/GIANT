@@ -21,7 +21,7 @@ namespace Utils
 
             // Read all files in the folder
             string[] files = Directory.GetFiles(folderPathJSON, "*.json");
-            files = files.OrderBy(file => int.Parse(Regex.Match(file, @"(\d+)").Groups[0].ToString())).ToArray();
+            files = files.OrderBy(file => int.Parse(Regex.Match(file, @"(\d+)(?!.*\d)").Groups[0].ToString())).ToArray();
 
             if (evalRangeStart < 0)
             {
