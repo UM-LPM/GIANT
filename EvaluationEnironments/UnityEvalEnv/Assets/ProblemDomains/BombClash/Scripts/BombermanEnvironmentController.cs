@@ -1,37 +1,51 @@
 using Base;
 using Configuration;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.UIElements;
 using Utils;
 
-namespace Problems.Bombclash
+namespace Problems.BombClash
 {
     public class BombermanEnvironmentController : EnvironmentControllerBase
     {
         [Header("Bomberman Agent configuration")]
-        [SerializeField] float AgentStartMoveSpeed = 5f;
+        [SerializeField] int AgentStartMoveSpeed = 5;
         [SerializeField] int StartAgentBombAmount = 1;
         [SerializeField] int StartExplosionRadius = 1;
         [SerializeField] int StartHealth = 1;
-        [SerializeField] public float ExplosionDamageCooldown = 0.8f;
+        [SerializeField] public int ExplosionDamageCooldown = 40; //0.8f;
 
         [Header("Descrete Agent Movement Configuration")]
-        [SerializeField] public float AgentUpdateinterval = 0.1f;
+        [SerializeField] public int AgentUpdateinterval = 10; //0.2f;
 
         [Header("Bomberman Game Configuration")]
-        [SerializeField] public float DestructibleDestructionTime = 1f;
+        [SerializeField] public int DestructibleDestructionTime = 50; //1f;
         [Range(0f, 1f)]
         [SerializeField] public float PowerUpSpawnChance = 0.4f;
         [SerializeField] public GameObject[] SpawnableItems;
 
-        [SerializeField] public float BombFuseTime = 3f;
-        [SerializeField] public float ExplosionDuration = 1f;
+        [Header("Bomb")]
+        [SerializeField] BombComponent BombPrefab;
+        [SerializeField] public int BombFuseTime = 150; //3f;
 
-        [HideInInspector] public BombExplosionController BombExplosionController { get; set; }
+        [Header("Explosion")]
+        [SerializeField] ExplosionComponent ExplosionPrefab;
+        [SerializeField] public int ExplosionDuration = 50; //1f;
+
+        [Header("Destructible")]
+        [SerializeField] public Tilemap DestructibleTiles;
+        [SerializeField] DestructibleComponent DestructiblePrefab;
 
         [HideInInspector] public Tilemap IndestructibleWalkableTiles { get; set; }
+
+        private List<ActiveBomb> ActiveBombs;
+        private List<ActiveExplosion> ActiveExplosions;
+        private List<ActiveDestructible> ActiveDestructibles; 
 
         Collider2D[] hitColliders;
         Vector3 newBombPos;
@@ -41,6 +55,10 @@ namespace Problems.Bombclash
         int destructibleTilesCount;
         int opponentPlacedBombs;
         float allPossibleBombs;
+
+        ContactFilter2D contactFilter;
+
+        bool allOpponentsDestroyed;
 
         // Fitness calculation
         private float sectorExplorationFitness;
@@ -60,16 +78,23 @@ namespace Problems.Bombclash
         protected override void DefineAdditionalDataOnPostAwake()
         {
             ReadParamsFromMainConfiguration();
-            BombExplosionController = GetComponent<BombExplosionController>();
-
             IndestructibleWalkableTiles = GetComponentInChildren<SectorComponent>().GetComponent<Tilemap>();
 
-            destructibleTilesCount = CountTiles(BombExplosionController.DestructibleTiles);
+            destructibleTilesCount = CountTiles(DestructibleTiles);
+
+            ActiveBombs = new List<ActiveBomb>();
+            ActiveExplosions = new List<ActiveExplosion>();
+            ActiveDestructibles = new List<ActiveDestructible>();
         }
 
         protected override void DefineAdditionalDataOnPostStart()
         {
             SetAgentStartParams(Agents);
+
+            contactFilter = new ContactFilter2D();
+            contactFilter.SetLayerMask(LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)));
+
+            hitColliders = new Collider2D[32];
         }
 
         void ReadParamsFromMainConfiguration()
@@ -87,7 +112,7 @@ namespace Problems.Bombclash
 
                 if (conf.ProblemConfiguration.ContainsKey("AgentStartMoveSpeed"))
                 {
-                    AgentStartMoveSpeed = float.Parse(conf.ProblemConfiguration["AgentStartMoveSpeed"]);
+                    AgentStartMoveSpeed = int.Parse(conf.ProblemConfiguration["AgentStartMoveSpeed"]);
                 }
 
                 if (conf.ProblemConfiguration.ContainsKey("StartAgentBombAmount"))
@@ -107,12 +132,12 @@ namespace Problems.Bombclash
 
                 if (conf.ProblemConfiguration.ContainsKey("ExplosionDamageCooldown"))
                 {
-                    ExplosionDamageCooldown = float.Parse(conf.ProblemConfiguration["ExplosionDamageCooldown"]);
+                    ExplosionDamageCooldown = int.Parse(conf.ProblemConfiguration["ExplosionDamageCooldown"]);
                 }
 
                 if (conf.ProblemConfiguration.ContainsKey("DestructibleDestructionTime"))
                 {
-                    DestructibleDestructionTime = float.Parse(conf.ProblemConfiguration["DestructibleDestructionTime"]);
+                    DestructibleDestructionTime = int.Parse(conf.ProblemConfiguration["DestructibleDestructionTime"]);
                 }
 
                 if (conf.ProblemConfiguration.ContainsKey("PowerUpSpawnChance"))
@@ -122,12 +147,12 @@ namespace Problems.Bombclash
 
                 if (conf.ProblemConfiguration.ContainsKey("BombFuseTime"))
                 {
-                    BombFuseTime = float.Parse(conf.ProblemConfiguration["BombFuseTime"]);
+                    BombFuseTime = int.Parse(conf.ProblemConfiguration["BombFuseTime"]);
                 }
 
                 if (conf.ProblemConfiguration.ContainsKey("ExplosionDuration"))
                 {
-                    ExplosionDuration = float.Parse(conf.ProblemConfiguration["ExplosionDuration"]);
+                    ExplosionDuration = int.Parse(conf.ProblemConfiguration["ExplosionDuration"]);
                 }
             }
         }
@@ -141,11 +166,13 @@ namespace Problems.Bombclash
         }
         public bool AgentCanMove(BombermanAgentComponent agent)
         {
-            newAgentPos = agent.transform.position + new Vector3(agent.MoveDirection.x, agent.MoveDirection.y, 0);
-            hitColliders = Physics2D.OverlapBoxAll(newAgentPos, new Vector2(1 / 1.15f, 1 / 1.15f), 0f, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)) + DefaultLayer);
+            newAgentPos = agent.transform.position + new Vector3Int(agent.MoveDirection.x, agent.MoveDirection.y, 0);
+            hitColliders = PhysicsUtil.PhysicsOverlapBox2D(PhysicsScene2D, agent.gameObject, newAgentPos, agent.transform.rotation, new Vector2(0.87f, 0.87f), false, gameObject.layer);
 
             foreach (Collider2D collider in hitColliders)
             {
+                if(collider == null) continue;
+
                 BombComponent bombComponent = collider.GetComponent<BombComponent>();
                 if (bombComponent != null)
                 {
@@ -158,27 +185,31 @@ namespace Problems.Bombclash
             return true;
         }
 
-        bool MoveBomb(BombComponent bomb, Vector3 pos, Vector2 moveDirection, int deep)
+        bool MoveBomb(BombComponent bomb, Vector3 pos, Vector2Int moveDirection, int deep)
         {
-            newBombPos = pos + new Vector3(moveDirection.x, moveDirection.y, 0);
-            hitColliders = Physics2D.OverlapBoxAll(newBombPos, new Vector2(1 / 1.15f, 1 / 1.15f), 0f, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)) + DefaultLayer);
+            newBombPos = pos + new Vector3Int(moveDirection.x, moveDirection.y, 0);
+            hitColliders = PhysicsUtil.PhysicsOverlapBox2D(PhysicsScene2D, bomb.gameObject, newBombPos, bomb.transform.rotation, new Vector2(0.87f, 0.87f), false, gameObject.layer);
+            
             if (hitColliders.Length > 0)
             {
                 return deep > 0 ? true : false;
             }
             else
             {
-                bomb.transform.Translate(moveDirection);
+                bomb.transform.position = newBombPos;
+
                 return MoveBomb(bomb, newBombPos, moveDirection, deep + 1);
             }
         }
 
         public void CheckIfAgentOverPowerUp(BombermanAgentComponent agent)
         {
-            hitColliders = Physics2D.OverlapBoxAll(agent.transform.position, new Vector2(1 / 1.15f, 1 / 1.15f), 0f, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)) + DefaultLayer);
-
+            hitColliders = PhysicsUtil.PhysicsOverlapBox2D(PhysicsScene2D, agent.gameObject, agent.transform.position, agent.transform.rotation, new Vector2(0.87f, 0.87f), false, gameObject.layer);
+            
             foreach (Collider2D collider in hitColliders)
             {
+                if(collider == null) continue;
+
                 itemPickup = collider.GetComponent<ItemPickupComponent>();
                 if (itemPickup != null)
                 {
@@ -190,29 +221,29 @@ namespace Problems.Bombclash
 
         public void ExlosionHitAgent(BombermanAgentComponent agent, ExplosionComponent explosion)
         {
-            if (agent.NextDamageTime <= CurrentSimulationTime)
+            if (agent.NextDamageTime <= CurrentSimulationSteps)
             {
-                agent.NextDamageTime = CurrentSimulationTime + ExplosionDamageCooldown;
+                agent.NextDamageTime = CurrentSimulationSteps + ExplosionDamageCooldown;
 
                 agent.Health--;
 
-                if (agent == explosion.Parent)
+                if (agent == explosion.Owener)
                 {
                     agent.AgentHitByOwnBombs++;
                 }
                 else
                 {
                     agent.AgentHitByBombs++;
-                    explosion.Parent.BombsHitAgent++;
+                    explosion.Owener.BombsHitAgent++;
                 }
 
                 if (agent.Health <= 0)
                 {
                     // Agent has died
-                    if (agent != explosion.Parent)
+                    if (agent != explosion.Owener)
                     {
                         agent.AgentDied = true;
-                        explosion.Parent.AgentsKilled++;
+                        explosion.Owener.AgentsKilled++;
                     }
 
                     agent.DeathSequence();
@@ -246,6 +277,36 @@ namespace Problems.Bombclash
         protected override void OnPostFixedUpdate()
         {
             AgentsOverExplosion();
+
+            // Handle active bombs
+            for (int i = ActiveBombs.Count - 1; i >= 0; i--)
+            {
+                if (ActiveBombs[i].DecreaseTime())
+                {
+                    InitExplosion(ActiveBombs[i]);
+
+                }
+            }
+            // Handle active explosions
+            for (int i = ActiveExplosions.Count - 1; i >= 0; i--)
+            {
+                if (ActiveExplosions[i].DecreaseDuration())
+                {
+                    Destroy(ActiveExplosions[i].Explosion.gameObject);
+                    ActiveExplosions.RemoveAt(i);
+                }
+            }
+
+            // Handle active destructibles
+            for (int i = ActiveDestructibles.Count - 1; i >= 0; i--)
+            {
+                if (ActiveDestructibles[i].DecreaseTime())
+                {
+                    SpawnPowerUpItem(ActiveDestructibles[i]);
+                    Destroy(ActiveDestructibles[i].DestructibleComponent.gameObject);
+                    ActiveDestructibles.RemoveAt(i);
+                }
+            }
         }
 
         void AgentsOverExplosion()
@@ -254,10 +315,12 @@ namespace Problems.Bombclash
             {
                 if (agent.gameObject.activeSelf && agent.enabled)
                 {
-                    Collider2D[] hitColliders = Physics2D.OverlapBoxAll(agent.transform.position, new Vector2(1 / 1.15f, 1 / 1.15f), 0f, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)) + DefaultLayer);
+                    hitColliders = PhysicsUtil.PhysicsOverlapBox2D(PhysicsScene2D, agent.gameObject, agent.transform.position, agent.transform.rotation, new Vector2(0.87f, 0.87f), false, gameObject.layer);
 
                     foreach (Collider2D collider in hitColliders)
                     {
+                        if(collider == null) continue;
+
                         ExplosionComponent explosion = collider.GetComponent<ExplosionComponent>();
                         if (explosion != null)
                         {
@@ -271,10 +334,15 @@ namespace Problems.Bombclash
 
         public override void CheckEndingState()
         {
-            if (GetNumOfActiveAgents() == 1)
+            if (GetNumOfActiveAgents() <= 1)
             {
-                FinishGame();
+                allOpponentsDestroyed = true;
             }
+        }
+
+        public override bool IsSimulationFinished()
+        {
+            return base.IsSimulationFinished() || allOpponentsDestroyed;
         }
 
         protected override void OnPreFinishGame()
@@ -320,6 +388,10 @@ namespace Problems.Bombclash
                     bombsHitAgentFitness = (float)Math.Round(BombermanFitness.FitnessValues[BombermanFitness.FitnessKeys.BombsHitAgent.ToString()] * bombsHitAgentFitness, 4);
                     agent.AgentFitness.UpdateFitness(bombsHitAgentFitness, BombermanFitness.FitnessKeys.BombsHitAgent.ToString());
                 }
+                else
+                {
+                    bombsHitAgentFitness = 0f;
+                }
 
                 // Agents killed
                 agentsKilledFitness = agent.AgentsKilled / (float)(Agents.Length -1);
@@ -333,6 +405,10 @@ namespace Problems.Bombclash
                     agentHitByBombsFitness = (float)Math.Round(BombermanFitness.FitnessValues[BombermanFitness.FitnessKeys.AgentHitByBombs.ToString()] * agentHitByBombsFitness, 4);
                     agent.AgentFitness.UpdateFitness(agentHitByBombsFitness, BombermanFitness.FitnessKeys.AgentHitByBombs.ToString());
                 }
+                else
+                {
+                    agentHitByBombsFitness = 0f;
+                }
 
                 // Agent hit by own bombs
                 if (agent.AgentHitByOwnBombs > 0 && agent.BombsPlaced > 0)
@@ -341,6 +417,10 @@ namespace Problems.Bombclash
                     agentHitByOwnBombsFitness = (float)Math.Round(BombermanFitness.FitnessValues[BombermanFitness.FitnessKeys.AgentHitByOwnBombs.ToString()] * agentHitByOwnBombsFitness, 4);
                     agent.AgentFitness.UpdateFitness(agentHitByOwnBombsFitness, BombermanFitness.FitnessKeys.AgentHitByOwnBombs.ToString());
                 }
+                else
+                {
+                    agentHitByOwnBombsFitness = 0f;
+                }
 
                 // Agent death
                 if (agent.AgentDied)
@@ -348,13 +428,21 @@ namespace Problems.Bombclash
                     agentDeathFitness = BombermanFitness.FitnessValues[BombermanFitness.FitnessKeys.AgentDeath.ToString()];
                     agent.AgentFitness.UpdateFitness(agentDeathFitness, BombermanFitness.FitnessKeys.AgentDeath.ToString());
                 }
+                else
+                {
+                    agentDeathFitness = 0f;
+                }
 
                 // Survival bonus
-                if(agent.SurvivalBonuses > 0)
+                if (agent.SurvivalBonuses > 0)
                 {
                     survivalBonusFitness = agent.SurvivalBonuses / (float)(Agents.Length - 1);
                     survivalBonusFitness = (float)Math.Round(BombermanFitness.FitnessValues[BombermanFitness.FitnessKeys.SurvivalBonus.ToString()] * survivalBonusFitness, 4);
                     agent.AgentFitness.UpdateFitness(survivalBonusFitness, BombermanFitness.FitnessKeys.SurvivalBonus.ToString());
+                }
+                else
+                {
+                    survivalBonusFitness = 0;
                 }
 
                 // Last survival bonus
@@ -363,20 +451,24 @@ namespace Problems.Bombclash
                     lastSurvivalBonusFitness = BombermanFitness.FitnessValues[BombermanFitness.FitnessKeys.LastSurvivalBonus.ToString()];
                     agent.AgentFitness.UpdateFitness(lastSurvivalBonusFitness, BombermanFitness.FitnessKeys.LastSurvivalBonus.ToString());
                 }
+                else
+                {
+                    lastSurvivalBonusFitness = 0f;
+                }
 
-                agentFitnessLog = "========================================\n" +
-                                  $"[Agent]: Team ID {agent.TeamIdentifier.TeamID}, ID: {agent.IndividualID}\n" +
-                                  $"Sectors explored: {agent.SectorsExplored} / {sectorCount} = {sectorExplorationFitness}\n" +
-                                  $"Bombs placed: {agent.BombsPlaced} / {allPossibleBombs} = {bombsPlacedFitness}\n" +
-                                  $"Blocks destroyed: {agent.BlocksDestroyed} / {destructibleTilesCount} = {blocksDestroyedFitness}\n" +
-                                  $"Power ups collected: {agent.PowerUpsCollected} / {(destructibleTilesCount * PowerUpSpawnChance)} = {powerUpsCollectedFitness}\n" +
-                                  $"Bombs hit agent: {agent.BombsHitAgent} / {opponentPlacedBombs} = {bombsHitAgentFitness}\n" +
-                                  $"Agents killed: {agent.AgentsKilled} = {agentsKilledFitness}\n" +
-                                  $"Agent hit by bombs: {agent.AgentHitByBombs} / {opponentPlacedBombs} = {agentHitByBombsFitness}\n" +
-                                  $"Agent hit by own bombs: {agent.AgentHitByOwnBombs} / {agent.BombsPlaced} = {agentHitByOwnBombsFitness}\n" +
-                                  $"Agent death: {agent.AgentDied} = {agentDeathFitness}\n" +
-                                  $"Survival bonus: {agent.SurvivalBonuses} / {(Agents.Length - 1)} = {survivalBonusFitness}\n" +
-                                  $"Last survival bonus: {agent.LastSurvivalBonus} = {lastSurvivalBonusFitness}";
+                    agentFitnessLog = "========================================\n" +
+                                      $"[Agent]: Team ID {agent.TeamIdentifier.TeamID}, ID: {agent.IndividualID}\n" +
+                                      $"Sectors explored: {agent.SectorsExplored} / {sectorCount} = {sectorExplorationFitness}\n" +
+                                      $"Bombs placed: {agent.BombsPlaced} / {allPossibleBombs} = {bombsPlacedFitness}\n" +
+                                      $"Blocks destroyed: {agent.BlocksDestroyed} / {destructibleTilesCount} = {blocksDestroyedFitness}\n" +
+                                      $"Power ups collected: {agent.PowerUpsCollected} / {(destructibleTilesCount * PowerUpSpawnChance)} = {powerUpsCollectedFitness}\n" +
+                                      $"Bombs hit agent: {agent.BombsHitAgent} / {opponentPlacedBombs} = {bombsHitAgentFitness}\n" +
+                                      $"Agents killed: {agent.AgentsKilled} = {agentsKilledFitness}\n" +
+                                      $"Agent hit by bombs: {agent.AgentHitByBombs} / {opponentPlacedBombs} = {agentHitByBombsFitness}\n" +
+                                      $"Agent hit by own bombs: {agent.AgentHitByOwnBombs} / {agent.BombsPlaced} = {agentHitByOwnBombsFitness}\n" +
+                                      $"Agent death: {agent.AgentDied} = {agentDeathFitness}\n" +
+                                      $"Survival bonus: {agent.SurvivalBonuses} / {(Agents.Length - 1)} = {survivalBonusFitness}\n" +
+                                      $"Last survival bonus: {agent.LastSurvivalBonus} = {lastSurvivalBonusFitness}";
 
                 DebugSystem.LogVerbose(agentFitnessLog);
             }
@@ -397,6 +489,123 @@ namespace Problems.Bombclash
                 }
             }
             return count;
+        }
+
+        public void PlaceBomb(BombermanAgentComponent agent)
+        {
+            Vector2 position = agent.transform.position;
+
+            // Check if the agent can place a bomb (No bomb is already present at this position
+            var existingBomb = PhysicsUtil.PhysicsOverlapBoxTargetObject<BombComponent>(
+                PhysicsScene,
+                PhysicsScene2D,
+                GameType,
+                agent.gameObject,
+                position,
+                Quaternion.identity,
+                new Vector2(0.5f, 0.5f),
+                false,
+                gameObject.layer
+                );
+
+            if (existingBomb != null || agent.BombsRemaining <= 0)
+                return;
+
+            agent.BombsPlaced++;
+
+            BombComponent bomb = Instantiate(BombPrefab, position, Quaternion.identity, transform);
+
+            SetLayerRecursively(bomb.gameObject, gameObject.layer);
+            agent.BombsRemaining--;
+
+            ActiveBombs.Add(new ActiveBomb(bomb, agent, BombFuseTime));
+        }
+
+        public void InitExplosion(ActiveBomb activeBomb)
+        {
+            Vector2 position = activeBomb.Bomb.transform.position;
+
+            // Handle explosion logic
+            ExplosionComponent explosion = Instantiate(ExplosionPrefab, position, Quaternion.identity, transform);
+            explosion.Owener = activeBomb.Owner;
+            SetLayerRecursively(explosion.gameObject, gameObject.layer);
+
+            explosion.SetActiveRenderer(explosion.Start);
+            ActiveExplosions.Add(new ActiveExplosion(explosion, ExplosionDuration));
+
+            Explode(position, Vector2.up, activeBomb.Owner.ExplosionRadius, activeBomb.Owner);
+            Explode(position, Vector2.down, activeBomb.Owner.ExplosionRadius, activeBomb.Owner);
+            Explode(position, Vector2.left, activeBomb.Owner.ExplosionRadius, activeBomb.Owner);
+            Explode(position, Vector2.right, activeBomb.Owner.ExplosionRadius, activeBomb.Owner);
+
+            Destroy(activeBomb.Bomb.gameObject);
+            activeBomb.Owner.BombsRemaining++;
+
+            ActiveBombs.Remove(activeBomb);
+        }
+
+        public void Explode(Vector2 position, Vector2 direction, int length, BombermanAgentComponent agent)
+        {
+            if (length <= 0)
+                return;
+
+            position += direction;
+
+            Collider2D[] colliders = PhysicsUtil.PhysicsOverlapBox2D(PhysicsScene2D, null, position, Quaternion.identity, new Vector2(0.5f, 0.5f), true, gameObject.layer);
+
+            foreach (var collider in colliders)
+            {
+                if (collider != null && !collider.isTrigger)
+                {
+                    BombermanAgentComponent hitAgent;
+                    collider.TryGetComponent<BombermanAgentComponent>(out hitAgent);
+                    if (!hitAgent)
+                    {
+                        ClearDestructible(position, agent);
+                        return;
+                    }
+                }
+            }
+
+            ExplosionComponent explosion = Instantiate(ExplosionPrefab, position, Quaternion.identity, transform);
+            explosion.Owener = agent;
+            SetLayerRecursively(explosion.gameObject, gameObject.layer);
+
+            explosion.SetActiveRenderer(length > 1 ? explosion.Middle : explosion.End);
+            explosion.SetDirection(direction);
+
+            ActiveExplosions.Add(new ActiveExplosion(explosion, ExplosionDuration));
+
+            Explode(position, direction, length - 1, agent);
+        }
+
+        public void ClearDestructible(Vector2 position, BombermanAgentComponent agent)
+        {
+            Vector3Int cell = DestructibleTiles.WorldToCell(position);
+            TileBase tile = DestructibleTiles.GetTile(cell);
+
+            if (tile != null)
+            {
+                DestructibleComponent destructible = Instantiate(DestructiblePrefab, position, Quaternion.identity, transform);
+                SetLayerRecursively(destructible.gameObject, gameObject.layer);
+
+                DestructibleTiles.SetTile(cell, null);
+
+                ActiveDestructibles.Add(new ActiveDestructible(destructible, DestructibleDestructionTime));
+
+                agent.BlocksDestroyed++;
+            }
+        }
+
+        public void SpawnPowerUpItem(ActiveDestructible activeDestructible)
+        {
+            // Spawn an item (power up)
+            if (SpawnableItems.Length > 0 && Util.NextDouble() < PowerUpSpawnChance)
+            {
+                int index = Util.NextInt(0, SpawnableItems.Length);
+                GameObject item = Instantiate(SpawnableItems[index], activeDestructible.DestructibleComponent.transform.position, Quaternion.identity, activeDestructible.DestructibleComponent.transform.parent);
+                SetLayerRecursively(item, gameObject.layer);
+            }
         }
     }
 }

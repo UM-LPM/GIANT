@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using Utils;
 
 public class GridSensor3D : Sensor<SensorPerceiveOutput[,,]> {
 
@@ -16,6 +17,8 @@ public class GridSensor3D : Sensor<SensorPerceiveOutput[,,]> {
     [Header("Sensor position")]
     [SerializeField] bool fixedPosition;
     [SerializeField] Vector3 position;
+
+    Collider[] hitColliders;
 
     public GridSensor3D() : base("Grid Sensor 3D") {
 
@@ -35,7 +38,8 @@ public class GridSensor3D : Sensor<SensorPerceiveOutput[,,]> {
                     Vector3 cellCenter = new Vector3(x * CellSpacing.x, y * CellSpacing.y, z * CellSpacing.z) + cellWorldPosition;
 
                     // Use Physics.OverlapBox to detect objects in the cell
-                    Collider[] hitColliders = Physics.OverlapBox(cellCenter, new Vector3(CellSize.x / 2, CellSize.y / 2, CellSize.z / 2), Quaternion.identity, LayerMask);
+                    hitColliders = PhysicsUtil.PhysicsOverlapBox3D(PhysicsScene, gameObject, cellCenter, Quaternion.identity, CellSize / 1.15f, false, LayerMask);
+
                     // If any objects were detected, store the first one in the SensorPerceiveOutputs array
                     if (hitColliders.Length > 0 && hitColliders[0].gameObject != gameObject) {
                         SensorPerceiveOutputs[x, y, z] = new SensorPerceiveOutput { HasHit = true, HitGameObjects = hitColliders.Select(a => a.gameObject).ToArray(), EndPositionWorld = cellCenter };

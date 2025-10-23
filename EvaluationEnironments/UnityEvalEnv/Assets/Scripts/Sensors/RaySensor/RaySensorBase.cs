@@ -176,17 +176,6 @@ public abstract class RaySensorBase : Sensor<SensorPerceiveOutput[]> {
         rayOutputs[rayIndex].HitGameObjects[0] = hitObject;
         rayOutputs[rayIndex].StartPositionWorld = startPositionWorld;
         rayOutputs[rayIndex].EndPositionWorld = endPositionWorld;
-        
-        // TODO Remove this
-        /*rayOutput = new SensorPerceiveOutput {
-            HasHit = castHit,
-            HitFraction = hitFraction,
-            HasHitTaggedObject = false,
-            HitTagIndex = -1,
-            HitGameObjects = new GameObject[] { hitObject },
-            StartPositionWorld = startPositionWorld,
-            EndPositionWorld = endPositionWorld,
-        };*/
 
         if (castHit) {
             // Find the index of the tag of the object that was hit.

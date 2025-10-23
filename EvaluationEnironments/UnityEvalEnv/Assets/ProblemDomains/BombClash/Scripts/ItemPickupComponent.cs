@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Problems.Bombclash
+namespace Problems.BombClash
 {
     public class ItemPickupComponent : MonoBehaviour
     {

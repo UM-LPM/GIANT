@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Problems.Robostrike
 {
-    [CreateAssetMenu(fileName = "RobostrikeManualAgentController", menuName = "AgentControllers/AIAgentControllers/ManualAgentControllers/RobostrikeManualAgentController")]
+    [CreateAssetMenu(fileName = "RobostrikeManualAgentController", menuName = "AgentControllers/ManualAgentControllers/RobostrikeManualAgentController")]
     public class RobostrikeManualAgentController : ManualAgentController
     {
         public override void GetActions(in ActionBuffer actionsOut)

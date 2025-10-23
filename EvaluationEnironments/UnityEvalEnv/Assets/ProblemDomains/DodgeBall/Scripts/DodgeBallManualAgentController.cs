@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Problems.DodgeBall
 {
-    [CreateAssetMenu(fileName = "DodgeBallManualAgentController", menuName = "AgentControllers/AIAgentControllers/ManualAgentControllers/DodgeBallManualAgentController")]
+    [CreateAssetMenu(fileName = "DodgeBallManualAgentController", menuName = "AgentControllers/ManualAgentControllers/DodgeBallManualAgentController")]
     public class DodgeBallManualAgentController : ManualAgentController
     {
         public override void GetActions(in ActionBuffer actionsOut)

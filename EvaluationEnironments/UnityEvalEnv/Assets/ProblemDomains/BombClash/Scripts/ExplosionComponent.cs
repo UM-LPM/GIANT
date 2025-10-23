@@ -1,7 +1,7 @@
 using Base;
 using UnityEngine;
 
-namespace Problems.Bombclash
+namespace Problems.BombClash
 {
     public class ExplosionComponent : MonoBehaviour
     {
@@ -9,7 +9,7 @@ namespace Problems.Bombclash
         [SerializeField] public AnimatedSpriteRenderer Middle;
         [SerializeField] public AnimatedSpriteRenderer End;
 
-        public BombermanAgentComponent Parent { get; set; }
+        public BombermanAgentComponent Owener { get; set; }
 
         public void SetActiveRenderer(AnimatedSpriteRenderer renderer)
         {
@@ -22,6 +22,23 @@ namespace Problems.Bombclash
         {
             float angle = Mathf.Atan2(direction.y, direction.x);
             transform.rotation = Quaternion.AngleAxis(angle * Mathf.Rad2Deg, Vector3.forward);
+        }
+    }
+
+    public class ActiveExplosion
+    {
+        public ExplosionComponent Explosion { get; set; }
+        public int ExplosionDuration { get; set; }
+        public ActiveExplosion(ExplosionComponent explosion, int explosionDuration)
+        {
+            Explosion = explosion;
+            ExplosionDuration = explosionDuration;
+        }
+
+        public bool DecreaseDuration()
+        {
+            ExplosionDuration--;
+            return ExplosionDuration <= 0f;
         }
     }
 }

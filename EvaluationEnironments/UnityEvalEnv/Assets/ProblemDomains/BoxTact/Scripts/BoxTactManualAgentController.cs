@@ -10,7 +10,7 @@ namespace Problems.BoxTact
 {
     public class BoxTactManualAgentController
     {
-        [CreateAssetMenu(fileName = "BoxTactManualAgentController", menuName = "AgentControllers/AIAgentControllers/ManualAgentControllers/BoxTactManualAgentController")]
+        [CreateAssetMenu(fileName = "BoxTactManualAgentController", menuName = "AgentControllers/ManualAgentControllers/BoxTactManualAgentController")]
         public class BombermanManualAgentController : ManualAgentController
         {
             public override void GetActions(in ActionBuffer actionsOut)

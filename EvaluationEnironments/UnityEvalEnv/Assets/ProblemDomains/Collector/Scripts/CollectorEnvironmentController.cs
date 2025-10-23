@@ -184,6 +184,10 @@ namespace Problems.Collector
                     targetsAcquiredFitness = (float)Math.Round(CollectorFitness.FitnessValues[CollectorFitness.FitnessKeys.TargetsAcquired.ToString()] * targetsAcquiredFitness, 4);
                     agent.AgentFitness.UpdateFitness(targetsAcquiredFitness, CollectorFitness.FitnessKeys.TargetsAcquired.ToString());
                 }
+                else
+                {
+                    targetsAcquiredFitness = 0f;
+                }
 
                 // Time penalty
                 timePenalty = CurrentSimulationSteps / SimulationSteps;

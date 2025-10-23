@@ -539,6 +539,10 @@ namespace Problems.Robostrike
                     missilesFiredAccuracy = (float)Math.Round(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.MissilesFiredAccuracy.ToString()] * missilesFiredAccuracy, 4);
                     agent.AgentFitness.UpdateFitness(missilesFiredAccuracy, RobostrikeFitness.FitnessKeys.MissilesFiredAccuracy.ToString());
                 }
+                else
+                {
+                    missilesFiredAccuracy = 0f;
+                }
 
                 // Survival bonus
                 agent.ResetSurvivalTime();
@@ -560,6 +564,10 @@ namespace Problems.Robostrike
                     opponentsDestroyedBonus = (float)Math.Round(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.OpponentDestroyedBonus.ToString()] * opponentsDestroyedBonus, 4);
                     agent.AgentFitness.UpdateFitness(opponentsDestroyedBonus, RobostrikeFitness.FitnessKeys.OpponentDestroyedBonus.ToString());
                 }
+                else
+                {
+                        opponentsDestroyedBonus = 0f;
+                }
 
                 // Damage taken
                 numOfFiredOpponentMissiles = Agents.Where(a => a.TeamIdentifier.TeamID != agent.TeamIdentifier.TeamID).Select(a => (a as RobostrikeAgentComponent).MissilesFired).Sum();
@@ -568,6 +576,10 @@ namespace Problems.Robostrike
                     damageTakenPenalty = agent.HitByOpponentMissiles / (float)numOfFiredOpponentMissiles;
                     damageTakenPenalty = (float)Math.Round(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.DamageTakenPenalty.ToString()] * damageTakenPenalty, 4);
                     agent.AgentFitness.UpdateFitness(damageTakenPenalty, RobostrikeFitness.FitnessKeys.DamageTakenPenalty.ToString());
+                }
+                else
+                {
+                    damageTakenPenalty = 0f;
                 }
 
                 agentFitnessLog = "========================================\n" +
@@ -578,7 +590,7 @@ namespace Problems.Robostrike
                     $"[Shield powerUps]: " + agent.ShieldPowerUpsCollected + " / " + PowerUpSpawner.ShieldBoxSpawned + " = " + shieldPowerUpsFitness + "\n" +
                     $"[Missiles fired]: " + agent.MissilesFired + " / " + allPossibleMissilesFired + " = " + missilesFired + "\n" +
                     $"[Missiles fired accuracy]: " + agent.MissilesHitOpponent + " / " + agent.MissilesFired + " = " + missilesFiredAccuracy + "\n" +
-                    $"[Survival bonus]: " + agent.MaxSurvivalTime + " / " + CurrentSimulationSteps + " = " + survivalBonus + "\n" + 
+                    $"[Survival bonus]: " + agent.MaxSurvivalTime + " / " + CurrentSimulationSteps + " = " + survivalBonus + "\n" +
                     $"[Opponent tracking bonus]: " + agent.OpponentTrackCounter + " / " + (CurrentSimulationSteps / (float)DecisionRequestInterval) + " = " + opponentTrackingBonus + "\n" +
                     $"[Opponents destroyed bonus]: " + agent.OpponentsDestroyed + " / " + numOfOpponents + " = " + opponentsDestroyedBonus + "\n" +
                     $"[Damage taken]: " + agent.HitByOpponentMissiles + " / " + numOfFiredOpponentMissiles + " = " + damageTakenPenalty + "\n" +

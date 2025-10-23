@@ -2,7 +2,7 @@ using Base;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Problems.Bombclash
+namespace Problems.BombClash
 {
     public class BombermanAgentComponent : AgentComponent
     {
@@ -23,12 +23,12 @@ namespace Problems.Bombclash
         public int BombsRemaining { get; set; }
 
         public int Health { get; set; }
-        public float NextDamageTime { get; set; } // Required to prevent constant damage from explosions
+        public int NextDamageTime { get; set; } // Required to prevent constant damage from explosions
 
         public AnimatedSpriteRenderer ActiveSpriteRenderer { get; set; }
 
-        public Vector2 MoveDirection { get; private set; }
-        public float NextAgentUpdateTime { get; set; }
+        public Vector2Int MoveDirection { get; private set; }
+        public int NextAgentUpdateTime { get; set; }
 
         List<Vector2> ExploredSectors;
         // Agent fitness variables
@@ -44,15 +44,14 @@ namespace Problems.Bombclash
         public int SurvivalBonuses { get; set; }
         public bool LastSurvivalBonus { get; set; }
 
-
-        private Vector2 CurrentAgentPosition;
+        private Vector2Int CurrentAgentPosition;
 
         protected override void DefineAdditionalDataOnAwake()
         {
             ActiveSpriteRenderer = SpriteRendererDown;
-            MoveDirection = Vector2.zero;
+            MoveDirection = Vector2Int.zero;
             ExploredSectors = new List<Vector2>();
-            CurrentAgentPosition = new Vector2(transform.position.x, transform.position.y);
+            CurrentAgentPosition = new Vector2Int((int)transform.position.x, (int)transform.position.y);
         }
 
         public void SetStartParams(BombermanEnvironmentController bombermanEnvironmentController, float startMoveSpeed, int startHealth, int startExplosionRadius, int startBombAmount)
@@ -62,7 +61,7 @@ namespace Problems.Bombclash
             Health = startHealth;
             ExplosionRadius = startExplosionRadius;
             SetBombs(startBombAmount);
-            MoveDirection = Vector2.zero;
+            MoveDirection = Vector2Int.zero;
         }
 
         public void AddBomb()
@@ -77,7 +76,7 @@ namespace Problems.Bombclash
             BombsRemaining = MaxAgentBombAmout;
         }
 
-        public void SetDirection(Vector2 newDirection, AnimatedSpriteRenderer spriteRenderer)
+        public void SetDirection(Vector2Int newDirection, AnimatedSpriteRenderer spriteRenderer)
         {
             MoveDirection = newDirection;
 
@@ -101,7 +100,9 @@ namespace Problems.Bombclash
 
             SpriteRendererDeath.enabled = true;
 
-            Invoke(nameof(OnDeathSequnceEnded), 0.5f);
+            //Invoke(nameof(OnDeathSequnceEnded), 0.5f); // Death animation
+            gameObject.SetActive(false);
+            BombermanEnvironmentController.CheckEndingState();
         }
 
         void OnDeathSequnceEnded()
@@ -112,12 +113,12 @@ namespace Problems.Bombclash
 
         public void CheckIfNewSectorExplored()
         {
-            CurrentAgentPosition.x = transform.position.x;
-            CurrentAgentPosition.y = transform.position.y;
+            CurrentAgentPosition.x = (int)transform.position.x;
+            CurrentAgentPosition.y = (int)transform.position.y;
             // Check if there's already sector with agents x and y coordinates
             if (!ExploredSectors.Contains(CurrentAgentPosition))
             {
-                ExploredSectors.Add(new Vector2(transform.position.x, transform.position.y));
+                ExploredSectors.Add(new Vector2Int((int)transform.position.x, (int)transform.position.y));
                 SectorsExplored++;
             }
         }

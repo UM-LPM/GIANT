@@ -1,31 +1,27 @@
 using Base;
 using UnityEngine;
 
-namespace Problems.Bombclash
+namespace Problems.BombClash
 {
     public class DestructibleComponent : MonoBehaviour
     {
-        private BombermanEnvironmentController BombermanEnvironmentController;
+    }
 
-        private void Awake()
+    public class ActiveDestructible
+    {
+        public DestructibleComponent DestructibleComponent;
+        public int TimeToDestruction;
+
+        public ActiveDestructible(DestructibleComponent destructibleComponent, int timeToDestruction)
         {
-            BombermanEnvironmentController = GetComponentInParent<BombermanEnvironmentController>();
+            DestructibleComponent = destructibleComponent;
+            TimeToDestruction = timeToDestruction;
         }
 
-        private void Start()
+        public bool DecreaseTime()
         {
-            Destroy(gameObject, BombermanEnvironmentController.DestructibleDestructionTime);
-        }
-
-        private void OnDestroy()
-        {
-            // Spawn an item (power up)
-            if (BombermanEnvironmentController.SpawnableItems.Length > 0 && BombermanEnvironmentController.Util.NextDouble() < BombermanEnvironmentController.PowerUpSpawnChance)
-            {
-                int index = BombermanEnvironmentController.Util.NextInt(0, BombermanEnvironmentController.SpawnableItems.Length);
-                GameObject item = Instantiate(BombermanEnvironmentController.SpawnableItems[index], transform.position, Quaternion.identity, transform.parent);
-                EnvironmentControllerBase.SetLayerRecursively(item, gameObject.layer);
-            }
+            TimeToDestruction--;
+            return TimeToDestruction <= 0f;
         }
     }
 }

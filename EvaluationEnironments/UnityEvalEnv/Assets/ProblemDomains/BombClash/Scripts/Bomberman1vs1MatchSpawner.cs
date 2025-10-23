@@ -5,15 +5,12 @@ using Spawners;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Problems.Bombclash
+namespace Problems.BombClash
 {
     public class Bomberman1vs1MatchSpawner : MatchSpawner
     {
         [Header("Bomberman 1vs1 Match Configuration")]
         [SerializeField] public Transform[] AgentSpawnPoints;
-
-        // TODO
-        //[Header("Bomberman 1vs1 Match Agent Configuration")]
 
         public override void validateSpawnConditions(EnvironmentControllerBase environmentController)
         {

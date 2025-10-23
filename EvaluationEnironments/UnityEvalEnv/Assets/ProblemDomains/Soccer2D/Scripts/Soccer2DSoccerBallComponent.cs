@@ -85,7 +85,6 @@ namespace Problems.Soccer2D
             {
                 hits = PhysicsUtil.PhysicsCircleCast2D(
                 SoccerEnvironmentController.PhysicsScene2D,
-                SoccerEnvironmentController.GameType,
                 gameObject,
                 currentPosition,
                 Radius,

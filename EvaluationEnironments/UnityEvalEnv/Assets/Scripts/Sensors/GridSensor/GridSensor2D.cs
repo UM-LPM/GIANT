@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine.Tilemaps;
 using UnityEngine;
+using Utils;
 
 public class GridSensor2D : Sensor<SensorPerceiveOutput[,]> {
 
@@ -19,8 +20,9 @@ public class GridSensor2D : Sensor<SensorPerceiveOutput[,]> {
     [SerializeField] bool fixedPosition;
     [SerializeField] Vector2 position;
 
-    public GridSensor2D() : base("Grid Sensor 2D") {
+    Collider2D[] hitColliders;
 
+    public GridSensor2D() : base("Grid Sensor 2D") {
     }
 
     public override SensorPerceiveOutput[,] PerceiveAll() {
@@ -36,7 +38,8 @@ public class GridSensor2D : Sensor<SensorPerceiveOutput[,]> {
                 Vector2 cellCenter = new Vector2((x * CellSpacing.x), (y * CellSpacing.y)) + cellWorldPosition;
 
                 // Use Physics.OverlapBox to detect objects in the cell
-                Collider2D[] hitColliders = Physics2D.OverlapBoxAll(cellCenter, new Vector2(CellSize.x / 1.15f, CellSize.y / 1.15f), 0f, LayerMask);
+                hitColliders = PhysicsUtil.PhysicsOverlapBox2D(PhysicsScene2D, gameObject, cellCenter, Quaternion.identity, CellSize / 1.15f, false, LayerMask);
+
                 // If any objects were detected, store the first one in the SensorPerceiveOutputs array
                 if (hitColliders.Length > 0 && hitColliders[0].gameObject != gameObject) {
                     SensorPerceiveOutputs[x, y] = new SensorPerceiveOutput { HasHit = true, HitGameObjects = hitColliders.Select(a => a.gameObject).ToArray(), EndPositionWorld = cellCenter };

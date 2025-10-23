@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Problems.Soccer2D
 {
-    [CreateAssetMenu(fileName = "Soccer2DManualAgentController", menuName = "AgentControllers/AIAgentControllers/ManualAgentControllers/Soccer2DManualAgentController")]
+    [CreateAssetMenu(fileName = "Soccer2DManualAgentController", menuName = "AgentControllers/ManualAgentControllers/Soccer2DManualAgentController")]
     public class SoccerManualAgentController : ManualAgentController
     {
         public override void GetActions(in ActionBuffer actionsOut)

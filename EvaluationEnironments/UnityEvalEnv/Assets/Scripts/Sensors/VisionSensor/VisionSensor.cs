@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Unity.VisualScripting;
 using UnityEngine;
+using Utils;
 
 
 public class VisionSensor : Sensor<SensorPerceiveOutput[]> {
@@ -27,9 +28,9 @@ public class VisionSensor : Sensor<SensorPerceiveOutput[]> {
     [SerializeField] Vector3 StartOffset;
     [SerializeField] Vector3 EndOffset;
 
-    Collider[] colliders = new Collider[50]; // All objects that are inside the certain radius
+    Collider[] colliders;
+    Collider[] collidersInSight;
     Mesh mesh;
-    int count;
     float scanInterval;
     float scanTimer;
 
@@ -60,10 +61,10 @@ public class VisionSensor : Sensor<SensorPerceiveOutput[]> {
         if (ScanFrequency <= 0) {
             List<SensorPerceiveOutput> outputs = new List<SensorPerceiveOutput>();
 
-            count = Physics.OverlapSphereNonAlloc(transform.position, Distance, colliders, LayerMask, QueryTriggerInteraction.Collide);
+            colliders = PhysicsUtil.PhysicsOverlapSphere<Collider>(PhysicsScene, PhysicsScene2D, Base.GameType._3D, gameObject, transform.position, Distance, false, LayerMask);
 
             outputs.Clear();
-            for (int i = 0; i < count; i++) {
+            for (int i = 0; i < colliders.Length; i++) {
                 GameObject obj = colliders[i].gameObject;
                 if (IsInSight(obj)) {
                     outputs.Add(new SensorPerceiveOutput {
@@ -96,8 +97,9 @@ public class VisionSensor : Sensor<SensorPerceiveOutput[]> {
         Bounds bounds = obj.GetComponent<Collider>().bounds;
         Vector3 halfExtents = bounds.extents;
 
-        Collider[] colliders = Physics.OverlapBox(obj.transform.position, halfExtents, obj.transform.rotation);
-        foreach (Collider collider in colliders) {
+        collidersInSight = PhysicsUtil.PhysicsOverlapBox<Collider>(PhysicsScene, PhysicsScene2D, Base.GameType._3D, obj, obj.transform.position, obj.transform.rotation, halfExtents, false, LayerMask);
+
+        foreach (Collider collider in collidersInSight) {
             VisionSensor visionSensor = collider.GetComponent<VisionSensor>();
             if(visionSensor != null && visionSensor == this && obj != gameObject && collider.isTrigger && collider is MeshCollider) {
                 isInSight = true;

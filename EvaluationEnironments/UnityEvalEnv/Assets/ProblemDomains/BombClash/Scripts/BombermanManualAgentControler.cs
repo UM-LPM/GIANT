@@ -1,17 +1,17 @@
 using AgentControllers;
 using UnityEngine;
 
-namespace Problems.Bombclash
+namespace Problems.BombClash
 {
-    [CreateAssetMenu(fileName = "BombermanManualAgentController", menuName = "AgentControllers/AIAgentControllers/ManualAgentControllers/BombermanManualAgentController")]
+    [CreateAssetMenu(fileName = "BombermanManualAgentController", menuName = "AgentControllers/ManualAgentControllers/BombermanManualAgentController")]
     public class BombermanManualAgentController : ManualAgentController
     {
         public override void GetActions(in ActionBuffer actionsOut)
         {
             if (Input.GetKey(KeyCode.W))
-                actionsOut.AddDiscreteAction("moveUpDirection", 1);
+                actionsOut.AddDiscreteAction("moveForwardDirection", 1);
             else if (Input.GetKey(KeyCode.S))
-                actionsOut.AddDiscreteAction("moveUpDirection", 2);
+                actionsOut.AddDiscreteAction("moveForwardDirection", 2);
 
             if (Input.GetKey(KeyCode.D))
                 actionsOut.AddDiscreteAction("moveSideDirection", 2);
