@@ -3929,9 +3929,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4077063720236094742}
   - component: {fileID: 8813540128259984713}
-  - component: {fileID: 8323119619378570481}
   - component: {fileID: 3859252164189630104}
   - component: {fileID: 4884790779723710298}
+  - component: {fileID: 2349815052653785137}
   m_Layer: 0
   m_Name: EnvironmentController_1v1
   m_TagString: Untagged
@@ -3969,56 +3969,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   InitialSeed: 316227711
---- !u!114 &8323119619378570481
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8752191533023890431}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 547e523e456de414297e8a56145b3f06, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  EnvironmentControllerSetup: 1
-  GameType: 0
-  SimulationSteps: 1000
-  SimulationTime: 0
-  DefaultLayer:
-    serializedVersion: 2
-    m_Bits: 1
-  Environment: {fileID: 744391361956120338}
-  IncludeNodeCallFrequencyCounts: 0
-  ForceNewDecisions: 0
-  AgentPrefab: {fileID: 6098588075026236225, guid: dc816e2f89a7dd640ad13dd91c77a9a8, type: 3}
-  ArenaSize: {x: 15, y: 15, z: 0}
-  ArenaRadius: 0
-  ArenaCenterPoint: {x: 0, y: 0, z: 0}
-  ArenaOffset: 3
-  MinAgentDistance: 10
-  AgentColliderExtendsMultiplier: {x: 0.5, y: 0.495, z: 0.505}
-  RandomTeamColor: 1
-  DecisionRequestInterval: 1
-  Match: {fileID: 0}
-  AgentStartMoveSpeed: 5
-  StartAgentBombAmount: 1
-  StartExplosionRadius: 1
-  StartHealth: 2
-  ExplosionDamageCooldown: 40
-  AgentUpdateinterval: 10
-  DestructibleDestructionTime: 50
-  PowerUpSpawnChance: 0.45
-  SpawnableItems:
-  - {fileID: 8310384761100984059, guid: cb6bb68b673948a4d94338670fd62f15, type: 3}
-  - {fileID: 7889292572868082948, guid: 4cd697ab6b60299438470d9c085a776b, type: 3}
-  - {fileID: 9095793269483030932, guid: ae0017066be0f5c4894faa416b5ed5a1, type: 3}
-  BombPrefab: {fileID: 2938409317021579913, guid: 5360fea1c9d87cd4d862c50ee5da4b12, type: 3}
-  BombFuseTime: 150
-  ExplosionPrefab: {fileID: 1823837670510830494, guid: 7683e31ab73a10f4b8d5ab52797a221b, type: 3}
-  ExplosionDuration: 50
-  DestructibleTiles: {fileID: 9181208662272740629}
-  DestructiblePrefab: {fileID: 2256237925362108353, guid: d7f0cc7627aa77d4ead01976714e8bb2, type: 3}
 --- !u!114 &3859252164189630104
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4046,3 +3996,55 @@ MonoBehaviour:
   AgentSpawnPoints:
   - {fileID: 1705283992988739248}
   - {fileID: 3913532461073201210}
+--- !u!114 &2349815052653785137
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8752191533023890431}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95d554001d0521147afd62481bbd1a02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  EnvironmentControllerSetup: 1
+  GameType: 0
+  SimulationSteps: 1000
+  SimulationTime: 0
+  DefaultLayer:
+    serializedVersion: 2
+    m_Bits: 1
+  Environment: {fileID: 744391361956120338}
+  IncludeNodeCallFrequencyCounts: 0
+  ForceNewDecisions: 0
+  AgentPrefab: {fileID: 6098588075026236225, guid: dc816e2f89a7dd640ad13dd91c77a9a8, type: 3}
+  ArenaSize: {x: 0, y: 0, z: 0}
+  ArenaRadius: 0
+  ArenaCenterPoint: {x: 0, y: 0, z: 0}
+  ArenaOffset: 3
+  MinAgentDistance: 10
+  AgentColliderExtendsMultiplier: {x: 0.5, y: 0.495, z: 0.505}
+  RandomTeamColor: 1
+  DecisionRequestInterval: 1
+  Match: {fileID: 0}
+  AgentStartMoveSpeed: 5
+  StartAgentBombAmount: 1
+  StartExplosionRadius: 1
+  StartHealth: 1
+  ExplosionDamageCooldown: 40
+  AgentUpdateinterval: 10
+  DestructibleDestructionTime: 50
+  PowerUpSpawnChance: 0.4
+  SpawnableItems:
+  - {fileID: -8781389413538603830, guid: ae0017066be0f5c4894faa416b5ed5a1, type: 3}
+  - {fileID: -570665802235073701, guid: 4cd697ab6b60299438470d9c085a776b, type: 3}
+  - {fileID: -3685380505886685488, guid: cb6bb68b673948a4d94338670fd62f15, type: 3}
+  BombPrefab: {fileID: 2938409317021579913, guid: 5360fea1c9d87cd4d862c50ee5da4b12, type: 3}
+  BombFuseTime: 150
+  ExplosionPrefab: {fileID: 1823837670510830494, guid: 7683e31ab73a10f4b8d5ab52797a221b, type: 3}
+  ExplosionDuration: 50
+  DestructiblePrefab: {fileID: 2256237925362108353, guid: d7f0cc7627aa77d4ead01976714e8bb2, type: 3}
+  DestructibleTiles: {fileID: 9181208662272740629}
+  IndestructibleTiles: {fileID: 5382871448238156623}
+  IndestructibleWalkableTiles: {fileID: 3649478934695316262}

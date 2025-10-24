@@ -13,7 +13,7 @@ namespace Problems.BombClash
 
         [SerializeField] ItemType Type;
 
-        public void OnItemPickup(BombermanAgentComponent agent)
+        public void OnItemPickup(BombClashAgentComponent agent)
         {
             switch (Type)
             {

@@ -9,7 +9,8 @@ namespace Problems.BombClash
         [SerializeField] public AnimatedSpriteRenderer Middle;
         [SerializeField] public AnimatedSpriteRenderer End;
 
-        public BombermanAgentComponent Owener { get; set; }
+        public Vector2Int Position { get; set; }
+        public BombClashAgentComponent Owener { get; set; }
 
         public void SetActiveRenderer(AnimatedSpriteRenderer renderer)
         {

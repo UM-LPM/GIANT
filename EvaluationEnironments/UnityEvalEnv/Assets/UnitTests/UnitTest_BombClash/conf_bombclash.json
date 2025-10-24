@@ -2,18 +2,19 @@
 				"AutoStart": true,
 				"ProblemDomain": "BombClash",
 				"CoordinatorURI": "http://localhost:4000/",
-				"IndividualsSourceJSON": "C:\\Users\\marko\\UnityProjects\\GIANT_develop\\Builds\\Resources\\BombClash\\",
+				"IndividualsSourceJSON": "C:\\Users\\marko\\Documents\\GIANT_develop\\Builds\\Resources\\BombClash\\",
 				"IndividualsSourceSO": "Assets\\Resources\\SOs\\BombClash",
 				"ConvertSOToJSON": false,
 				"StartCommunicatorURI": "http://localhost:4444/",
-				"TimeScale": 10,
+				"TimeScale": 15,
 				"FixedTimeStep": 0.02,
 				"RerunTimes": 1,
 				"InitialSeed": 963852,
 				"Render": true,
 				"RandomSeedMode": 1,
-				"SimulationSteps": 2000,
+				"SimulationSteps": 3000,
 				"SimulationTime": 0,
+				"DebugCategories": [],
 				"IncludeEncapsulatedNodesToFreqCount": false,
 				"EvaluatorType": 2, 
 				"RatingSystemType": 0,
@@ -21,19 +22,10 @@
 				"CompetitionOrganizationType": 6,
 				"CompetitionRounds": -1,
 				"TeamsPerMatch": 2,
+				"TeamSize": 1,
 				"SwapCompetitionMatchTeams": false,
-				"GameScenarios": [
-					{"GameSceneName": "BombClashGameScene"}
-					
-				],
-				"AgentScenarios": [
-					{
-						"AgentSceneName": "BombClashAgentScene", 
-						"GameScenarios": [
-							{"GameSceneName": "BombClashGameScene"}
-						]
-					}
-				],
+				"IncludedEnvironments": ["1v1"],
+				"MaxSimultaneousEnvironments": 20,
 				"IncludeNodeCallFrequencyCounts": false,
 				"ProblemConfiguration": {
 					"DecisionRequestInterval": 2,
@@ -41,11 +33,12 @@
 					"StartAgentBombAmount": 1,
 					"StartExplosionRadius": 1,
 					"StartHealth": 2,
-					"ExplosionDamageCooldown": 1,
-					"DestructibleDestructionTime": 1,
-					"PowerUpSpawnChance": 0.4,
-					"BombFuseTime": 3.0,
-					"ExplosionDuration" : 1.0,
+					"PowerUpSpawnChance": 0.45,
+					"ExplosionDamageCooldown": 50,
+					"MaxSpeedIncrease": 0.5,
+					"DestructibleDestructionTime": 50,
+					"BombFuseTime": 150,
+					"ExplosionDuration" : 50,
 					"RayHitObjectDetectionType": 1,
 					"TargetGameObjects": "Agent,Wall,Obstacle,Object1,Object2,Object3,Object4,Object5"
 				},
@@ -60,7 +53,7 @@
 					"AgentHitByBombs": 0,
 					"AgentHitByOwnBombs": 0,
 					"AgentDeath": 0,
-					"SurvivalBonus": -100,
-					"LastSurvivalBonus": -100
+					"SurvivalBonus": 0,
+					"LastSurvivalBonus": 0
 				}
 			}

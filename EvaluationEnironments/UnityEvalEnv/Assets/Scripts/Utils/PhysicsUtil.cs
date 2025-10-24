@@ -511,9 +511,9 @@ namespace Utils
         public static Collider2D[] PhysicsOverlapBox2D(
             PhysicsScene2D physicsScene2D,
             GameObject caller,
-            Vector3 position,
+            Vector2 position,
             Quaternion rotation,
-            Vector3 halfExtends,
+            Vector2 halfExtends,
             bool ignoreTriggerGameObjs,
             int layer)
         {

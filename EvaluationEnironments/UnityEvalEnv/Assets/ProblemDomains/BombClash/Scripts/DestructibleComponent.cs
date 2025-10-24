@@ -5,6 +5,7 @@ namespace Problems.BombClash
 {
     public class DestructibleComponent : MonoBehaviour
     {
+        public Vector2Int Position { get; set; }
     }
 
     public class ActiveDestructible
