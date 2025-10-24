@@ -2,16 +2,16 @@
 
 namespace Problems.BombClash
 {
-    public class BombClashGrid
+    public class BombClashGrid : Grid
     {
-        public int Width { get; set; }
-        public int Height { get; set; }
+        [HideInInspector] public int Width { get; set; }
+        [HideInInspector] public int Height { get; set; }
 
         public Vector2Int WorldMin { get; private set; }
 
         private GridTile[,] Grid {  get; set; }
 
-        public BombClashGrid(int width, int height, Vector2Int worldMin)
+        public void InitGrid(int width, int height, Vector2Int worldMin)
         {
             this.Width = width;
             this.Height = height;
@@ -26,6 +26,14 @@ namespace Problems.BombClash
                     Grid[i,j] = new GridTile();
                 }
             }
+        }
+
+        public override Component GetCellItem(int x, int y, int z)
+        {
+            var tile = GetTile(x, y);
+            if (tile == null) throw new System.Exception("Grid position is invalid");
+
+            return tile.Component;
         }
 
         public GridTile GetTile(int x, int y)

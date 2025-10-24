@@ -80,7 +80,9 @@ namespace Problems.BombClash
             ActiveExplosions = new List<ActiveExplosion>();
             ActiveDestructibles = new List<ActiveDestructible>();
 
-            Grid = new BombClashGrid(IndestructibleTiles.cellBounds.size.x, IndestructibleTiles.cellBounds.size.y, WorldMin);
+            Grid = GetComponent<BombClashGrid>();
+
+            Grid.InitGrid(IndestructibleTiles.cellBounds.size.x, IndestructibleTiles.cellBounds.size.y, WorldMin);
 
             for (int x = 0; x < Grid.Width; x++)
             {
