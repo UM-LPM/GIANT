@@ -14,7 +14,8 @@ namespace Configuration
         Soccer,
         BombClash,
         DodgeBall,
-        Soccer2D
+        Soccer2D,
+        MicroRTS
     }
 
     public class MenuManager : MonoBehaviour
@@ -128,6 +129,9 @@ namespace Configuration
                     break;
                 case "Soccer2D":
                     UnityEngine.SceneManagement.SceneManager.LoadScene("Soccer2DBaseScene");
+                    break;
+                case "MicroRTS":
+                    UnityEngine.SceneManagement.SceneManager.LoadScene("MicroRTSBaseScene");
                     break;
                 default:
                     DebugSystem.LogError("Problem domain not found");
