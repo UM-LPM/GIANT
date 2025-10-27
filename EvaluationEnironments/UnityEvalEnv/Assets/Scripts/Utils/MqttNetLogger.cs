@@ -18,6 +18,8 @@ namespace Utils
 
         private static IMqttClient mqttClient;
 
+        public static bool IsDisconnecting = false;
+
         public static async Task Connect()
         {
             var factory = new MqttFactory();
@@ -34,14 +36,21 @@ namespace Utils
         {
             var msgPayload = new MqttNetLogObject(message, logType);
 
-            if (mqttClient.IsConnected)
+            if (mqttClient.IsConnected && !IsDisconnecting)
             {
-                var msg = new MqttApplicationMessageBuilder()
-                    .WithTopic(Topic)
-                    .WithPayload(System.Text.Encoding.UTF8.GetBytes(JsonUtility.ToJson(msgPayload)))
-                    .WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce)
-                    .Build();
-                await mqttClient.PublishAsync(msg);
+                try
+                {
+                    var msg = new MqttApplicationMessageBuilder()
+                        .WithTopic(Topic)
+                        .WithPayload(System.Text.Encoding.UTF8.GetBytes(JsonUtility.ToJson(msgPayload)))
+                        .WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce)
+                        .Build();
+                    await mqttClient.PublishAsync(msg);
+                }
+                catch (Exception ex)
+                {
+                    DebugSystem.LogError(ex.ToString());
+                }
             }
         }
 
@@ -60,7 +69,9 @@ namespace Utils
 
         public static async void Disconnect()
         {
+            IsDisconnecting = true;
             await mqttClient.DisconnectAsync();
+            IsDisconnecting = false;
         }
 
         public static bool IsConnected()

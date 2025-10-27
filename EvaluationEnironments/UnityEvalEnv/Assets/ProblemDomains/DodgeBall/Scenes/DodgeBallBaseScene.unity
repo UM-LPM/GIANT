@@ -38,7 +38,6 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1254,7 +1253,7 @@ Transform:
   m_GameObject: {fileID: 185658459}
   serializedVersion: 2
   m_LocalRotation: {x: -0.27280045, y: 0.00634684, z: -0.0017996843, w: -0.962048}
-  m_LocalPosition: {x: -0.6469885, y: 34.92396, z: -31.563309}
+  m_LocalPosition: {x: -0.6469885, y: 10, z: -12}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6953,8 +6952,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CommunicatorSetup: 1
   CommunicatorURI: http://localhost:4444/
-  GameScenarios: []
-  AgentScenarios: []
   TimeScale: 1
   FixedTimeStep: 0.02
   RerunTimes: 1
@@ -6962,7 +6959,10 @@ MonoBehaviour:
   PredefinedMatchFitnessLoser: 1000
   InitialSeed: 316227711
   RandomSeedMode: 0
-  EnvironmentPrefabs: []
+  Environments:
+  - EnvironmentName: 1v1
+    EnvironmentPrefab: {fileID: 516164517336700708, guid: b44bfa011f7b6894ebc358508c59aeaf, type: 3}
+    IncludeEnvironment: 1
   MaxSimultaneousEnvironments: 100
   Matches: []
 --- !u!1 &1850808320
