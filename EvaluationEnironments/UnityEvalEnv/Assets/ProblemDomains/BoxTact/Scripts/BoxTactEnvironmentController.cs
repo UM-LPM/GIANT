@@ -26,7 +26,8 @@ namespace Problems.BoxTact
 
         [HideInInspector] public Tilemap IndestructibleWalkableTiles { get; set; }
 
-
+        bool allBoxesOnTargets = false;
+        
         // Temp variables 
         Collider2D[] hitColliders;
         Vector3 newBoxPos;
@@ -95,10 +96,12 @@ namespace Problems.BoxTact
         public override void CheckEndingState()
         {
             // Check if all boxes are on their targets
-            if (Boxes.All(box => BoxTargets.Any(target => target.transform.position == box.transform.position)))
-            {
-                FinishGame();
-            }
+            allBoxesOnTargets = !Boxes.Any(x => !x.IsOnTarget);
+        }
+
+        public override bool IsSimulationFinished()
+        {
+            return base.IsSimulationFinished() || allBoxesOnTargets;
         }
 
         protected override void OnPreFinishGame()
@@ -109,7 +112,7 @@ namespace Problems.BoxTact
         public bool AgentCanMove(BoxTactAgentComponent agent)
         {
             newAgentPos = agent.transform.position + new Vector3(agent.MoveDirection.x, agent.MoveDirection.y, 0);
-            hitColliders = Physics2D.OverlapBoxAll(newAgentPos, new Vector2(1 / 1.15f, 1 / 1.15f), 0f, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)) + DefaultLayer);
+            hitColliders = PhysicsUtil.PhysicsOverlapBox2D(PhysicsScene2D, agent.gameObject, newAgentPos, agent.transform.rotation, new Vector2(0.87f, 0.87f), false, gameObject.layer);
 
             foreach (Collider2D collider in hitColliders)
             {
@@ -129,7 +132,8 @@ namespace Problems.BoxTact
         bool MoveBox(BoxTactBoxComponent box, BoxTactAgentComponent agent, Vector3 pos, Vector2 moveDirection)
         {
             newBoxPos = pos + new Vector3(moveDirection.x, moveDirection.y, 0);
-            hitColliders = Physics2D.OverlapBoxAll(newBoxPos, new Vector2(1 / 1.15f, 1 / 1.15f), 0f, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)) + DefaultLayer);
+            hitColliders = PhysicsUtil.PhysicsOverlapBox2D(PhysicsScene2D, box.gameObject, newBoxPos, box.transform.rotation, new Vector2(0.87f, 0.87f), false, gameObject.layer);
+
             if (hitColliders.Length > 0)
             {
                 return false;
@@ -143,10 +147,12 @@ namespace Problems.BoxTact
             if (BoxTargets.Any(target => target.transform.position == box.transform.position))
             {
                 box.BoxSpriteRenderer.color = new Color(.7f, .7f, .7f, 1f);
+                box.IsOnTarget = true;
             }
             else
             {
                 box.BoxSpriteRenderer.color = new Color(1f, 1f, 1f, 1f);
+                box.IsOnTarget = false;
             }
 
             return true;
@@ -202,6 +208,8 @@ namespace Problems.BoxTact
                     if (target.transform.position == box.transform.position)
                     {
                         box.BoxSpriteRenderer.color = new Color(.7f, .7f, .7f, 1f);
+                        box.IsOnTarget = true;
+                        break;
                     }
                     else
                     {

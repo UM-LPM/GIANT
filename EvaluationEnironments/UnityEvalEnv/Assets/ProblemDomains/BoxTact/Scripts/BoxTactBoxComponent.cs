@@ -9,6 +9,8 @@ namespace Problems.BoxTact
         public BoxTactAgentComponent LastAgentThatMoved { get; set; }
         public SpriteRenderer BoxSpriteRenderer { get; set; }
 
+        public bool IsOnTarget { get; set; }
+
         private void Awake()
         {
             BoxSpriteRenderer = GetComponent<SpriteRenderer>();
@@ -16,6 +18,8 @@ namespace Problems.BoxTact
             {
                 DebugSystem.LogError("BoxTactBoxComponent requires a SpriteRenderer component.");
             }
+
+            IsOnTarget = false;
         }
     }
 }

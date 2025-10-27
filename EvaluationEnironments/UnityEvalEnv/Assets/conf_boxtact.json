@@ -1,55 +1,42 @@
 {
-				"AutoStart": true,
-				"ProblemDomain": "BoxTact",
-				"CoordinatorURI": "http://localhost:4000/",
-				"IndividualsSourceJSON": "...\\GIANT\\EvaluationEnironments\\UnityEvalEnv\\Assets\\Resources\\JSONs\\BoxTact\\",
-				"IndividualsSourceSO": "Assets\\Resources\\SOs\\BoxTact",
-				"ConvertSOToJSON": false,
-				"StartCommunicatorURI": "http://localhost:4444/",
-				"TimeScale": 1,
-				"FixedTimeStep": 0.02,
-				"RerunTimes": 1,
-				"InitialSeed": 963852,
-				"Render": true,
-				"RandomSeedMode": 1,
-				"SimulationSteps": 2000,
-				"SimulationTime": 0,
-				"IncludeEncapsulatedNodesToFreqCount": false,
-				"EvaluatorType": 0, 
-				"RatingSystemType": -1,
-				"CompetitionOrganizationType": 3,
-				"CompetitionRounds": -1,
-				"SwapCompetitionMatchTeams": false,
-				"GameScenarios": [
-					{"GameSceneName": "BoxTactGameScene"},
-					{"GameSceneName": "BoxTactGameScene2"}
-					
-				],
-				"AgentScenarios": [
-					{
-						"AgentSceneName": "BoxTactAgentScene", 
-						"GameScenarios": [
-							{"GameSceneName": "BoxTactGameScene"}
-						]
-					},
-					{
-						"AgentSceneName": "BoxTactAgentScene2", 
-						"GameScenarios": [
-							{"GameSceneName": "BoxTactGameScene2"}
-						]
-					}
-				],
-				"IncludeNodeCallFrequencyCounts": false,
-				"ProblemConfiguration": {
-					"DecisionRequestInterval": 2,
-					"AgentUpdateinterval": 0.15,
-					"RayHitObjectDetectionType": 1
-				},
-				"FitnessValues": 
-				{ 
-					"TimePenalty": -25,
-					"SectorExploration": -50,
-					"BoxesMoved": -100,
-					"BoxesMovedToTarget": -500
-				}
-			}
+    "AutoStart": true,
+    "ProblemDomain": "BoxTact",
+    "CoordinatorURI": "http://localhost:4000/",
+    "IndividualsSourceJSON": "C:\\Users\\marko\\Documents\\GIANT_develop\\Builds\\Resources\\BoxTact\\",
+    "IndividualsSourceSO": "Assets\\Resources\\SOs\\BoxTact",
+    "ConvertSOToJSON": false,
+    "StartCommunicatorURI": "http://localhost:4444/",
+    "TimeScale": 1,
+    "FixedTimeStep": 0.02,
+    "RerunTimes": 1,
+    "InitialSeed": 963852,
+    "Render": true,
+    "RandomSeedMode": 1,
+    "SimulationSteps": 3000,
+    "SimulationTime": 0,
+	"DebugCategories": [],								  
+    "IncludeEncapsulatedNodesToFreqCount": false,
+    "EvaluatorType": 0,
+    "RatingSystemType": -1,
+	"CreateNewTeamsEachRound": false,							  
+    "CompetitionOrganizationType": 3,
+    "CompetitionRounds": -1,
+	"TeamsPerMatch": 1,
+	"TeamSize": 1,				
+    "SwapCompetitionMatchTeams": false,
+	"IncludedEnvironments": ["Base"],
+	"MaxSimultaneousEnvironments": 20,
+    "IncludeNodeCallFrequencyCounts": false,
+    "ProblemConfiguration": {
+        "DecisionRequestInterval": 2,
+        "AgentUpdateinterval": 0.15,
+        "RayHitObjectDetectionType": 1,
+		"TargetGameObjects": "Wall,Object1,Object2"
+    },
+    "FitnessValues": {
+        "TimePenalty": -25,
+        "SectorExploration": -50,
+        "BoxesMoved": -100,
+        "BoxesMovedToTarget": -500
+    }
+}
