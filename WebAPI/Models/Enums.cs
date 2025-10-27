@@ -13,6 +13,7 @@
         Shoot,
         PlaceBomb,
         RayHitObject,
+        GridCellContainsComponent,
         GridCellContainsObject,
         HealthLevelBellow,
         ShieldLevelBellow,

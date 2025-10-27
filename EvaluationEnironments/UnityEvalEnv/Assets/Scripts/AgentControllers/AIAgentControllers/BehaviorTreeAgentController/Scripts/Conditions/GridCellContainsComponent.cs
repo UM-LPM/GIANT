@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 {
-    public class GridCellContainsItem: ConditionNode
+    public class GridCellContainsComponent: ConditionNode
     {
         public int targetGameObject;
         public ObjectTeamType targetTeamType;
@@ -33,18 +33,26 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 
             Problems.Grid grid = context.gameObject.GetComponentInParent<Problems.Grid>();
 
-            Component component = grid.GetCellItem(gridPositionX, gridPositionY, gridPositionZ);
-            if (component.gameObject.tag.Contains(TargetGameObjects[targetGameObject]) && TargetTeamHit(component.gameObject))
+            Component[] components = grid.GetCellItem(gridPositionX, gridPositionY, gridPositionZ);
+            if (components == null || components.Length == 0)
             {
-                gridContainsTarget = true;
+                gridContainsTarget = false;
             }
-            else if (targetGameObject == -1)
+            else
             {
-                gridContainsTarget = true;
+                foreach (var component in components)
+                {
+                    if (component == null) continue;
+
+                    if (component.gameObject.tag.Contains(TargetGameObjects[targetGameObject]) && TargetTeamHit(component.gameObject))
+                    {
+                        gridContainsTarget = true;
+                        break;
+                    }
+                }
             }
 
             return gridContainsTarget;
-
         }
 
         public void GetBaseGameObjectTeam()

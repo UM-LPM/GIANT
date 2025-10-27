@@ -28,12 +28,13 @@ namespace Problems.BombClash
             }
         }
 
-        public override Component GetCellItem(int x, int y, int z)
+        public override Component[] GetCellItem(int x, int y, int z)
         {
             var tile = GetTile(x, y);
             if (tile == null) throw new System.Exception("Grid position is invalid");
 
-            return tile.Component;
+            if (tile.Component == null) return new Component[] { };
+            else return new Component[] { tile.Component };
         }
 
         public GridTile GetTile(int x, int y)
