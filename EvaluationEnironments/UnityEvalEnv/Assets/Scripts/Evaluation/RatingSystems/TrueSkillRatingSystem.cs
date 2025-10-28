@@ -76,10 +76,10 @@ namespace Evaluators.CompetitionOrganizations
                 {
                     if (matchFitness.TeamFitnesses[i].IndividualFitness.Count > 1)
                     {
-                        float teamFitness = matchFitness.TeamFitnesses[i].GetTeamFitness();
+                        float teamFitness = math.abs(matchFitness.TeamFitnesses[i].GetTeamFitness());
                         foreach (IndividualFitness individualFitness in matchFitness.TeamFitnesses[i].IndividualFitness)
                         {
-                            float contribution = teamFitness > 0 ? (individualFitness.Value / teamFitness) : 1;
+                            float contribution = teamFitness > 0 ? (math.abs(individualFitness.Value) / teamFitness) : 1;
                             TrueSkillPlayer trueSkillPlayer = GetPlayer(individualFitness.IndividualID);
                             if (trueSkillPlayer != null)
                             {

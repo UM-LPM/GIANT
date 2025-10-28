@@ -3,6 +3,7 @@ using Configuration;
 using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -107,17 +108,17 @@ namespace UnitTests {
             {
                 return $"UnitTest Error: Name is required.";
             }
-            if (string.IsNullOrEmpty(unitTest.ConfigFilePath))
+            if (string.IsNullOrEmpty(unitTest.ConfigFilePath) || !File.Exists(unitTest.ConfigFilePath))
             {
-                return $"UnitTest Error: ConfigFilePath is required for test '{unitTest.Name}'.";
+                return $"UnitTest Error: ConfigFilePath is empty or incorrect for test '{unitTest.Name}'.";
             }
             if (unitTest.Individuals == null || unitTest.Individuals.Length == 0)
             {
                 return $"UnitTest Error: At least one Individual is required for test '{unitTest.Name}'.";
             }
-            if (string.IsNullOrEmpty(unitTest.ExpectedOutputFilePath))
+            if (string.IsNullOrEmpty(unitTest.ExpectedOutputFilePath) || !File.Exists(unitTest.ExpectedOutputFilePath))
             {
-                return $"UnitTest Error: ExpectedOutputFilePath is required for test '{unitTest.Name}'.";
+                return $"UnitTest Error: ExpectedOutputFilePath is empty or incorrect for test '{unitTest.Name}'.";
             }
             return null;
         }

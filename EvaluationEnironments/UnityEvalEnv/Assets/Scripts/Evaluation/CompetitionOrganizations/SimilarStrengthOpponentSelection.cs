@@ -1,6 +1,5 @@
 using AgentOrganizations;
 using Base;
-using Evaluators.CompetitionOrganizations;
 using Fitnesses;
 using System;
 using System.Collections.Generic;
