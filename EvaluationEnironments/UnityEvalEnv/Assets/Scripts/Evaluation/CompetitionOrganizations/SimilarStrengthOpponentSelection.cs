@@ -15,7 +15,6 @@ namespace Evaluators.CompetitionOrganizations
         List<Match> competitionMatches = new List<Match>();
         List<CompetitionTeam> unpairedTeams = new List<CompetitionTeam>();
         int currentMatchID;
-        List<int> opponentTeamIDs;
 
         public SimilarStrengthOpponentSelection(CompetitionTeamOrganizator teamOrganizator, Individual[] individuals, bool regenerateTeamsEachRound, int rounds, int teamsPerMatch)
             : base(teamOrganizator, individuals, regenerateTeamsEachRound, teamsPerMatch)

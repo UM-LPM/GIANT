@@ -1,7 +1,5 @@
-using Evaluators.CompetitionOrganizations;
 using System.Collections.Generic;
 using Moserware.Skills;
-using Moserware.Skills.TrueSkill;
 using Unity.Mathematics;
 using System;
 using AgentOrganizations;

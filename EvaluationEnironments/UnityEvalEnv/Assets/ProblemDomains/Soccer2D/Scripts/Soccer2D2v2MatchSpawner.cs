@@ -1,6 +1,4 @@
 using AgentControllers;
-using AgentControllers.AIAgentControllers;
-using AgentOrganizations;
 using Base;
 using Spawners;
 using System.Collections.Generic;

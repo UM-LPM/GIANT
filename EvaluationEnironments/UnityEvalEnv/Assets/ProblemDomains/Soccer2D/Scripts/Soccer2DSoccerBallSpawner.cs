@@ -15,7 +15,6 @@ namespace Problems.Soccer2D
         Quaternion rotation;
 
         private GameObject obj;
-        private Rigidbody rb;
 
         public override void validateSpawnConditions(EnvironmentControllerBase environmentController)
         {

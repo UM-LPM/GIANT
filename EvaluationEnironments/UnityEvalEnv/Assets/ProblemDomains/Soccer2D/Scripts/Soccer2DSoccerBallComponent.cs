@@ -20,10 +20,8 @@ namespace Problems.Soccer2D
 
         private Vector2 velocity;
         private CircleCollider2D circleCollider;
-        private ContactFilter2D contactFilter2D;
 
         RaycastHit2D[] hits;
-        Soccer2DGoalComponent goal;
 
         Vector2 normal;
         Vector2 reflectedVelocity;
@@ -51,10 +49,6 @@ namespace Problems.Soccer2D
             }
 
             Radius = circleCollider.radius * transform.localScale.x;
-
-            contactFilter2D = new ContactFilter2D();
-            contactFilter2D.useTriggers = false;
-            contactFilter2D.SetLayerMask(LayerMask.GetMask(LayerMask.LayerToName(SoccerEnvironmentController.gameObject.layer)));
         }
 
         public void OnStep()
