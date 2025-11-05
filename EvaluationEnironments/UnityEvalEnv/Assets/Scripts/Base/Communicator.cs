@@ -248,9 +248,13 @@ namespace Base
                         yield return null;
                     }
 
-                    var env = new Environment(Environments[j].EnvironmentPrefab, $"Environment_{Environments[j].EnvironmentName}_{j}_{i}", Matches[i]);
-                    environments.Add(env);
+                    environments.Add(new Environment(Environments[j].EnvironmentPrefab, $"Environment_{Environments[j].EnvironmentName}_{j}_{i}", Matches[i]));
                 }
+            }
+
+            if(environments.Count == 0)
+            {
+                throw new Exception("No simulation environments were loaded. Please check the Environments configuration.");
             }
 
             // Wait until all environments are done
