@@ -10,7 +10,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using UnityEngine;
 using Utils;
 
 namespace Evaluators

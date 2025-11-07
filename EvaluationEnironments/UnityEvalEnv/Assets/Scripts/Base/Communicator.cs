@@ -11,7 +11,6 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using Utils;
 
 namespace Base

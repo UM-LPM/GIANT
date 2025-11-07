@@ -1,7 +1,4 @@
-using AgentControllers;
 using AgentOrganizations;
-using Base;
-using Spawners;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Utils;
@@ -55,14 +52,6 @@ namespace Base
         public void Step()
         {
             EnvironmentController.OnStep();
-        }
-
-        public void ResetEnvironment()
-        {
-            foreach (var resettable in RootObject.GetComponentsInChildren<IResettable>())
-            {
-                resettable.OnReset();
-            }
         }
 
         public bool IsDone()
