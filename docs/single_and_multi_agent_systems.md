@@ -41,7 +41,7 @@ Agents can be further classified as **weak** or **strong** based on their capabi
 
 The typical composition of an autonomous agent is depicted in the diagram below:
 
-![Agent Architecture](/docs/images/agent_architecture.png)
+![Agent Architecture](/docs/images/agent_scheme.png)
 
 In gaming environments, autonomous agents often follow a goal-directed architecture. Agents decide which goal to pursue based on periodic checks, with each goal linked to an algorithm that dictates rational behavior. Teams of evolving agents decide on goals based on a **decision tree** developed through **genetic programming**.
 
