@@ -29,11 +29,11 @@ The platform currently includes seven implemented problem domains: **RoboStrike*
 <center><img src="/docs/images/dodgeballProblemDomain/dodgeball_problem_domain_main.png" alt="DodgeBall" width="600"/></center>
 
 ## Pong Problem Domain
-
 [**Pong**](/docs/GIANT_pong_problem_domain.md) is a **multi-agent** environment, where players control paddles on opposite sides of the screen, bouncing a ball back and forth in a test of reflexes, timing, and precision to score points against their opponent.
 
 <center><img src="/docs/images/pongProblemDomain/pong_problem_domain_main.png" alt="Pong" width="600"/></center>
 
+## BoxTact Problem Domain
 [**BoxTact**](/docs/GIANT_boxtact_problem_domain.md) is an environment inspired by the classic Sokoban puzzle game, where players navigate a maze-like grid, strategically pushing boxes onto designated targets while planning each move carefully to avoid getting trapped.
 
 <center><img src="/docs/images/boxtactProblemDomain/boxtact_problem_domain_main.png" alt="BoxTact" width="600"/></center>
