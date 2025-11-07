@@ -39,10 +39,6 @@ Several **properties** distinguish agents from simple controllers:
 
 Agents can be further classified as **weak** or **strong** based on their capabilities.
 
-The typical composition of an autonomous agent is depicted in the diagram below:
-
-![Agent Architecture](/docs/images/agent_scheme.png)
-
 In gaming environments, autonomous agents often follow a goal-directed architecture. Agents decide which goal to pursue based on periodic checks, with each goal linked to an algorithm that dictates rational behavior. Teams of evolving agents decide on goals based on a **decision tree** developed through **genetic programming**.
 
 Within goal-directed agent architectures, **goals** can be either **Atomic** (defining a single task) or **Composite** (composed of multiple subgoals). Composite goals can be broken down into simpler subgoals, creating a hierarchical structure for each agent’s behavior.
