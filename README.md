@@ -7,7 +7,7 @@ The current implementation supports training with the Unity game engine and the 
 GIANT is designed with a highly modular structure, ensuring that each component operates independently and can be replaced or upgraded as needed. This makes the platform valuable for both researchers and game developers, providing tools for efficiently developing and evaluating new solutions.
 
 # Features
-- Four built-in example environments
+- Seven built-in example environments
 - Support for both Single-Agent and Multi-Agent scenarios
 - Highly extensible and modular design
 - It is compatible with various decision-making systems, including Behavior Trees, Neural Networks, and more
