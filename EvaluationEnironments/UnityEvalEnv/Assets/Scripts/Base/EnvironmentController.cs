@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using AgentOrganizations;
 using AgentControllers.AIAgentControllers.NeuralNetworkAgentController.ActionObservationCollectors;
 using AgentControllers.AIAgentControllers.NeuralNetworkAgentController;
@@ -11,7 +10,6 @@ using Spawners;
 using Utils;
 using AgentControllers;
 using Configuration;
-using AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentController;
 
 namespace Base
 {
@@ -173,13 +171,11 @@ namespace Base
                 if (MainConfiguration.ProblemConfiguration.ContainsKey("RayHitObjectDetectionType"))
                 {
                     AgentControllers.AIAgentControllers.BehaviorTreeAgentController.RayHitObject.RAY_HIT_OBJECT_DETECTION_TYPE = (AgentControllers.AIAgentControllers.BehaviorTreeAgentController.RayHitObjectDetectionType)Enum.Parse(typeof(AgentControllers.AIAgentControllers.BehaviorTreeAgentController.RayHitObjectDetectionType), MainConfiguration.ProblemConfiguration["RayHitObjectDetectionType"]);
-                    AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentController.RayHitObject.RAY_HIT_OBJECT_DETECTION_TYPE = (AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentController.RayHitObjectDetectionType)Enum.Parse(typeof(AgentControllers.AIAgentControllers.ActivatorBasedBehaviorSystemAgentController.RayHitObjectDetectionType), MainConfiguration.ProblemConfiguration["RayHitObjectDetectionType"]);
                 }
 
                 if (MainConfiguration.ProblemConfiguration.ContainsKey("TargetGameObjects"))
                 {
                     ConditionNode.TargetGameObjects = MainConfiguration.ProblemConfiguration["TargetGameObjects"].Split(',');
-                    ActivatorNode.TargetGameObjects = MainConfiguration.ProblemConfiguration["TargetGameObjects"].Split(',');
                 }
 
                 if (MainConfiguration.ProblemConfiguration.ContainsKey("ArenaSizeX"))
@@ -231,14 +227,10 @@ namespace Base
                     });
                         break;
                     case BehaviorTreeAgentController:
-                        //Agents[i].AgentController = Agents[i].AgentController.Clone();
                         ((BehaviorTreeAgentController)Agents[i].AgentController).Bind(BehaviorTreeAgentController.CreateBehaviourTreeContext(Agents[i].gameObject));
                         ((BehaviorTreeAgentController)Agents[i].AgentController).InitNodeCallFrequencyCounter();
                         break;
                     case ManualAgentController:
-                        break;
-                    case ActivatorBasedBehaviorSystemAgentController:
-                        ((ActivatorBasedBehaviorSystemAgentController)Agents[i].AgentController).Bind(ActivatorBasedBehaviorSystemAgentController.CreateActivatorBasedBehaviorSystemContext(Agents[i].gameObject));
                         break;
                     default:
                         throw new Exception("Unknown AgentController type!");

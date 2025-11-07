@@ -4,7 +4,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System;
 using UnityEngine;
-using System.Collections.Generic;
 using AgentOrganizations;
 using Fitnesses;
 using Configuration;
