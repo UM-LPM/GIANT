@@ -7,10 +7,7 @@ The platform consists of three parts: **Unity**, **Web API**, and **EARS framewo
 2. From the Unity Hub install the Unity LTS version for 2022 or higher.
 3. Clone the [repository](https://github.com/UM-LPM/GIANT/) on your local machine from the GitHub.
 4. Add and open the cloned project in the Unity Hub.
-5. Configure Unity Editor (Edit -> Project Settings -> Physics) if the settings don't match the ones displayed in the image below.
-   
-   ![Unity Editor Configuration](/docs/images/unity_editor_config.png)
-6. To test run the Unity setup, navigate to **Assets -> Problem Domains -> Robostrike** and open **RobostrikeBaseScene** and in your API platform of choice create the following request:
+5. To test run the Unity setup, navigate to **Assets -> Problem Domains -> Robostrike** (or any other example environment) and open **RobostrikeBaseScene** and in your API platform of choice create the following request:
    
    ```json
     POST request to: http://localhost:4000
@@ -20,7 +17,7 @@ The platform consists of three parts: **Unity**, **Web API**, and **EARS framewo
       "EvalRangeEnd": 2
     }
    ```
-7. The response from the request should look something like this:
+6. The response from the request should look something like this:
 
    ```json
      {
