@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using AgentControllers;
 using AgentOrganizations;
 using UnityEngine.Tilemaps;
+using Problems.MicroRTS.Core;
 
 namespace Problems.MicroRTS
 {
@@ -19,14 +20,12 @@ namespace Problems.MicroRTS
 
         private void FindSpawnPoints(EnvironmentControllerBase environmentController)
         {
-            // Find UnitSpawnPositions component in the environment controller or its children
             spawnPositions = environmentController.GetComponentInChildren<UnitSpawnPositions>();
             if (spawnPositions == null)
             {
                 throw new System.Exception("UnitSpawnPositions component not found in environment controller");
             }
 
-            // Get spawn points from the component
             resourceSpawnPoints = new Transform[]
             {
                 spawnPositions.Resource0_Spawn,
@@ -48,7 +47,6 @@ namespace Problems.MicroRTS
             dummyAgentSpawnPoint = spawnPositions.DummyAgentSpawn;
             if (dummyAgentSpawnPoint == null)
             {
-                // Create a default off-board spawn point if not found
                 GameObject dummySpawn = new GameObject("DummyAgentSpawn");
                 dummySpawn.transform.SetParent(spawnPositions.transform);
                 dummySpawn.transform.position = Vector3.zero;
@@ -83,10 +81,9 @@ namespace Problems.MicroRTS
                 throw new System.Exception("AgentPrefab is not defined");
             }
 
-            // Find spawn points automatically
             FindSpawnPoints(environmentController);
 
-            // Validate spawn points were found
+            // Validate spawn points
             if (resourceSpawnPoints == null || resourceSpawnPoints[0] == null || resourceSpawnPoints[1] == null)
             {
                 throw new System.Exception("Resource spawn points not found (expected Resource0_Spawn and Resource1_Spawn)");
@@ -102,7 +99,7 @@ namespace Problems.MicroRTS
                 throw new System.Exception("Worker spawn points not found (expected Player0_WorkerSpawn and Player1_WorkerSpawn)");
             }
 
-            // Validate prefabs are assigned
+            // Validate prefabs
             if (spawnPositions.ResourcePrefab == null)
             {
                 throw new System.Exception("ResourcePrefab is not assigned in UnitSpawnPositions component");
@@ -125,16 +122,16 @@ namespace Problems.MicroRTS
 
             List<T> agents = new List<T>();
 
-            // Spawn Resources
-            SpawnResources();
+            MicroRTSEnvironmentController microRTSController = environmentController as MicroRTSEnvironmentController;
+            if (microRTSController == null)
+            {
+                throw new System.Exception("EnvironmentController must be MicroRTSEnvironmentController");
+            }
 
-            // Spawn Bases
-            SpawnBases();
-
-            // Spawn Workers
-            SpawnWorkers();
-
-            // Spawn 1 dummy agent for Player 0 that controls all Player 0 units
+            SpawnResources(microRTSController);
+            SpawnBases(microRTSController);
+            SpawnWorkers(microRTSController);
+            
             var team0 = environmentController.Match.Teams[0];
             if (team0.Individuals != null && team0.Individuals.Length > 0)
             {
@@ -143,7 +140,6 @@ namespace Problems.MicroRTS
                 {
                     var agentController = individual.AgentControllers[0];
 
-                    // Position dummy agent off-board
                     Vector3 dummyAgentPosition = dummyAgentSpawnPoint != null
                         ? dummyAgentSpawnPoint.position
                         : Vector3.zero;
@@ -151,7 +147,6 @@ namespace Problems.MicroRTS
                         ? dummyAgentSpawnPoint.rotation
                         : Quaternion.identity;
 
-                    // Instantiate
                     GameObject dummyAgentObj = Instantiate(
                         environmentController.AgentPrefab,
                         dummyAgentPosition,
@@ -159,7 +154,6 @@ namespace Problems.MicroRTS
                         gameObject.transform
                     );
 
-                    // Configure
                     T agent = dummyAgentObj.GetComponent<T>();
                     MicroRTSAgentComponent agentComponent = agent as MicroRTSAgentComponent;
                     if (agentComponent != null)
@@ -179,21 +173,39 @@ namespace Problems.MicroRTS
             return agents.ToArray();
         }
 
-        private void SpawnResources()
+        private void SpawnResources(MicroRTSEnvironmentController controller)
         {
             GameObject resourcePrefab = spawnPositions.ResourcePrefab;
+            UnitTypeTable unitTypeTable = controller.UnitTypeTable;
+            UnitType resourceType = unitTypeTable.GetUnitType("Resource");
 
             for (int i = 0; i < resourceSpawnPoints.Length; i++)
             {
                 Vector3 centeredPosition = CenterPositionOnTile(resourceSpawnPoints[i].position);
                 GameObject resourceObj = Instantiate(resourcePrefab, centeredPosition, resourceSpawnPoints[i].rotation, gameObject.transform);
                 resourceObj.name = $"Resource_{i}";
+
+                if (controller.TryWorldToGrid(centeredPosition, out int gridX, out int gridY))
+                {
+                    Unit unit = new Unit(-1, resourceType, gridX, gridY, 10);
+
+                    MicroRTSUnitComponent unitComponent = resourceObj.GetComponent<MicroRTSUnitComponent>();
+                    if (unitComponent == null)
+                    {
+                        unitComponent = resourceObj.AddComponent<MicroRTSUnitComponent>();
+                    }
+                    unitComponent.Initialize(unit);
+
+                    controller.RegisterUnit(resourceObj, unitComponent, unit);
+                }
             }
         }
 
-        private void SpawnBases()
+        private void SpawnBases(MicroRTSEnvironmentController controller)
         {
             GameObject basePrefab = spawnPositions.BasePrefab;
+            UnitTypeTable unitTypeTable = controller.UnitTypeTable;
+            UnitType baseType = unitTypeTable.GetUnitType("Base");
             Color[] playerColors = new Color[] { Color.blue, Color.red };
 
             for (int i = 0; i < baseSpawnPoints.Length; i++)
@@ -202,12 +214,28 @@ namespace Problems.MicroRTS
                 GameObject baseObj = Instantiate(basePrefab, centeredPosition, baseSpawnPoints[i].rotation, gameObject.transform);
                 baseObj.name = $"Base_Player{i}";
                 SetColor(baseObj, playerColors[i]);
+
+                if (controller.TryWorldToGrid(centeredPosition, out int gridX, out int gridY))
+                {
+                    Unit unit = new Unit(i, baseType, gridX, gridY);
+
+                    MicroRTSUnitComponent unitComponent = baseObj.GetComponent<MicroRTSUnitComponent>();
+                    if (unitComponent == null)
+                    {
+                        unitComponent = baseObj.AddComponent<MicroRTSUnitComponent>();
+                    }
+                    unitComponent.Initialize(unit);
+
+                    controller.RegisterUnit(baseObj, unitComponent, unit);
+                }
             }
         }
 
-        private void SpawnWorkers()
+        private void SpawnWorkers(MicroRTSEnvironmentController controller)
         {
             GameObject workerPrefab = spawnPositions.WorkerPrefab;
+            UnitTypeTable unitTypeTable = controller.UnitTypeTable;
+            UnitType workerType = unitTypeTable.GetUnitType("Worker");
             Color[] playerColors = new Color[] { Color.blue, Color.red };
 
             for (int i = 0; i < workerSpawnPoints.Length; i++)
@@ -216,6 +244,20 @@ namespace Problems.MicroRTS
                 GameObject workerObj = Instantiate(workerPrefab, centeredPosition, workerSpawnPoints[i].rotation, gameObject.transform);
                 workerObj.name = $"Worker_Player{i}";
                 SetColor(workerObj, playerColors[i]);
+
+                if (controller.TryWorldToGrid(centeredPosition, out int gridX, out int gridY))
+                {
+                    Unit unit = new Unit(i, workerType, gridX, gridY);
+
+                    MicroRTSUnitComponent unitComponent = workerObj.GetComponent<MicroRTSUnitComponent>();
+                    if (unitComponent == null)
+                    {
+                        unitComponent = workerObj.AddComponent<MicroRTSUnitComponent>();
+                    }
+                    unitComponent.Initialize(unit);
+
+                    controller.RegisterUnit(workerObj, unitComponent, unit);
+                }
             }
         }
 
