@@ -1,0 +1,643 @@
+using System.Collections;
+using System.Linq;
+using UnityEngine;
+using Problems.MicroRTS.Core;
+using Problems.MicroRTS;
+using Utils;
+
+namespace Problems.MicroRTS.Testing
+{
+    public enum TestType
+    {
+        Movement,
+        Harvest
+    }
+
+    public class WorkerActionTest : MonoBehaviour
+    {
+        [Header("Test Configuration")]
+        [SerializeField] private TestType testType = TestType.Movement;
+        [SerializeField] private bool autoStartTest = true;
+        [SerializeField] private float testStartDelay = 0.5f;
+        [SerializeField] private float maxWaitTime = 5.0f;
+        [SerializeField] private float checkInterval = 0.5f;
+
+        private MicroRTSEnvironmentController environmentController;
+        private MicroRTSActionExecutor actionExecutor;
+        private Util util;
+        private bool testRunning = false;
+
+        void Start()
+        {
+            if (autoStartTest)
+            {
+                StartCoroutine(StartTestAfterDelay());
+            }
+        }
+
+        void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.T) && !testRunning)
+            {
+                StartCoroutine(VerifyUnitSpawn());
+            }
+        }
+
+        private IEnumerator StartTestAfterDelay()
+        {
+            yield return new WaitForSeconds(testStartDelay);
+            StartCoroutine(VerifyUnitSpawn());
+        }
+
+        private IEnumerator VerifyUnitSpawn()
+        {
+            if (testRunning) yield break;
+            testRunning = true;
+
+            environmentController = FindFirstObjectByType<MicroRTSEnvironmentController>();
+            if (environmentController == null)
+            {
+                DebugSystem.LogError("Environment controller not found");
+                testRunning = false;
+                yield break;
+            }
+
+            util = environmentController.GetComponent<Util>();
+            if (util == null)
+            {
+                DebugSystem.LogError("Util component not found");
+                testRunning = false;
+                yield break;
+            }
+
+            actionExecutor = environmentController.GetComponent<MicroRTSActionExecutor>();
+            if (actionExecutor == null)
+            {
+                DebugSystem.LogError("Action executor not found");
+                testRunning = false;
+                yield break;
+            }
+
+            float elapsedTime = 0f;
+            while (elapsedTime < maxWaitTime)
+            {
+                var allUnits = environmentController.GetAllUnits();
+                if (allUnits.Count >= 6)
+                {
+                    break;
+                }
+
+                yield return new WaitForSeconds(checkInterval);
+                elapsedTime += checkInterval;
+            }
+
+            var units = environmentController.GetAllUnits();
+            int resourceCount = 0;
+            int team0WorkerCount = 0;
+            int team0BaseCount = 0;
+            int team1WorkerCount = 0;
+            int team1BaseCount = 0;
+
+            foreach (Unit unit in units)
+            {
+                string unitType = unit.Type?.name ?? "NULL";
+                int team = unit.Player;
+
+                if (team == -1)
+                {
+                    resourceCount++;
+                }
+                else if (team == 0)
+                {
+                    if (unitType == "Worker") team0WorkerCount++;
+                    else if (unitType == "Base") team0BaseCount++;
+                }
+                else if (team == 1)
+                {
+                    if (unitType == "Worker") team1WorkerCount++;
+                    else if (unitType == "Base") team1BaseCount++;
+                }
+            }
+
+            bool allCorrect = resourceCount == 2 &&
+                             team0WorkerCount == 1 && team0BaseCount == 1 &&
+                             team1WorkerCount == 1 && team1BaseCount == 1;
+
+            if (allCorrect)
+            {
+                DebugSystem.LogSuccess($"Units spawned: {resourceCount} resources, Team 0: {team0WorkerCount} worker/{team0BaseCount} base, Team 1: {team1WorkerCount} worker/{team1BaseCount} base");
+
+                if (testType == TestType.Movement)
+                {
+                    yield return StartCoroutine(TestWorkerMovement());
+                }
+                else if (testType == TestType.Harvest)
+                {
+                    yield return StartCoroutine(TestWorkerHarvest());
+                }
+            }
+            else
+            {
+                DebugSystem.LogWarning($"Unit spawn failed: {resourceCount} resources, Team 0: {team0WorkerCount} worker/{team0BaseCount} base, Team 1: {team1WorkerCount} worker/{team1BaseCount} base");
+            }
+
+            testRunning = false;
+        }
+
+        private Unit FindTeam0Worker()
+        {
+            if (environmentController == null) return null;
+
+            var units = environmentController.GetAllUnits();
+            return units.FirstOrDefault(u =>
+                u.Player == 0 &&
+                u.Type != null &&
+                u.Type.name == "Worker" &&
+                u.HitPoints > 0);
+        }
+
+        private Unit FindNearestResource(Unit worker)
+        {
+            if (environmentController == null || worker == null) return null;
+
+            Unit nearest = null;
+            int minDist = int.MaxValue;
+
+            foreach (var unit in environmentController.GetAllUnits())
+            {
+                if (unit.Type.isResource && unit.Resources > 0)
+                {
+                    int dist = Mathf.Abs(unit.X - worker.X) + Mathf.Abs(unit.Y - worker.Y);
+                    if (dist < minDist)
+                    {
+                        minDist = dist;
+                        nearest = unit;
+                    }
+                }
+            }
+
+            return nearest;
+        }
+
+        private Unit FindNearestBase(Unit worker)
+        {
+            if (environmentController == null || worker == null) return null;
+
+            Unit nearest = null;
+            int minDist = int.MaxValue;
+
+            foreach (var unit in environmentController.GetAllUnits())
+            {
+                if (unit.Player == worker.Player && unit.Type.isStockpile)
+                {
+                    int dist = Mathf.Abs(unit.X - worker.X) + Mathf.Abs(unit.Y - worker.Y);
+                    if (dist < minDist)
+                    {
+                        minDist = dist;
+                        nearest = unit;
+                    }
+                }
+            }
+
+            return nearest;
+        }
+
+        private bool IsAdjacent(int x1, int y1, int x2, int y2)
+        {
+            int dx = Mathf.Abs(x1 - x2);
+            int dy = Mathf.Abs(y1 - y2);
+            return (dx == 1 && dy == 0) || (dx == 0 && dy == 1);
+        }
+
+        private int GetDirectionToTarget(int fromX, int fromY, int toX, int toY)
+        {
+            int dx = toX - fromX;
+            int dy = toY - fromY;
+
+            if (dx == 0 && dy == -1) return MicroRTSUtils.DIRECTION_UP;
+            if (dx == 1 && dy == 0) return MicroRTSUtils.DIRECTION_RIGHT;
+            if (dx == 0 && dy == 1) return MicroRTSUtils.DIRECTION_DOWN;
+            if (dx == -1 && dy == 0) return MicroRTSUtils.DIRECTION_LEFT;
+
+            return MicroRTSUtils.DIRECTION_NONE;
+        }
+
+        private bool CanMoveTo(Unit unit, int newX, int newY)
+        {
+            if (environmentController == null) return false;
+            if (unit == null) return false;
+
+            if (newX < 0 || newX >= environmentController.MapWidth || newY < 0 || newY >= environmentController.MapHeight)
+            {
+                return false;
+            }
+
+            if (!environmentController.IsWalkable(newX, newY))
+            {
+                return false;
+            }
+
+            Unit unitAtPosition = environmentController.GetUnitAt(newX, newY);
+            if (unitAtPosition != null && unitAtPosition.ID != unit.ID)
+            {
+                return false;
+            }
+
+            if (!unit.Type.canMove)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private void SyncUnitVisualPosition(Unit unit)
+        {
+            if (environmentController == null || unit == null) return;
+
+            GameObject unitObj = environmentController.GetUnitGameObject(unit.ID);
+            if (unitObj == null) return;
+
+            MicroRTSUnitComponent unitComponent = environmentController.GetUnitComponent(unitObj);
+            if (unitComponent == null) return;
+
+            Vector3 worldPosition = environmentController.GridToWorldPosition(unit.X, unit.Y);
+            unitComponent.SyncPositionFromGrid(worldPosition);
+        }
+
+        private IEnumerator TestWorkerMovement()
+        {
+            Unit worker = FindTeam0Worker();
+            if (worker == null)
+            {
+                DebugSystem.LogError("Team 0 worker not found");
+                yield break;
+            }
+
+            if (util == null || util.Rnd == null)
+            {
+                DebugSystem.LogError("Seeded random not available");
+                yield break;
+            }
+
+            if (actionExecutor == null)
+            {
+                DebugSystem.LogError("Action executor not found");
+                yield break;
+            }
+
+            int initialX = worker.X;
+            int initialY = worker.Y;
+            int moveTime = worker.MoveTime;
+            float cyclesPerSec = actionExecutor.GetCyclesPerSecond();
+            float expectedMoveDuration = moveTime / cyclesPerSec;
+
+            DebugSystem.Log($"Worker at ({initialX}, {initialY}), moveTime: {moveTime} cycles ({expectedMoveDuration:F2}s at {cyclesPerSec:F1} cycles/s), starting movement timing test");
+
+            int[] allDirections = { MicroRTSUtils.DIRECTION_UP, MicroRTSUtils.DIRECTION_RIGHT, MicroRTSUtils.DIRECTION_DOWN, MicroRTSUtils.DIRECTION_LEFT };
+            int successfulMoves = 0;
+            int lastX = worker.X;
+            int lastY = worker.Y;
+            int actionScheduledCycle = 0;
+            bool actionPending = false;
+
+            while (true)
+            {
+                int currentX = worker.X;
+                int currentY = worker.Y;
+                int cycleBeforeProcess = actionExecutor.GetCurrentCycle();
+
+                actionExecutor.ProcessActions();
+
+                int newX = worker.X;
+                int newY = worker.Y;
+
+                if (newX != currentX || newY != currentY)
+                {
+                    int cyclesElapsed = cycleBeforeProcess - actionScheduledCycle;
+                    successfulMoves++;
+
+                    if (cyclesElapsed != moveTime)
+                    {
+                        DebugSystem.LogError($"Move {successfulMoves} wrong timing! Took {cyclesElapsed} cycles, expected exactly {moveTime} cycles (scheduled at {actionScheduledCycle}, executed at {cycleBeforeProcess})");
+                    }
+                    else
+                    {
+                        float actualDuration = environmentController.CurrentSimulationTime - (actionScheduledCycle / cyclesPerSec);
+                        DebugSystem.Log($"Move {successfulMoves}: ({currentX}, {currentY}) -> ({newX}, {newY}) in {cyclesElapsed} cycles ({actualDuration:F3}s)");
+                    }
+
+                    lastX = newX;
+                    lastY = newY;
+                    actionPending = false;
+                }
+
+                if (!actionPending)
+                {
+                    int randomDirection = allDirections[util.Rnd.Next(allDirections.Length)];
+                    Vector2Int offset = MicroRTSUtils.GetDirectionOffset(randomDirection);
+                    int targetX = newX + offset.x;
+                    int targetY = newY + offset.y;
+
+                    if (CanMoveTo(worker, targetX, targetY))
+                    {
+                        actionScheduledCycle = actionExecutor.GetCurrentCycle();
+                        ScheduleMovement(worker, randomDirection);
+                        actionPending = true;
+                    }
+                }
+
+                yield return new WaitForFixedUpdate();
+            }
+        }
+
+        private IEnumerator TestWorkerHarvest()
+        {
+            Unit worker = FindTeam0Worker();
+            if (worker == null)
+            {
+                DebugSystem.LogError("Team 0 worker not found");
+                yield break;
+            }
+
+            if (actionExecutor == null)
+            {
+                DebugSystem.LogError("Action executor not found");
+                yield break;
+            }
+
+            int harvestTime = worker.HarvestTime;
+            float cyclesPerSec = actionExecutor.GetCyclesPerSecond();
+            float expectedHarvestDuration = harvestTime / cyclesPerSec;
+
+            DebugSystem.Log($"Worker at ({worker.X}, {worker.Y}), harvestTime: {harvestTime} cycles ({expectedHarvestDuration:F2}s at {cyclesPerSec:F1} cycles/s), starting harvest test");
+
+            Unit targetResource = FindNearestResource(worker);
+            if (targetResource == null)
+            {
+                DebugSystem.LogError("No harvestable resource found");
+                yield break;
+            }
+
+            DebugSystem.Log($"Target resource at ({targetResource.X}, {targetResource.Y}) with {targetResource.Resources} resources");
+
+            var allResources = environmentController.GetAllUnits().Where(u => u.Type.isResource && u.Resources > 0).ToList();
+            DebugSystem.Log($"Total harvestable resources on map: {allResources.Count}");
+            foreach (var res in allResources)
+            {
+                DebugSystem.Log($"  - Resource at ({res.X}, {res.Y}) with {res.Resources} resources");
+            }
+
+            int initialResourceAmount = targetResource.Resources;
+            int previousWorkerResources = worker.Resources;
+            int successfulHarvests = 0;
+            int actionScheduledCycle = 0;
+            bool harvestPending = false;
+            bool navigatingToResource = true;
+            Unit currentResource = targetResource;
+            Unit currentBase = null;
+            int previousX = worker.X;
+            int previousY = worker.Y;
+
+            while (true)
+            {
+                int cycleBeforeProcess = actionExecutor.GetCurrentCycle();
+                actionExecutor.ProcessActions();
+
+                int currentX = worker.X;
+                int currentY = worker.Y;
+                int currentWorkerResources = worker.Resources;
+                int currentResourceAmount = currentResource != null ? currentResource.Resources : 0;
+                bool hasPendingAction = actionExecutor.HasPendingAction(worker);
+
+                if (currentX != previousX || currentY != previousY)
+                {
+                    DebugSystem.Log($"Worker moved: ({previousX}, {previousY}) -> ({currentX}, {currentY})");
+                    previousX = currentX;
+                    previousY = currentY;
+                }
+
+                if (navigatingToResource)
+                {
+                    DebugSystem.Log($"Navigating to resource at ({currentResource.X}, {currentResource.Y}), worker at ({worker.X}, {worker.Y}), resources: {worker.Resources}");
+                    if (IsAdjacent(worker.X, worker.Y, currentResource.X, currentResource.Y))
+                    {
+                        DebugSystem.Log($"Adjacent to resource, harvesting...");
+                        if (!harvestPending && !hasPendingAction && worker.Resources == 0)
+                        {
+                            int direction = GetDirectionToTarget(worker.X, worker.Y, currentResource.X, currentResource.Y);
+                            if (direction != MicroRTSUtils.DIRECTION_NONE)
+                            {
+                                actionScheduledCycle = actionExecutor.GetCurrentCycle();
+                                ScheduleHarvest(worker, direction);
+                                harvestPending = true;
+                                previousWorkerResources = worker.Resources;
+                                DebugSystem.Log($"Scheduled harvest action at cycle {actionScheduledCycle}");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (!harvestPending && !hasPendingAction)
+                        {
+                            DebugSystem.Log($"Not adjacent, scheduling move to ({currentResource.X}, {currentResource.Y})");
+                            ScheduleMoveToTarget(worker, currentResource.X, currentResource.Y);
+                        }
+                        else
+                        {
+                            DebugSystem.Log($"Cannot move: harvestPending={harvestPending}, hasPendingAction={hasPendingAction}");
+                        }
+                    }
+
+                    if (harvestPending && currentWorkerResources > previousWorkerResources)
+                    {
+                        int cyclesElapsed = cycleBeforeProcess - actionScheduledCycle;
+                        successfulHarvests++;
+
+                        if (cyclesElapsed != harvestTime)
+                        {
+                            DebugSystem.LogError($"Harvest {successfulHarvests} wrong timing! Took {cyclesElapsed} cycles, expected exactly {harvestTime} cycles");
+                        }
+                        else
+                        {
+                            DebugSystem.LogSuccess($"Harvest {successfulHarvests}: Worker now has {worker.Resources} resources (took {cyclesElapsed} cycles)");
+                        }
+
+                        harvestPending = false;
+                        navigatingToResource = false;
+
+                        if (currentBase == null)
+                        {
+                            currentBase = FindNearestBase(worker);
+                            if (currentBase == null)
+                            {
+                                DebugSystem.LogError("No base found to return resources");
+                                yield break;
+                            }
+                            DebugSystem.Log($"Navigating to own team base at ({currentBase.X}, {currentBase.Y}) (Team {currentBase.Player})");
+
+                            if (currentBase.Player != worker.Player)
+                            {
+                                DebugSystem.LogError($"ERROR: Found base belongs to team {currentBase.Player}, but worker is team {worker.Player}!");
+                            }
+                        }
+                    }
+
+                    previousWorkerResources = currentWorkerResources;
+                }
+                else
+                {
+                    DebugSystem.Log($"Navigating to base at ({currentBase.X}, {currentBase.Y}), worker at ({worker.X}, {worker.Y}), resources: {worker.Resources}");
+                    if (IsAdjacent(worker.X, worker.Y, currentBase.X, currentBase.Y))
+                    {
+                        DebugSystem.Log($"Adjacent to base, depositing...");
+                        if (worker.Resources > 0 && !hasPendingAction)
+                        {
+                            var player = environmentController.GetPlayer(worker.Player);
+                            int playerResourcesBefore = player != null ? player.Resources : 0;
+
+                            int direction = GetDirectionToTarget(worker.X, worker.Y, currentBase.X, currentBase.Y);
+                            if (direction != MicroRTSUtils.DIRECTION_NONE)
+                            {
+                                ExecuteReturn(worker, direction);
+
+                                if (player != null && player.Resources > playerResourcesBefore)
+                                {
+                                    int returnedAmount = player.Resources - playerResourcesBefore;
+                                    DebugSystem.LogSuccess($"Returned {returnedAmount} resources to base. Player now has {player.Resources} resources");
+                                }
+
+                                if (worker.Resources == 0)
+                                {
+                                    navigatingToResource = true;
+                                    harvestPending = false;
+                                    currentResource = FindNearestResource(worker);
+                                    if (currentResource == null)
+                                    {
+                                        DebugSystem.Log("No more resources to harvest");
+                                        yield break;
+                                    }
+                                    DebugSystem.Log($"Returning to resource at ({currentResource.X}, {currentResource.Y})");
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (!hasPendingAction)
+                        {
+                            DebugSystem.Log($"Not adjacent to base, scheduling move to ({currentBase.X}, {currentBase.Y})");
+                            ScheduleMoveToTarget(worker, currentBase.X, currentBase.Y);
+                        }
+                        else
+                        {
+                            DebugSystem.Log($"Cannot move to base: hasPendingAction={hasPendingAction}");
+                        }
+                    }
+                }
+
+                if (currentResource != null)
+                {
+                    Unit actualResource = environmentController.GetUnitAt(currentResource.X, currentResource.Y);
+                    if (actualResource == null || actualResource.Resources <= 0 || !actualResource.Type.isResource)
+                    {
+                        DebugSystem.Log($"Resource at ({currentResource.X}, {currentResource.Y}) depleted or removed.");
+
+                        if (worker.Resources > 0)
+                        {
+                            DebugSystem.Log($"Worker is carrying {worker.Resources} resources. Must return to base first.");
+                            if (currentBase == null)
+                            {
+                                currentBase = FindNearestBase(worker);
+                                if (currentBase == null)
+                                {
+                                    DebugSystem.LogError("No base found to return resources");
+                                    yield break;
+                                }
+                                DebugSystem.Log($"Navigating to own team base at ({currentBase.X}, {currentBase.Y}) (Team {currentBase.Player})");
+                            }
+                            navigatingToResource = false;
+                            harvestPending = false;
+                        }
+                        else
+                        {
+                            DebugSystem.Log($"Worker has no resources. Finding new resource...");
+                            currentResource = FindNearestResource(worker);
+                            if (currentResource == null)
+                            {
+                                DebugSystem.Log("No more resources to harvest");
+                                yield break;
+                            }
+                            navigatingToResource = true;
+                            harvestPending = false;
+                            DebugSystem.Log($"New target resource at ({currentResource.X}, {currentResource.Y}) with {currentResource.Resources} resources");
+                        }
+                    }
+                    else
+                    {
+                        currentResource = actualResource;
+                    }
+                }
+
+                yield return new WaitForFixedUpdate();
+            }
+        }
+
+        private void ScheduleMovement(Unit unit, int direction)
+        {
+            if (actionExecutor == null) return;
+
+            var assignment = new MicroRTSActionAssignment(unit, MicroRTSActionAssignment.ACTION_TYPE_MOVE, direction, GetCurrentGameTime());
+            actionExecutor.ScheduleAction(assignment);
+        }
+
+        private void ScheduleHarvest(Unit unit, int direction)
+        {
+            if (actionExecutor == null) return;
+
+            var assignment = new MicroRTSActionAssignment(unit, MicroRTSActionAssignment.ACTION_TYPE_HARVEST, direction, GetCurrentGameTime());
+            actionExecutor.ScheduleAction(assignment);
+        }
+
+        private void ScheduleMoveToTarget(Unit unit, int targetX, int targetY)
+        {
+            if (actionExecutor == null || environmentController == null) return;
+            if (actionExecutor.HasPendingAction(unit)) return;
+
+            if (actionExecutor.GetNextStepTowardTarget(unit, targetX, targetY, out int stepX, out int stepY))
+            {
+                int direction = GetDirectionToTarget(unit.X, unit.Y, stepX, stepY);
+                if (direction != MicroRTSUtils.DIRECTION_NONE && CanMoveTo(unit, stepX, stepY))
+                {
+                    ScheduleMovement(unit, direction);
+                }
+            }
+        }
+
+        private void ExecuteReturn(Unit unit, int direction)
+        {
+            if (unit == null || environmentController == null) return;
+            if (unit.Resources == 0) return;
+
+            Vector2Int offset = MicroRTSUtils.GetDirectionOffset(direction);
+            int targetX = unit.X + offset.x;
+            int targetY = unit.Y + offset.y;
+
+            Unit baseUnit = environmentController.GetUnitAt(targetX, targetY);
+            if (baseUnit == null || !baseUnit.Type.isStockpile || baseUnit.Player != unit.Player) return;
+
+            var player = environmentController.GetPlayer(unit.Player);
+            if (player != null)
+            {
+                player.SetResources(player.Resources + unit.Resources);
+                unit.SetResources(0);
+            }
+        }
+
+        private int GetCurrentGameTime()
+        {
+            return actionExecutor.GetCurrentCycle();
+        }
+    }
+}
+

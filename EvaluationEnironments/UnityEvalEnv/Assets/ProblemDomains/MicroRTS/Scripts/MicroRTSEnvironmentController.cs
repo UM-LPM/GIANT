@@ -227,7 +227,19 @@ namespace Problems.MicroRTS
 
         public void RemoveUnit(Unit unit)
         {
+            if (unit == null) return;
+
             units.Remove(unit);
+
+            if (unitGameObjects.TryGetValue(unit.ID, out GameObject unitObj))
+            {
+                unitGameObjects.Remove(unit.ID);
+                unitComponents.Remove(unitObj);
+                if (unitObj != null)
+                {
+                    Destroy(unitObj);
+                }
+            }
         }
 
         public Unit GetUnit(long id)

@@ -260,7 +260,7 @@ namespace Problems.MicroRTS
 
                 if (baseSpawnPoints[i] == null)
                 {
-                    DebugSystem.LogError($"Base spawn point {i} is null, skipping team {teamID}");
+                    DebugSystem.LogWarning($"Base spawn point {i} is null, skipping team {teamID}");
                     continue;
                 }
 
@@ -329,7 +329,7 @@ namespace Problems.MicroRTS
 
                 if (workerSpawnPoints[i] == null)
                 {
-                    DebugSystem.LogError($"Worker spawn point {i} is null, skipping team {teamID}");
+                    DebugSystem.LogWarning($"Worker spawn point {i} is null, skipping team {teamID}");
                     continue;
                 }
 
