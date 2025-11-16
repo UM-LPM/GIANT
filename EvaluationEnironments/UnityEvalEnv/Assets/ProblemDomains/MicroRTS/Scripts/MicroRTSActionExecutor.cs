@@ -8,31 +8,6 @@ namespace Problems.MicroRTS
 {
     public class MicroRTSActionExecutor : ActionExecutor
     {
-        // This changed to match project imp
-        // Original MicroRTS: DIRECTION_NONE=-1, UP=0, RIGHT=1, DOWN=2, LEFT=3
-        // Now matches project: DIRECTION_NONE=0, UP=1, RIGHT=2, DOWN=3, LEFT=4 (same as action values)
-        private const int DIRECTION_NONE = 0;
-        private const int DIRECTION_UP = 1;
-        private const int DIRECTION_RIGHT = 2;
-        private const int DIRECTION_DOWN = 3;
-        private const int DIRECTION_LEFT = 4;
-
-        private Vector2Int GetDirectionOffset(int direction)
-        {
-            switch (direction)
-            {
-                case DIRECTION_UP:
-                    return new Vector2Int(0, -1); // moving up -> decrease Y
-                case DIRECTION_RIGHT:
-                    return new Vector2Int(1, 0); // moving right -> increase X
-                case DIRECTION_DOWN:
-                    return new Vector2Int(0, 1); // moving down -> increase Y
-                case DIRECTION_LEFT:
-                    return new Vector2Int(-1, 0); // moving left -> decrease X
-                default:
-                    return Vector2Int.zero;
-            }
-        }
 
         private MicroRTSEnvironmentController environmentController;
 
@@ -66,12 +41,12 @@ namespace Problems.MicroRTS
                 string actionName = $"moveDirection_unit{unit.ID}";
                 int actionValue = agent.ActionBuffer.GetDiscreteAction(actionName);
 
-                if (actionValue == DIRECTION_NONE) continue;
+                if (actionValue == MicroRTSUtils.DIRECTION_NONE) continue;
 
                 int direction = actionValue;
 
                 // Get direction offset
-                Vector2Int offset = GetDirectionOffset(direction);
+                Vector2Int offset = MicroRTSUtils.GetDirectionOffset(direction);
                 int newX = unit.X + offset.x;
                 int newY = unit.Y + offset.y;
 
