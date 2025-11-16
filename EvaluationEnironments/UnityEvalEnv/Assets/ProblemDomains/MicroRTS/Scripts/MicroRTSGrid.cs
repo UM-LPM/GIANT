@@ -50,11 +50,19 @@ namespace Problems.MicroRTS
         {
             if (!IsInBounds(x, y)) return false;
             if (walkableTilemap == null) return false;
+            if (environmentController == null) return false;
+
+            BoundsInt bounds = walkableTilemap.cellBounds;
+            Vector3Int tilemapOffset = bounds.position;
 
             // Grid to tilemap cell coordinates
-            // Y is inverted
-            Vector3Int cellPos = new Vector3Int(x, Height - 1 - y, 0);
-            
+            // Y is inverted + offset
+            Vector3Int cellPos = new Vector3Int(
+                x + tilemapOffset.x,
+                Height - 1 - y + tilemapOffset.y,
+                0
+            );
+
             // Tile exists on position
             return walkableTilemap.HasTile(cellPos);
         }

@@ -6,6 +6,7 @@ using AgentControllers;
 using AgentOrganizations;
 using UnityEngine.Tilemaps;
 using Problems.MicroRTS.Core;
+using Utils;
 
 namespace Problems.MicroRTS
 {
@@ -84,19 +85,19 @@ namespace Problems.MicroRTS
             FindSpawnPoints(environmentController);
 
             // Validate spawn points
-            if (resourceSpawnPoints == null || resourceSpawnPoints[0] == null || resourceSpawnPoints[1] == null)
+            if (resourceSpawnPoints == null || resourceSpawnPoints.Length != 2 || resourceSpawnPoints[0] == null || resourceSpawnPoints[1] == null)
             {
-                throw new System.Exception("Resource spawn points not found (expected Resource0_Spawn and Resource1_Spawn)");
+                throw new System.Exception($"Resource spawn points not found or invalid (expected exactly 2, got {resourceSpawnPoints?.Length ?? 0})");
             }
 
-            if (baseSpawnPoints == null || baseSpawnPoints[0] == null || baseSpawnPoints[1] == null)
+            if (baseSpawnPoints == null || baseSpawnPoints.Length != 2 || baseSpawnPoints[0] == null || baseSpawnPoints[1] == null)
             {
-                throw new System.Exception("Base spawn points not found (expected Player0_BaseSpawn and Player1_BaseSpawn)");
+                throw new System.Exception($"Base spawn points not found or invalid (expected exactly 2, got {baseSpawnPoints?.Length ?? 0})");
             }
 
-            if (workerSpawnPoints == null || workerSpawnPoints[0] == null || workerSpawnPoints[1] == null)
+            if (workerSpawnPoints == null || workerSpawnPoints.Length != 2 || workerSpawnPoints[0] == null || workerSpawnPoints[1] == null)
             {
-                throw new System.Exception("Worker spawn points not found (expected Player0_WorkerSpawn and Player1_WorkerSpawn)");
+                throw new System.Exception($"Worker spawn points not found or invalid (expected exactly 2, got {workerSpawnPoints?.Length ?? 0})");
             }
 
             // Validate prefabs
@@ -131,7 +132,7 @@ namespace Problems.MicroRTS
             SpawnResources(microRTSController);
             SpawnBases(microRTSController);
             SpawnWorkers(microRTSController);
-            
+
             var team0 = environmentController.Match.Teams[0];
             if (team0.Individuals != null && team0.Individuals.Length > 0)
             {
@@ -176,101 +177,211 @@ namespace Problems.MicroRTS
         private void SpawnResources(MicroRTSEnvironmentController controller)
         {
             GameObject resourcePrefab = spawnPositions.ResourcePrefab;
+            if (resourcePrefab == null)
+            {
+                DebugSystem.LogError("Resource prefab is null");
+                return;
+            }
+
             UnitTypeTable unitTypeTable = controller.UnitTypeTable;
+            if (unitTypeTable == null)
+            {
+                DebugSystem.LogError("UnitTypeTable is null");
+                return;
+            }
+
             UnitType resourceType = unitTypeTable.GetUnitType("Resource");
+            if (resourceType == null)
+            {
+                DebugSystem.LogError("Resource type not found in UnitTypeTable");
+                return;
+            }
 
             for (int i = 0; i < resourceSpawnPoints.Length; i++)
             {
-                Vector3 centeredPosition = CenterPositionOnTile(resourceSpawnPoints[i].position);
-                GameObject resourceObj = Instantiate(resourcePrefab, centeredPosition, resourceSpawnPoints[i].rotation, gameObject.transform);
+                if (resourceSpawnPoints[i] == null)
+                {
+                    DebugSystem.LogError($"Resource spawn point {i} is null");
+                    continue;
+                }
+
+                Vector3 spawnPointPos = resourceSpawnPoints[i].position;
+                int gridX, gridY;
+                if (!controller.TryWorldToGrid(spawnPointPos, out gridX, out gridY))
+                {
+                    DebugSystem.LogWarning($"Resource spawn point {i} at {spawnPointPos} is out of bounds, using safe default position");
+                    int centerX = controller.MapWidth / 2;
+                    int centerY = controller.MapHeight / 2;
+                    gridX = i == 0 ? centerX - 2 : centerX + 2;
+                    gridY = i == 0 ? centerY - 2 : centerY + 2;
+                    gridX = Mathf.Clamp(gridX, 0, controller.MapWidth - 1);
+                    gridY = Mathf.Clamp(gridY, 0, controller.MapHeight - 1);
+                }
+
+                Vector3 worldPosition = controller.GridToWorldPosition(gridX, gridY);
+                GameObject resourceObj = Instantiate(resourcePrefab, worldPosition, resourceSpawnPoints[i].rotation, gameObject.transform);
                 resourceObj.name = $"Resource_{i}";
 
-                if (controller.TryWorldToGrid(centeredPosition, out int gridX, out int gridY))
+                Unit unit = new Unit(-1, resourceType, gridX, gridY, 10);
+
+                MicroRTSUnitComponent unitComponent = resourceObj.GetComponent<MicroRTSUnitComponent>();
+                if (unitComponent == null)
                 {
-                    Unit unit = new Unit(-1, resourceType, gridX, gridY, 10);
-
-                    MicroRTSUnitComponent unitComponent = resourceObj.GetComponent<MicroRTSUnitComponent>();
-                    if (unitComponent == null)
-                    {
-                        unitComponent = resourceObj.AddComponent<MicroRTSUnitComponent>();
-                    }
-                    unitComponent.Initialize(unit);
-
-                    controller.RegisterUnit(resourceObj, unitComponent, unit);
+                    unitComponent = resourceObj.AddComponent<MicroRTSUnitComponent>();
                 }
+                unitComponent.Initialize(unit);
+
+                controller.RegisterUnit(resourceObj, unitComponent, unit);
             }
         }
 
         private void SpawnBases(MicroRTSEnvironmentController controller)
         {
             GameObject basePrefab = spawnPositions.BasePrefab;
+            if (basePrefab == null)
+            {
+                DebugSystem.LogError("Base prefab is null");
+                return;
+            }
+
             UnitTypeTable unitTypeTable = controller.UnitTypeTable;
             UnitType baseType = unitTypeTable.GetUnitType("Base");
+            if (baseType == null)
+            {
+                DebugSystem.LogError("Base type not found in UnitTypeTable");
+                return;
+            }
+
             Color[] playerColors = new Color[] { Color.blue, Color.red };
 
             for (int i = 0; i < baseSpawnPoints.Length; i++)
             {
-                Vector3 centeredPosition = CenterPositionOnTile(baseSpawnPoints[i].position);
-                GameObject baseObj = Instantiate(basePrefab, centeredPosition, baseSpawnPoints[i].rotation, gameObject.transform);
-                baseObj.name = $"Base_Player{i}";
+                int teamID = i;
+
+                if (baseSpawnPoints[i] == null)
+                {
+                    DebugSystem.LogError($"Base spawn point {i} is null, skipping team {teamID}");
+                    continue;
+                }
+
+                Vector3 spawnPointPos = baseSpawnPoints[i].position;
+                int gridX, gridY;
+                if (!controller.TryWorldToGrid(spawnPointPos, out gridX, out gridY))
+                {
+                    DebugSystem.LogWarning($"Base spawn point {i} at {spawnPointPos} is out of bounds, using safe default position");
+                    gridX = i == 0 ? 0 : controller.MapWidth - 1;
+                    gridY = i == 0 ? 0 : controller.MapHeight - 1;
+                    gridX = Mathf.Clamp(gridX, 0, controller.MapWidth - 1);
+                    gridY = Mathf.Clamp(gridY, 0, controller.MapHeight - 1);
+                }
+
+                Vector3 worldPosition = controller.GridToWorldPosition(gridX, gridY);
+                GameObject baseObj = Instantiate(basePrefab, worldPosition, baseSpawnPoints[i].rotation, gameObject.transform);
+                baseObj.name = $"Base_Player{teamID}";
                 SetColor(baseObj, playerColors[i]);
 
-                if (controller.TryWorldToGrid(centeredPosition, out int gridX, out int gridY))
+                Unit unit = new Unit(teamID, baseType, gridX, gridY);
+
+                if (unit.Player != teamID)
                 {
-                    Unit unit = new Unit(i, baseType, gridX, gridY);
-
-                    MicroRTSUnitComponent unitComponent = baseObj.GetComponent<MicroRTSUnitComponent>();
-                    if (unitComponent == null)
-                    {
-                        unitComponent = baseObj.AddComponent<MicroRTSUnitComponent>();
-                    }
-                    unitComponent.Initialize(unit);
-
-                    controller.RegisterUnit(baseObj, unitComponent, unit);
+                    DebugSystem.LogError($"Team mismatch: Base {i} has team {unit.Player} but expected {teamID}");
                 }
+
+                MicroRTSUnitComponent unitComponent = baseObj.GetComponent<MicroRTSUnitComponent>();
+                if (unitComponent == null)
+                {
+                    unitComponent = baseObj.AddComponent<MicroRTSUnitComponent>();
+                }
+                unitComponent.Initialize(unit);
+
+                controller.RegisterUnit(baseObj, unitComponent, unit);
             }
         }
 
         private void SpawnWorkers(MicroRTSEnvironmentController controller)
         {
             GameObject workerPrefab = spawnPositions.WorkerPrefab;
+            if (workerPrefab == null)
+            {
+                DebugSystem.LogError("Worker prefab is null");
+                return;
+            }
+
             UnitTypeTable unitTypeTable = controller.UnitTypeTable;
+            if (unitTypeTable == null)
+            {
+                DebugSystem.LogError("UnitTypeTable is null");
+                return;
+            }
+
             UnitType workerType = unitTypeTable.GetUnitType("Worker");
+            if (workerType == null)
+            {
+                DebugSystem.LogError("Worker type not found in UnitTypeTable");
+                return;
+            }
+
             Color[] playerColors = new Color[] { Color.blue, Color.red };
 
             for (int i = 0; i < workerSpawnPoints.Length; i++)
             {
-                Vector3 centeredPosition = CenterPositionOnTile(workerSpawnPoints[i].position);
-                GameObject workerObj = Instantiate(workerPrefab, centeredPosition, workerSpawnPoints[i].rotation, gameObject.transform);
-                workerObj.name = $"Worker_Player{i}";
+                int teamID = i;
+
+                if (workerSpawnPoints[i] == null)
+                {
+                    DebugSystem.LogError($"Worker spawn point {i} is null, skipping team {teamID}");
+                    continue;
+                }
+
+                Vector3 spawnPointPos = workerSpawnPoints[i].position;
+                int gridX, gridY;
+                if (!controller.TryWorldToGrid(spawnPointPos, out gridX, out gridY))
+                {
+                    DebugSystem.LogWarning($"Worker spawn point {i} at {spawnPointPos} is out of bounds, using safe default position");
+                    int centerX = controller.MapWidth / 2;
+                    int centerY = controller.MapHeight / 2;
+                    gridX = i == 0 ? centerX - 1 : centerX + 1;
+                    gridY = i == 0 ? centerY - 1 : centerY + 1;
+                    gridX = Mathf.Clamp(gridX, 0, controller.MapWidth - 1);
+                    gridY = Mathf.Clamp(gridY, 0, controller.MapHeight - 1);
+                }
+
+                Vector3 worldPosition = controller.GridToWorldPosition(gridX, gridY);
+                GameObject workerObj = Instantiate(workerPrefab, worldPosition, workerSpawnPoints[i].rotation, gameObject.transform);
+                workerObj.name = $"Worker_Player{teamID}";
                 SetColor(workerObj, playerColors[i]);
 
-                if (controller.TryWorldToGrid(centeredPosition, out int gridX, out int gridY))
+                Unit unit = new Unit(teamID, workerType, gridX, gridY);
+
+                if (unit.Player != teamID)
                 {
-                    Unit unit = new Unit(i, workerType, gridX, gridY);
-
-                    MicroRTSUnitComponent unitComponent = workerObj.GetComponent<MicroRTSUnitComponent>();
-                    if (unitComponent == null)
-                    {
-                        unitComponent = workerObj.AddComponent<MicroRTSUnitComponent>();
-                    }
-                    unitComponent.Initialize(unit);
-
-                    controller.RegisterUnit(workerObj, unitComponent, unit);
+                    DebugSystem.LogError($"Team mismatch: Worker {i} has team {unit.Player} but expected {teamID}");
                 }
+
+                MicroRTSUnitComponent unitComponent = workerObj.GetComponent<MicroRTSUnitComponent>();
+                if (unitComponent == null)
+                {
+                    unitComponent = workerObj.AddComponent<MicroRTSUnitComponent>();
+                }
+                unitComponent.Initialize(unit);
+
+                controller.RegisterUnit(workerObj, unitComponent, unit);
             }
         }
 
         private Vector3 CenterPositionOnTile(Vector3 position)
         {
             Tilemap tilemap = FindFirstObjectByType<Tilemap>();
-            Vector3 cellSize = tilemap.cellSize;
-            Vector3 cellPosition = new Vector3(
-                Mathf.Floor(position.x / cellSize.x) * cellSize.x + cellSize.x * 0.5f,
-                Mathf.Floor(position.y / cellSize.y) * cellSize.y + cellSize.y * 0.5f,
-                position.z
-            );
-            return cellPosition;
+            if (tilemap == null)
+            {
+                DebugSystem.LogError("Tilemap not found for CenterPositionOnTile");
+                return position;
+            }
+
+            Vector3Int cellPos = tilemap.WorldToCell(position);
+            Vector3 cellCenter = tilemap.CellToWorld(cellPos) + tilemap.cellSize * 0.5f;
+
+            return cellCenter;
         }
 
         private void SetColor(GameObject obj, Color color)

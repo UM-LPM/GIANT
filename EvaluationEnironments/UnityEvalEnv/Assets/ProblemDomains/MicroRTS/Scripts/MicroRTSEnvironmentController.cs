@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Problems.MicroRTS.Core;
+using Utils;
 
 namespace Problems.MicroRTS
 {
@@ -19,6 +20,8 @@ namespace Problems.MicroRTS
         [SerializeField] private int mapHeight = 8;
 
         public MicroRTSGrid Grid { get; private set; }
+
+        private Vector3Int tilemapOffset;
 
         // Game state
         private List<Player> players = new List<Player>();
@@ -50,11 +53,12 @@ namespace Problems.MicroRTS
 
             if (walkableTilemap == null)
             {
-                Debug.LogError("IndestructablesWalkable Tilemap not found!");
+                DebugSystem.LogError("IndestructablesWalkable tilemap not found");
             }
             else
             {
                 BoundsInt bounds = walkableTilemap.cellBounds;
+                tilemapOffset = bounds.position;
                 mapWidth = bounds.size.x;
                 mapHeight = bounds.size.y;
             }
@@ -63,7 +67,7 @@ namespace Problems.MicroRTS
             Grid = GetComponent<MicroRTSGrid>();
             if (Grid == null)
             {
-                Debug.LogError("MicroRTSGrid component not found!");
+                DebugSystem.LogError("MicroRTSGrid component not found");
             }
             else
             {
@@ -83,15 +87,17 @@ namespace Problems.MicroRTS
 
             if (walkableTilemap == null)
             {
+                DebugSystem.LogWarning($"Can't convert world position {worldPosition} to grid - tilemap is null");
                 return false;
             }
 
             Vector3Int cellPos = walkableTilemap.WorldToCell(worldPosition);
-            gridX = cellPos.x;
-            gridY = mapHeight - 1 - cellPos.y;
+            gridX = cellPos.x - tilemapOffset.x;
+            gridY = mapHeight - 1 - (cellPos.y - tilemapOffset.y);
 
             if (gridX < 0 || gridX >= mapWidth || gridY < 0 || gridY >= mapHeight)
             {
+                DebugSystem.LogWarning($"Grid position ({gridX}, {gridY}) is out of bounds (map is {mapWidth}x{mapHeight})");
                 return false;
             }
 
@@ -102,11 +108,19 @@ namespace Problems.MicroRTS
         {
             if (walkableTilemap == null)
             {
+                DebugSystem.LogWarning("Tilemap is null, using fallback position calculation");
                 return new Vector3(gridX, mapHeight - 1 - gridY, 0);
             }
 
-            Vector3Int cellPos = new Vector3Int(gridX, mapHeight - 1 - gridY, 0);
-            return walkableTilemap.CellToWorld(cellPos) + walkableTilemap.cellSize * 0.5f;
+            Vector3Int cellPos = new Vector3Int(
+                gridX + tilemapOffset.x,
+                mapHeight - 1 - gridY + tilemapOffset.y,
+                0
+            );
+            Vector3 cellWorldPos = walkableTilemap.CellToWorld(cellPos);
+            Vector3 centeredPos = cellWorldPos + walkableTilemap.cellSize * 0.5f;
+
+            return centeredPos;
         }
 
         public bool IsWalkable(int gridX, int gridY)
@@ -119,6 +133,7 @@ namespace Problems.MicroRTS
         {
             if (unitGameObject == null || unitComponent == null || unit == null)
             {
+                DebugSystem.LogError("Can't register unit - missing GameObject, component, or unit data");
                 throw new System.ArgumentNullException("Cannot register null unit, component, or GameObject");
             }
 
@@ -195,11 +210,18 @@ namespace Problems.MicroRTS
 
         public void AddUnit(Unit unit)
         {
+            if (unit.X < 0 || unit.X >= mapWidth || unit.Y < 0 || unit.Y >= mapHeight)
+            {
+                DebugSystem.LogError($"Unit {unit.ID} at ({unit.X}, {unit.Y}) is outside map bounds ({mapWidth}x{mapHeight})");
+            }
             Debug.Assert(unit.X >= 0 && unit.X < mapWidth && unit.Y >= 0 && unit.Y < mapHeight, "Unit coordinates must be within map bounds");
+
             if (GetUnit(unit.ID) != null)
             {
+                DebugSystem.LogError($"Unit with ID {unit.ID} already exists");
                 throw new ArgumentException($"Unit with ID {unit.ID} already exists!");
             }
+
             units.Add(unit);
         }
 
