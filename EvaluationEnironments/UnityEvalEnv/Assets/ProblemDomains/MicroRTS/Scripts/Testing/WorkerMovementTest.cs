@@ -16,6 +16,7 @@ namespace Problems.MicroRTS.Testing
         [SerializeField] private float checkInterval = 0.5f;
 
         private MicroRTSEnvironmentController environmentController;
+        private MicroRTSActionExecutor actionExecutor;
         private Util util;
         private bool testRunning = false;
 
@@ -58,6 +59,14 @@ namespace Problems.MicroRTS.Testing
             if (util == null)
             {
                 DebugSystem.LogError("Util component not found");
+                testRunning = false;
+                yield break;
+            }
+
+            actionExecutor = environmentController.GetComponent<MicroRTSActionExecutor>();
+            if (actionExecutor == null)
+            {
+                DebugSystem.LogError("Action executor not found");
                 testRunning = false;
                 yield break;
             }
@@ -206,41 +215,88 @@ namespace Problems.MicroRTS.Testing
                 yield break;
             }
 
+            if (actionExecutor == null)
+            {
+                DebugSystem.LogError("Action executor not found");
+                yield break;
+            }
+
             int initialX = worker.X;
             int initialY = worker.Y;
-            DebugSystem.Log($"Worker at ({initialX}, {initialY}), starting random movement");
+            int moveTime = worker.MoveTime;
+            float cyclesPerSec = actionExecutor.GetCyclesPerSecond();
+            float expectedMoveDuration = moveTime / cyclesPerSec;
+
+            DebugSystem.Log($"Worker at ({initialX}, {initialY}), moveTime: {moveTime} cycles ({expectedMoveDuration:F2}s at {cyclesPerSec:F1} cycles/s), starting movement timing test");
 
             int[] allDirections = { MicroRTSUtils.DIRECTION_UP, MicroRTSUtils.DIRECTION_RIGHT, MicroRTSUtils.DIRECTION_DOWN, MicroRTSUtils.DIRECTION_LEFT };
             int successfulMoves = 0;
+            int lastX = worker.X;
+            int lastY = worker.Y;
+            int actionScheduledCycle = 0;
+            bool actionPending = false;
 
             while (true)
             {
                 int currentX = worker.X;
                 int currentY = worker.Y;
+                int cycleBeforeProcess = actionExecutor.GetCurrentCycle();
 
-                int randomDirection = allDirections[util.Rnd.Next(allDirections.Length)];
-                Vector2Int offset = MicroRTSUtils.GetDirectionOffset(randomDirection);
-                int targetX = currentX + offset.x;
-                int targetY = currentY + offset.y;
+                actionExecutor.ProcessActions();
 
-                if (CanMoveTo(worker, targetX, targetY))
+                int newX = worker.X;
+                int newY = worker.Y;
+
+                if (newX != currentX || newY != currentY)
                 {
-                    ExecuteMovement(worker, randomDirection);
-                    yield return null;
+                    int cyclesElapsed = cycleBeforeProcess - actionScheduledCycle;
+                    successfulMoves++;
 
-                    if (worker.X == targetX && worker.Y == targetY)
+                    if (cyclesElapsed != moveTime)
                     {
-                        successfulMoves++;
-                        DebugSystem.Log($"Move {successfulMoves}: ({currentX}, {currentY}) -> ({worker.X}, {worker.Y})");
+                        DebugSystem.LogError($"Move {successfulMoves} wrong timing! Took {cyclesElapsed} cycles, expected exactly {moveTime} cycles (scheduled at {actionScheduledCycle}, executed at {cycleBeforeProcess})");
                     }
                     else
                     {
-                        DebugSystem.LogWarning($"Move failed: expected ({targetX}, {targetY}), got ({worker.X}, {worker.Y})");
+                        float actualDuration = environmentController.CurrentSimulationTime - (actionScheduledCycle / cyclesPerSec);
+                        DebugSystem.Log($"Move {successfulMoves}: ({currentX}, {currentY}) -> ({newX}, {newY}) in {cyclesElapsed} cycles ({actualDuration:F3}s)");
+                    }
+
+                    lastX = newX;
+                    lastY = newY;
+                    actionPending = false;
+                }
+
+                if (!actionPending)
+                {
+                    int randomDirection = allDirections[util.Rnd.Next(allDirections.Length)];
+                    Vector2Int offset = MicroRTSUtils.GetDirectionOffset(randomDirection);
+                    int targetX = newX + offset.x;
+                    int targetY = newY + offset.y;
+
+                    if (CanMoveTo(worker, targetX, targetY))
+                    {
+                        actionScheduledCycle = actionExecutor.GetCurrentCycle();
+                        ScheduleMovement(worker, randomDirection);
+                        actionPending = true;
                     }
                 }
 
-                yield return null;
+                yield return new WaitForFixedUpdate();
             }
+        }
+
+        private void ScheduleMovement(Unit unit, int direction)
+        {
+            if (actionExecutor == null || environmentController == null) return;
+
+            var assignment = new MicroRTSActionAssignment(unit, MicroRTSActionAssignment.ACTION_TYPE_MOVE, direction, GetCurrentGameTime());
+            actionExecutor.ScheduleAction(assignment);
+        }
+
+        private int GetCurrentGameTime()
+        {
+            return actionExecutor.GetCurrentCycle();
         }
     }
 }
