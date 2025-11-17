@@ -10,7 +10,8 @@ namespace Problems.MicroRTS.Testing
     public enum TestType
     {
         Movement,
-        Harvest
+        Harvest,
+        Attack
     }
 
     public class WorkerActionTest : MonoBehaviour
@@ -134,6 +135,10 @@ namespace Problems.MicroRTS.Testing
                 else if (testType == TestType.Harvest)
                 {
                     yield return StartCoroutine(TestWorkerHarvest());
+                }
+                else if (testType == TestType.Attack)
+                {
+                    yield return StartCoroutine(TestWorkerAttack());
                 }
             }
             else
@@ -587,7 +592,7 @@ namespace Problems.MicroRTS.Testing
         {
             if (actionExecutor == null) return;
 
-            var assignment = new MicroRTSActionAssignment(unit, MicroRTSActionAssignment.ACTION_TYPE_MOVE, direction, GetCurrentGameTime());
+            var assignment = new MicroRTSActionAssignment(unit, MicroRTSActionAssignment.ACTION_TYPE_MOVE, GetCurrentGameTime(), direction);
             actionExecutor.ScheduleAction(assignment);
         }
 
@@ -595,7 +600,7 @@ namespace Problems.MicroRTS.Testing
         {
             if (actionExecutor == null) return;
 
-            var assignment = new MicroRTSActionAssignment(unit, MicroRTSActionAssignment.ACTION_TYPE_HARVEST, direction, GetCurrentGameTime());
+            var assignment = new MicroRTSActionAssignment(unit, MicroRTSActionAssignment.ACTION_TYPE_HARVEST, GetCurrentGameTime(), direction);
             actionExecutor.ScheduleAction(assignment);
         }
 
@@ -637,6 +642,166 @@ namespace Problems.MicroRTS.Testing
         private int GetCurrentGameTime()
         {
             return actionExecutor.GetCurrentCycle();
+        }
+
+        private Unit FindEnemyWorker(Unit attacker)
+        {
+            if (environmentController == null || attacker == null) return null;
+
+            var units = environmentController.GetAllUnits();
+            return units.FirstOrDefault(u =>
+                u.Player != attacker.Player &&
+                u.Player >= 0 &&
+                u.Type != null &&
+                u.Type.name == "Worker" &&
+                u.HitPoints > 0);
+        }
+
+        private Unit FindEnemyBase(Unit attacker)
+        {
+            if (environmentController == null || attacker == null) return null;
+
+            var units = environmentController.GetAllUnits();
+            return units.FirstOrDefault(u =>
+                u.Player != attacker.Player &&
+                u.Player >= 0 &&
+                u.Type != null &&
+                u.Type.name == "Base" &&
+                u.HitPoints > 0);
+        }
+
+        private IEnumerator TestWorkerAttack()
+        {
+            Unit attacker = FindTeam0Worker();
+            if (attacker == null)
+            {
+                DebugSystem.LogError("Team 0 worker not found");
+                yield break;
+            }
+
+            if (actionExecutor == null)
+            {
+                DebugSystem.LogError("Action executor not found");
+                yield break;
+            }
+
+            if (!attacker.Type.canAttack)
+            {
+                DebugSystem.LogError("Worker cannot attack");
+                yield break;
+            }
+
+            int attackTime = attacker.AttackTime;
+            float cyclesPerSec = actionExecutor.GetCyclesPerSecond();
+            float expectedAttackDuration = attackTime / cyclesPerSec;
+
+            DebugSystem.Log($"Worker at ({attacker.X}, {attacker.Y}), attackTime: {attackTime} cycles ({expectedAttackDuration:F2}s at {cyclesPerSec:F1} cycles/s), starting attack test");
+
+            Unit enemyWorker = FindEnemyWorker(attacker);
+            Unit enemyBase = FindEnemyBase(attacker);
+
+            if (enemyWorker == null && enemyBase == null)
+            {
+                DebugSystem.LogError("No enemy units found to attack");
+                yield break;
+            }
+
+            bool attackingWorker = true;
+            Unit currentTarget = enemyWorker ?? enemyBase;
+            int previousX = attacker.X;
+            int previousY = attacker.Y;
+            int previousTargetHP = currentTarget != null ? currentTarget.HitPoints : 0;
+            int successfulAttacks = 0;
+            bool targetDestroyed = false;
+
+            if (enemyWorker != null)
+            {
+                DebugSystem.Log($"Target enemy worker at ({enemyWorker.X}, {enemyWorker.Y}) with {enemyWorker.HitPoints} HP");
+                actionExecutor.SetAttackTarget(attacker, enemyWorker.X, enemyWorker.Y);
+            }
+            else if (enemyBase != null)
+            {
+                DebugSystem.Log($"Target enemy base at ({enemyBase.X}, {enemyBase.Y}) with {enemyBase.HitPoints} HP");
+                actionExecutor.SetAttackTarget(attacker, enemyBase.X, enemyBase.Y);
+                attackingWorker = false;
+            }
+
+            while (true)
+            {
+                actionExecutor.ProcessActions();
+
+                int currentX = attacker.X;
+                int currentY = attacker.Y;
+                bool hasPendingAction = actionExecutor.HasPendingAction(attacker);
+
+                Unit actualTarget = environmentController.GetUnitAt(currentTarget.X, currentTarget.Y);
+
+                if (actualTarget == null)
+                {
+                    if (!targetDestroyed)
+                    {
+                        DebugSystem.LogWarning($"Target {currentTarget.Type.name} at ({currentTarget.X}, {currentTarget.Y}) moved away or was destroyed");
+
+                        if (attackingWorker && enemyBase != null)
+                        {
+                            DebugSystem.Log($"Switching target to enemy base at ({enemyBase.X}, {enemyBase.Y}) with {enemyBase.HitPoints} HP");
+                            currentTarget = enemyBase;
+                            attackingWorker = false;
+                            actionExecutor.SetAttackTarget(attacker, enemyBase.X, enemyBase.Y);
+                            previousTargetHP = enemyBase.HitPoints;
+                        }
+                        else
+                        {
+                            DebugSystem.LogSuccess("Target destroyed or moved away. Test complete.");
+                            yield break;
+                        }
+                    }
+                }
+                else if (actualTarget.HitPoints <= 0)
+                {
+                    if (!targetDestroyed)
+                    {
+                        targetDestroyed = true;
+                        DebugSystem.LogSuccess($"{currentTarget.Type.name} at ({currentTarget.X}, {currentTarget.Y}) was destroyed after {successfulAttacks} attacks");
+
+                        if (attackingWorker && enemyBase != null)
+                        {
+                            DebugSystem.Log($"Switching target to enemy base at ({enemyBase.X}, {enemyBase.Y}) with {enemyBase.HitPoints} HP");
+                            currentTarget = enemyBase;
+                            attackingWorker = false;
+                            actionExecutor.SetAttackTarget(attacker, enemyBase.X, enemyBase.Y);
+                            targetDestroyed = false;
+                            previousTargetHP = enemyBase.HitPoints;
+                        }
+                        else
+                        {
+                            DebugSystem.LogSuccess("All enemy targets destroyed. Test complete.");
+                            yield break;
+                        }
+                    }
+                }
+                else
+                {
+                    int currentTargetHP = actualTarget.HitPoints;
+
+                    if (currentX != previousX || currentY != previousY)
+                    {
+                        DebugSystem.Log($"Attacker moved: ({previousX}, {previousY}) -> ({currentX}, {currentY})");
+                        previousX = currentX;
+                        previousY = currentY;
+                    }
+
+                    if (currentTargetHP < previousTargetHP)
+                    {
+                        int damage = previousTargetHP - currentTargetHP;
+                        successfulAttacks++;
+                        DebugSystem.LogSuccess($"Attack {successfulAttacks}: Dealt {damage} damage to {actualTarget.Type.name} at ({actualTarget.X}, {actualTarget.Y}). HP: {previousTargetHP} -> {currentTargetHP}");
+                        previousTargetHP = currentTargetHP;
+                    }
+                }
+
+                yield return new WaitForFixedUpdate();
+            }
         }
     }
 }

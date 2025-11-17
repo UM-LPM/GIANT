@@ -9,23 +9,18 @@ namespace Problems.MicroRTS
         public int direction;
         public int assignmentTime;
         public UnitType unitType;
+        public int targetX;
+        public int targetY;
 
-        public MicroRTSActionAssignment(Unit unit, int actionType, int direction, int assignmentTime)
+        public MicroRTSActionAssignment(Unit unit, int actionType, int assignmentTime, int? direction = null, int? targetX = null, int? targetY = null, UnitType unitType = null)
         {
             this.unit = unit;
             this.actionType = actionType;
-            this.direction = direction;
-            this.assignmentTime = assignmentTime;
-            this.unitType = null;
-        }
-
-        public MicroRTSActionAssignment(Unit unit, int actionType, int direction, int assignmentTime, UnitType unitType)
-        {
-            this.unit = unit;
-            this.actionType = actionType;
-            this.direction = direction;
+            this.direction = direction ?? -1;
             this.assignmentTime = assignmentTime;
             this.unitType = unitType;
+            this.targetX = targetX ?? -1;
+            this.targetY = targetY ?? -1;
         }
 
         public int GetETA()

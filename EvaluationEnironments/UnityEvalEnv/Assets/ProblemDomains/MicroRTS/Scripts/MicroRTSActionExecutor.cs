@@ -15,6 +15,8 @@ namespace Problems.MicroRTS
         private Dictionary<Unit, (int targetX, int targetY, bool toResource)> harvestTargets = new Dictionary<Unit, (int, int, bool)>();
         private Dictionary<Unit, (int resourceX, int resourceY)> resourceTargets = new Dictionary<Unit, (int, int)>();
         private Dictionary<Unit, (int spawnX, int spawnY, UnitType unitType)> producingUnits = new Dictionary<Unit, (int, int, UnitType)>();
+        private Dictionary<Unit, (int targetX, int targetY)> attackTargets = new Dictionary<Unit, (int, int)>();
+        [SerializeField] private bool useDeterministicDamage = false;
         private float? cachedCyclesPerSecond = null;
 
         private float CyclesPerSecond
@@ -69,11 +71,20 @@ namespace Problems.MicroRTS
         {
             ExecuteReadyActions();
             ProcessHarvestNavigation();
+            ProcessAttackNavigation();
         }
 
         public bool HasPendingAction(Unit unit)
         {
             return unit != null && pendingActions.ContainsKey(unit);
+        }
+
+        public void SetAttackTarget(Unit attacker, int targetX, int targetY)
+        {
+            if (attacker != null)
+            {
+                attackTargets[attacker] = (targetX, targetY);
+            }
         }
 
         public bool GetNextStepTowardTarget(Unit unit, int targetX, int targetY, out int stepX, out int stepY)
@@ -94,6 +105,7 @@ namespace Problems.MicroRTS
 
             ExecuteReadyActions();
             ProcessHarvestNavigation();
+            ProcessAttackNavigation();
 
             int teamID = agent.TeamIdentifier.TeamID;
 
@@ -120,7 +132,7 @@ namespace Problems.MicroRTS
                         if (targetUnit != null && targetUnit.Type.isResource && CanHarvestAt(unit, targetX, targetY))
                         {
                             int currentCycle = GetCurrentCycle();
-                            var assignment = new MicroRTSActionAssignment(unit, MicroRTSActionAssignment.ACTION_TYPE_HARVEST, harvestDirection, currentCycle);
+                            var assignment = new MicroRTSActionAssignment(unit, MicroRTSActionAssignment.ACTION_TYPE_HARVEST, currentCycle, harvestDirection);
                             pendingActions[unit] = assignment;
                             continue;
                         }
@@ -158,7 +170,7 @@ namespace Problems.MicroRTS
                     if (CanMoveTo(unit, newX, newY))
                     {
                         int currentCycle = GetCurrentCycle();
-                        var assignment = new MicroRTSActionAssignment(unit, MicroRTSActionAssignment.ACTION_TYPE_MOVE, direction, currentCycle);
+                        var assignment = new MicroRTSActionAssignment(unit, MicroRTSActionAssignment.ACTION_TYPE_MOVE, currentCycle, direction);
                         pendingActions[unit] = assignment;
                     }
                 }
@@ -178,7 +190,7 @@ namespace Problems.MicroRTS
                                 if (player != null && player.Resources >= producibleType.cost)
                                 {
                                     int currentCycle = GetCurrentCycle();
-                                    var assignment = new MicroRTSActionAssignment(unit, MicroRTSActionAssignment.ACTION_TYPE_PRODUCE, foundDirection, currentCycle, producibleType);
+                                    var assignment = new MicroRTSActionAssignment(unit, MicroRTSActionAssignment.ACTION_TYPE_PRODUCE, currentCycle, foundDirection, null, null, producibleType);
                                     pendingActions[unit] = assignment;
                                     producingUnits[unit] = (spawnX, spawnY, producibleType);
                                     DebugSystem.Log($"Base at ({unit.X}, {unit.Y}) started producing {producibleType.name} at ({spawnX}, {spawnY}). Production will take {producibleType.produceTime} cycles");
@@ -194,6 +206,24 @@ namespace Problems.MicroRTS
                                 DebugSystem.LogWarning($"Base at ({unit.X}, {unit.Y}) cannot produce {producibleType.name} - no free adjacent space available");
                             }
                             break;
+                        }
+                    }
+                }
+
+                if (unit.Type.canAttack)
+                {
+                    string attackTargetXName = $"attackTargetX_unit{unit.ID}";
+                    string attackTargetYName = $"attackTargetY_unit{unit.ID}";
+                    int targetXCoord = agent.ActionBuffer.GetDiscreteAction(attackTargetXName);
+                    int targetYCoord = agent.ActionBuffer.GetDiscreteAction(attackTargetYName);
+
+                    if (targetXCoord >= 0 && targetYCoord >= 0)
+                    {
+                        Unit targetUnit = environmentController.GetUnitAt(targetXCoord, targetYCoord);
+                        if (targetUnit != null && ValidateAttackTarget(unit, targetUnit))
+                        {
+                            attackTargets[unit] = (targetXCoord, targetYCoord);
+                            continue;
                         }
                     }
                 }
@@ -235,6 +265,7 @@ namespace Problems.MicroRTS
                 harvestTargets.Remove(unit);
                 resourceTargets.Remove(unit);
                 producingUnits.Remove(unit);
+                attackTargets.Remove(unit);
             }
 
             foreach (var unit in readyActions)
@@ -253,7 +284,10 @@ namespace Problems.MicroRTS
                 {
                     ExecuteProduce(unit, assignment.direction, assignment.unitType);
                 }
-                // TODO: Implement timing for ATTACK actions (unit.AttackTime)
+                else if (assignment.actionType == MicroRTSActionAssignment.ACTION_TYPE_ATTACK)
+                {
+                    ExecuteAttack(unit, assignment.targetX, assignment.targetY);
+                }
                 // TODO: Implement timing for RETURN actions (unit.MoveTime)
 
                 pendingActions.Remove(unit);
@@ -433,7 +467,7 @@ namespace Problems.MicroRTS
                         if (direction != MicroRTSUtils.DIRECTION_NONE && CanMoveTo(unit, stepX, stepY))
                         {
                             int currentCycle = GetCurrentCycle();
-                            var assignment = new MicroRTSActionAssignment(unit, MicroRTSActionAssignment.ACTION_TYPE_MOVE, direction, currentCycle);
+                            var assignment = new MicroRTSActionAssignment(unit, MicroRTSActionAssignment.ACTION_TYPE_MOVE, currentCycle, direction);
                             pendingActions[unit] = assignment;
                         }
                     }
@@ -449,6 +483,72 @@ namespace Problems.MicroRTS
             foreach (var kvp in toUpdate)
             {
                 harvestTargets[kvp.Key] = kvp.Value;
+            }
+        }
+
+        private void ProcessAttackNavigation()
+        {
+            if (environmentController == null) return;
+
+            var toClear = new List<Unit>();
+
+            var ids = new List<Unit>(attackTargets.Keys);
+            foreach (var unit in ids)
+            {
+                if (unit == null || unit.HitPoints <= 0)
+                {
+                    toClear.Add(unit);
+                    continue;
+                }
+
+                if (pendingActions.ContainsKey(unit))
+                {
+                    continue;
+                }
+
+                var target = attackTargets[unit];
+                Unit targetUnit = environmentController.GetUnitAt(target.targetX, target.targetY);
+
+                if (targetUnit == null || targetUnit.HitPoints <= 0)
+                {
+                    toClear.Add(unit);
+                    continue;
+                }
+
+                if (!ValidateAttackTarget(unit, targetUnit))
+                {
+                    toClear.Add(unit);
+                    continue;
+                }
+
+                if (IsInAttackRange(unit, target.targetX, target.targetY))
+                {
+                    int currentCycle = GetCurrentCycle();
+                    var assignment = new MicroRTSActionAssignment(unit, MicroRTSActionAssignment.ACTION_TYPE_ATTACK, currentCycle, null, target.targetX, target.targetY);
+                    pendingActions[unit] = assignment;
+                }
+                else
+                {
+                    if (GetNextStepTowardTargetInternal(unit, target.targetX, target.targetY, out int stepX, out int stepY))
+                    {
+                        int direction = GetDirectionToTarget(unit.X, unit.Y, stepX, stepY);
+                        if (direction != MicroRTSUtils.DIRECTION_NONE && CanMoveTo(unit, stepX, stepY))
+                        {
+                            int currentCycle = GetCurrentCycle();
+                            var assignment = new MicroRTSActionAssignment(unit, MicroRTSActionAssignment.ACTION_TYPE_MOVE, currentCycle, direction);
+                            pendingActions[unit] = assignment;
+                        }
+                    }
+                    else
+                    {
+                        toClear.Add(unit);
+                    }
+                }
+            }
+
+            foreach (var unit in toClear)
+            {
+                attackTargets.Remove(unit);
             }
         }
 
@@ -827,6 +927,91 @@ namespace Problems.MicroRTS
             }
 
             return found;
+        }
+
+        private bool ValidateAttackTarget(Unit attacker, Unit target)
+        {
+            if (attacker == null || target == null) return false;
+            if (!attacker.Type.canAttack) return false;
+            if (target.Player == attacker.Player || target.Player < 0) return false;
+            return true;
+        }
+
+        private bool IsInAttackRange(Unit attacker, int targetX, int targetY)
+        {
+            if (attacker == null) return false;
+
+            int dx = Mathf.Abs(targetX - attacker.X);
+            int dy = Mathf.Abs(targetY - attacker.Y);
+            int attackRange = attacker.AttackRange;
+
+            if (attackRange == 1)
+            {
+                return (dx == 1 && dy == 0) || (dx == 0 && dy == 1);
+            }
+            else
+            {
+                int sqDistance = dx * dx + dy * dy;
+                int sqRange = attackRange * attackRange;
+                return sqDistance <= sqRange;
+            }
+        }
+
+        private int CalculateDamage(Unit attacker)
+        {
+            if (attacker == null) return 0;
+
+            if (useDeterministicDamage || attacker.MinDamage == attacker.MaxDamage)
+            {
+                return attacker.MinDamage;
+            }
+            else
+            {
+                return Random.Range(attacker.MinDamage, attacker.MaxDamage + 1);
+            }
+        }
+
+        private void ExecuteAttack(Unit attacker, int targetX, int targetY)
+        {
+            if (attacker == null || environmentController == null) return;
+            if (!attacker.Type.canAttack) return;
+
+            Unit target = environmentController.GetUnitAt(targetX, targetY);
+            if (target == null)
+            {
+                attackTargets.Remove(attacker);
+                return;
+            }
+
+            if (!ValidateAttackTarget(attacker, target))
+            {
+                attackTargets.Remove(attacker);
+                return;
+            }
+
+            if (!IsInAttackRange(attacker, targetX, targetY))
+            {
+                return;
+            }
+
+            int damage = CalculateDamage(attacker);
+            int newHP = target.HitPoints - damage;
+            target.SetHitPoints(newHP);
+
+            DebugSystem.Log($"{attacker.Type.name} at ({attacker.X}, {attacker.Y}) attacked {target.Type.name} at ({targetX}, {targetY}) for {damage} damage. Target HP: {newHP}/{target.MaxHitPoints}");
+
+            if (target.HitPoints <= 0)
+            {
+                environmentController.RemoveUnit(target);
+                attackTargets.Remove(attacker);
+                DebugSystem.LogSuccess($"{target.Type.name} at ({targetX}, {targetY}) was destroyed");
+            }
+            else
+            {
+                int currentCycle = GetCurrentCycle();
+                var assignment = new MicroRTSActionAssignment(attacker, MicroRTSActionAssignment.ACTION_TYPE_ATTACK, currentCycle, null, targetX, targetY);
+                pendingActions[attacker] = assignment;
+            }
         }
     }
 }
