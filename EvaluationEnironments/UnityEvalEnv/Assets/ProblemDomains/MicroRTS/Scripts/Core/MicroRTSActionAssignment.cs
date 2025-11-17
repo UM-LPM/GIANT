@@ -8,6 +8,7 @@ namespace Problems.MicroRTS
         public int actionType;
         public int direction;
         public int assignmentTime;
+        public UnitType unitType;
 
         public MicroRTSActionAssignment(Unit unit, int actionType, int direction, int assignmentTime)
         {
@@ -15,6 +16,16 @@ namespace Problems.MicroRTS
             this.actionType = actionType;
             this.direction = direction;
             this.assignmentTime = assignmentTime;
+            this.unitType = null;
+        }
+
+        public MicroRTSActionAssignment(Unit unit, int actionType, int direction, int assignmentTime, UnitType unitType)
+        {
+            this.unit = unit;
+            this.actionType = actionType;
+            this.direction = direction;
+            this.assignmentTime = assignmentTime;
+            this.unitType = unitType;
         }
 
         public int GetETA()
@@ -32,7 +43,7 @@ namespace Problems.MicroRTS
                 case ACTION_TYPE_RETURN:
                     return unit.MoveTime;
                 case ACTION_TYPE_PRODUCE:
-                    return unit.Type.produceTime;
+                    return unitType != null ? unitType.produceTime : 0;
                 default:
                     return 0;
             }

@@ -76,8 +76,8 @@ namespace Problems.MicroRTS
 
             // Initialize players
             players.Clear();
-            players.Add(new Player(0, 0));
-            players.Add(new Player(1, 0));
+            players.Add(new Player(0, 5));
+            players.Add(new Player(1, 5));
         }
 
         public bool TryWorldToGrid(Vector3 worldPosition, out int gridX, out int gridY)

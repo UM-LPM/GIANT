@@ -4,6 +4,7 @@ using UnityEngine;
 using Problems.MicroRTS.Core;
 using System.Collections.Generic;
 using System.Linq;
+using Utils;
 
 namespace Problems.MicroRTS
 {
@@ -13,6 +14,7 @@ namespace Problems.MicroRTS
         private Dictionary<Unit, MicroRTSActionAssignment> pendingActions = new Dictionary<Unit, MicroRTSActionAssignment>();
         private Dictionary<Unit, (int targetX, int targetY, bool toResource)> harvestTargets = new Dictionary<Unit, (int, int, bool)>();
         private Dictionary<Unit, (int resourceX, int resourceY)> resourceTargets = new Dictionary<Unit, (int, int)>();
+        private Dictionary<Unit, (int spawnX, int spawnY, UnitType unitType)> producingUnits = new Dictionary<Unit, (int, int, UnitType)>();
         private float? cachedCyclesPerSecond = null;
 
         private float CyclesPerSecond
@@ -160,6 +162,41 @@ namespace Problems.MicroRTS
                         pendingActions[unit] = assignment;
                     }
                 }
+
+                if (unit.Type.produces != null && unit.Type.produces.Count > 0)
+                {
+                    foreach (UnitType producibleType in unit.Type.produces)
+                    {
+                        string produceActionName = $"produce_{producibleType.name}_unit{unit.ID}";
+                        int produceRequested = agent.ActionBuffer.GetDiscreteAction(produceActionName);
+
+                        if (produceRequested != 0)
+                        {
+                            if (FindFreeAdjacentSpace(unit, out int spawnX, out int spawnY, out int foundDirection))
+                            {
+                                var player = environmentController.GetPlayer(unit.Player);
+                                if (player != null && player.Resources >= producibleType.cost)
+                                {
+                                    int currentCycle = GetCurrentCycle();
+                                    var assignment = new MicroRTSActionAssignment(unit, MicroRTSActionAssignment.ACTION_TYPE_PRODUCE, foundDirection, currentCycle, producibleType);
+                                    pendingActions[unit] = assignment;
+                                    producingUnits[unit] = (spawnX, spawnY, producibleType);
+                                    DebugSystem.Log($"Base at ({unit.X}, {unit.Y}) started producing {producibleType.name} at ({spawnX}, {spawnY}). Production will take {producibleType.produceTime} cycles");
+                                    break;
+                                }
+                                else if (player != null)
+                                {
+                                    DebugSystem.Log($"Base at ({unit.X}, {unit.Y}) cannot produce {producibleType.name} - insufficient resources (have {player.Resources}, need {producibleType.cost})");
+                                }
+                            }
+                            else
+                            {
+                                DebugSystem.LogWarning($"Base at ({unit.X}, {unit.Y}) cannot produce {producibleType.name} - no free adjacent space available");
+                            }
+                            break;
+                        }
+                    }
+                }
             }
         }
 
@@ -197,6 +234,7 @@ namespace Problems.MicroRTS
                 pendingActions.Remove(unit);
                 harvestTargets.Remove(unit);
                 resourceTargets.Remove(unit);
+                producingUnits.Remove(unit);
             }
 
             foreach (var unit in readyActions)
@@ -211,9 +249,12 @@ namespace Problems.MicroRTS
                 {
                     ExecuteHarvest(unit, assignment.direction);
                 }
+                else if (assignment.actionType == MicroRTSActionAssignment.ACTION_TYPE_PRODUCE)
+                {
+                    ExecuteProduce(unit, assignment.direction, assignment.unitType);
+                }
                 // TODO: Implement timing for ATTACK actions (unit.AttackTime)
                 // TODO: Implement timing for RETURN actions (unit.MoveTime)
-                // TODO: Implement timing for PRODUCE actions (unitType.produceTime)
 
                 pendingActions.Remove(unit);
             }
@@ -583,6 +624,158 @@ namespace Problems.MicroRTS
             if (dx == -1 && dy == 0) return MicroRTSUtils.DIRECTION_LEFT;
 
             return MicroRTSUtils.DIRECTION_NONE;
+        }
+
+        private bool FindFreeAdjacentSpace(Unit producer, out int spawnX, out int spawnY, out int direction)
+        {
+            spawnX = producer.X;
+            spawnY = producer.Y;
+            direction = MicroRTSUtils.DIRECTION_NONE;
+
+            if (producer == null || environmentController == null) return false;
+
+            int[] directions = { MicroRTSUtils.DIRECTION_UP, MicroRTSUtils.DIRECTION_RIGHT, MicroRTSUtils.DIRECTION_DOWN, MicroRTSUtils.DIRECTION_LEFT };
+            int[] dxs = { 0, 1, 0, -1 };
+            int[] dys = { -1, 0, 1, 0 };
+
+            for (int i = 0; i < directions.Length; i++)
+            {
+                int nx = producer.X + dxs[i];
+                int ny = producer.Y + dys[i];
+
+                if (nx < 0 || ny < 0 || nx >= environmentController.MapWidth || ny >= environmentController.MapHeight) continue;
+                if (!environmentController.IsWalkable(nx, ny)) continue;
+
+                Unit existingUnit = environmentController.GetUnitAt(nx, ny);
+                if (existingUnit != null) continue;
+
+                bool spaceReserved = false;
+                foreach (var producing in producingUnits.Values)
+                {
+                    if (producing.spawnX == nx && producing.spawnY == ny)
+                    {
+                        spaceReserved = true;
+                        break;
+                    }
+                }
+                if (spaceReserved) continue;
+
+                spawnX = nx;
+                spawnY = ny;
+                direction = directions[i];
+                return true;
+            }
+
+            return false;
+        }
+
+        private void ExecuteProduce(Unit producer, int direction, UnitType unitType)
+        {
+            if (producer == null || environmentController == null || unitType == null) return;
+
+            int targetX = producer.X;
+            int targetY = producer.Y;
+
+            Vector2Int offset = MicroRTSUtils.GetDirectionOffset(direction);
+            targetX += offset.x;
+            targetY += offset.y;
+
+            if (targetX < 0 || targetX >= environmentController.MapWidth ||
+                targetY < 0 || targetY >= environmentController.MapHeight)
+            {
+                DebugSystem.LogWarning($"Base at ({producer.X}, {producer.Y}) cannot spawn {unitType.name} - target position ({targetX}, {targetY}) is out of bounds");
+                return;
+            }
+
+            if (!environmentController.IsWalkable(targetX, targetY))
+            {
+                DebugSystem.LogWarning($"Base at ({producer.X}, {producer.Y}) cannot spawn {unitType.name} - position ({targetX}, {targetY}) is not walkable");
+                return;
+            }
+
+            Unit existingUnit = environmentController.GetUnitAt(targetX, targetY);
+            if (existingUnit != null)
+            {
+                DebugSystem.LogWarning($"Base at ({producer.X}, {producer.Y}) cannot spawn {unitType.name} - position ({targetX}, {targetY}) is occupied");
+                return;
+            }
+
+            bool spaceReserved = false;
+            foreach (var kvp in producingUnits)
+            {
+                if (kvp.Key != producer && kvp.Value.spawnX == targetX && kvp.Value.spawnY == targetY)
+                {
+                    spaceReserved = true;
+                    break;
+                }
+            }
+            if (spaceReserved)
+            {
+                DebugSystem.LogWarning($"Base at ({producer.X}, {producer.Y}) cannot spawn {unitType.name} - position ({targetX}, {targetY}) is reserved for production by another unit");
+                return;
+            }
+
+            var player = environmentController.GetPlayer(producer.Player);
+            if (player == null)
+            {
+                DebugSystem.LogWarning($"Base at ({producer.X}, {producer.Y}) cannot spawn {unitType.name} - player {producer.Player} not found");
+                return;
+            }
+
+            int unitCost = unitType.cost;
+            if (player.Resources < unitCost)
+            {
+                DebugSystem.Log($"Base at ({producer.X}, {producer.Y}) cannot spawn {unitType.name} - insufficient resources (have {player.Resources}, need {unitCost})");
+                return;
+            }
+
+            Unit newUnit = new Unit(producer.Player, unitType, targetX, targetY, 0);
+            player.SetResources(player.Resources - unitCost);
+
+            Vector3 worldPosition = environmentController.GridToWorldPosition(targetX, targetY);
+            GameObject unitPrefab = GetUnitPrefab(unitType.name);
+            if (unitPrefab == null)
+            {
+                DebugSystem.LogError($"Cannot create {unitType.name} - prefab not found");
+                environmentController.RemoveUnit(newUnit);
+                player.SetResources(player.Resources + unitCost);
+                return;
+            }
+
+            GameObject newUnitObj = Instantiate(unitPrefab, worldPosition, Quaternion.identity, environmentController.transform);
+            newUnitObj.name = $"{unitType.name}_Player{producer.Player}_{newUnit.ID}";
+
+            MicroRTSUnitComponent unitComponent = newUnitObj.GetComponent<MicroRTSUnitComponent>();
+            if (unitComponent == null)
+            {
+                unitComponent = newUnitObj.AddComponent<MicroRTSUnitComponent>();
+            }
+            unitComponent.Initialize(newUnit);
+
+            environmentController.RegisterUnit(newUnitObj, unitComponent, newUnit);
+
+            producingUnits.Remove(producer);
+            DebugSystem.LogSuccess($"Base at ({producer.X}, {producer.Y}) spawned {unitType.name} at ({targetX}, {targetY}). Player {producer.Player} now has {player.Resources} resources");
+        }
+
+        private GameObject GetUnitPrefab(string unitTypeName)
+        {
+            if (environmentController == null) return null;
+
+            var spawnPositions = environmentController.GetComponentInChildren<UnitSpawnPositions>();
+            if (spawnPositions == null) return null;
+
+            switch (unitTypeName)
+            {
+                case "Worker":
+                    return spawnPositions.WorkerPrefab;
+                case "Base":
+                    return spawnPositions.BasePrefab;
+                case "Resource":
+                    return spawnPositions.ResourcePrefab;
+                default:
+                    return null;
+            }
         }
 
         private Unit FindNearestResource(Unit unit)
