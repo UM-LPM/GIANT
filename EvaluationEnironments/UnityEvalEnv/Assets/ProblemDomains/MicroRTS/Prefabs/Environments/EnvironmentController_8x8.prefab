@@ -137,6 +137,9 @@ MonoBehaviour:
   BasePrefab: {fileID: 6000000000000000001, guid: a8f93339054a048ccbd13f631e0de0f3, type: 3}
   BarracksPrefab: {fileID: 7000000000000000001, guid: 4dc2995765d3049b686e3e38121020ab, type: 3}
   WorkerPrefab: {fileID: 2050879318465984797, guid: 7c3d68f5e5bd54fcb96a47c6e63d5968, type: 3}
+  LightPrefab: {fileID: 3000000000000000001, guid: edc777dda249f49fb812da9d2423236a, type: 3}
+  HeavyPrefab: {fileID: 5000000000000000001, guid: 58e9500d52b244ce09de269e7e232741, type: 3}
+  RangedPrefab: {fileID: 4000000000000000001, guid: 6ea32f537157e4673bf9ea3082a4eaa9, type: 3}
   Resource0_Spawn: {fileID: 8800344479618484279}
   Resource1_Spawn: {fileID: 4048845517984314372}
   Player0_BaseSpawn: {fileID: 849684102961445389}
@@ -189,6 +192,55 @@ Grid:
   m_CellGap: {x: 0, y: 0, z: 0}
   m_CellLayout: 0
   m_CellSwizzle: 0
+--- !u!1 &4822215353889394071
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8328069008786877334}
+  - component: {fileID: 1093923538841724463}
+  m_Layer: 0
+  m_Name: Barracks test
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &8328069008786877334
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4822215353889394071}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.1539994, y: 0.033437103, z: -0.022835635}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3993769363434491550}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1093923538841724463
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4822215353889394071}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3750a5e7f1c644dc297fa44180fe9312, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  autoStartTest: 1
+  testStartDelay: 5
+  barracksCheckInterval: 3
+  maxWaitTime: 60
+  targetTeam: 0
 --- !u!1 &4845549828457006148
 GameObject:
   m_ObjectHideFlags: 0
@@ -214,7 +266,7 @@ Transform:
   m_GameObject: {fileID: 4845549828457006148}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1, y: -2, z: 0.4}
+  m_LocalPosition: {x: 1.5, y: -1.5, z: 0.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -245,7 +297,7 @@ Transform:
   m_GameObject: {fileID: 5596419376069370359}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -3, y: 3, z: 0.4}
+  m_LocalPosition: {x: -2, y: 3.5, z: 0.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -279,7 +331,7 @@ Transform:
   m_GameObject: {fileID: 6028870969268125060}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.02, y: 0.03, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -966,8 +1018,8 @@ Tilemap:
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Origin: {x: -5, y: -5, z: 0}
-  m_Size: {x: 9, y: 10, z: 1}
+  m_Origin: {x: -4, y: -3, z: 0}
+  m_Size: {x: 8, y: 8, z: 1}
   m_TileAnchor: {x: 0.5, y: 0.5, z: 0}
   m_TileOrientation: 0
   m_TileOrientationMatrix:
@@ -1097,7 +1149,7 @@ Transform:
   m_GameObject: {fileID: 6307382920027221953}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -4, y: 4, z: 0.4}
+  m_LocalPosition: {x: -3.5, y: 4.5, z: 0.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1141,6 +1193,7 @@ Transform:
   - {fileID: 5207253127147263303}
   - {fileID: 7373857955249735856}
   - {fileID: 5732805566169795298}
+  - {fileID: 8328069008786877334}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3797895207197865228
@@ -1389,7 +1442,7 @@ Transform:
   m_GameObject: {fileID: 6613383355787060353}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 3, y: -3, z: 0.4}
+  m_LocalPosition: {x: 3.5, y: -2.5, z: 0.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1420,7 +1473,7 @@ Transform:
   m_GameObject: {fileID: 6706450078257566043}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 2, y: -2, z: 0.4}
+  m_LocalPosition: {x: 2.5, y: -1.5, z: 0.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1502,7 +1555,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc51faa86b8bc4525aad217c642d800c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  testType: 4
+  testType: 0
   autoStartTest: 1
   testStartDelay: 0.5
   maxWaitTime: 5
@@ -1532,7 +1585,7 @@ Transform:
   m_GameObject: {fileID: 8601108573963215536}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2, y: 3, z: 0.4}
+  m_LocalPosition: {x: -1, y: 3.5, z: 0.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

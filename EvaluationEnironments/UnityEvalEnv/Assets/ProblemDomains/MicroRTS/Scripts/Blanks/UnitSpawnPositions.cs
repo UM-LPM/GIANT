@@ -9,6 +9,9 @@ namespace Problems.MicroRTS
         public GameObject BasePrefab;
         public GameObject BarracksPrefab;
         public GameObject WorkerPrefab;
+        public GameObject LightPrefab;
+        public GameObject HeavyPrefab;
+        public GameObject RangedPrefab;
 
         [Header("Resource Spawn Points")]
         public Transform Resource0_Spawn;

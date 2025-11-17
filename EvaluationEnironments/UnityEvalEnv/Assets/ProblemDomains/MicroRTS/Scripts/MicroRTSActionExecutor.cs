@@ -206,17 +206,23 @@ namespace Problems.MicroRTS
 
                     string harvestTargetXName = $"harvestTargetX_unit{unit.ID}";
                     string harvestTargetYName = $"harvestTargetY_unit{unit.ID}";
-                    int targetXCoord = agent.ActionBuffer.GetDiscreteAction(harvestTargetXName);
-                    int targetYCoord = agent.ActionBuffer.GetDiscreteAction(harvestTargetYName);
 
-                    if (targetXCoord >= 0 && targetYCoord >= 0)
+                    // BUG: Started automatically harvesting
+                    if (agent.ActionBuffer.DiscreteActions.ContainsKey(harvestTargetXName) &&
+                        agent.ActionBuffer.DiscreteActions.ContainsKey(harvestTargetYName))
                     {
-                        Unit targetResource = environmentController.GetUnitAt(targetXCoord, targetYCoord);
-                        if (targetResource != null && targetResource.Type.isResource && targetResource.Resources > 0)
+                        int targetXCoord = agent.ActionBuffer.GetDiscreteAction(harvestTargetXName);
+                        int targetYCoord = agent.ActionBuffer.GetDiscreteAction(harvestTargetYName);
+
+                        if (targetXCoord >= 0 && targetYCoord >= 0)
                         {
-                            harvestTargets[unit] = (targetXCoord, targetYCoord, true);
-                            resourceTargets[unit] = (targetXCoord, targetYCoord);
-                            continue;
+                            Unit targetResource = environmentController.GetUnitAt(targetXCoord, targetYCoord);
+                            if (targetResource != null && targetResource.Type.isResource && targetResource.Resources > 0)
+                            {
+                                harvestTargets[unit] = (targetXCoord, targetYCoord, true);
+                                resourceTargets[unit] = (targetXCoord, targetYCoord);
+                                continue;
+                            }
                         }
                     }
                 }
@@ -511,7 +517,7 @@ namespace Problems.MicroRTS
                             if (direction != MicroRTSUtils.DIRECTION_NONE)
                             {
                                 int currentCycle = GetCurrentCycle();
-                                var assignment = new MicroRTSActionAssignment(unit, MicroRTSActionAssignment.ACTION_TYPE_HARVEST, direction, currentCycle);
+                                var assignment = new MicroRTSActionAssignment(unit, MicroRTSActionAssignment.ACTION_TYPE_HARVEST, currentCycle, direction);
                                 pendingActions[unit] = assignment;
                             }
                         }
@@ -923,6 +929,8 @@ namespace Problems.MicroRTS
             }
             unitComponent.Initialize(newUnit);
 
+            SetUnitColor(newUnitObj, producer.Player);
+
             environmentController.RegisterUnit(newUnitObj, unitComponent, newUnit);
 
             producingUnits.Remove(producer);
@@ -946,6 +954,12 @@ namespace Problems.MicroRTS
                     return spawnPositions.BarracksPrefab;
                 case "Resource":
                     return spawnPositions.ResourcePrefab;
+                case "Light":
+                    return spawnPositions.LightPrefab;
+                case "Heavy":
+                    return spawnPositions.HeavyPrefab;
+                case "Ranged":
+                    return spawnPositions.RangedPrefab;
                 default:
                     return null;
             }
@@ -1006,6 +1020,7 @@ namespace Problems.MicroRTS
         {
             if (attacker == null || target == null) return false;
             if (!attacker.Type.canAttack) return false;
+            if (target.Type.isResource) return false;
             if (target.Player == attacker.Player || target.Player < 0) return false;
             return true;
         }
@@ -1084,6 +1099,23 @@ namespace Problems.MicroRTS
                 int currentCycle = GetCurrentCycle();
                 var assignment = new MicroRTSActionAssignment(attacker, MicroRTSActionAssignment.ACTION_TYPE_ATTACK, currentCycle, null, targetX, targetY);
                 pendingActions[attacker] = assignment;
+            }
+        }
+
+        private void SetUnitColor(GameObject obj, int playerId)
+        {
+            if (obj == null) return;
+
+            Color[] playerColors = new Color[] { Color.blue, Color.red };
+            Color color = playerId >= 0 && playerId < playerColors.Length ? playerColors[playerId] : Color.white;
+
+            SpriteRenderer[] spriteRenderers = obj.GetComponentsInChildren<SpriteRenderer>();
+            if (spriteRenderers.Length > 0)
+            {
+                foreach (SpriteRenderer sr in spriteRenderers)
+                {
+                    sr.color = color;
+                }
             }
         }
     }
