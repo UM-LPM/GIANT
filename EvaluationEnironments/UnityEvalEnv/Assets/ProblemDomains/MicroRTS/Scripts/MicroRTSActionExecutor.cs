@@ -87,6 +87,72 @@ namespace Problems.MicroRTS
             }
         }
 
+        public bool ScheduleBuildAtPosition(Unit builder, int targetX, int targetY, UnitType unitType)
+        {
+            if (builder == null || environmentController == null || unitType == null) return false;
+
+            int dx = targetX - builder.X;
+            int dy = targetY - builder.Y;
+
+            if (Mathf.Abs(dx) + Mathf.Abs(dy) != 1)
+            {
+                DebugSystem.LogWarning($"Target position ({targetX}, {targetY}) is not adjacent to builder at ({builder.X}, {builder.Y})");
+                return false;
+            }
+
+            int direction = GetDirectionToTarget(builder.X, builder.Y, targetX, targetY);
+            if (direction == MicroRTSUtils.DIRECTION_NONE) return false;
+
+            if (targetX < 0 || targetX >= environmentController.MapWidth ||
+                targetY < 0 || targetY >= environmentController.MapHeight)
+            {
+                return false;
+            }
+
+            if (!environmentController.IsWalkable(targetX, targetY))
+            {
+                return false;
+            }
+
+            Unit existingUnit = environmentController.GetUnitAt(targetX, targetY);
+            if (existingUnit != null)
+            {
+                return false;
+            }
+
+            bool spaceReserved = false;
+            foreach (var producing in producingUnits.Values)
+            {
+                if (producing.spawnX == targetX && producing.spawnY == targetY)
+                {
+                    spaceReserved = true;
+                    break;
+                }
+            }
+            if (spaceReserved)
+            {
+                return false;
+            }
+
+            var player = environmentController.GetPlayer(builder.Player);
+            if (player == null || player.Resources < unitType.cost)
+            {
+                return false;
+            }
+
+            if (pendingActions.ContainsKey(builder))
+            {
+                return false;
+            }
+
+            int currentCycle = GetCurrentCycle();
+            var assignment = new MicroRTSActionAssignment(builder, MicroRTSActionAssignment.ACTION_TYPE_PRODUCE, currentCycle, direction, null, null, unitType);
+            pendingActions[builder] = assignment;
+            producingUnits[builder] = (targetX, targetY, unitType);
+            DebugSystem.Log($"{builder.Type.name} at ({builder.X}, {builder.Y}) scheduled to build {unitType.name} at ({targetX}, {targetY}). Production will take {unitType.produceTime} cycles");
+            return true;
+        }
+
         public bool GetNextStepTowardTarget(Unit unit, int targetX, int targetY, out int stepX, out int stepY)
         {
             return GetNextStepTowardTargetInternal(unit, targetX, targetY, out stepX, out stepY);
@@ -193,17 +259,20 @@ namespace Problems.MicroRTS
                                     var assignment = new MicroRTSActionAssignment(unit, MicroRTSActionAssignment.ACTION_TYPE_PRODUCE, currentCycle, foundDirection, null, null, producibleType);
                                     pendingActions[unit] = assignment;
                                     producingUnits[unit] = (spawnX, spawnY, producibleType);
-                                    DebugSystem.Log($"Base at ({unit.X}, {unit.Y}) started producing {producibleType.name} at ({spawnX}, {spawnY}). Production will take {producibleType.produceTime} cycles");
+                                    string producerType = unit.Type.name;
+                                    DebugSystem.Log($"{producerType} at ({unit.X}, {unit.Y}) started producing {producibleType.name} at ({spawnX}, {spawnY}). Production will take {producibleType.produceTime} cycles");
                                     break;
                                 }
                                 else if (player != null)
                                 {
-                                    DebugSystem.Log($"Base at ({unit.X}, {unit.Y}) cannot produce {producibleType.name} - insufficient resources (have {player.Resources}, need {producibleType.cost})");
+                                    string producerType = unit.Type.name;
+                                    DebugSystem.Log($"{producerType} at ({unit.X}, {unit.Y}) cannot produce {producibleType.name} - insufficient resources (have {player.Resources}, need {producibleType.cost})");
                                 }
                             }
                             else
                             {
-                                DebugSystem.LogWarning($"Base at ({unit.X}, {unit.Y}) cannot produce {producibleType.name} - no free adjacent space available");
+                                string producerType = unit.Type.name;
+                                DebugSystem.LogWarning($"{producerType} at ({unit.X}, {unit.Y}) cannot produce {producibleType.name} - no free adjacent space available");
                             }
                             break;
                         }
@@ -780,23 +849,25 @@ namespace Problems.MicroRTS
             targetX += offset.x;
             targetY += offset.y;
 
+            string producerType = producer.Type.name;
+
             if (targetX < 0 || targetX >= environmentController.MapWidth ||
                 targetY < 0 || targetY >= environmentController.MapHeight)
             {
-                DebugSystem.LogWarning($"Base at ({producer.X}, {producer.Y}) cannot spawn {unitType.name} - target position ({targetX}, {targetY}) is out of bounds");
+                DebugSystem.LogWarning($"{producerType} at ({producer.X}, {producer.Y}) cannot spawn {unitType.name} - target position ({targetX}, {targetY}) is out of bounds");
                 return;
             }
 
             if (!environmentController.IsWalkable(targetX, targetY))
             {
-                DebugSystem.LogWarning($"Base at ({producer.X}, {producer.Y}) cannot spawn {unitType.name} - position ({targetX}, {targetY}) is not walkable");
+                DebugSystem.LogWarning($"{producerType} at ({producer.X}, {producer.Y}) cannot spawn {unitType.name} - position ({targetX}, {targetY}) is not walkable");
                 return;
             }
 
             Unit existingUnit = environmentController.GetUnitAt(targetX, targetY);
             if (existingUnit != null)
             {
-                DebugSystem.LogWarning($"Base at ({producer.X}, {producer.Y}) cannot spawn {unitType.name} - position ({targetX}, {targetY}) is occupied");
+                DebugSystem.LogWarning($"{producerType} at ({producer.X}, {producer.Y}) cannot spawn {unitType.name} - position ({targetX}, {targetY}) is occupied");
                 return;
             }
 
@@ -811,21 +882,21 @@ namespace Problems.MicroRTS
             }
             if (spaceReserved)
             {
-                DebugSystem.LogWarning($"Base at ({producer.X}, {producer.Y}) cannot spawn {unitType.name} - position ({targetX}, {targetY}) is reserved for production by another unit");
+                DebugSystem.LogWarning($"{producerType} at ({producer.X}, {producer.Y}) cannot spawn {unitType.name} - position ({targetX}, {targetY}) is reserved for production by another unit");
                 return;
             }
 
             var player = environmentController.GetPlayer(producer.Player);
             if (player == null)
             {
-                DebugSystem.LogWarning($"Base at ({producer.X}, {producer.Y}) cannot spawn {unitType.name} - player {producer.Player} not found");
+                DebugSystem.LogWarning($"{producerType} at ({producer.X}, {producer.Y}) cannot spawn {unitType.name} - player {producer.Player} not found");
                 return;
             }
 
             int unitCost = unitType.cost;
             if (player.Resources < unitCost)
             {
-                DebugSystem.Log($"Base at ({producer.X}, {producer.Y}) cannot spawn {unitType.name} - insufficient resources (have {player.Resources}, need {unitCost})");
+                DebugSystem.Log($"{producerType} at ({producer.X}, {producer.Y}) cannot spawn {unitType.name} - insufficient resources (have {player.Resources}, need {unitCost})");
                 return;
             }
 
@@ -855,7 +926,7 @@ namespace Problems.MicroRTS
             environmentController.RegisterUnit(newUnitObj, unitComponent, newUnit);
 
             producingUnits.Remove(producer);
-            DebugSystem.LogSuccess($"Base at ({producer.X}, {producer.Y}) spawned {unitType.name} at ({targetX}, {targetY}). Player {producer.Player} now has {player.Resources} resources");
+            DebugSystem.LogSuccess($"{producerType} at ({producer.X}, {producer.Y}) spawned {unitType.name} at ({targetX}, {targetY}). Player {producer.Player} now has {player.Resources} resources");
         }
 
         private GameObject GetUnitPrefab(string unitTypeName)
@@ -871,6 +942,8 @@ namespace Problems.MicroRTS
                     return spawnPositions.WorkerPrefab;
                 case "Base":
                     return spawnPositions.BasePrefab;
+                case "Barracks":
+                    return spawnPositions.BarracksPrefab;
                 case "Resource":
                     return spawnPositions.ResourcePrefab;
                 default:

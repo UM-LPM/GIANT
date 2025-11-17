@@ -7,6 +7,7 @@ namespace Problems.MicroRTS
         [Header("Unit Prefabs")]
         public GameObject ResourcePrefab;
         public GameObject BasePrefab;
+        public GameObject BarracksPrefab;
         public GameObject WorkerPrefab;
 
         [Header("Resource Spawn Points")]

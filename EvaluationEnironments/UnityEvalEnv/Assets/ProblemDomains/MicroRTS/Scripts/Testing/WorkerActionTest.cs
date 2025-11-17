@@ -4,6 +4,8 @@ using UnityEngine;
 using Problems.MicroRTS.Core;
 using Problems.MicroRTS;
 using Utils;
+using AgentControllers;
+using System.Collections.Generic;
 
 namespace Problems.MicroRTS.Testing
 {
@@ -11,7 +13,9 @@ namespace Problems.MicroRTS.Testing
     {
         Movement,
         Harvest,
-        Attack
+        Attack,
+        BuildBarracks,
+        BuildBase
     }
 
     public class WorkerActionTest : MonoBehaviour
@@ -139,6 +143,14 @@ namespace Problems.MicroRTS.Testing
                 else if (testType == TestType.Attack)
                 {
                     yield return StartCoroutine(TestWorkerAttack());
+                }
+                else if (testType == TestType.BuildBarracks)
+                {
+                    yield return StartCoroutine(TestWorkerBuildBarracks());
+                }
+                else if (testType == TestType.BuildBase)
+                {
+                    yield return StartCoroutine(TestWorkerBuildBase());
                 }
             }
             else
@@ -802,6 +814,411 @@ namespace Problems.MicroRTS.Testing
 
                 yield return new WaitForFixedUpdate();
             }
+        }
+
+        private bool FindRandomWalkablePosition(out int x, out int y)
+        {
+            x = 0;
+            y = 0;
+
+            if (environmentController == null) return false;
+            if (util == null || util.Rnd == null)
+            {
+                DebugSystem.LogError("Util component or seeded random not available");
+                return false;
+            }
+
+            List<(int x, int y)> walkablePositions = new List<(int x, int y)>();
+
+            for (int tx = 0; tx < environmentController.MapWidth; tx++)
+            {
+                for (int ty = 0; ty < environmentController.MapHeight; ty++)
+                {
+                    if (environmentController.IsWalkable(tx, ty))
+                    {
+                        Unit unitAtPos = environmentController.GetUnitAt(tx, ty);
+                        if (unitAtPos == null)
+                        {
+                            walkablePositions.Add((tx, ty));
+                        }
+                    }
+                }
+            }
+
+            if (walkablePositions.Count == 0) return false;
+
+            var selected = walkablePositions[util.Rnd.Next(walkablePositions.Count)];
+            x = selected.x;
+            y = selected.y;
+            return true;
+        }
+
+        private IEnumerator TestWorkerBuildBarracks()
+        {
+            Unit worker = FindTeam0Worker();
+            if (worker == null)
+            {
+                DebugSystem.LogError("Team 0 worker not found");
+                yield break;
+            }
+
+            if (actionExecutor == null)
+            {
+                DebugSystem.LogError("Action executor not found");
+                yield break;
+            }
+
+            if (environmentController == null)
+            {
+                DebugSystem.LogError("Environment controller not found");
+                yield break;
+            }
+
+            var player = environmentController.GetPlayer(worker.Player);
+            if (player == null)
+            {
+                DebugSystem.LogError("Player not found");
+                yield break;
+            }
+
+            var barracksType = environmentController.UnitTypeTable.GetUnitType("Barracks");
+            if (barracksType == null)
+            {
+                DebugSystem.LogError("Barracks unit type not found");
+                yield break;
+            }
+
+            if (util == null || util.Rnd == null)
+            {
+                DebugSystem.LogError("Util component or seeded random not available");
+                yield break;
+            }
+
+            DebugSystem.Log($"Worker at ({worker.X}, {worker.Y}), starting Barracks build test");
+            DebugSystem.Log($"Player has {player.Resources} resources, Barracks costs {barracksType.cost}");
+
+            if (player.Resources < barracksType.cost)
+            {
+                DebugSystem.LogWarning($"Insufficient resources to build Barracks. Need {barracksType.cost}, have {player.Resources}");
+                yield break;
+            }
+
+            if (!FindRandomWalkablePosition(out int targetX, out int targetY))
+            {
+                DebugSystem.LogError("Could not find random walkable position");
+                yield break;
+            }
+
+            DebugSystem.Log($"Target build position: ({targetX}, {targetY})");
+
+            int adjacentX = targetX;
+            int adjacentY = targetY;
+            bool foundAdjacent = false;
+
+            int[] dxs = { 0, 1, 0, -1 };
+            int[] dys = { -1, 0, 1, 0 };
+
+            for (int i = 0; i < 4; i++)
+            {
+                int ax = targetX + dxs[i];
+                int ay = targetY + dys[i];
+                if (ax >= 0 && ax < environmentController.MapWidth && ay >= 0 && ay < environmentController.MapHeight)
+                {
+                    if (environmentController.IsWalkable(ax, ay))
+                    {
+                        Unit unitAtPos = environmentController.GetUnitAt(ax, ay);
+                        if (unitAtPos == null || unitAtPos.ID == worker.ID)
+                        {
+                            adjacentX = ax;
+                            adjacentY = ay;
+                            foundAdjacent = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (!foundAdjacent)
+            {
+                DebugSystem.LogWarning($"Could not find adjacent position to ({targetX}, {targetY})");
+                yield break;
+            }
+
+            DebugSystem.Log($"Moving worker to adjacent position ({adjacentX}, {adjacentY})");
+
+            while (worker.X != adjacentX || worker.Y != adjacentY)
+            {
+                if (actionExecutor.HasPendingAction(worker))
+                {
+                    actionExecutor.ProcessActions();
+                    yield return new WaitForFixedUpdate();
+                    continue;
+                }
+
+                if (actionExecutor.GetNextStepTowardTarget(worker, adjacentX, adjacentY, out int stepX, out int stepY))
+                {
+                    int direction = GetDirectionToTarget(worker.X, worker.Y, stepX, stepY);
+                    if (direction != MicroRTSUtils.DIRECTION_NONE && CanMoveTo(worker, stepX, stepY))
+                    {
+                        ScheduleMovement(worker, direction);
+                    }
+                }
+
+                actionExecutor.ProcessActions();
+                yield return new WaitForFixedUpdate();
+            }
+
+            DebugSystem.LogSuccess($"Worker reached position ({worker.X}, {worker.Y}), starting Barracks build");
+            DebugSystem.Log($"Worker at ({worker.X}, {worker.Y}), target build position: ({targetX}, {targetY}), adjacent: {IsAdjacent(worker.X, worker.Y, targetX, targetY)}");
+
+            if (!IsAdjacent(worker.X, worker.Y, targetX, targetY))
+            {
+                DebugSystem.LogError($"Worker is not adjacent to target position! Worker: ({worker.X}, {worker.Y}), Target: ({targetX}, {targetY})");
+                yield break;
+            }
+
+            Unit unitAtTarget = environmentController.GetUnitAt(targetX, targetY);
+            if (unitAtTarget != null)
+            {
+                DebugSystem.LogWarning($"Target position ({targetX}, {targetY}) is occupied by {unitAtTarget.Type.name}");
+                yield break;
+            }
+
+            if (!environmentController.IsWalkable(targetX, targetY))
+            {
+                DebugSystem.LogWarning($"Target position ({targetX}, {targetY}) is not walkable");
+                yield break;
+            }
+
+            int initialBarracksCount = environmentController.GetAllUnits().Count(u => u.Type.name == "Barracks" && u.Player == worker.Player);
+            int buildStartCycle = 0;
+            float buildStartTime = Time.time;
+            float maxBuildTime = 30f;
+
+            if (!actionExecutor.ScheduleBuildAtPosition(worker, targetX, targetY, barracksType))
+            {
+                DebugSystem.LogError($"Failed to schedule Barracks build at ({targetX}, {targetY})");
+                yield break;
+            }
+
+            buildStartCycle = actionExecutor.GetCurrentCycle();
+            DebugSystem.Log($"Barracks production scheduled! Will take {barracksType.produceTime} cycles");
+
+            while (Time.time - buildStartTime < maxBuildTime)
+            {
+                if (actionExecutor.HasPendingAction(worker))
+                {
+                    actionExecutor.ProcessActions();
+                    yield return new WaitForFixedUpdate();
+                    continue;
+                }
+
+                int currentBarracksCount = environmentController.GetAllUnits().Count(u => u.Type.name == "Barracks" && u.Player == worker.Player);
+                if (currentBarracksCount > initialBarracksCount)
+                {
+                    Unit newBarracks = environmentController.GetAllUnits().FirstOrDefault(u => u.Type.name == "Barracks" && u.Player == worker.Player && u.X == targetX && u.Y == targetY);
+                    if (newBarracks == null)
+                    {
+                        newBarracks = environmentController.GetAllUnits().FirstOrDefault(u => u.Type.name == "Barracks" && u.Player == worker.Player);
+                    }
+
+                    if (newBarracks != null)
+                    {
+                        int cyclesElapsed = actionExecutor.GetCurrentCycle() - buildStartCycle;
+                        DebugSystem.LogSuccess($"Barracks built at ({newBarracks.X}, {newBarracks.Y}) after {cyclesElapsed} cycles! Player now has {player.Resources} resources");
+                        yield break;
+                    }
+                }
+
+                actionExecutor.ProcessActions();
+                yield return new WaitForFixedUpdate();
+            }
+
+            DebugSystem.LogWarning($"Barracks build test timed out after {maxBuildTime} seconds");
+        }
+
+        private IEnumerator TestWorkerBuildBase()
+        {
+            Unit worker = FindTeam0Worker();
+            if (worker == null)
+            {
+                DebugSystem.LogError("Team 0 worker not found");
+                yield break;
+            }
+
+            if (actionExecutor == null)
+            {
+                DebugSystem.LogError("Action executor not found");
+                yield break;
+            }
+
+            if (environmentController == null)
+            {
+                DebugSystem.LogError("Environment controller not found");
+                yield break;
+            }
+
+            var player = environmentController.GetPlayer(worker.Player);
+            if (player == null)
+            {
+                DebugSystem.LogError("Player not found");
+                yield break;
+            }
+
+            var baseType = environmentController.UnitTypeTable.GetUnitType("Base");
+            if (baseType == null)
+            {
+                DebugSystem.LogError("Base unit type not found");
+                yield break;
+            }
+
+            if (util == null || util.Rnd == null)
+            {
+                DebugSystem.LogError("Util component or seeded random not available");
+                yield break;
+            }
+
+            DebugSystem.Log($"Worker at ({worker.X}, {worker.Y}), starting Base build test");
+            DebugSystem.Log($"Player has {player.Resources} resources, Base costs {baseType.cost}");
+
+            if (player.Resources < baseType.cost)
+            {
+                DebugSystem.LogWarning($"Insufficient resources to build Base. Need {baseType.cost}, have {player.Resources}");
+                yield break;
+            }
+
+            if (!FindRandomWalkablePosition(out int targetX, out int targetY))
+            {
+                DebugSystem.LogError("Could not find random walkable position");
+                yield break;
+            }
+
+            DebugSystem.Log($"Target build position: ({targetX}, {targetY})");
+
+            int adjacentX = targetX;
+            int adjacentY = targetY;
+            bool foundAdjacent = false;
+
+            int[] dxs = { 0, 1, 0, -1 };
+            int[] dys = { -1, 0, 1, 0 };
+
+            for (int i = 0; i < 4; i++)
+            {
+                int ax = targetX + dxs[i];
+                int ay = targetY + dys[i];
+                if (ax >= 0 && ax < environmentController.MapWidth && ay >= 0 && ay < environmentController.MapHeight)
+                {
+                    if (environmentController.IsWalkable(ax, ay))
+                    {
+                        Unit unitAtPos = environmentController.GetUnitAt(ax, ay);
+                        if (unitAtPos == null || unitAtPos.ID == worker.ID)
+                        {
+                            adjacentX = ax;
+                            adjacentY = ay;
+                            foundAdjacent = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (!foundAdjacent)
+            {
+                DebugSystem.LogWarning($"Could not find adjacent position to ({targetX}, {targetY})");
+                yield break;
+            }
+
+            DebugSystem.Log($"Moving worker to adjacent position ({adjacentX}, {adjacentY})");
+
+            while (worker.X != adjacentX || worker.Y != adjacentY)
+            {
+                if (actionExecutor.HasPendingAction(worker))
+                {
+                    actionExecutor.ProcessActions();
+                    yield return new WaitForFixedUpdate();
+                    continue;
+                }
+
+                if (actionExecutor.GetNextStepTowardTarget(worker, adjacentX, adjacentY, out int stepX, out int stepY))
+                {
+                    int direction = GetDirectionToTarget(worker.X, worker.Y, stepX, stepY);
+                    if (direction != MicroRTSUtils.DIRECTION_NONE && CanMoveTo(worker, stepX, stepY))
+                    {
+                        ScheduleMovement(worker, direction);
+                    }
+                }
+
+                actionExecutor.ProcessActions();
+                yield return new WaitForFixedUpdate();
+            }
+
+            DebugSystem.LogSuccess($"Worker reached position ({worker.X}, {worker.Y}), starting Base build");
+            DebugSystem.Log($"Worker at ({worker.X}, {worker.Y}), target build position: ({targetX}, {targetY}), adjacent: {IsAdjacent(worker.X, worker.Y, targetX, targetY)}");
+
+            if (!IsAdjacent(worker.X, worker.Y, targetX, targetY))
+            {
+                DebugSystem.LogError($"Worker is not adjacent to target position! Worker: ({worker.X}, {worker.Y}), Target: ({targetX}, {targetY})");
+                yield break;
+            }
+
+            Unit unitAtTarget = environmentController.GetUnitAt(targetX, targetY);
+            if (unitAtTarget != null)
+            {
+                DebugSystem.LogWarning($"Target position ({targetX}, {targetY}) is occupied by {unitAtTarget.Type.name}");
+                yield break;
+            }
+
+            if (!environmentController.IsWalkable(targetX, targetY))
+            {
+                DebugSystem.LogWarning($"Target position ({targetX}, {targetY}) is not walkable");
+                yield break;
+            }
+
+            int initialBaseCount = environmentController.GetAllUnits().Count(u => u.Type.name == "Base" && u.Player == worker.Player);
+            int buildStartCycle = 0;
+            float buildStartTime = Time.time;
+            float maxBuildTime = 30f;
+
+            if (!actionExecutor.ScheduleBuildAtPosition(worker, targetX, targetY, baseType))
+            {
+                DebugSystem.LogError($"Failed to schedule Base build at ({targetX}, {targetY})");
+                yield break;
+            }
+
+            buildStartCycle = actionExecutor.GetCurrentCycle();
+            DebugSystem.Log($"Base production scheduled! Will take {baseType.produceTime} cycles");
+
+            while (Time.time - buildStartTime < maxBuildTime)
+            {
+                if (actionExecutor.HasPendingAction(worker))
+                {
+                    actionExecutor.ProcessActions();
+                    yield return new WaitForFixedUpdate();
+                    continue;
+                }
+
+                int currentBaseCount = environmentController.GetAllUnits().Count(u => u.Type.name == "Base" && u.Player == worker.Player);
+                if (currentBaseCount > initialBaseCount)
+                {
+                    Unit newBase = environmentController.GetAllUnits().FirstOrDefault(u => u.Type.name == "Base" && u.Player == worker.Player && u.X == targetX && u.Y == targetY);
+                    if (newBase == null)
+                    {
+                        newBase = environmentController.GetAllUnits().FirstOrDefault(u => u.Type.name == "Base" && u.Player == worker.Player);
+                    }
+
+                    if (newBase != null)
+                    {
+                        int cyclesElapsed = actionExecutor.GetCurrentCycle() - buildStartCycle;
+                        DebugSystem.LogSuccess($"Base built at ({newBase.X}, {newBase.Y}) after {cyclesElapsed} cycles! Player now has {player.Resources} resources");
+                        yield break;
+                    }
+                }
+
+                actionExecutor.ProcessActions();
+                yield return new WaitForFixedUpdate();
+            }
+
+            DebugSystem.LogWarning($"Base build test timed out after {maxBuildTime} seconds");
         }
     }
 }
