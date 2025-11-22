@@ -18,6 +18,7 @@ namespace Problems.MicroRTS
         private Dictionary<Unit, (int targetX, int targetY)> attackTargets = new Dictionary<Unit, (int, int)>();
         [SerializeField] private bool useDeterministicDamage = false;
         private float? cachedCyclesPerSecond = null;
+        private MicroRTSActionProgressTracker progressTracker;
 
         private float CyclesPerSecond
         {
@@ -53,12 +54,23 @@ namespace Problems.MicroRTS
             {
                 Debug.LogError("Environment controller not found");
             }
+
+            progressTracker = GetComponent<MicroRTSActionProgressTracker>();
+            if (progressTracker == null)
+            {
+                progressTracker = gameObject.AddComponent<MicroRTSActionProgressTracker>();
+            }
         }
 
         public void ScheduleAction(MicroRTSActionAssignment assignment)
         {
             if (assignment == null || assignment.unit == null) return;
             pendingActions[assignment.unit] = assignment;
+
+            if (progressTracker != null)
+            {
+                progressTracker.OnActionScheduled(assignment.unit, assignment);
+            }
         }
 
         public int GetCurrentCycle()
@@ -149,6 +161,12 @@ namespace Problems.MicroRTS
             var assignment = new MicroRTSActionAssignment(builder, MicroRTSActionAssignment.ACTION_TYPE_PRODUCE, currentCycle, direction, null, null, unitType);
             pendingActions[builder] = assignment;
             producingUnits[builder] = (targetX, targetY, unitType);
+
+            if (progressTracker != null)
+            {
+                progressTracker.OnProductionScheduled(builder, targetX, targetY);
+            }
+
             DebugSystem.Log($"{builder.Type.name} at ({builder.X}, {builder.Y}) scheduled to build {unitType.name} at ({targetX}, {targetY}). Production will take {unitType.produceTime} cycles");
             return true;
         }
@@ -156,6 +174,16 @@ namespace Problems.MicroRTS
         public bool GetNextStepTowardTarget(Unit unit, int targetX, int targetY, out int stepX, out int stepY)
         {
             return GetNextStepTowardTargetInternal(unit, targetX, targetY, out stepX, out stepY);
+        }
+
+        public Dictionary<Unit, MicroRTSActionAssignment> GetPendingActions()
+        {
+            return pendingActions;
+        }
+
+        public Dictionary<Unit, (int spawnX, int spawnY, UnitType unitType)> GetProducingUnits()
+        {
+            return producingUnits;
         }
 
         private int SimulationTimeToCycle(float simulationTime)
@@ -200,6 +228,11 @@ namespace Problems.MicroRTS
                             int currentCycle = GetCurrentCycle();
                             var assignment = new MicroRTSActionAssignment(unit, MicroRTSActionAssignment.ACTION_TYPE_HARVEST, currentCycle, harvestDirection);
                             pendingActions[unit] = assignment;
+
+                            if (progressTracker != null)
+                            {
+                                progressTracker.OnActionScheduled(unit, assignment);
+                            }
                             continue;
                         }
                     }
@@ -244,6 +277,11 @@ namespace Problems.MicroRTS
                         int currentCycle = GetCurrentCycle();
                         var assignment = new MicroRTSActionAssignment(unit, MicroRTSActionAssignment.ACTION_TYPE_MOVE, currentCycle, direction);
                         pendingActions[unit] = assignment;
+
+                        if (progressTracker != null)
+                        {
+                            progressTracker.OnActionScheduled(unit, assignment);
+                        }
                     }
                 }
 
@@ -265,6 +303,12 @@ namespace Problems.MicroRTS
                                     var assignment = new MicroRTSActionAssignment(unit, MicroRTSActionAssignment.ACTION_TYPE_PRODUCE, currentCycle, foundDirection, null, null, producibleType);
                                     pendingActions[unit] = assignment;
                                     producingUnits[unit] = (spawnX, spawnY, producibleType);
+
+                                    if (progressTracker != null)
+                                    {
+                                        progressTracker.OnProductionScheduled(unit, spawnX, spawnY);
+                                    }
+
                                     string producerType = unit.Type.name;
                                     DebugSystem.Log($"{producerType} at ({unit.X}, {unit.Y}) started producing {producibleType.name} at ({spawnX}, {spawnY}). Production will take {producibleType.produceTime} cycles");
                                     break;
@@ -366,6 +410,11 @@ namespace Problems.MicroRTS
                 // TODO: Implement timing for RETURN actions (unit.MoveTime)
 
                 pendingActions.Remove(unit);
+
+                if (progressTracker != null)
+                {
+                    progressTracker.OnActionCompleted(unit);
+                }
             }
         }
 
@@ -519,6 +568,11 @@ namespace Problems.MicroRTS
                                 int currentCycle = GetCurrentCycle();
                                 var assignment = new MicroRTSActionAssignment(unit, MicroRTSActionAssignment.ACTION_TYPE_HARVEST, currentCycle, direction);
                                 pendingActions[unit] = assignment;
+
+                                if (progressTracker != null)
+                                {
+                                    progressTracker.OnActionScheduled(unit, assignment);
+                                }
                             }
                         }
                     }
@@ -601,6 +655,11 @@ namespace Problems.MicroRTS
                     int currentCycle = GetCurrentCycle();
                     var assignment = new MicroRTSActionAssignment(unit, MicroRTSActionAssignment.ACTION_TYPE_ATTACK, currentCycle, null, target.targetX, target.targetY);
                     pendingActions[unit] = assignment;
+
+                    if (progressTracker != null)
+                    {
+                        progressTracker.OnActionScheduled(unit, assignment);
+                    }
                 }
                 else
                 {
@@ -612,6 +671,11 @@ namespace Problems.MicroRTS
                             int currentCycle = GetCurrentCycle();
                             var assignment = new MicroRTSActionAssignment(unit, MicroRTSActionAssignment.ACTION_TYPE_MOVE, currentCycle, direction);
                             pendingActions[unit] = assignment;
+
+                            if (progressTracker != null)
+                            {
+                                progressTracker.OnActionScheduled(unit, assignment);
+                            }
                         }
                     }
                     else
@@ -1099,6 +1163,11 @@ namespace Problems.MicroRTS
                 int currentCycle = GetCurrentCycle();
                 var assignment = new MicroRTSActionAssignment(attacker, MicroRTSActionAssignment.ACTION_TYPE_ATTACK, currentCycle, null, targetX, targetY);
                 pendingActions[attacker] = assignment;
+
+                if (progressTracker != null)
+                {
+                    progressTracker.OnActionScheduled(attacker, assignment);
+                }
             }
         }
 
