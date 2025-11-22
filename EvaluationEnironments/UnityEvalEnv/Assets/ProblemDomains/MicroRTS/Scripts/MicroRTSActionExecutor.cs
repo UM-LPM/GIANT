@@ -202,13 +202,31 @@ namespace Problems.MicroRTS
             ProcessAttackNavigation();
 
             int teamID = agent.TeamIdentifier.TeamID;
-
             var playerUnits = environmentController.GetAllUnits()
                 .Where(u => u.Player == teamID && u.HitPoints > 0)
                 .ToList();
 
             foreach (Unit unit in playerUnits)
             {
+                // Update attack targets first, even if unit has pending actions
+                // This lets units update targets while moving/attacking
+                if (unit.Type.canAttack)
+                {
+                    string attackTargetXName = $"attackTargetX_unit{unit.ID}";
+                    string attackTargetYName = $"attackTargetY_unit{unit.ID}";
+                    int targetXCoord = agent.ActionBuffer.GetDiscreteAction(attackTargetXName);
+                    int targetYCoord = agent.ActionBuffer.GetDiscreteAction(attackTargetYName);
+
+                    if (targetXCoord >= 0 && targetYCoord >= 0)
+                    {
+                        Unit targetUnit = environmentController.GetUnitAt(targetXCoord, targetYCoord);
+                        if (targetUnit != null && ValidateAttackTarget(unit, targetUnit))
+                        {
+                            attackTargets[unit] = (targetXCoord, targetYCoord);
+                        }
+                    }
+                }
+
                 if (pendingActions.ContainsKey(unit)) continue;
 
                 if (unit.Type.canHarvest && unit.Resources == 0)
@@ -240,7 +258,7 @@ namespace Problems.MicroRTS
                     string harvestTargetXName = $"harvestTargetX_unit{unit.ID}";
                     string harvestTargetYName = $"harvestTargetY_unit{unit.ID}";
 
-                    // BUG: Started automatically harvesting
+                    // TODO AO BUG: Started automatically harvesting
                     if (agent.ActionBuffer.DiscreteActions.ContainsKey(harvestTargetXName) &&
                         agent.ActionBuffer.DiscreteActions.ContainsKey(harvestTargetYName))
                     {
@@ -329,23 +347,6 @@ namespace Problems.MicroRTS
                     }
                 }
 
-                if (unit.Type.canAttack)
-                {
-                    string attackTargetXName = $"attackTargetX_unit{unit.ID}";
-                    string attackTargetYName = $"attackTargetY_unit{unit.ID}";
-                    int targetXCoord = agent.ActionBuffer.GetDiscreteAction(attackTargetXName);
-                    int targetYCoord = agent.ActionBuffer.GetDiscreteAction(attackTargetYName);
-
-                    if (targetXCoord >= 0 && targetYCoord >= 0)
-                    {
-                        Unit targetUnit = environmentController.GetUnitAt(targetXCoord, targetYCoord);
-                        if (targetUnit != null && ValidateAttackTarget(unit, targetUnit))
-                        {
-                            attackTargets[unit] = (targetXCoord, targetYCoord);
-                            continue;
-                        }
-                    }
-                }
             }
         }
 
