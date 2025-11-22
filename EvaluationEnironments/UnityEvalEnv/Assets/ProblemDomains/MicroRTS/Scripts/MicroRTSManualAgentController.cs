@@ -117,12 +117,23 @@ namespace Problems.MicroRTS
                 int buildType = Input.GetKeyDown(KeyCode.Alpha1) ? 1 : (Input.GetKeyDown(KeyCode.Alpha2) ? 2 : 0);
                 if (buildType > 0)
                 {
-                    int direction = GetMovementDirection();
+                    int direction = GetArrowKeyDirection();
                     if (direction != MicroRTSUtils.DIRECTION_NONE)
                     {
                         string buildingType = buildType == 1 ? "Base" : "Barracks";
-                        actionsOut.AddDiscreteAction($"produce_{buildingType}_{unitActionPrefix}", 1);
-                        DebugSystem.Log($"Worker building {buildingType} {GetDirectionName(direction)}");
+                        UnitType unitType = environmentController.UnitTypeTable.GetUnitType(buildingType);
+                        if (unitType != null)
+                        {
+                            Vector2Int offset = MicroRTSUtils.GetDirectionOffset(direction);
+                            int targetX = selectedUnit.X + offset.x;
+                            int targetY = selectedUnit.Y + offset.y;
+
+                            MicroRTSActionExecutor actionExecutor = environmentController.GetComponent<MicroRTSActionExecutor>();
+                            if (actionExecutor != null && actionExecutor.ScheduleBuildAtPosition(selectedUnit, targetX, targetY, unitType))
+                            {
+                                DebugSystem.Log($"Worker building {buildingType} {GetDirectionName(direction)}");
+                            }
+                        }
                     }
                 }
             }
@@ -248,6 +259,15 @@ namespace Problems.MicroRTS
             if (Input.GetKey(KeyCode.S)) return MicroRTSUtils.DIRECTION_DOWN;
             if (Input.GetKey(KeyCode.A)) return MicroRTSUtils.DIRECTION_LEFT;
             if (Input.GetKey(KeyCode.D)) return MicroRTSUtils.DIRECTION_RIGHT;
+            return MicroRTSUtils.DIRECTION_NONE;
+        }
+
+        private int GetArrowKeyDirection()
+        {
+            if (Input.GetKey(KeyCode.UpArrow)) return MicroRTSUtils.DIRECTION_UP;
+            if (Input.GetKey(KeyCode.DownArrow)) return MicroRTSUtils.DIRECTION_DOWN;
+            if (Input.GetKey(KeyCode.LeftArrow)) return MicroRTSUtils.DIRECTION_LEFT;
+            if (Input.GetKey(KeyCode.RightArrow)) return MicroRTSUtils.DIRECTION_RIGHT;
             return MicroRTSUtils.DIRECTION_NONE;
         }
 
