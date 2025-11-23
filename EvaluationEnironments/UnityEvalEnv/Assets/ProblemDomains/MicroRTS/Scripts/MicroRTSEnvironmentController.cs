@@ -160,6 +160,24 @@ namespace Problems.MicroRTS
             return unitGameObjects.Values;
         }
 
+        protected override void DefineAdditionalDataOnPostStart()
+        {
+            InitializeStepLogger();
+        }
+
+        private void InitializeStepLogger()
+        {
+            MicroRTSActionExecutor actionExecutor = GetComponentInChildren<MicroRTSActionExecutor>();
+            if (actionExecutor != null)
+            {
+                MicroRTSStepLogger stepLogger = actionExecutor.GetComponent<MicroRTSStepLogger>();
+                if (stepLogger != null)
+                {
+                    stepLogger.Initialize();
+                }
+            }
+        }
+
         protected override void OnPostFixedUpdate()
         {
             CheckEndingState();

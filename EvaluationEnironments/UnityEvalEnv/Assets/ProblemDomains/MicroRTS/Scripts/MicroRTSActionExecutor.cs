@@ -19,6 +19,7 @@ namespace Problems.MicroRTS
         [SerializeField] private bool useDeterministicDamage = false;
         private float? cachedCyclesPerSecond = null;
         private MicroRTSActionProgressTracker progressTracker;
+        private MicroRTSStepLogger stepLogger;
 
         private float CyclesPerSecond
         {
@@ -60,6 +61,12 @@ namespace Problems.MicroRTS
             {
                 progressTracker = gameObject.AddComponent<MicroRTSActionProgressTracker>();
             }
+
+            stepLogger = GetComponent<MicroRTSStepLogger>();
+            if (stepLogger == null)
+            {
+                stepLogger = gameObject.AddComponent<MicroRTSStepLogger>();
+            }
         }
 
         public void ScheduleAction(MicroRTSActionAssignment assignment)
@@ -70,6 +77,12 @@ namespace Problems.MicroRTS
             if (progressTracker != null)
             {
                 progressTracker.OnActionScheduled(assignment.unit, assignment);
+            }
+
+            if (stepLogger != null && stepLogger.IsEnabled)
+            {
+                int currentCycle = GetCurrentCycle();
+                stepLogger.LogActionScheduled(assignment.unit, assignment, currentCycle);
             }
         }
 
@@ -251,6 +264,11 @@ namespace Problems.MicroRTS
                             {
                                 progressTracker.OnActionScheduled(unit, assignment);
                             }
+
+                            if (stepLogger != null && stepLogger.IsEnabled)
+                            {
+                                stepLogger.LogActionScheduled(unit, assignment, currentCycle);
+                            }
                             continue;
                         }
                     }
@@ -300,6 +318,11 @@ namespace Problems.MicroRTS
                         {
                             progressTracker.OnActionScheduled(unit, assignment);
                         }
+
+                        if (stepLogger != null && stepLogger.IsEnabled)
+                        {
+                            stepLogger.LogActionScheduled(unit, assignment, currentCycle);
+                        }
                     }
                 }
 
@@ -325,6 +348,11 @@ namespace Problems.MicroRTS
                                     if (progressTracker != null)
                                     {
                                         progressTracker.OnProductionScheduled(unit, spawnX, spawnY);
+                                    }
+
+                                    if (stepLogger != null && stepLogger.IsEnabled)
+                                    {
+                                        stepLogger.LogActionScheduled(unit, assignment, currentCycle);
                                     }
 
                                     string producerType = unit.Type.name;
@@ -392,6 +420,8 @@ namespace Problems.MicroRTS
             {
                 if (!pendingActions.TryGetValue(unit, out var assignment)) continue;
 
+                int currentCycle = GetCurrentCycle();
+
                 if (assignment.actionType == MicroRTSActionAssignment.ACTION_TYPE_MOVE)
                 {
                     ExecuteMovement(unit, assignment.direction);
@@ -409,6 +439,11 @@ namespace Problems.MicroRTS
                     ExecuteAttack(unit, assignment.targetX, assignment.targetY);
                 }
                 // TODO: Implement timing for RETURN actions (unit.MoveTime)
+
+                if (stepLogger != null && stepLogger.IsEnabled)
+                {
+                    stepLogger.LogActionCompleted(unit, assignment, currentCycle);
+                }
 
                 pendingActions.Remove(unit);
 
@@ -574,6 +609,11 @@ namespace Problems.MicroRTS
                                 {
                                     progressTracker.OnActionScheduled(unit, assignment);
                                 }
+
+                                if (stepLogger != null && stepLogger.IsEnabled)
+                                {
+                                    stepLogger.LogActionScheduled(unit, assignment, currentCycle);
+                                }
                             }
                         }
                     }
@@ -599,6 +639,11 @@ namespace Problems.MicroRTS
                             int currentCycle = GetCurrentCycle();
                             var assignment = new MicroRTSActionAssignment(unit, MicroRTSActionAssignment.ACTION_TYPE_MOVE, currentCycle, direction);
                             pendingActions[unit] = assignment;
+
+                            if (stepLogger != null && stepLogger.IsEnabled)
+                            {
+                                stepLogger.LogActionScheduled(unit, assignment, currentCycle);
+                            }
                         }
                     }
                 }
@@ -661,6 +706,11 @@ namespace Problems.MicroRTS
                     {
                         progressTracker.OnActionScheduled(unit, assignment);
                     }
+
+                    if (stepLogger != null && stepLogger.IsEnabled)
+                    {
+                        stepLogger.LogActionScheduled(unit, assignment, currentCycle);
+                    }
                 }
                 else
                 {
@@ -676,6 +726,11 @@ namespace Problems.MicroRTS
                             if (progressTracker != null)
                             {
                                 progressTracker.OnActionScheduled(unit, assignment);
+                            }
+
+                            if (stepLogger != null && stepLogger.IsEnabled)
+                            {
+                                stepLogger.LogActionScheduled(unit, assignment, currentCycle);
                             }
                         }
                     }
@@ -998,6 +1053,12 @@ namespace Problems.MicroRTS
 
             environmentController.RegisterUnit(newUnitObj, unitComponent, newUnit);
 
+            if (stepLogger != null && stepLogger.IsEnabled)
+            {
+                int currentCycle = GetCurrentCycle();
+                stepLogger.LogUnitCreated(newUnit, currentCycle);
+            }
+
             producingUnits.Remove(producer);
             DebugSystem.LogSuccess($"{producerType} at ({producer.X}, {producer.Y}) spawned {unitType.name} at ({targetX}, {targetY}). Player {producer.Player} now has {player.Resources} resources");
         }
@@ -1155,6 +1216,11 @@ namespace Problems.MicroRTS
 
             if (target.HitPoints <= 0)
             {
+                if (stepLogger != null && stepLogger.IsEnabled)
+                {
+                    int currentCycle = GetCurrentCycle();
+                    stepLogger.LogUnitDestroyed(target, currentCycle);
+                }
                 environmentController.RemoveUnit(target);
                 attackTargets.Remove(attacker);
                 DebugSystem.LogSuccess($"{target.Type.name} at ({targetX}, {targetY}) was destroyed");
