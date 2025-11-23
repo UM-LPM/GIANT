@@ -1049,6 +1049,12 @@ namespace Problems.MicroRTS
             }
             unitComponent.Initialize(newUnit);
 
+            MicroRTSUnitHealthBar healthBar = newUnitObj.GetComponent<MicroRTSUnitHealthBar>();
+            if (healthBar == null)
+            {
+                healthBar = newUnitObj.AddComponent<MicroRTSUnitHealthBar>();
+            }
+
             SetUnitColor(newUnitObj, producer.Player);
 
             environmentController.RegisterUnit(newUnitObj, unitComponent, newUnit);

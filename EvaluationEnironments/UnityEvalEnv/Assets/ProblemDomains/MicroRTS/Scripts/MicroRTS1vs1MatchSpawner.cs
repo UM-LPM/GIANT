@@ -294,6 +294,12 @@ namespace Problems.MicroRTS
                 }
                 unitComponent.Initialize(unit);
 
+                MicroRTSUnitHealthBar healthBar = baseObj.GetComponent<MicroRTSUnitHealthBar>();
+                if (healthBar == null)
+                {
+                    healthBar = baseObj.AddComponent<MicroRTSUnitHealthBar>();
+                }
+
                 controller.RegisterUnit(baseObj, unitComponent, unit);
             }
         }
@@ -364,6 +370,12 @@ namespace Problems.MicroRTS
                     unitComponent = workerObj.AddComponent<MicroRTSUnitComponent>();
                 }
                 unitComponent.Initialize(unit);
+
+                MicroRTSUnitHealthBar healthBar = workerObj.GetComponent<MicroRTSUnitHealthBar>();
+                if (healthBar == null)
+                {
+                    healthBar = workerObj.AddComponent<MicroRTSUnitHealthBar>();
+                }
 
                 controller.RegisterUnit(workerObj, unitComponent, unit);
             }
