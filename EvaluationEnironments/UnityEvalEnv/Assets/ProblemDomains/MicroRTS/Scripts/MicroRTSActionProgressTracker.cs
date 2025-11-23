@@ -49,7 +49,21 @@ namespace Problems.MicroRTS
                         GameObject unitObj = environmentController.GetUnitGameObject(unit.ID);
                         if (unitObj != null)
                         {
-                            progressBar.SetPosition(unitObj.transform.position);
+                            var pendingActions = actionExecutor.GetPendingActions();
+                            if (pendingActions.TryGetValue(unit, out MicroRTSActionAssignment assignment))
+                            {
+                                bool isMovement = assignment.actionType == MicroRTSActionAssignment.ACTION_TYPE_MOVE;
+                                int direction = isMovement ? assignment.direction : -1;
+                                progressBar.SetPosition(unitObj.transform.position, direction, isMovement);
+                                if (isMovement)
+                                {
+                                    progressBar.SetColor(Color.green);
+                                }
+                            }
+                            else
+                            {
+                                progressBar.SetPosition(unitObj.transform.position, -1, false);
+                            }
                             progressBar.SetProgress(progress);
                             progressBar.SetVisible(true);
                         }

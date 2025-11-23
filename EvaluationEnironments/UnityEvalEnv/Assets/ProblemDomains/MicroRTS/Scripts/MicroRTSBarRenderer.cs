@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using Problems.MicroRTS.Core;
 
 namespace Problems.MicroRTS
 {
@@ -7,6 +8,7 @@ namespace Problems.MicroRTS
     {
         private Canvas canvas;
         private RectTransform fillRect;
+        private RectTransform backgroundRect;
         private Camera mainCamera;
         private float currentProgress = 0f;
         private float barWidth = 0.5f;
@@ -14,6 +16,8 @@ namespace Problems.MicroRTS
         private Color fillColor = Color.blue;
         private Color backgroundColor = new Color(0f, 0f, 0f, 0.6f);
         private const float CANVAS_SCALE = 0.01f;
+        private bool isMovementBar = false;
+        private int currentDirection = -1;
 
         void Start()
         {
@@ -77,12 +81,12 @@ namespace Problems.MicroRTS
             bgImage.sprite = sprite;
             bgImage.color = backgroundColor;
 
-            RectTransform bgRect = bgObj.GetComponent<RectTransform>();
-            bgRect.anchorMin = new Vector2(0f, 0f);
-            bgRect.anchorMax = new Vector2(0f, 1f);
-            bgRect.pivot = new Vector2(0f, 0.5f);
-            bgRect.sizeDelta = new Vector2(barWidth * 100f, barHeight * 90f);
-            bgRect.anchoredPosition = new Vector2(barWidth * 5f, 0f);
+            backgroundRect = bgObj.GetComponent<RectTransform>();
+            backgroundRect.anchorMin = new Vector2(0f, 0f);
+            backgroundRect.anchorMax = new Vector2(0f, 1f);
+            backgroundRect.pivot = new Vector2(0f, 0.5f);
+            backgroundRect.sizeDelta = new Vector2(barWidth * 100f, barHeight * 90f);
+            backgroundRect.anchoredPosition = new Vector2(barWidth * 5f, 0f);
         }
 
         private void CreateFill(Sprite sprite)
@@ -102,13 +106,136 @@ namespace Problems.MicroRTS
             fillRect.anchoredPosition = new Vector2(barWidth * 5f, 0f);
         }
 
-        public void SetProgress(float progress)
+        public void SetProgress(float progress, bool isMovement = false, int direction = -1)
         {
             currentProgress = Mathf.Clamp01(progress);
+            isMovementBar = isMovement;
+            currentDirection = direction;
+
             if (fillRect != null)
             {
-                float fillWidth = barWidth * 90f * currentProgress;
-                fillRect.sizeDelta = new Vector2(fillWidth, fillRect.sizeDelta.y);
+                if (isMovementBar && direction >= 0)
+                {
+                    UpdateMovementBarProgress();
+                }
+                else
+                {
+                    float fillWidth = barWidth * 90f * currentProgress;
+                    fillRect.sizeDelta = new Vector2(fillWidth, fillRect.sizeDelta.y);
+                    fillRect.anchoredPosition = new Vector2(barWidth * 5f, 0f);
+                }
+            }
+        }
+
+        private void UpdateMovementBarProgress()
+        {
+            float tileSize = 1f;
+            var parent = GetComponentInParent<MicroRTSEnvironmentController>();
+            if (parent != null)
+            {
+                var walkableTilemap = parent.GetComponentInChildren<UnityEngine.Tilemaps.Tilemap>();
+                if (walkableTilemap != null)
+                {
+                    tileSize = walkableTilemap.cellSize.x;
+                }
+            }
+
+            float startOffset = tileSize / 6f;
+            float fullBarLength = tileSize;
+            float progressLength = fullBarLength * currentProgress;
+
+            float thickness = barHeight * 90f;
+            float startPosition = startOffset * 100f;
+            float fillLength = progressLength * 100f;
+            float bgLength = fullBarLength * 100f;
+
+            Vector2 anchoredPos = Vector2.zero;
+            Vector2 sizeDelta = Vector2.zero;
+            Vector2 pivot = new Vector2(0.5f, 0.5f);
+            Vector2 anchorMin = new Vector2(0.5f, 0.5f);
+            Vector2 anchorMax = new Vector2(0.5f, 0.5f);
+
+            switch (currentDirection)
+            {
+                case MicroRTSUtils.DIRECTION_UP:
+                    sizeDelta = new Vector2(thickness, fillLength);
+                    anchoredPos = new Vector2(0f, startPosition);
+                    pivot = new Vector2(0.5f, 0f);
+                    break;
+
+                case MicroRTSUtils.DIRECTION_RIGHT:
+                    sizeDelta = new Vector2(fillLength, thickness);
+                    anchoredPos = new Vector2(startPosition, 0f);
+                    pivot = new Vector2(0f, 0.5f);
+                    break;
+
+                case MicroRTSUtils.DIRECTION_DOWN:
+                    sizeDelta = new Vector2(thickness, fillLength);
+                    anchoredPos = new Vector2(0f, -startPosition);
+                    pivot = new Vector2(0.5f, 1f);
+                    break;
+
+                case MicroRTSUtils.DIRECTION_LEFT:
+                    sizeDelta = new Vector2(fillLength, thickness);
+                    anchoredPos = new Vector2(-startPosition, 0f);
+                    pivot = new Vector2(1f, 0.5f);
+                    break;
+
+                default:
+                    sizeDelta = new Vector2(fillLength, thickness);
+                    anchoredPos = new Vector2(startPosition, 0f);
+                    pivot = new Vector2(0f, 0.5f);
+                    break;
+            }
+
+            fillRect.anchorMin = anchorMin;
+            fillRect.anchorMax = anchorMax;
+            fillRect.pivot = pivot;
+            fillRect.sizeDelta = sizeDelta;
+            fillRect.anchoredPosition = anchoredPos;
+
+            if (backgroundRect != null)
+            {
+                Vector2 bgSizeDelta = Vector2.zero;
+                Vector2 bgPivot = pivot;
+                Vector2 bgAnchorMin = anchorMin;
+                Vector2 bgAnchorMax = anchorMax;
+                Vector2 bgAnchoredPos = anchoredPos;
+
+                switch (currentDirection)
+                {
+                    case MicroRTSUtils.DIRECTION_UP:
+                        bgSizeDelta = new Vector2(thickness, bgLength);
+                        bgPivot = new Vector2(0.5f, 0f);
+                        bgAnchoredPos = new Vector2(0f, startPosition);
+                        break;
+                    case MicroRTSUtils.DIRECTION_RIGHT:
+                        bgSizeDelta = new Vector2(bgLength, thickness);
+                        bgPivot = new Vector2(0f, 0.5f);
+                        bgAnchoredPos = new Vector2(startPosition, 0f);
+                        break;
+                    case MicroRTSUtils.DIRECTION_DOWN:
+                        bgSizeDelta = new Vector2(thickness, bgLength);
+                        bgPivot = new Vector2(0.5f, 1f);
+                        bgAnchoredPos = new Vector2(0f, -startPosition);
+                        break;
+                    case MicroRTSUtils.DIRECTION_LEFT:
+                        bgSizeDelta = new Vector2(bgLength, thickness);
+                        bgPivot = new Vector2(1f, 0.5f);
+                        bgAnchoredPos = new Vector2(-startPosition, 0f);
+                        break;
+                    default:
+                        bgSizeDelta = new Vector2(bgLength, thickness);
+                        bgPivot = new Vector2(0f, 0.5f);
+                        bgAnchoredPos = new Vector2(startPosition, 0f);
+                        break;
+                }
+
+                backgroundRect.anchorMin = bgAnchorMin;
+                backgroundRect.anchorMax = bgAnchorMax;
+                backgroundRect.pivot = bgPivot;
+                backgroundRect.sizeDelta = bgSizeDelta;
+                backgroundRect.anchoredPosition = bgAnchoredPos;
             }
         }
 
@@ -166,9 +293,16 @@ namespace Problems.MicroRTS
 
             if (fillRect != null)
             {
-                float fillWidth = barWidth * 90f * currentProgress;
-                fillRect.sizeDelta = new Vector2(fillWidth, barHeight * 90f);
-                fillRect.anchoredPosition = new Vector2(barWidth * 5f, 0f);
+                if (isMovementBar && currentDirection >= 0)
+                {
+                    UpdateMovementBarProgress();
+                }
+                else
+                {
+                    float fillWidth = barWidth * 90f * currentProgress;
+                    fillRect.sizeDelta = new Vector2(fillWidth, barHeight * 90f);
+                    fillRect.anchoredPosition = new Vector2(barWidth * 5f, 0f);
+                }
             }
         }
 
