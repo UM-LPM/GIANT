@@ -1,6 +1,7 @@
 ﻿using AgentControllers;
 using AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
 using WebAPI.Models;
+using WebAPI.Models.EARS;
 
 namespace AgentOrganizations
 {
@@ -10,21 +11,20 @@ namespace AgentOrganizations
         public int IndividualId;
         public AgentController[] AgentControllers;
 
-        public Individual(int individualId, TreeModel treeModel) : base("Individual_" + individualId.ToString())
+        public Individual(int individualId, ProgramSolution program) : base("Individual_" + individualId.ToString())
         {
             IndividualId = individualId;
-            // TODO Update in the future to allow for multiple agent controllers
-            AgentControllers = new AgentController[1];
+            AgentControllers = new AgentController[program.SolutionParts.Count];
 
-            MapTreeModelToAgentController(treeModel);
+            MapProgramSolutionToIndividual(program);
         }
 
-        private void MapTreeModelToAgentController(TreeModel treeModel)
+        private void MapProgramSolutionToIndividual(ProgramSolution program)
         {
-            AgentControllers[0] = new BehaviorTreeAgentController("AgentController");
-
-            // Map TreeModel to BehaviorTreeAgentController
-            AgentControllers[0].MapTreeModelToAgentController(treeModel);
+            for (int i = 0; i < program.SolutionParts.Count; i++)
+            {
+                AgentControllers[i] = program.SolutionParts[i].MapToAgentController();
+            }
         }
     }
 }

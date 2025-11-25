@@ -3,6 +3,7 @@ using WebAPI.Models;
 using Newtonsoft.Json;
 using AgentOrganizations;
 using System.Text;
+using WebAPI.Models.EARS;
 
 namespace WebAPI.Controllers
 {
@@ -41,14 +42,14 @@ namespace WebAPI.Controllers
 
             try
             {
-                string jsonString = System.IO.File.ReadAllText(requestBodyParams.SourceFilePath!);
+                string jsonString = System.IO.File.ReadAllText(requestBodyParams.ApiRequestDataSourceFilePath!);
 
                 // Deserialize the JSON string to a dynamic object or a custom class
-                TreeModel[] treeModels = JsonConvert.DeserializeObject<TreeModel[]>(jsonString);
-
+                ProgramSolution[] programs = JsonConvert.DeserializeObject<ProgramSolution[]>(jsonString)!;
+                
                 ClearFolder(requestBodyParams.DestinationFilePath!);
 
-                if (treeModels.Length == 0)
+                if (programs.Length == 0)
                 {
                     Util.WriteErrorToFile("Failed to parse JSON", "No behaviour trees sent in request", "1_JsonToSoParserControllerError");
                     await _mqttClientService.PublishAsync(MqttClientService.Topic, JsonConvert.SerializeObject("Failed to parse JSON: No behaviour trees sent in request"));
@@ -56,17 +57,16 @@ namespace WebAPI.Controllers
                 }
 
                 int currentIndex = 0;
-                Individual[] individuals = new Individual[treeModels.Length];
+                Individual[] individuals = new Individual[programs.Length];
 
-                foreach (TreeModel treeModel in treeModels)
+                foreach (ProgramSolution program in programs)
                 {
-                    // Update node IDs
-                    TreeModelNode.UpdateNoteIDs(treeModel.RootNode!);
+                    foreach(ProgramSolutionPart programPart in program.SolutionParts)
+                    {
+                        programPart.Configure();
+                    }
 
-                    // Update node positions
-                    TreeModelNode.UpdateNodePositions(treeModel.RootNode);
-
-                    individuals[currentIndex] = new Individual(currentIndex, treeModel);
+                    individuals[currentIndex] = new Individual(currentIndex, program);
                     
                     currentIndex++;
                 }
@@ -88,7 +88,7 @@ namespace WebAPI.Controllers
                     {
                         client.Timeout = TimeSpan.FromMinutes(100);
 
-                        var task = client.PostAsync(requestBodyParams.CoordinatorURI, new StringContent(JsonConvert.SerializeObject(new CoordinatorEvalRequestData() { EvalEnvInstances = requestBodyParams.EvalEnvInstanceURIs, EvalRangeStart = 0, EvalRangeEnd = treeModels.Length, LastEvalIndividualFitnesses = requestBodyParams.LastEvalIndividualFitnesses }), Encoding.UTF8, "application/json"));
+                        var task = client.PostAsync(requestBodyParams.CoordinatorURI, new StringContent(JsonConvert.SerializeObject(new CoordinatorEvalRequestData() { EvalEnvInstances = requestBodyParams.EvalEnvInstanceURIs, EvalRangeStart = 0, EvalRangeEnd = programs.Length, LastEvalIndividualFitnesses = requestBodyParams.LastEvalIndividualFitnesses }), Encoding.UTF8, "application/json"));
                         task.Wait();
 
                         HttpResponseMessage responseMessage = await task;
@@ -112,7 +112,7 @@ namespace WebAPI.Controllers
                                 return BadRequest(new { Status = "Error", Message = $"Request failed response is null" });
                             }
 
-                            return Ok(new { Status = "Success", Message = "JSON parsing was successful.", Object = response });
+                            return Ok(new { Status = "Success", Message = "JSON parsing was successful.", CoordinatorEvaluationResult = response });
                         }
                         else
                         {
@@ -144,9 +144,9 @@ namespace WebAPI.Controllers
                 return "RequestBodyParams is null";
             }
 
-            if (requestBodyParams.SourceFilePath == null || requestBodyParams.SourceFilePath.Length == 0)
+            if (requestBodyParams.ApiRequestDataSourceFilePath == null || requestBodyParams.ApiRequestDataSourceFilePath.Length == 0)
             {
-                return "SourceFilePath is null";
+                return "ApiRequestDataSourceFilePath is null";
             }
 
             if (requestBodyParams.DestinationFilePath == null || requestBodyParams.DestinationFilePath.Length == 0)
