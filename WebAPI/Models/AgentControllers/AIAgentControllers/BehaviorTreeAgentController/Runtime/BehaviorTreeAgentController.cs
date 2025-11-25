@@ -3,6 +3,7 @@ using AgentControllers.AIAgentControllers.BehaviorTreeAgentController.BombClash;
 using AgentControllers.AIAgentControllers.BehaviorTreeAgentController.DodgeBall;
 using AgentControllers.AIAgentControllers.BehaviorTreeAgentController.Robostrike;
 using WebAPI.Models;
+using WebAPI.Models.EARS;
 
 namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 {
@@ -20,17 +21,23 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
             this.Blackboard = new Blackboard();
         }
 
-        public override void MapTreeModelToAgentController(TreeModel treeModel)
+        public override void MapProgramToAgentController(ProgramSolutionPart programPart)
         {
-            if (treeModel == null || treeModel.RootNode == null)
+            if (programPart == null)
             {
                 return;
             }
 
-            MapNodes(treeModel.RootNode);
+            if (programPart is BehaviorTree btProgramPart)
+            {
+                if (btProgramPart.RootNode == null)
+                    return;
+
+                MapNodes(btProgramPart.RootNode);
+            }
         }
 
-        private void MapNodes(TreeModelNode treeModelNode)
+        private void MapNodes(BTProgramSolutionPartNode treeModelNode)
         {
             if (treeModelNode == null)
             {
@@ -54,7 +61,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 
                 if (nodesModelToProcess.TreeModelNode.Children != null)
                 {
-                    foreach (TreeModelNode childTreeModelNode in nodesModelToProcess.TreeModelNode.Children)
+                    foreach (BTProgramSolutionPartNode childTreeModelNode in nodesModelToProcess.TreeModelNode.Children)
                     {
                         nodeModelsToProcessQueue.Enqueue(new NodeModelToProcess() { Node = child, TreeModelNode = childTreeModelNode });
                     }
@@ -62,7 +69,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
             }
         }
 
-        private BTNode CreateNode(BTNode parent, TreeModelNode treeModelNode)
+        private BTNode CreateNode(BTNode parent, BTProgramSolutionPartNode treeModelNode)
         {
             BTNode node;
 
@@ -177,6 +184,6 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
     class NodeModelToProcess
     {
         public BTNode Node { get; set; }
-        public TreeModelNode TreeModelNode { get; set; }
+        public BTProgramSolutionPartNode TreeModelNode { get; set; }
     }
 }

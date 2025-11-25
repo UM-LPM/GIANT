@@ -1,5 +1,6 @@
 ﻿
 using WebAPI.Models;
+using WebAPI.Models.EARS;
 
 namespace AgentControllers
 {
@@ -20,6 +21,6 @@ namespace AgentControllers
             ControllerType = controllerType;
         }
 
-        public abstract void MapTreeModelToAgentController(TreeModel treeModel);
+        public abstract void MapProgramToAgentController(ProgramSolutionPart programPart);
     }
 }
