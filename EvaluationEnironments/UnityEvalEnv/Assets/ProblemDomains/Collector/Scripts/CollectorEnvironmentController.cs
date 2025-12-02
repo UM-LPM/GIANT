@@ -190,7 +190,7 @@ namespace Problems.Collector
                 }
 
                 // Time penalty
-                timePenalty = CurrentSimulationSteps / SimulationSteps;
+                timePenalty = CurrentSimulationSteps / (float)SimulationSteps;
                 timePenalty = (float)Math.Round(CollectorFitness.FitnessValues[CollectorFitness.FitnessKeys.TimePenalty.ToString()] * timePenalty, 4);
                 agent.AgentFitness.UpdateFitness(timePenalty, CollectorFitness.FitnessKeys.TimePenalty.ToString());
 
