@@ -26,6 +26,7 @@ namespace Problems.MicroRTS
         // Game state
         private List<Player> players = new List<Player>();
         private List<Unit> units = new List<Unit>();
+        private bool gameEnded = false;
 
         // Unit registry: maps Unit ID to GameObject
         private Dictionary<long, GameObject> unitGameObjects = new Dictionary<long, GameObject>();
@@ -201,6 +202,7 @@ namespace Problems.MicroRTS
             // Game is over if no units remain or only one player has units
             if (totalAliveUnits == 0)
             {
+                gameEnded = true;
                 FinishGame();
                 return;
             }
@@ -216,8 +218,19 @@ namespace Problems.MicroRTS
 
             if (playersWithUnits <= 1)
             {
+                gameEnded = true;
                 FinishGame();
             }
+        }
+
+        public override bool IsSimulationFinished()
+        {
+            return base.IsSimulationFinished() || gameEnded;
+        }
+
+        protected override void OnPreFinishGame()
+        {
+            // TODO AO: agent fitness when MicroRTSFitness is implemented
         }
 
         // PhysicalGameState methods
