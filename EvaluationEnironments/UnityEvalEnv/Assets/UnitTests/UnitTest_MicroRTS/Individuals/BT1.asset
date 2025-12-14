@@ -1,5 +1,129 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-7943734078210432001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e5379af504924b2c91f149714b30d8c, type: 3}
+  m_Name: HaveBarracks
+  m_EditorClassIdentifier: 
+  position: {x: 3.5, y: 664}
+  description: 
+  guid: a1ff54f71c5b34e859e33f137af9efb6
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+--- !u!114 &-7227751833045283346
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
+  m_Name: Sequencer
+  m_EditorClassIdentifier: 
+  position: {x: 596.26, y: 398}
+  description: 
+  guid: d470a42a9836d4252914a705a78c471a
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  children:
+  - {fileID: 8116419302680989121}
+  - {fileID: 7497796473802508630}
+--- !u!114 &-7061690345617478564
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 901e08fa627694079a46c555dbc03e3a, type: 3}
+  m_Name: AttackClosestEnemy
+  m_EditorClassIdentifier: 
+  position: {x: 747.5, y: 666}
+  description: 
+  guid: 16c0a6ef7cf95404dacba5e24ebdbc8e
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+--- !u!114 &-5314683863634769763
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
+  m_Name: Sequencer
+  m_EditorClassIdentifier: 
+  position: {x: -754.5, y: 661}
+  description: 
+  guid: fc42442e1dc8b45178b2a5a0cf54fd09
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  children:
+  - {fileID: -4608788476782033066}
+  - {fileID: 8641341030659338416}
+--- !u!114 &-4946050222645857879
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 460be9e34c566ea45b9e282b1adcb028, type: 3}
+  m_Name: Selector
+  m_EditorClassIdentifier: 
+  position: {x: -448.5, y: 535}
+  description: 
+  guid: 3134644520baf44eb8872419efb7a2bc
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  children:
+  - {fileID: -5314683863634769763}
+  - {fileID: 6160370386959149367}
+--- !u!114 &-4608788476782033066
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d89d380783be4101a81f345eda88439, type: 3}
+  m_Name: WorkersLessThan
+  m_EditorClassIdentifier: 
+  position: {x: -906.5, y: 794}
+  description: 
+  guid: 9996a7ec17a074da89296d5b10b33630
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  maxWorkers: 3
 --- !u!114 &-4592937589698024486
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12,16 +136,83 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afb5496e8cd973748a10b3e3ef436ebd, type: 3}
   m_Name: Repeat
   m_EditorClassIdentifier: 
-  position: {x: 0, y: 134}
+  position: {x: 1, y: 135}
   description: 
   guid: 88df050f8d1ca4244aa7d17f1ff83940
   drawGizmos: 0
   state: 0
   started: 0
   callFrequencyCount: 0
-  child: {fileID: 3497904211523320571}
+  child: {fileID: -1543716596575081804}
   restartOnSuccess: 1
   restartOnFailure: 1
+--- !u!114 &-3828043326359891033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58e48107a335348d1b02fd88d68b2bf5, type: 3}
+  m_Name: LateGame
+  m_EditorClassIdentifier: 
+  position: {x: 1157.5, y: 710}
+  description: 
+  guid: 923b9a8ebc8bf4257b6dd39b4ef39169
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  stepThreshold: 1000
+--- !u!114 &-1543716596575081804
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 460be9e34c566ea45b9e282b1adcb028, type: 3}
+  m_Name: Selector
+  m_EditorClassIdentifier: 
+  position: {x: 2, y: 270.5}
+  description: 
+  guid: 60b031a1088ee4eb8b9650bd1fb31cb1
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  children:
+  - {fileID: 2761650088475910502}
+  - {fileID: 5000605211848364252}
+  - {fileID: -7227751833045283346}
+  - {fileID: 9216780762930522802}
+--- !u!114 &-889944261605449527
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 460be9e34c566ea45b9e282b1adcb028, type: 3}
+  m_Name: Selector
+  m_EditorClassIdentifier: 
+  position: {x: 1053.5, y: 536}
+  description: 
+  guid: 7a88daf92401a425e9f6512543d1b77a
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  children:
+  - {fileID: -7061690345617478564}
+  - {fileID: 7763851999210720198}
+  - {fileID: -3828043326359891033}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -41,7 +232,108 @@ MonoBehaviour:
   Nodes:
   - {fileID: 2958183315786795140}
   - {fileID: -4592937589698024486}
-  - {fileID: 3497904211523320571}
+  - {fileID: -1543716596575081804}
+  - {fileID: 2922487157775786472}
+  - {fileID: 2761650088475910502}
+  - {fileID: -5314683863634769763}
+  - {fileID: -4608788476782033066}
+  - {fileID: 8641341030659338416}
+  - {fileID: -4946050222645857879}
+  - {fileID: 6160370386959149367}
+  - {fileID: 5000605211848364252}
+  - {fileID: -7227751833045283346}
+  - {fileID: 3501061756245585839}
+  - {fileID: 2933284520157880533}
+  - {fileID: -7943734078210432001}
+  - {fileID: 2224712234459243873}
+  - {fileID: 8116419302680989121}
+  - {fileID: 7497796473802508630}
+  - {fileID: 9216780762930522802}
+  - {fileID: -889944261605449527}
+  - {fileID: -7061690345617478564}
+  - {fileID: 7763851999210720198}
+  - {fileID: -3828043326359891033}
+--- !u!114 &2224712234459243873
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fd9a7a6091134343b813af4b4747773, type: 3}
+  m_Name: BuildBarracks
+  m_EditorClassIdentifier: 
+  position: {x: 205.5, y: 526}
+  description: 
+  guid: 867032bf316ec44bcba0db817fcb1441
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+--- !u!114 &2761650088475910502
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
+  m_Name: Sequencer
+  m_EditorClassIdentifier: 
+  position: {x: -448.5, y: 401.5}
+  description: Early game strategy
+  guid: b40c56dc1e4184c4f8c32f43f7c86f59
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  children:
+  - {fileID: 2922487157775786472}
+  - {fileID: -4946050222645857879}
+--- !u!114 &2922487157775786472
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49a57f47c88b941af8d90a66abd5711a, type: 3}
+  m_Name: EarlyGame
+  m_EditorClassIdentifier: 
+  position: {x: -599.5, y: 529.5}
+  description: 
+  guid: 65e4ad99c59254684845d5c29611a31b
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  stepThreshold: 100
+--- !u!114 &2933284520157880533
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e658b1bd308bc5c429f5a9b404a04943, type: 3}
+  m_Name: Inverter
+  m_EditorClassIdentifier: 
+  position: {x: 2.5, y: 523}
+  description: 
+  guid: 9d754ef5b554747cd94df63c52bc8212
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  child: {fileID: -7943734078210432001}
 --- !u!114 &2958183315786795140
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62,7 +354,7 @@ MonoBehaviour:
   started: 0
   callFrequencyCount: 0
   child: {fileID: -4592937589698024486}
---- !u!114 &3497904211523320571
+--- !u!114 &3501061756245585839
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -71,14 +363,155 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1fd1e85f30abba2499f6834e124b1450, type: 3}
-  m_Name: MoveForward
+  m_Script: {fileID: 11500000, guid: 711f70b1a6e9f4607890217a4209b944, type: 3}
+  m_Name: ResourcesGreaterThan
   m_EditorClassIdentifier: 
-  position: {x: 0, y: 282}
+  position: {x: -181.5, y: 527}
   description: 
-  guid: be605c64789da744a8020d31c549dfad
+  guid: d6b32bfcbeb25493294f8df834a3d302
   drawGizmos: 0
   state: 0
   started: 0
   callFrequencyCount: 0
-  moveForwardDirection: 3
+  threshold: 0
+--- !u!114 &5000605211848364252
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
+  m_Name: Sequencer
+  m_EditorClassIdentifier: 
+  position: {x: 0.5, y: 400}
+  description: Barracs
+  guid: 48c4515640e5a4a37beebd217ed050aa
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  children:
+  - {fileID: 3501061756245585839}
+  - {fileID: 2933284520157880533}
+  - {fileID: 2224712234459243873}
+--- !u!114 &6160370386959149367
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45432edfccc4244aa806b2ea2d2cf065, type: 3}
+  m_Name: GatherResource
+  m_EditorClassIdentifier: 
+  position: {x: -298.5, y: 663}
+  description: 
+  guid: 487f72edc2d6a459391abfc3fcb17585
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+--- !u!114 &7497796473802508630
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e03a7d49fe46a4065a2a1d1b1f7c4006, type: 3}
+  m_Name: TrainLightUnit
+  m_EditorClassIdentifier: 
+  position: {x: 596.5, y: 527}
+  description: 
+  guid: 90651b77bf9cb4b0aa11cbd9ba2ab7c6
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+--- !u!114 &7763851999210720198
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3922f138ddceb4abb9d48ee688e493b4, type: 3}
+  m_Name: MidGame
+  m_EditorClassIdentifier: 
+  position: {x: 962.5, y: 707}
+  description: 
+  guid: 05f47f28f25554aa697c61c3c9cbe74f
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  earlyThreshold: 100
+  lateThreshold: 1000
+--- !u!114 &8116419302680989121
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e5379af504924b2c91f149714b30d8c, type: 3}
+  m_Name: HaveBarracks
+  m_EditorClassIdentifier: 
+  position: {x: 411.5, y: 527}
+  description: 
+  guid: 203f641497ba84e69b60bfb20e30ca7c
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+--- !u!114 &8641341030659338416
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80971e4d470f8473db829a8d4c97bca9, type: 3}
+  m_Name: TrainWorker
+  m_EditorClassIdentifier: 
+  position: {x: -603.5, y: 792}
+  description: 
+  guid: d5d6bbfe4a47d41e0a218adf882c655f
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+--- !u!114 &9216780762930522802
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61431bba79d7d7843b82bf1de71703f5, type: 3}
+  m_Name: Sequencer
+  m_EditorClassIdentifier: 
+  position: {x: 1053.5, y: 401}
+  description: 
+  guid: 983753cda7512499b9836b02213d788f
+  drawGizmos: 0
+  state: 0
+  started: 0
+  callFrequencyCount: 0
+  children:
+  - {fileID: -889944261605449527}
