@@ -29,7 +29,14 @@ namespace WebAPI.Controllers
         {
             if (!_mqttClientService.GetMqttClient().IsConnected)
             {
-                await _mqttClientService.StartAsync(CancellationToken.None);
+                try
+                {
+                    await _mqttClientService.StartAsync(CancellationToken.None);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
             }
 
             string? error = ValidateInput(requestBodyParams);
