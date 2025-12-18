@@ -251,7 +251,7 @@ namespace Base
                 }
             }
 
-            if(environments.Count == 0)
+            if(environments.Count == 0 && MatchFitnesses.Count == 0) // MatchFitnesses.Count == 0 to also cover the case where all Matches had predefined scores (Dummy match)
             {
                 throw new Exception("No simulation environments were loaded. Please check the Environments configuration.");
             }

@@ -87,10 +87,11 @@ namespace Evaluators
                         int start = i * numOfMatchesPerInstance;
                         int end = start + numOfMatchesPerInstance + (i == numOfRequiredInstances - 1 ? remainder : 0);
 
+                        var matchesForInstance = matches.Skip(start).Take(end - start).ToArray();
                         string json = JsonConvert.SerializeObject(new
                         CommunicatorEvalRequestData()
                         {
-                            Matches = matches[start..end]
+                            Matches = matchesForInstance
                         }, MainConfiguration.JSON_SERIALIZATION_SETTINGS);
 
                         tasks[i] = client.PostAsync(evalRequestData.EvalEnvInstances[i], new StringContent(json, Encoding.UTF8, "application/json"));
