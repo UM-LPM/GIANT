@@ -112,7 +112,7 @@ namespace Configuration
                 case "Collector":
                     UnityEngine.SceneManagement.SceneManager.LoadScene("CollectorBaseScene");
                     break;
-                case "Robostrike":
+                case "RoboStrike":
                     UnityEngine.SceneManagement.SceneManager.LoadScene("RobostrikeBaseScene");
                     break;
                 case "Soccer":

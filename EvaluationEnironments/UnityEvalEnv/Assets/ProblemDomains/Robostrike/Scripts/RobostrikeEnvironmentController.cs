@@ -512,19 +512,28 @@ namespace Problems.Robostrike
                 agent.AgentFitness.UpdateFitness(sectorExplorationFitness, RobostrikeFitness.FitnessKeys.SectorExploration.ToString());
 
                 // Health powerUps
-                healthPowerUpsFitness = agent.HealtPowerUpsCollected / (float)PowerUpSpawner.HealthBoxSpawned;
-                healthPowerUpsFitness = (float)Math.Round(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.PowerUp_Pickup_Health.ToString()] * healthPowerUpsFitness, 4);
-                agent.AgentFitness.UpdateFitness(healthPowerUpsFitness, RobostrikeFitness.FitnessKeys.PowerUp_Pickup_Health.ToString());
+                if(PowerUpSpawner.HealthBoxSpawned > 0)
+                {
+                    healthPowerUpsFitness = agent.HealtPowerUpsCollected / (float)PowerUpSpawner.HealthBoxSpawned;
+                    healthPowerUpsFitness = (float)Math.Round(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.PowerUp_Pickup_Health.ToString()] * healthPowerUpsFitness, 4);
+                    agent.AgentFitness.UpdateFitness(healthPowerUpsFitness, RobostrikeFitness.FitnessKeys.PowerUp_Pickup_Health.ToString());
+                }
 
                 // Ammo powerUps
-                ammoPowerUpsFitness = agent.AmmoPowerUpsCollected / (float)PowerUpSpawner.AmmoBoxSpawned;
-                ammoPowerUpsFitness = (float)Math.Round(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.PowerUp_Pickup_Ammo.ToString()] * ammoPowerUpsFitness, 4);
-                agent.AgentFitness.UpdateFitness(ammoPowerUpsFitness, RobostrikeFitness.FitnessKeys.PowerUp_Pickup_Ammo.ToString());
+                if(PowerUpSpawner.AmmoBoxSpawned > 0)
+                {
+                    ammoPowerUpsFitness = agent.AmmoPowerUpsCollected / (float)PowerUpSpawner.AmmoBoxSpawned;
+                    ammoPowerUpsFitness = (float)Math.Round(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.PowerUp_Pickup_Ammo.ToString()] * ammoPowerUpsFitness, 4);
+                    agent.AgentFitness.UpdateFitness(ammoPowerUpsFitness, RobostrikeFitness.FitnessKeys.PowerUp_Pickup_Ammo.ToString());
+                }
 
                 // Shield powerUps
-                shieldPowerUpsFitness = agent.ShieldPowerUpsCollected / (float)PowerUpSpawner.ShieldBoxSpawned;
-                shieldPowerUpsFitness = (float)Math.Round(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.PowerUp_Pickup_Shield.ToString()] * shieldPowerUpsFitness, 4);
-                agent.AgentFitness.UpdateFitness(shieldPowerUpsFitness, RobostrikeFitness.FitnessKeys.PowerUp_Pickup_Shield.ToString());
+                if(PowerUpSpawner.ShieldBoxSpawned > 0)
+                {
+                    shieldPowerUpsFitness = agent.ShieldPowerUpsCollected / (float)PowerUpSpawner.ShieldBoxSpawned;
+                    shieldPowerUpsFitness = (float)Math.Round(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.PowerUp_Pickup_Shield.ToString()] * shieldPowerUpsFitness, 4);
+                    agent.AgentFitness.UpdateFitness(shieldPowerUpsFitness, RobostrikeFitness.FitnessKeys.PowerUp_Pickup_Shield.ToString());
+                }
 
                 // Missiles fired
                 allPossibleMissilesFired = (CurrentSimulationSteps * Time.fixedDeltaTime) / MissileShootCooldown;
