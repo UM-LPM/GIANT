@@ -14,7 +14,7 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
 
         public override void Execute(ActionBuffer actionsOut)
         {
-            actionsOut.AddDiscreteAction("moveSideDirection", moveForwardDirection == MoveForwardDirection.Random ? Util.NextIntAC(context.transform.GetInstanceID(), 3) : (int)moveForwardDirection);
+            actionsOut.AddDiscreteAction("moveForwardDirection", moveForwardDirection == MoveForwardDirection.Random ? Util.NextIntAC(context.transform.GetInstanceID(), 3) : (int)moveForwardDirection);
         }
     }
 
