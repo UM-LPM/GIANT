@@ -10,6 +10,7 @@ using Spawners;
 using Utils;
 using AgentControllers;
 using Configuration;
+using AgentControllers.AIAgentControllers.ADiSAgentController;
 
 namespace Base
 {
@@ -229,6 +230,9 @@ namespace Base
                     case BehaviorTreeAgentController:
                         ((BehaviorTreeAgentController)Agents[i].AgentController).Bind(BehaviorTreeAgentController.CreateBehaviourTreeContext(Agents[i].gameObject));
                         ((BehaviorTreeAgentController)Agents[i].AgentController).InitNodeCallFrequencyCounter();
+                        break;
+                    case ADiSAgentController:
+                        ((ADiSAgentController)Agents[i].AgentController).BindAndInit(ADiSAgentController.CreateADiSContext(Agents[i].gameObject));
                         break;
                     case ManualAgentController:
                         break;
