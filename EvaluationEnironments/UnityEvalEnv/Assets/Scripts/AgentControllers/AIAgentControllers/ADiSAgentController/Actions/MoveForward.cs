@@ -1,0 +1,28 @@
+﻿using Utils;
+
+namespace AgentControllers.AIAgentControllers.ADiSAgentController
+{
+    public class MoveForward : Action
+    {
+        public MoveForwardDirection moveForwardDirection = MoveForwardDirection.Random;
+        private Util Util;
+
+        public override void Init()
+        {
+            Util = context.gameObject.GetComponentInParent<Util>();
+        }
+
+        public override void Execute(ActionBuffer actionsOut)
+        {
+            actionsOut.AddDiscreteAction("moveSideDirection", moveForwardDirection == MoveForwardDirection.Random ? Util.NextIntAC(context.transform.GetInstanceID(), 3) : (int)moveForwardDirection);
+        }
+    }
+
+    public enum MoveForwardDirection
+    {
+        Forward = 1,
+        Backward = 2,
+        NoAction = 0,
+        Random = 3
+    }
+}
