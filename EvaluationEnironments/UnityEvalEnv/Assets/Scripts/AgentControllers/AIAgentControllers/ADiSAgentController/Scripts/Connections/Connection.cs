@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace AgentControllers.AIAgentControllers.ADiSAgentController
 {
-    [Serializable]
-    public class Connection: ScriptableObject
+    public class Connection: ADiSComponent
     {
-        public List<ActivatorConnection> ActivatorConnections;
-        public List<Action> Actions;
+        public List<ActivatorConnection> ActivatorConnections = new List<ActivatorConnection>();
+        public List<Action> Actions = new List<Action>();
         public double Weight;
 
         public bool IsActivated()
@@ -36,8 +36,9 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
             }
         }
 
-        public void BindAndInit(Context context)
+        public override void BindAndInit(Context context)
         {
+            base.BindAndInit(context);
             foreach (var activatorConnection in ActivatorConnections)
             {
                 activatorConnection.Activator.BindAndInit(context);
@@ -49,7 +50,7 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
             }
         }
 
-        public Connection Clone()
+        public override ADiSComponent Clone()
         {
             var clone = ScriptableObject.CreateInstance<Connection>();
             clone.Weight = Weight;
@@ -74,6 +75,11 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
             }
 
             return clone;
+        }
+
+        public override void Init()
+        {
+            return; // Nothing to init
         }
     }
 }

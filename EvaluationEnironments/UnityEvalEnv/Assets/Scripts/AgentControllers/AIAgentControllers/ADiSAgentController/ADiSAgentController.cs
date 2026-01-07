@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
+using UnityEditor.MemoryProfiler;
 using UnityEngine;
 
 namespace AgentControllers.AIAgentControllers.ADiSAgentController
@@ -9,7 +11,9 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
     [CreateAssetMenu(fileName = "ADiSAgentController", menuName = "AgentControllers/AIAgentControllers/ADiSAgentController")]
     public class ADiSAgentController : AIAgentController
     {
-        public List<Connection> Connections;
+        public List<Connection> Connections = new List<Connection>();
+
+        public List<ADiSComponent> Components = new List<ADiSComponent>();
 
         public override void AddAgentControllerToSO(ScriptableObject parent)
         {
@@ -22,7 +26,7 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
             clone.Connections = new List<Connection>();
             foreach (var connection in Connections)
             {
-                clone.Connections.Add(connection.Clone());
+                clone.Connections.Add(connection.Clone() as Connection);
             }
 
             return clone;
@@ -63,6 +67,89 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
         public static Context CreateADiSContext(GameObject agentGameObject)
         {
             return Context.CreateFromGameObject(agentGameObject);
+        }
+
+        public ADiSComponent CreateComponent(System.Type type)
+        {
+            ADiSComponent component = ScriptableObject.CreateInstance(type) as ADiSComponent;
+            component.name = type.Name;
+            component.guid = GUID.Generate().ToString();
+
+            Undo.RecordObject(this, "ADiS (CreateComponent)");
+            if(component is Connection connection)
+            {
+                Connections.Add(connection);
+            }
+
+            Components.Add(component);
+
+            if (!Application.isPlaying)
+            {
+                AssetDatabase.AddObjectToAsset(component, this);
+            }
+
+            Undo.RegisterCreatedObjectUndo(component, "ADiS (CreateComponent)");
+
+            AssetDatabase.SaveAssets();
+            return component;
+        }
+
+        public void DeleteComponent(ADiSComponent component)
+        {
+            Undo.RecordObject(this, "ADiS (DeleteComponent)");
+            Components.Remove(component);
+
+            Undo.DestroyObjectImmediate(component);
+
+            AssetDatabase.SaveAssets();
+        }
+
+        public void AddComponent(ADiSComponent parent, ADiSComponent child)
+        {
+            if (parent is Connection connection && child is Action action)
+            {
+                connection.Actions.Add(action);
+                return;
+            }
+
+            if (parent is Activator activator && child is Connection targetConnection)
+            {
+                var activatorConnection = CreateActivatorConnection(activator);
+                targetConnection.ActivatorConnections.Add(activatorConnection);
+            }
+        }
+
+        private ActivatorConnection CreateActivatorConnection(Activator activator)
+        {
+            var ac = ScriptableObject.CreateInstance<ActivatorConnection>();
+            ac.Activator = activator;
+            ac.IsNegated = false;
+            ac.name = "ActivatorConnection";
+            ac.guid = GUID.Generate().ToString();
+
+            if (!Application.isPlaying)
+            {
+                AssetDatabase.AddObjectToAsset(ac, this);
+                AssetDatabase.SaveAssets();
+            }
+
+            return ac;
+        }
+
+        public void RemoveComponent(ADiSComponent parent, ADiSComponent child)
+        {
+            if(parent is Connection connection1 && child is Action action1)
+            {
+                connection1.Actions.Remove(action1);
+                return;
+            }
+            
+            if (parent is Activator activator1 && child is Connection connection2)
+            {
+                var activatorConnection = connection2.ActivatorConnections.Where(ac => ac.Activator == activator1).First();
+                connection2.ActivatorConnections.Remove(activatorConnection);
+                AssetDatabase.RemoveObjectFromAsset(activatorConnection);
+            }
         }
     }
 }
