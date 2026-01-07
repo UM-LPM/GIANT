@@ -12,7 +12,6 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
         ADiSView adisView;
         ADiSAgentController adisAgentController;
         InspectorView inspectorView;
-        IMGUIContainer blackboardView;
         ToolbarMenu toolbarMenu;
         TextField adisNameField;
         TextField locationPathField;
@@ -21,7 +20,6 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
         ADiSSettings settings;
 
         SerializedObject adisObject;
-        SerializedProperty blackboardProperty; // TODO Remove Blackboard completely if not needed
 
         [MenuItem("AI/ADiSEditor")]
         public static void OpenWindow()
@@ -170,7 +168,6 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
 
 
             adisObject = new SerializedObject(adisAgentController);
-            blackboardProperty = adisObject.FindProperty("Blackboard");
 
             EditorApplication.delayCall += () => {
                 adisView.FrameAll();
