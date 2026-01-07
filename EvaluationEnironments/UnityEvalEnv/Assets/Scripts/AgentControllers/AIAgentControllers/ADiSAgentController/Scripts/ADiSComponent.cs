@@ -4,19 +4,19 @@ using UnityEngine;
 namespace AgentControllers.AIAgentControllers.ADiSAgentController
 {
     [Serializable]
-    public abstract class ADiSComponent: ScriptableObject
+    public abstract class ADiSComponent: Node
     {
         [HideInInspector] public Context context;
 
         public abstract void Init();
 
-        public void BindAndInit(Context context)
+        public virtual void BindAndInit(Context context)
         {
             this.context = context;
             Init();
         }
 
-        public ADiSComponent Clone()
+        public virtual ADiSComponent Clone()
         {
             return Instantiate(this);
         }

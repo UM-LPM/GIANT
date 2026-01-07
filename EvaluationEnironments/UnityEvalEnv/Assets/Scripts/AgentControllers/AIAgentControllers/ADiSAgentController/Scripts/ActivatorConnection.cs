@@ -1,10 +1,9 @@
 ﻿using System;
-using UnityEngine;
 
 namespace AgentControllers.AIAgentControllers.ADiSAgentController
 {
     [Serializable]
-    public class ActivatorConnection : ScriptableObject
+    public class ActivatorConnection : Node
     {
         public Activator Activator;
         public bool IsNegated;
