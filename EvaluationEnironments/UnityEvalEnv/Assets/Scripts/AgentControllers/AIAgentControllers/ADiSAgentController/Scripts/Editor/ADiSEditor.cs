@@ -181,8 +181,7 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
 
         private void OnInspectorUpdate()
         {
-            // TODO: Iplement
-            //adisView?.UpdateNodeStates();
+            adisView?.UpdateNodeStates();
         }
 
         void CreateNewADiS(string assetName)

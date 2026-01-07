@@ -7,6 +7,12 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
     public abstract class ADiSComponent: Node
     {
         [HideInInspector] public Context context;
+        [HideInInspector] public bool IsExecuting = false;
+
+        public virtual void ToggleIsExecuting(bool isExecuting)
+        {
+            IsExecuting = isExecuting;
+        }
 
         public abstract void Init();
 
