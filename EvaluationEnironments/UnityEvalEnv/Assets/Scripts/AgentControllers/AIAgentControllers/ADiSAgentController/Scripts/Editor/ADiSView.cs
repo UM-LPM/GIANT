@@ -1,13 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.Plastic.Antlr3.Runtime.Tree;
-using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
-using Utils;
 
 namespace AgentControllers.AIAgentControllers.ADiSAgentController
 {
@@ -17,6 +14,8 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
         public new class UxmlFactory : UxmlFactory<ADiSView, UxmlTraits> { }
         ADiSAgentController adis;
         ADiSSettings settings;
+
+        private const float GridSize = 20f;
 
         public struct ScriptTemplate
         {
@@ -44,8 +43,7 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
             this.AddManipulator(new SelectionDragger());
             this.AddManipulator(new RectangleSelector());
 
-            var styleSheet = settings.adisStyle;
-            styleSheets.Add(styleSheet);
+            styleSheets.Add(settings.adisStyle);
 
             Undo.undoRedoPerformed += OnUndoRedo;
         }
@@ -88,34 +86,69 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
                     ADiSComponentView parentView = FindComponentView(ac.Activator);
                     ADiSComponentView childView = FindComponentView(c);
 
-                    Edge edge = parentView.output.ConnectTo(childView.input); // Create connection
-                    AddElement(edge); // Add edge to graph
+                    var edge = new ADiSEdge(ac)
+                    {
+                        output = parentView.output,
+                        input = childView.input
+                    };
+
+                    edge.output.Connect(edge);
+                    edge.input.Connect(edge);
+                    AddElement(edge);
                 });
             });
-
-            // Create edges
-            /*tree.Nodes.ForEach(n => {
-                var children = BehaviorTreeAgentController.GetChildren(n);
-                children.ForEach(c => {
-                    BTNodeView parentView = FindNodeView(n);
-                    BTNodeView childView = FindNodeView(c);
-
-                    Edge edge = parentView.output.ConnectTo(childView.input); // Create connection
-                    AddElement(edge); // Add edge to graph
-                });
-            });*/
         }
 
         // Filter all ports based on the input (start) port, so we are able to only connect input and output
         public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
         {
-            return ports.ToList().Where(endPort =>
-            endPort.direction != startPort.direction &&
-            endPort.node != startPort.node).ToList();
+            var compatible = new List<Port>();
+
+            foreach (var port in ports)
+            {
+                if (port == startPort)
+                    continue;
+
+                if (port.direction == startPort.direction)
+                    continue;
+
+                if (port.node == startPort.node)
+                    continue;
+
+                if (IsValidConnection(startPort, port))
+                    compatible.Add(port);
+            }
+
+            return compatible;
+        }
+
+        private bool IsValidConnection(Port from, Port to)
+        {
+            var fromNode = from.node as ADiSComponentView;
+            var toNode = to.node as ADiSComponentView;
+
+            // Activator -> Connection || Connection -> Action
+            return (fromNode.component is Activator && toNode.component is Connection) || (fromNode.component is Connection && toNode.component is Action);
         }
 
         private GraphViewChange OnGraphViewChanged(GraphViewChange graphViewChange)
         {
+            if (graphViewChange.movedElements != null)
+            {
+                foreach (var element in graphViewChange.movedElements)
+                {
+                    if (element is ADiSComponentView nodeView)
+                    {
+                        Vector2 pos = nodeView.GetPosition().position;
+
+                        pos.x = Mathf.Round(pos.x / GridSize) * GridSize;
+                        pos.y = Mathf.Round(pos.y / GridSize) * GridSize;
+
+                        nodeView.SetPosition(new Rect(pos, nodeView.GetPosition().size));
+                    }
+                }
+            }
+
             if (graphViewChange.elementsToRemove != null)
             {
                 graphViewChange.elementsToRemove.ForEach(elem => {
@@ -137,12 +170,35 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
 
             if (graphViewChange.edgesToCreate != null)
             {
+                var acEdgesToCreate = new Dictionary<Edge, ActivatorConnection>();
+
                 graphViewChange.edgesToCreate.ForEach(edge => {
                     ADiSComponentView parentView = edge.output.node as ADiSComponentView;
                     ADiSComponentView childView = edge.input.node as ADiSComponentView;
                     
-                    adis.AddComponent(parentView.component, childView.component);
+                    var ac = adis.AddComponent(parentView.component, childView.component);
+                    if(ac != null)
+                        acEdgesToCreate.Add(edge, ac);
                 });
+
+                // For each ActivatorConnection edge created, replace the edge with an ADiSEdge
+                foreach (var kvp in acEdgesToCreate)
+                {
+                    Edge oldEdge = kvp.Key;
+                    ActivatorConnection ac = kvp.Value;
+
+                    graphViewChange.edgesToCreate.Remove(oldEdge);
+
+                    var newEdge = new ADiSEdge(ac)
+                    {
+                        output = oldEdge.output,
+                        input = oldEdge.input
+                    };
+
+                    newEdge.output.Connect(newEdge);
+                    newEdge.input.Connect(newEdge);
+                    AddElement(newEdge);
+                }
             }
 
             nodes.ForEach((n) => {

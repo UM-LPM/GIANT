@@ -104,19 +104,23 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
             AssetDatabase.SaveAssets();
         }
 
-        public void AddComponent(ADiSComponent parent, ADiSComponent child)
+        public ActivatorConnection AddComponent(ADiSComponent parent, ADiSComponent child)
         {
             if (parent is Connection connection && child is Action action)
             {
                 connection.Actions.Add(action);
-                return;
+                return null;
             }
 
             if (parent is Activator activator && child is Connection targetConnection)
             {
                 var activatorConnection = CreateActivatorConnection(activator);
                 targetConnection.ActivatorConnections.Add(activatorConnection);
+
+                return activatorConnection;
             }
+
+            return null;
         }
 
         private ActivatorConnection CreateActivatorConnection(Activator activator)
