@@ -9,7 +9,7 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
     {
         public List<ActivatorConnection> ActivatorConnections = new List<ActivatorConnection>();
         public List<Action> Actions = new List<Action>();
-        public double Weight;
+        public double Weight = 1.0;
 
         public bool IsActivated()
         {
@@ -22,8 +22,10 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
                 }
                 if (!activated)
                 {
+                    activatorConnection.Activator.ToggleIsActive(false);
                     return false;
                 }
+                activatorConnection.Activator.ToggleIsActive(true);
             }
             return true;
         }
@@ -80,6 +82,21 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
         public override void Init()
         {
             return; // Nothing to init
+        }
+
+        public override void ToggleIsExecuting(bool isActive)
+        {
+            base.ToggleIsExecuting(isActive);
+
+            foreach (var action in Actions)
+            {
+                action.ToggleIsExecuting(isActive);
+            }
+
+            foreach (var activatorConnection in ActivatorConnections)
+            {
+                activatorConnection.Activator.ToggleIsExecuting(isActive);
+            }
         }
     }
 }

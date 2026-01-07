@@ -306,5 +306,13 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
             nodeView.OnNodeSelected = OnNodeSelected;
             AddElement(nodeView);
         }
+
+        public void UpdateNodeStates()
+        {
+            nodes.ForEach(n => {
+                ADiSComponentView view = n as ADiSComponentView;
+                view.UpdateState();
+            });
+        }
     }
 }

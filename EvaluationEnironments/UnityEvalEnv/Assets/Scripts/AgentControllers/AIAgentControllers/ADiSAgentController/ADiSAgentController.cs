@@ -34,10 +34,13 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
 
         public override void GetActions(in ActionBuffer actionsOut)
         {
+
             // 1. Find all activated connections
             var activatedConnections = new List<Connection>();
+
             foreach (var connection in Connections)
             {
+                connection.ToggleIsExecuting(false);
                 if (connection.IsActivated())
                 {
                     activatedConnections.Add(connection);
@@ -52,6 +55,10 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
             // 3. Get and set the actions from the selected connection
             if(selectedConnection != null)
             {
+#if UNITY_EDITOR
+                selectedConnection.IsActivated(); // Enable this only in editor to show active activators
+#endif
+                selectedConnection.ToggleIsExecuting(true);
                 selectedConnection.GetActions(actionsOut);
             }
         }
