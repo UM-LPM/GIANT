@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
-using UnityEditor.MemoryProfiler;
 using UnityEngine;
 
 namespace AgentControllers.AIAgentControllers.ADiSAgentController
@@ -17,7 +16,20 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
 
         public override void AddAgentControllerToSO(ScriptableObject parent)
         {
-            throw new NotImplementedException();
+#if UNITY_EDITOR
+            foreach (var component in Components)
+            {
+                AssetDatabase.AddObjectToAsset(component, parent);
+            }
+
+            foreach (var connection in Connections)
+            {
+                foreach(var activatorConnection in connection.ActivatorConnections)
+                {
+                    AssetDatabase.AddObjectToAsset(activatorConnection, parent);
+                }
+            }
+#endif
         }
 
         public override AgentController Clone()
@@ -73,6 +85,8 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
             return Context.CreateFromGameObject(agentGameObject);
         }
 
+        #region Editor Compatibility
+#if UNITY_EDITOR
         public ADiSComponent CreateComponent(System.Type type)
         {
             ADiSComponent component = ScriptableObject.CreateInstance(type) as ADiSComponent;
@@ -159,5 +173,7 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
                 AssetDatabase.RemoveObjectFromAsset(activatorConnection);
             }
         }
+#endif
+        #endregion Editor Compatibility
     }
 }
