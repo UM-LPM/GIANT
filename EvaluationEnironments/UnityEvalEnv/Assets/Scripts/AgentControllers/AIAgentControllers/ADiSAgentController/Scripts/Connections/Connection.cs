@@ -22,10 +22,8 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
                 }
                 if (!activated)
                 {
-                    activatorConnection.Activator.ToggleIsActive(false);
                     return false;
                 }
-                activatorConnection.Activator.ToggleIsActive(true);
             }
             return true;
         }

@@ -125,24 +125,10 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
 
         public void UpdateState()
         {
-            RemoveFromClassList("active");
-            RemoveFromClassList("inactive");
             RemoveFromClassList("executing");
 
             if (Application.isPlaying)
             {
-                if(component is Activator activator)
-                {
-                    if (activator.IsActive)
-                    {
-                        AddToClassList("active");
-                    }
-                    else
-                    {
-                        AddToClassList("inactive");
-                    }
-                    return;
-                }
                 if(component.IsExecuting)
                 {
                     AddToClassList("executing");
