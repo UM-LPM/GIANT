@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine.UIElements;
 
@@ -33,32 +34,114 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
             double duration = EditorApplication.timeSinceStartup - time;
             if (duration < doubleClickDuration)
             {
-                SelectChildren(evt);
+                SelectConnectedNodes(evt);
             }
 
             time = EditorApplication.timeSinceStartup;
         }
 
-        void SelectChildren(MouseDownEvent evt)
+        void SelectConnectedNodes(MouseDownEvent evt)
         {
-
-            var graphView = target as ADiSView;
-            if (graphView == null)
-                return;
-
             if (!CanStopManipulation(evt))
                 return;
 
-            ADiSComponentView clickedElement = evt.target as ADiSComponentView;
-            if (clickedElement == null)
+            if (target is not ADiSView graphView)
+                return;
+
+            var clickedView = evt.target as ADiSComponentView
+                ?? (evt.target as VisualElement)?.GetFirstAncestorOfType<ADiSComponentView>();
+
+            if (clickedView == null)
+                return;
+
+            // ---------------------------------------
+            // Build indices (single pass)
+            // ---------------------------------------
+            var activatorToConnections = new Dictionary<Activator, List<Connection>>();
+            var actionToConnections = new Dictionary<Action, List<Connection>>();
+            var componentToView = new Dictionary<object, ADiSComponentView>();
+
+            foreach (var node in graphView.nodes)
             {
-                var ve = evt.target as VisualElement;
-                clickedElement = ve.GetFirstAncestorOfType<ADiSComponentView>();
-                if (clickedElement == null)
-                    return;
+                if (node is not ADiSComponentView view)
+                    continue;
+
+                componentToView[view.component] = view;
+
+                if (view.component is Connection conn)
+                {
+                    foreach (var ac in conn.ActivatorConnections)
+                    {
+                        activatorToConnections
+                            .GetOrCreate(ac.Activator)
+                            .Add(conn);
+                    }
+
+                    foreach (var action in conn.Actions)
+                    {
+                        actionToConnections
+                            .GetOrCreate(action)
+                            .Add(conn);
+                    }
+                }
             }
 
-            // TODO: Add find all connected nodes with this node
+            // ---------------------------------------
+            // Selection helpers
+            // ---------------------------------------
+            void Select(object component)
+            {
+                if (componentToView.TryGetValue(component, out var view))
+                    graphView.AddToSelection(view);
+            }
+
+            // ---------------------------------------
+            // Dispatch by clicked type
+            // ---------------------------------------
+            switch (clickedView.component)
+            {
+                case Activator activator:
+                    {
+                        if (!activatorToConnections.TryGetValue(activator, out var conns))
+                            break;
+
+                        foreach (var conn in conns)
+                        {
+                            Select(conn);
+
+                            foreach (var action in conn.Actions)
+                                Select(action);
+                        }
+                        break;
+                    }
+
+                case Connection conn:
+                    {
+                        foreach (var ac in conn.ActivatorConnections)
+                            Select(ac.Activator);
+
+                        foreach (var action in conn.Actions)
+                            Select(action);
+
+                        break;
+                    }
+
+                case Action action:
+                    {
+                        if (!actionToConnections.TryGetValue(action, out var conns))
+                            break;
+
+                        foreach (var conn2 in conns)
+                        {
+                            Select(conn2);
+
+                            foreach (var ac in conn2.ActivatorConnections)
+                                Select(ac.Activator);
+                        }
+                        break;
+                    }
+            }
         }
+
     }
 }
