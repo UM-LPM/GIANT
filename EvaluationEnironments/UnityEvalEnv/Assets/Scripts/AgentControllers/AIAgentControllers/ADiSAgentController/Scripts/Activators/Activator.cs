@@ -52,14 +52,6 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
             "Object40"
         };
 
-
-        [HideInInspector] public bool IsActive = false;
-
-        public virtual void ToggleIsActive(bool isActive)
-        {
-            IsActive = isActive;
-        }
-
         public abstract bool IsActivated();
     }
 }

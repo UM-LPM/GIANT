@@ -55,9 +55,6 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
             // 3. Get and set the actions from the selected connection
             if(selectedConnection != null)
             {
-#if UNITY_EDITOR
-                selectedConnection.IsActivated(); // Enable this only in editor to show active activators
-#endif
                 selectedConnection.ToggleIsExecuting(true);
                 selectedConnection.GetActions(actionsOut);
             }
