@@ -52,7 +52,7 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
 
         public override ADiSComponent Clone()
         {
-            var clone = ScriptableObject.CreateInstance<Connection>();
+            var clone = Instantiate(this);
             clone.Weight = Weight;
 
             clone.ActivatorConnections = new List<ActivatorConnection>();

@@ -14,6 +14,7 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
                 "MoveForward" => new MoveForward(guid.ToString(), properties, position),
                 "MoveSide" => new MoveSide(guid.ToString(), properties, position),
                 "Rotate" => new Rotate(guid.ToString(), properties, position),
+                "Shoot" => new Shoot(guid.ToString(), properties, position),
                 null => throw new ArgumentException("Action name cannot be null."),
                 _ => throw new ArgumentException($"Action '{name}' is not recognized."),
             };

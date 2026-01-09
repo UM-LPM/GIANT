@@ -12,6 +12,9 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
             name switch
             {
                 "RayHitObject" => new RayHitObject(guid.ToString(), properties, position),
+                "AmmoLevelBellow" => new AmmoLevelBellow(guid.ToString(), properties, position),
+                "HealthLevelBellow" => new HealthLevelBellow(guid.ToString(), properties, position),
+                "ShieldLevelBellow" => new ShieldLevelBellow(guid.ToString(), properties, position),
                 _ => throw new ArgumentException($"Activator '{name}' is not recognized."),
             };
     }
