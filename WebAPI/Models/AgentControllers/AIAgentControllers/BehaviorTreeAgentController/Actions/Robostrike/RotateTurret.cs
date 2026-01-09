@@ -16,7 +16,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController.Robost
         {
             if (properties != null)
             {
-                rotateDirection = (RotateDirection)(properties.Find(p => p.Name == "rotateDirection")?.Value ?? 0);
+                rotateDirection = (RotateDirection)(properties.Find(p => p.Name == "rotateTurretDirection")?.Value ?? 0);
             }
         }
     }

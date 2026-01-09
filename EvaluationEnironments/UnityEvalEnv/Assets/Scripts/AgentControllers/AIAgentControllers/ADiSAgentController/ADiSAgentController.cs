@@ -41,6 +41,14 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
                 clone.Connections.Add(connection.Clone() as Connection);
             }
 
+            clone.Components = new List<ADiSComponent>();
+            foreach (var connection in clone.Connections)
+            {
+                clone.Components.Add(connection);
+                connection.Actions.ForEach(x => clone.Components.Add(x));
+                connection.ActivatorConnections.ForEach(ac => clone.Components.Add(ac.Activator));
+            }
+
             return clone;
         }
 
