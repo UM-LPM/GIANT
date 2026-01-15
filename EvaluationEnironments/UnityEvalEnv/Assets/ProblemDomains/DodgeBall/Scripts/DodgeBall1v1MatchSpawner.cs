@@ -94,7 +94,7 @@ namespace Problems.DodgeBall
 
             if (environmentController.Match.Teams[0].Individuals.Length != 1 || environmentController.Match.Teams[1].Individuals.Length != 1)
             {
-                throw new System.Exception("Each team must have at one individual");
+                throw new System.Exception("Each team must have at 1 individual");
             }
         }
 

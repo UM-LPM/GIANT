@@ -250,7 +250,11 @@ namespace Problems.DodgeBall
                 numOfOpponents = Agents.Where(a => a.TeamIdentifier.TeamID != agent.TeamIdentifier.TeamID).Select(a => (a as DodgeBallAgentComponent).NumOfSpawns).Sum();
                 if (numOfOpponents > 0)
                 {
-                    opponentsHitFitness = agent.OpponentsHit / (float)numOfOpponents;
+                    if(agent.TeamatesHit > agent.OpponentsHit)
+                    {
+                        agent.TeamatesHit = agent.OpponentsHit;
+                    }
+                    opponentsHitFitness = (agent.OpponentsHit - agent.TeamatesHit) / (float)numOfOpponents;
                     opponentsHitFitness = (float)Math.Round(DodgeBallFitness.FitnessValues[DodgeBallFitness.FitnessKeys.OpponentsHit.ToString()] * opponentsHitFitness, 4);
                     agent.AgentFitness.UpdateFitness(opponentsHitFitness, DodgeBallFitness.FitnessKeys.OpponentsHit.ToString());
 

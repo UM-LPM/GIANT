@@ -14,6 +14,10 @@ namespace WebAPI.Models {
 
         public Position? NodePosition { get; set; }
 
+        // Layout constants
+        private const int NodeWidth = 150;
+        private const int NodeHeight = 140;
+        private const int HorizontalSpacing = 0;
 
         public static void UpdateNoteIDs(BTProgramSolutionPartNode rootNode) {
             Queue<BTProgramSolutionPartNode> nodeQueue = new Queue<BTProgramSolutionPartNode>();
@@ -37,59 +41,46 @@ namespace WebAPI.Models {
             return new System.Random().NextInt64(100000000000000000, 999999999999999999);
         }
 
-        public static void UpdateNodePositions(BTProgramSolutionPartNode rootNode) {
-            // Update Nodes' position so the nodes will be graphically represented as a organized tree, where root node is at the top and leaves are at the bottom
 
-            int nodeHeight = 140;
-            int nodeWidth = 170;
+        public static void UpdateNodePositions(BTProgramSolutionPartNode root)
+        {
+            if (root == null)
+                return;
 
-            var result = new Dictionary<int, int>();
-            var queue = new Queue<(BTProgramSolutionPartNode node, int depth)>();
-
-            if (rootNode != null) {
-                queue.Enqueue((rootNode, 0));
-            }
-
-            while (queue.Count > 0) {
-                var (node, depth) = queue.Dequeue();
-
-                if (!result.ContainsKey(depth)) {
-                    result[depth] = 0;
-                }
-
-                result[depth] = result[depth] + 1;
-
-                node.NodePosition = new Position(result[depth] * nodeWidth, depth * nodeHeight);
-
-                if (node.Children != null) {
-                    foreach (var child in node.Children) {
-                        queue.Enqueue((child, depth + 1));
-                    }
-                }
-            }
+            int nextLeafX = 0;
+            LayoutNode(root, 0, ref nextLeafX);
         }
 
-        public static int UpdateNodePositions(BTProgramSolutionPartNode node, int depth, ref int index, int verticalSpacing, int horizontalSpacing) {
-            if (node == null) {
-                return 0;
+        private static void LayoutNode(BTProgramSolutionPartNode node, int depth, ref int nextLeafX)
+        {
+            if (node.Children == null || node.Children.Count == 0)
+            {
+                // Leaf node -> assign next available horizontal slot
+                node.NodePosition = new Position(
+                    nextLeafX * (NodeWidth + HorizontalSpacing),
+                    depth * NodeHeight
+                );
+
+                nextLeafX++;
+                return;
             }
 
-            // Calculate and assign the node's position
-            int y = depth * verticalSpacing;
-            node.NodePosition = new Position(index * horizontalSpacing, y);
-
-            // Recursively update positions for all children and find the total number of descendants
-            int descendants = 0;
-            if (node.Children != null) {
-                foreach (var child in node.Children) {
-                    descendants += UpdateNodePositions(child, depth + 1, ref index, verticalSpacing, horizontalSpacing);
-                }
+            // Layout children first (post-order)
+            foreach (var child in node.Children)
+            {
+                LayoutNode(child, depth + 1, ref nextLeafX);
             }
 
-            // The position of the next sibling node or cousin node should be to the right of all descendants of this node
-            index += Math.Max(1, descendants);
+            // Center parent above its children
+            var firstChild = node.Children[0];
+            var lastChild = node.Children[^1];
 
-            return descendants + 1; // Include this node and all its descendants
+            int centerX = (firstChild.NodePosition!.X + lastChild.NodePosition!.X) / 2;
+
+            node.NodePosition = new Position(
+                centerX,
+                depth * NodeHeight
+            );
         }
 
 

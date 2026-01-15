@@ -24,6 +24,7 @@ namespace Problems.DodgeBall
         public int BallsIntercepted { get; set; }
 
         public int OpponentsHit { get; set; }
+        public int TeamatesHit { get; set; }
         public int BallsHitBy { get; set; }
 
         public int NumOfSpawns { get; set; }
@@ -102,7 +103,18 @@ namespace Problems.DodgeBall
             {
                 throw new System.Exception("Ball parent is null when agent is hit by ball");
             }
-            ball.Parent.OpponentsHit++;
+
+            // Check if the ball was thrown by an opponent or a teamate
+            if (ball.Parent.TeamIdentifier.TeamID != TeamIdentifier.TeamID)
+            {
+                // Hit by opponent
+                ball.Parent.OpponentsHit++;
+            }
+            else
+            {
+                // Hit by teamate
+                ball.Parent.TeamatesHit++;
+            }
         }
 
         void OnTriggerEnter(Collider c)

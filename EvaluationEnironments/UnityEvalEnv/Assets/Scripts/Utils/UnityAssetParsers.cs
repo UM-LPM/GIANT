@@ -47,6 +47,31 @@ namespace Utils
             return individuals;
         }
 
+        public static Individual[] ParseIndividualsFromFolder(string folderPathJSON, int[] evalRange)
+        {
+            Individual[] individuals = null;
+
+            // Read all files in the folder
+            string[] files = Directory.GetFiles(folderPathJSON, "*.json");
+            files = files.OrderBy(file => int.Parse(Regex.Match(file, @"(\d+)(?!.*\d)").Groups[0].ToString())).ToArray();
+
+            individuals = new Individual[evalRange.Length];
+
+            int indx = 0;
+            foreach (int i in evalRange)
+            {
+                individuals[indx++] = JsonConvert.DeserializeObject<Individual>(File.ReadAllText(files[i]), MainConfiguration.JSON_SERIALIZATION_SETTINGS);
+            }
+
+            if (individuals.Length == 0)
+            {
+                throw new Exception("No individuals were loaded from the IndividualsSource");
+            }
+
+            return individuals;
+        }
+
+
         public static void SaveSOIndividualsToSO(Individual[] individuals, string folderPath)
         {
 #if UNITY_EDITOR

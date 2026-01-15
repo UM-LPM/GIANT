@@ -84,6 +84,7 @@ namespace Base
         void Start()
         {
             ListenerThread = new Thread(StartListener);
+            ListenerThread.IsBackground = true;
             ListenerThread.Start();
 
             Time.timeScale = TimeScale;
@@ -114,6 +115,16 @@ namespace Base
                     }
                 });
             }
+        }
+
+        private void OnDestroy()
+        {
+            if (Listener != null)
+            {
+                StopListener();
+            }
+
+            if (Instance == this) Instance = null;
         }
 
 
@@ -251,7 +262,7 @@ namespace Base
                 }
             }
 
-            if(environments.Count == 0 && MatchFitnesses.Count == 0) // MatchFitnesses.Count == 0 to also cover the case where all Matches had predefined scores (Dummy match)
+            if (environments.Count == 0 && MatchFitnesses.Count == 0) // MatchFitnesses.Count == 0 to also cover the case where all Matches had predefined scores (Dummy match)
             {
                 throw new Exception("No simulation environments were loaded. Please check the Environments configuration.");
             }
@@ -262,14 +273,23 @@ namespace Base
                 yield return null;
             }
 
-            CommunicatorEvalResponseData evalResponseData = new CommunicatorEvalResponseData() { MatchFitnesses = MatchFitnesses };
+            try
+            {
+                CommunicatorEvalResponseData evalResponseData = new CommunicatorEvalResponseData() { MatchFitnesses = MatchFitnesses };
 
-            string evalResponseJson = JsonConvert.SerializeObject(evalResponseData);
+                string evalResponseJson = JsonConvert.SerializeObject(evalResponseData);
 
-            byte[] evalResponseBuffer = Encoding.UTF8.GetBytes(evalResponseJson);
-            context.Response.ContentLength64 = evalResponseBuffer.Length;
-            context.Response.OutputStream.Write(evalResponseBuffer, 0, evalResponseBuffer.Length);
-            context.Response.OutputStream.Close();
+                byte[] evalResponseBuffer = Encoding.UTF8.GetBytes(evalResponseJson);
+                context.Response.ContentLength64 = evalResponseBuffer.Length;
+                context.Response.OutputStream.Write(evalResponseBuffer, 0, evalResponseBuffer.Length);
+                context.Response.OutputStream.Close();
+            }
+            finally
+            {
+                context.Response.Close();
+                Matches = null;
+                MatchFitnesses = null;
+            }
 
             evaluationInProgress = false;
         }
@@ -284,9 +304,9 @@ namespace Base
             {
                 throw new Exception("No client data was sent with the request.");
             }
-            System.IO.Stream body = context.Request.InputStream;
+            using var body = context.Request.InputStream;
             Encoding encoding = context.Request.ContentEncoding;
-            System.IO.StreamReader reader = new System.IO.StreamReader(body, encoding);
+            using var reader = new System.IO.StreamReader(body, encoding);
 
             CommunicatorEvalRequestData evalRequestData;
             try

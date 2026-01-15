@@ -62,6 +62,16 @@ namespace WebAPI.Models.EARS
         public List<ProgramSolutionPartAction> Actions { get; set; }
         public List<ProgramSolutionPartConnection> Connections { get; set; }
 
+        // Layout parameters
+        const int connectionSpacing = 300;
+        const int minNodeSpacing = 180; // must be >= max node width
+
+        const int connectionY = 0;
+        const int activatorY = -250;
+        const int actionY = 250;
+
+        const int startX = 0;
+
         public override void Configure()
         {
             // Update node positions
@@ -76,15 +86,6 @@ namespace WebAPI.Models.EARS
 
             return agentController;
         }
-
-        const int connectionSpacing = 300;
-        const int minNodeSpacing = 180; // must be >= max node width
-
-        const int connectionY = 0;
-        const int activatorY = -250;
-        const int actionY = 250;
-
-        const int startX = 0;
 
         public void UpdateNodePositions()
         {
