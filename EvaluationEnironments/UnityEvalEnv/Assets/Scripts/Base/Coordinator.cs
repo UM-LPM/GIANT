@@ -14,6 +14,7 @@ using Fitnesses;
 using Utils;
 using Configuration;
 using UnitTests;
+using System.IO;
 
 namespace Base
 {
@@ -71,6 +72,7 @@ namespace Base
         void Start()
         {
             ListenerThread = new Thread(StartListener);
+            ListenerThread.IsBackground = true;
             ListenerThread.Start();
         }
 
@@ -177,7 +179,10 @@ namespace Base
                 if (CoordinatorSetup == ComponentSetupType.REAL)
                 {
                     // Load Individuals from IndividualsSource
-                    LoadIndividualsFromJSON(evalRequestData.EvalRangeStart.HasValue ? evalRequestData.EvalRangeStart.Value : -1, evalRequestData.EvalRangeEnd.HasValue ? evalRequestData.EvalRangeEnd.Value : -1);
+                    if(evalRequestData.EvalRange != null && evalRequestData.EvalRange.Length > 0)
+                        LoadIndividualsFromJSON(evalRequestData.EvalRange);
+                    else
+                        LoadIndividualsFromJSON(evalRequestData.EvalRangeStart.HasValue ? evalRequestData.EvalRangeStart.Value : -1, evalRequestData.EvalRangeEnd.HasValue ? evalRequestData.EvalRangeEnd.Value : -1);
                 }
                 else if (CoordinatorSetup == ComponentSetupType.MOCK && ConvertSOToJSON)
                 {
@@ -224,13 +229,20 @@ namespace Base
                 yield return null;
             }
 
-            CoordinatorEvaluationResult evaluationResult = evaluationResultTask.Result;
-            string responseJson_ = JsonConvert.SerializeObject(evaluationResult);
+            try {
+                CoordinatorEvaluationResult evaluationResult = evaluationResultTask.Result;
+                string responseJson_ = JsonConvert.SerializeObject(evaluationResult);
 
-            byte[] buffer_ = Encoding.UTF8.GetBytes(responseJson_);
-            context.Response.ContentLength64 = buffer_.Length;
-            context.Response.OutputStream.Write(buffer_, 0, buffer_.Length);
-            context.Response.OutputStream.Close();
+                byte[] buffer_ = Encoding.UTF8.GetBytes(responseJson_);
+                context.Response.ContentLength64 = buffer_.Length;
+                context.Response.OutputStream.Write(buffer_, 0, buffer_.Length);
+                context.Response.OutputStream.Close();
+            }
+            finally
+            { 
+                context.Response.OutputStream.Close();
+                Individuals = null;
+            }
         }
 
         CoordinatorEvalRequestData ReadDataFromRequestBody(HttpListenerContext context)
@@ -240,9 +252,9 @@ namespace Base
                 throw new Exception("No client data was sent with the request.");
             }
 
-            System.IO.Stream body = context.Request.InputStream;
+            using var body = context.Request.InputStream;
             Encoding encoding = context.Request.ContentEncoding;
-            System.IO.StreamReader reader = new System.IO.StreamReader(body, encoding);
+            using var reader = new StreamReader(body, encoding);
 
             try
             {
@@ -276,6 +288,20 @@ namespace Base
 
             // Loading individuals from JSON files
             Individuals = UnityAssetParser.ParseIndividualsFromFolder(IndividualsSourceJSON, evalRangeStart, evalRangeEnd);
+
+            // Save individuals to Scriptable Objects if in Editor mode
+            UnityAssetParser.SaveSOIndividualsToSO(Individuals, IndividualsSourceSO);
+        }
+
+        public void LoadIndividualsFromJSON(int[] evalRange)
+        {
+            if (IndividualsSourceJSON == null || IndividualsSourceJSON.Length == 0 || IndividualsSourceSO == null || IndividualsSourceSO.Length == 0)
+            {
+                throw new Exception("IndividualsSourceJSON or IndividualsSourceSO are not defined");
+            }
+
+            // Loading individuals from JSON files
+            Individuals = UnityAssetParser.ParseIndividualsFromFolder(IndividualsSourceJSON, evalRange);
 
             // Save individuals to Scriptable Objects if in Editor mode
             UnityAssetParser.SaveSOIndividualsToSO(Individuals, IndividualsSourceSO);
@@ -348,6 +374,8 @@ namespace Base
             {
                 StopListener();
             }
+
+            if (Instance == this) Instance = null;
         }
     }
 
@@ -357,6 +385,7 @@ namespace Base
         public string[] EvalEnvInstances { get; set; }
         public int? EvalRangeStart { get; set; }
         public int? EvalRangeEnd { get; set; }
+        public int[] EvalRange { get; set; } // Contains the indices of the individuals to be evaluated (e.g. 1, 4, 5, 8)
         public IndividualFitness[] LastEvalIndividualFitnesses { get; set; } // TODO implement
 
         public string EvalEnvInstancesToString()
