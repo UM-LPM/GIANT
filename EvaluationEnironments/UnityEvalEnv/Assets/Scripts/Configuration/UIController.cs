@@ -20,7 +20,6 @@ namespace Configuration
         [SerializeField] public TMP_InputField FixedTimeStepInputField;
         [SerializeField] public TMP_InputField RerunTimesInputField;
         [SerializeField] public TMP_Text FpsText;
-        [SerializeField] public TMP_InputField ACSourceInputField; // AC = Agent Controllers
         [SerializeField] public TMP_Dropdown RndSeedModeDropdown;
         [SerializeField] public TMP_InputField RndSeedInputField;
 
@@ -28,9 +27,6 @@ namespace Configuration
         [SerializeField] public Toggle RenderToggleInGameCanvas;
         [SerializeField] public GameObject[] RenderToggleGameObjectList;
         [SerializeField] public TMP_Text UriText;
-
-        [SerializeField] public Toggle RenderUI;
-        [SerializeField] public GameObject ToggleElements;
 
         private bool isProgrammaticChange = true;
 
@@ -116,7 +112,7 @@ namespace Configuration
         public void DisplayFPS()
         {
             if (FpsText != null)
-                FpsText.text = "FPS: " + (1.0f / Time.unscaledDeltaTime).ToString("F0");
+                FpsText.text = (1.0f / Time.unscaledDeltaTime).ToString("F0");
         }
 
         public void DisplayUri()
@@ -188,11 +184,6 @@ namespace Configuration
                     }
                 }
             }
-        }
-
-        public void OnUpdateRenderUIToggle()
-        {
-            ToggleElements.SetActive(RenderUI.isOn);
         }
 
         public void OnRenderToggleValueChanged()

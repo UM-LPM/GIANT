@@ -10,7 +10,7 @@ namespace Configuration
     public enum ProblemDomains
     {
         Collector,
-        Robostrike,
+        RoboStrike,
         Soccer,
         BombClash,
         DodgeBall,
@@ -74,9 +74,23 @@ namespace Configuration
             // Read configuration file
             MainConfiguration = MainConfiguration.Deserialize(path);
 
-            if (MainConfiguration != null && MainConfiguration.AutoStart)
+            if (MainConfiguration != null)
             {
-                Play();
+                CoordinatorURIInputField.text = MainConfiguration.CoordinatorURI;
+                CommunicatorURIInputField.text = MainConfiguration.StartCommunicatorURI;
+
+                // Set the problem domain in the dropdown
+                for (int i = 0; i < ProblemDropdown.options.Count; i++)
+                {
+                    if (ProblemDropdown.options[i].text == MainConfiguration.ProblemDomain)
+                    {
+                        ProblemDropdown.value = i;
+                        break;
+                    }
+                }
+
+                if(MainConfiguration.AutoStart)
+                    Play();
             }
         }
 

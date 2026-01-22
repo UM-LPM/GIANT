@@ -210,7 +210,6 @@ namespace Base
 
         public void StopListener()
         {
-            Listener.Stop();
             Listener.Close();
             ListenerThread.Join();
             ListenerThread.Abort();
