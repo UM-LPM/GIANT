@@ -7,7 +7,7 @@ using Utils;
 
 namespace Spawners
 {
-    public class DummyMatchSpawner : MatchSpawner
+    public class CollectorMatchSpawner : MatchSpawner
     {
         public Individual Opponent;
 

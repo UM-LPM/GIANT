@@ -83,8 +83,9 @@ namespace Problems.Soccer2D
                 gameObject.layer))
             {
                 agent.transform.position = newAgentPos;
-                agent.transform.rotation = newAgentRotation;
             }
+
+            agent.transform.rotation = newAgentRotation;
         }
     }
 }
