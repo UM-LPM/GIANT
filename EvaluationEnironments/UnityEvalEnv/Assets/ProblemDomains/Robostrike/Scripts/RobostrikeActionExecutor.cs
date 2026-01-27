@@ -87,8 +87,9 @@ namespace Problems.Robostrike
             // Check if agent can be moved and rotated without colliding to other objects
             if (!PhysicsUtil.PhysicsOverlapObject(RobostrikeEnvironmentController.PhysicsScene, RobostrikeEnvironmentController.PhysicsScene2D, RobostrikeEnvironmentController.GameType, agent.gameObject, newAgentPos, RobostrikeEnvironmentController.AgentColliderExtendsMultiplier.x, Vector3.zero, newAgentRotation, PhysicsOverlapType.OverlapSphere, true, gameObject.layer)){
                 agent.transform.position = newAgentPos;
-                agent.transform.rotation = newAgentRotation;
             }
+
+            agent.transform.rotation = newAgentRotation;
 
             // Agent turret rotation
             agent.Turret.transform.rotation = Quaternion.Euler(0, 0, agent.Turret.transform.rotation.eulerAngles.z + rotateTurrentDir.z * Time.fixedDeltaTime * RobostrikeEnvironmentController.AgentTurrentRotationSpeed);
