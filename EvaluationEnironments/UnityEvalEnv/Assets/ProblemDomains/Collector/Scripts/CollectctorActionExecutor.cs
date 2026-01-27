@@ -66,8 +66,9 @@ namespace Problems.Collector
             {
                 // 3. Move and rotate the agent
                 agent.transform.position = newAgentPos;
-                agent.transform.rotation = newAgentRotation;
             }
+
+            agent.transform.rotation = newAgentRotation;
 
         }
     }
