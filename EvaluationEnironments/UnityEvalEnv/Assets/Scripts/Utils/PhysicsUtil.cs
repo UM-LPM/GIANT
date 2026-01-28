@@ -482,31 +482,6 @@ namespace Utils
             throw new NotImplementedException();
         }
 
-        public static RaycastHit2D[] PhysicsCircleCast2D(
-            PhysicsScene2D physicsScene2D,
-            GameObject caller,
-            Vector3 position,
-            float radius,
-            Vector2 direction,
-            float distance,
-            bool ignoreTriggerGameObjs,
-            int layer)
-        {
-            var results = new List<RaycastHit2D>();
-            var filter = new ContactFilter2D { layerMask = 1 << layer, useTriggers = !ignoreTriggerGameObjs };
-
-            int count = physicsScene2D.CircleCast(position, radius, direction, distance, filter, RaycastHit2DBuffer);
-
-            for (int i = 0; i < count; i++)
-            {
-                var hit = RaycastHit2DBuffer[i];
-                if (hit.collider == null || hit.collider.gameObject == caller) continue;
-                results.Add(hit);
-            }
-
-            return results.Count == 0 ? Array.Empty<RaycastHit2D>() : results.ToArray();
-        }
-
         public static Collider2D[] PhysicsOverlapBox2D(
             PhysicsScene2D physicsScene2D,
             GameObject caller,
@@ -556,6 +531,59 @@ namespace Utils
                 }
             }
             return hits.ToArray();
+        }
+
+        public static RaycastHit2D[] PhysicsCircleCast2D(
+            PhysicsScene2D physicsScene2D,
+            GameObject caller,
+            Vector3 origin,
+            float radius,
+            Vector2 direction,
+            float distance,
+            bool ignoreTriggerGameObjs,
+            int layer)
+        {
+            var results = new List<RaycastHit2D>();
+            var filter = new ContactFilter2D { layerMask = 1 << layer, useTriggers = !ignoreTriggerGameObjs };
+
+            int count = physicsScene2D.CircleCast(origin, radius, direction, distance, filter, RaycastHit2DBuffer);
+
+            for (int i = 0; i < count; i++)
+            {
+                var hit = RaycastHit2DBuffer[i];
+                if (hit.collider == null || hit.collider.gameObject == caller) continue;
+                results.Add(hit);
+            }
+
+            return results.Count == 0 ? Array.Empty<RaycastHit2D>() : results.ToArray();
+        }
+
+        public static RaycastHit2D[] BoxCast2D(
+                PhysicsScene2D physicsScene,
+                GameObject caller,
+                Vector2 origin,
+                Vector2 size,
+                float angle,
+                Vector2 direction,
+                float distance,
+                bool ignoreTriggerGameObjs,
+                int layer)
+        {
+            var results = new List<RaycastHit2D>();
+            var filter = new ContactFilter2D { layerMask = 1 << layer, useTriggers = !ignoreTriggerGameObjs };
+
+            int count = physicsScene.BoxCast(origin, size, angle, direction, distance, filter, RaycastHit2DBuffer);
+
+            for (int i = 0; i < count; i++)
+            {
+                var hit = RaycastHit2DBuffer[i];
+                if (hit.collider == null || hit.collider.gameObject == caller) continue;
+                results.Add(hit);
+            }
+
+            return results.Count == 0 ? Array.Empty<RaycastHit2D>() : results.ToArray();
+
+
         }
     }
 

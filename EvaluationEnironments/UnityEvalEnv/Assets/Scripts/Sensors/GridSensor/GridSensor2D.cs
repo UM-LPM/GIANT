@@ -55,7 +55,28 @@ public class GridSensor2D : Sensor<SensorPerceiveOutput[,]> {
 
     public override SensorPerceiveOutput[,] PerceiveSingle(int xPos = -1, int yPos = -1, int zPos = -1)
     {
-        throw new NotImplementedException();
+        Vector2 agentPos = DiscretizeGridPos ? new Vector2(CustomRound(transform.position.x), CustomRound(transform.position.y)) : transform.position;
+        SensorPerceiveOutputs = new SensorPerceiveOutput[1, 1];
+
+        Vector2 cellWorldPosition = fixedPosition ? position : (new Vector2(agentPos.x, agentPos.y) + CenterOffset);
+
+        // Calculate the center of the current cell
+        Vector2 cellCenter = new Vector2((xPos * CellSpacing.x), (yPos * CellSpacing.y)) + cellWorldPosition;
+
+        // Use Physics.OverlapBox to detect objects in the cell
+        hitColliders = PhysicsUtil.PhysicsOverlapBox2D(PhysicsScene2D, gameObject, cellCenter, Quaternion.identity, CellSize / 1.15f, false, LayerMask);
+
+        // If any objects were detected, store the first one in the SensorPerceiveOutputs array
+        if (hitColliders.Length > 0 && hitColliders[0].gameObject != gameObject)
+        {
+            SensorPerceiveOutputs[0, 0] = new SensorPerceiveOutput { HasHit = true, HitGameObjects = hitColliders.Select(a => a.gameObject).ToArray(), EndPositionWorld = cellCenter };
+        }
+        else
+        {
+            SensorPerceiveOutputs[0, 0] = new SensorPerceiveOutput { HasHit = false, HitGameObjects = null, EndPositionWorld = cellCenter };
+        }
+
+        return SensorPerceiveOutputs;
     }
 
     public override SensorPerceiveOutput[,] PerceiveRange(int startIndex = -1, int endIndex = -1, int step = 1)

@@ -15,7 +15,8 @@ namespace Configuration
         BombClash,
         DodgeBall,
         Soccer2D,
-        Pong
+        Pong,
+        Mario
     }
 
     public class MenuManager : MonoBehaviour
@@ -146,6 +147,9 @@ namespace Configuration
                     break;
                 case "Pong":
                     UnityEngine.SceneManagement.SceneManager.LoadScene("PongBaseScene");
+                    break;
+                case "Mario":
+                    UnityEngine.SceneManagement.SceneManager.LoadScene("MarioBaseScene");
                     break;
                 default:
                     DebugSystem.LogError("Problem domain not found");
