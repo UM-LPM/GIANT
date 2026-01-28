@@ -101,7 +101,11 @@ namespace Problems.Mario
             }
             else if (velocity.y > 0 && !bigJump)
             {
-                velocity.y -= MarioEnvironmentController.Gravity * MarioEnvironmentController.LowJumpMultiplier * Time.fixedDeltaTime;
+                velocity.y -= MarioEnvironmentController.Gravity * MarioEnvironmentController.SmallJumpMultiplier * Time.fixedDeltaTime;
+            }
+            else if (velocity.y > 0 && bigJump)
+            {
+                velocity.y -= MarioEnvironmentController.Gravity * MarioEnvironmentController.BigJumpMultiplier * Time.fixedDeltaTime;
             }
             else
             {
@@ -142,6 +146,14 @@ namespace Problems.Mario
                     {
                         MarioEnvironmentController.OnAgentReachedFinish(agent, finish);
                     }
+                    else
+                    {
+                        var enemy = hit.collider.GetComponent<EnemyComponent>();
+                        if (enemy != null)
+                        {
+                            MarioEnvironmentController.OnEnemyKilledAgent(agent, enemy);
+                        }
+                    }
 
                     float hitDistance = results[i].distance - MarioEnvironmentController.SkinWidth;
                     move.x = hitDistance * dirX;
@@ -176,10 +188,21 @@ namespace Problems.Mario
                     if (hit.collider.gameObject == agent.gameObject)
                         continue;
 
-                    var finish = hit.collider.GetComponent<FinishComponent>();
-                    if (finish != null)
+                    if (dirY > 0 && hit.normal.y < -0.7f)
                     {
-                        MarioEnvironmentController.OnAgentReachedFinish(agent, finish);
+                        var block = hit.collider.GetComponent<BlockComponent>();
+                        if (block != null)
+                        {
+                            block.OnHit(agent);
+                        }
+                    }
+                    else
+                    {
+                        var enemy = hit.collider.GetComponent<EnemyComponent>();
+                        if (enemy != null)
+                        {
+                            MarioEnvironmentController.OnEnemyKilledAgent(agent, enemy);
+                        }
                     }
 
                     float hitDistance = results[i].distance - MarioEnvironmentController.SkinWidth;
@@ -209,9 +232,20 @@ namespace Problems.Mario
             isGrounded = false;
             for (int i = 0; i < results.Length; i++)
             {
-                if (results[i].collider.gameObject != agent.gameObject)
+                var hit = results[i];
+
+                if (hit.collider.gameObject == agent.gameObject)
+                    continue;
+
+                if (hit.normal.y > 0.7f && velocity.y <= 0)
                 {
                     isGrounded = true;
+
+                    var enemy = hit.collider.GetComponent<EnemyComponent>();
+                    if (enemy != null)
+                    {
+                        MarioEnvironmentController.OnAgentKilledEnemy(agent, enemy);
+                    }
                     break;
                 }
             }

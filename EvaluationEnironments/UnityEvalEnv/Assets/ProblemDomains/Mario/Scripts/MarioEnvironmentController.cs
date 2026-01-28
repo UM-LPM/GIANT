@@ -20,16 +20,25 @@ namespace Problems.Mario
         public float JumpVelocity = 22f;
         public float Gravity = 35f;
         public float FallMultiplier = 1.8f;
-        public float LowJumpMultiplier = 2.3f;
+        public float SmallJumpMultiplier = 2.3f;
+        public float BigJumpMultiplier = 1.5f;
         public float SpeedJumpBonus = 0.5f;
 
         public float CoyoteTime = 0.1f;
+
+        [Header("Enemy Movement Configuration")]
+        public float EnemyPatrolSpeed = 2f;
 
         private bool finishReached = false;
         private bool isDead = false;
 
         private MarioMatchSpawner MarioMatchSpawner;
         private FinishComponent FinishComponent;
+
+        private EnemyComponent[] Enemies;
+        private CoinComponent[] Coins;
+        private MysteryBlockComponent[] MysteryBlocks;
+        private int TotalCoins; // Coins spawned in the level + coins obtained through mystery boxes
 
         // fitness calculation temp variables
         private float timePenalty;
@@ -47,11 +56,18 @@ namespace Problems.Mario
 
             if (FinishComponent == null)
                 throw new Exception("MarioEnvironmentController: No FinishComponent found in the EnvironmentController children GameObjects.");
+
+            Enemies = GetComponentsInChildren<EnemyComponent>();
+            Coins = GetComponentsInChildren<CoinComponent>();
+            TotalCoins = Coins.Length;
+            MysteryBlocks = GetComponentsInChildren<MysteryBlockComponent>();
         }
 
         protected override void OnPostFixedUpdate()
         {
+            UpdateEnemies();
             AgentFellFromPlatform();
+            AgentCollectedCoin();
         }
 
         protected override void OnPreFinishGame()
@@ -75,16 +91,58 @@ namespace Problems.Mario
             }
         }
 
+        public void AgentCollectedCoin()
+        {
+            foreach(MarioAgentComponent agent in Agents)
+            {
+                foreach(CoinComponent coin in Coins)
+                {
+                    if(coin.isActiveAndEnabled && agent.BoxCollider2D.bounds.Intersects(coin.BoxCollider2D.bounds))
+                    {
+                        coin.enabled = false;
+                        coin.gameObject.SetActive(false);
+                        agent.CoinsCollected++;
+                    }
+                }
+            }
+        }
+
+        public void UpdateEnemies()
+        {
+            foreach (EnemyComponent enemy in Enemies)
+            {
+                if(enemy.isActiveAndEnabled)
+                    enemy.UpdateEnemy();
+            }
+        }
+
         public void OnAgentReachedFinish(MarioAgentComponent agent, FinishComponent finish)
         {
             finishReached = true;
-            DebugSystem.LogVerbose($"MarioEnvironmentController: Agent TeamID {agent.TeamIdentifier.TeamID}, ID: {agent.IndividualID} reached the finish!");
         }
 
         public void OnAgentFellFromPlatform(MarioAgentComponent agent)
         {
             isDead = true;
-            DebugSystem.LogVerbose($"MarioEnvironmentController: Agent TeamID {agent.TeamIdentifier.TeamID}, ID: {agent.IndividualID} fell from platform and died!");
+        }
+
+        public void OnAgentKilledEnemy(MarioAgentComponent agent, EnemyComponent enemy)
+        {
+            agent.EnemiesKilled++;
+            enemy.enabled = false;
+            enemy.gameObject.SetActive(false);
+        }
+
+        public void OnEnemyKilledAgent(MarioAgentComponent agent, EnemyComponent enemy)
+        {
+            isDead = true;
+        }
+
+        public void OnMysteryBlockWithCoinHit(MarioAgentComponent agent)
+        {
+            TotalCoins++;
+            agent.CoinsCollected++;
+            agent.MysteryBlocksDestroyed++;
         }
 
         public void SetAgentsFitness()
@@ -96,6 +154,32 @@ namespace Problems.Mario
                 timePenalty = (float)Math.Round(MarioFitness.FitnessValues[MarioFitness.FitnessKeys.TimePenalty.ToString()] * timePenalty, 4);
                 agent.AgentFitness.UpdateFitness(timePenalty, MarioFitness.FitnessKeys.TimePenalty.ToString());
 
+                // Death penalty
+                if(isDead)
+                {
+                    float deathPenalty = MarioFitness.FitnessValues[MarioFitness.FitnessKeys.DeathPenalty.ToString()];
+                    deathPenalty = (float)Math.Round(deathPenalty, 4);
+                    agent.AgentFitness.UpdateFitness(deathPenalty, MarioFitness.FitnessKeys.DeathPenalty.ToString());
+                }
+
+                // Enemies killed fitness
+                float enemiesKilled = agent.EnemiesKilled / Enemies.Length;
+                float enemiesKilledFitness = enemiesKilled * MarioFitness.FitnessValues[MarioFitness.FitnessKeys.EnemiesKilled.ToString()];
+                enemiesKilledFitness = (float)Math.Round(enemiesKilledFitness, 4);
+                agent.AgentFitness.UpdateFitness(enemiesKilledFitness, MarioFitness.FitnessKeys.EnemiesKilled.ToString());
+
+                // Coins collected fitness
+                float coinsCollected = agent.CoinsCollected / TotalCoins;
+                float coinsCollectedFitness = coinsCollected * MarioFitness.FitnessValues[MarioFitness.FitnessKeys.CoinsCollected.ToString()];
+                coinsCollectedFitness = (float)Math.Round(coinsCollectedFitness, 4);
+                agent.AgentFitness.UpdateFitness(coinsCollectedFitness, MarioFitness.FitnessKeys.CoinsCollected.ToString());
+
+                // Mystery blocks destroyed fitness
+                float mysteryBlocksDestroyed =  agent.MysteryBlocksDestroyed / MysteryBlocks.Length;
+                float mysteryBlocksDestroyedFitness = mysteryBlocksDestroyed * MarioFitness.FitnessValues[MarioFitness.FitnessKeys.MysteryBlocksDestroyed.ToString()];
+                mysteryBlocksDestroyedFitness = (float)Math.Round(mysteryBlocksDestroyedFitness, 4);
+                agent.AgentFitness.UpdateFitness(mysteryBlocksDestroyedFitness, MarioFitness.FitnessKeys.MysteryBlocksDestroyed.ToString());
+
                 // Distance fitness
                 float maxDistance = Math.Abs(MarioMatchSpawner.AgentSpawnPoint.transform.position.x - FinishComponent.transform.position.x);
                 float agentDistance = Math.Abs(agent.transform.position.x - FinishComponent.transform.position.x);
@@ -104,14 +188,18 @@ namespace Problems.Mario
                 if(finishReached)
                     agentDistance = 0f;
 
-                float distanceFitness = (1 - (agentDistance / maxDistance)) * Math.Abs(MarioFitness.FitnessValues[MarioFitness.FitnessKeys.Distance.ToString()]);
+                float distanceFitness = (1 - (agentDistance / maxDistance)) * MarioFitness.FitnessValues[MarioFitness.FitnessKeys.Distance.ToString()];
                 distanceFitness = (float)Math.Round(distanceFitness, 4);
                 agent.AgentFitness.UpdateFitness(distanceFitness, MarioFitness.FitnessKeys.Distance.ToString());
 
                 agentFitnessLog = "========================================\n" +
                                   $"[Agent]: TeamID {agent.TeamIdentifier.TeamID}, ID: {agent.IndividualID} \n" +
-                                  $"[Distance]: {agentDistance} / {maxDistance} = {distanceFitness}\n" +
-                                  $"[Time penalty]: {CurrentSimulationSteps} / {SimulationSteps} = {timePenalty}\n";
+                                  $"[Time penalty]: {CurrentSimulationSteps} / {SimulationSteps} = {timePenalty}\n" +
+                                  $"[Death penalty]: {(isDead? MarioFitness.FitnessValues[MarioFitness.FitnessKeys.DeathPenalty.ToString()] : 0f)}\n" +
+                                  $"[Enemies killed]: {agent.EnemiesKilled} / {Enemies.Length} = {enemiesKilledFitness}\n" +
+                                  $"[Coins collected]: {agent.CoinsCollected} / {TotalCoins} = {coinsCollectedFitness}\n" +
+                                  $"[Mystery blocks destroyed]: {agent.MysteryBlocksDestroyed} / {MysteryBlocks.Length} = {mysteryBlocksDestroyedFitness}\n" +
+                                  $"[Distance]: {agentDistance} / {maxDistance} = {distanceFitness}\n";
 
                 DebugSystem.LogVerbose(agentFitnessLog);
             }
@@ -157,9 +245,13 @@ namespace Problems.Mario
                 {
                     FallMultiplier = float.Parse(conf.ProblemConfiguration["FallMultiplier"]);
                 }
-                if (conf.ProblemConfiguration.ContainsKey("LowJumpMultiplier"))
+                if (conf.ProblemConfiguration.ContainsKey("SmallJumpMultiplier"))
                 {
-                    LowJumpMultiplier = float.Parse(conf.ProblemConfiguration["LowJumpMultiplier"]);
+                    SmallJumpMultiplier = float.Parse(conf.ProblemConfiguration["SmallJumpMultiplier"]);
+                }
+                if (conf.ProblemConfiguration.ContainsKey("BigJumpMultiplier"))
+                {
+                    BigJumpMultiplier = float.Parse(conf.ProblemConfiguration["BigJumpMultiplier"]);
                 }
                 if (conf.ProblemConfiguration.ContainsKey("SpeedJumpBonus"))
                 {
@@ -168,6 +260,10 @@ namespace Problems.Mario
                 if (conf.ProblemConfiguration.ContainsKey("CoyoteTime"))
                 {
                     CoyoteTime = float.Parse(conf.ProblemConfiguration["CoyoteTime"]);
+                }
+                if (conf.ProblemConfiguration.ContainsKey("EnemyPatrolSpeed"))
+                {
+                    EnemyPatrolSpeed = float.Parse(conf.ProblemConfiguration["EnemyPatrolSpeed"]);
                 }
             }
         }

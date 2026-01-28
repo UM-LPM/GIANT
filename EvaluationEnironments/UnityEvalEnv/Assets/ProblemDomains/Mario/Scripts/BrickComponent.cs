@@ -7,15 +7,11 @@ using UnityEngine;
 
 namespace Problems.Mario
 {
-    public class BrickComponent: MonoBehaviour
+    public class BrickComponent: BlockComponent
     {
-        public BrickType BrickType;
-    }
-
-    public enum BrickType
-    {
-        Destructible,
-        Hard,
-        Mystery
+        public override void OnHit(MarioAgentComponent agent)
+        {
+            return;
+        }
     }
 }

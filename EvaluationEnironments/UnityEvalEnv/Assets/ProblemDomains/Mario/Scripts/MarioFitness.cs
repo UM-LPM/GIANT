@@ -9,7 +9,11 @@ namespace Problems.Mario
     public class MarioFitness
     {
         public static Dictionary<string, float> FitnessValues = new Dictionary<string, float> {
-            { "TimePenalty", -25f },
+            { "TimePenalty", 50f },
+            { "DeathPenalty", 50f },
+            { "EnemiesKilled", -100f },
+            { "CoinsCollected", -100f },
+            { "MysteryBlocksDestroyed", -50f },
             { "Distance", -500f },
         };
 
@@ -18,6 +22,10 @@ namespace Problems.Mario
         public enum FitnessKeys
         {
             TimePenalty,
+            DeathPenalty,
+            EnemiesKilled,
+            CoinsCollected,
+            MysteryBlocksDestroyed,
             Distance
         }
     }

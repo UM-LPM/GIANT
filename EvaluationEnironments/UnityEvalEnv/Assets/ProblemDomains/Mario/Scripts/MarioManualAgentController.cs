@@ -13,10 +13,10 @@ namespace Problems.Mario
             else if (Input.GetKey(KeyCode.A))
                 actionsOut.AddDiscreteAction("moveSideDirection", 1);
 
-            if (Input.GetKeyDown(KeyCode.W))
+            if (Input.GetKey(KeyCode.W))
                 actionsOut.AddDiscreteAction("smallJump", 1);
 
-            if (Input.GetKeyDown(KeyCode.E))
+            if (Input.GetKey(KeyCode.E))
                 actionsOut.AddDiscreteAction("bigJump", 1);
         }
 

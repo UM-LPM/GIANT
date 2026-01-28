@@ -30,7 +30,7 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
 
             bool gridContainsTarget = false;
 
-            if (sensorOutputs[0, 0] != null && sensorOutputs[0, 0].HasHit)
+            if (sensorOutputs[0, 0] != null && sensorOutputs[0, 0].HasHit && targetGameObject != -1)
             {
                 foreach (GameObject obj in sensorOutputs[0, 0].HitGameObjects)
                 {

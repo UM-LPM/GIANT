@@ -7,13 +7,11 @@ using UnityEngine;
 
 namespace Problems.Mario
 {
-    public class CoinComponent: MonoBehaviour
+    public class EmptyBlockComponent : BlockComponent
     {
-        public BoxCollider2D BoxCollider2D;
-
-        private void Awake()
+        public override void OnHit(MarioAgentComponent agent)
         {
-            BoxCollider2D = GetComponent<BoxCollider2D>();
+            return;
         }
     }
 }
