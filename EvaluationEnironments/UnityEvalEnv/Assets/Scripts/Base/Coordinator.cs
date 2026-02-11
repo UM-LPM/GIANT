@@ -103,6 +103,16 @@ namespace Base
                     CoordinatorURI = MenuManager.Instance.CoordinatorURI;
                 }
             }
+            else
+            {
+                if(EvaluatorType != EvaluatiorType.Simple)
+                {
+                    if (!getTeamOrganizator())
+                    {
+                        throw new Exception("CompetitionTeamOrganizator component is required for competition or rating evaluators");
+                    }
+                }
+            }
         }
 
         void InitializeHttpServer()

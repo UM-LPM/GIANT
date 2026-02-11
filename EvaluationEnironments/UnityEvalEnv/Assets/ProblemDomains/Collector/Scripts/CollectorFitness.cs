@@ -6,7 +6,7 @@ namespace Problems.Collector
     public class CollectorFitness
     {
         public static Dictionary<string, float> FitnessValues = new Dictionary<string, float> {
-        { "TimePenalty", -25f },
+        { "TimePenalty", 25f },
         { "SectorExploration", -50f },
         { "TargetsAcquired", -500f }
     };
