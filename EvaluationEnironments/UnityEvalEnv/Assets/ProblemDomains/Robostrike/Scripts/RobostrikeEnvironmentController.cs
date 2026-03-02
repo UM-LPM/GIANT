@@ -597,8 +597,8 @@ namespace Problems.Robostrike
                     $"[Health powerUps]: " + agent.HealtPowerUpsCollected + " / " + PowerUpSpawner.HealthBoxSpawned + " = " + healthPowerUpsFitness + "\n" +
                     $"[Ammo powerUps]: " + agent.AmmoPowerUpsCollected + " / " + PowerUpSpawner.AmmoBoxSpawned + " = " + ammoPowerUpsFitness + "\n" +
                     $"[Shield powerUps]: " + agent.ShieldPowerUpsCollected + " / " + PowerUpSpawner.ShieldBoxSpawned + " = " + shieldPowerUpsFitness + "\n" +
-                    $"[Missiles fired]: " + agent.MissilesFired + " / " + allPossibleMissilesFired + " = " + missilesFired + "\n" +
-                    $"[Missiles fired accuracy]: " + agent.MissilesHitOpponent + " / " + agent.MissilesFired + " = " + missilesFiredAccuracy + "\n" +
+                    $"[Bullets fired]: " + agent.MissilesFired + " / " + allPossibleMissilesFired + " = " + missilesFired + "\n" +
+                    $"[Bullets fired accuracy]: " + agent.MissilesHitOpponent + " / " + agent.MissilesFired + " = " + missilesFiredAccuracy + "\n" +
                     $"[Survival bonus]: " + agent.MaxSurvivalTime + " / " + CurrentSimulationSteps + " = " + survivalBonus + "\n" +
                     $"[Opponent tracking bonus]: " + agent.OpponentTrackCounter + " / " + (CurrentSimulationSteps / (float)DecisionRequestInterval) + " = " + opponentTrackingBonus + "\n" +
                     $"[Opponents destroyed bonus]: " + agent.OpponentsDestroyed + " / " + numOfOpponents + " = " + opponentsDestroyedBonus + "\n" +

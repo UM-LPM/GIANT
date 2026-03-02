@@ -11,8 +11,8 @@ namespace Problems.Robostrike
         private List<MissileComponent> Missiles;
         private RobostrikeEnvironmentController RobostrikeEnvironmentController;
 
-        private Collider2D[] MissileCollisions = new Collider2D[PhysicsUtil.DefaultColliderArraySize];
         private AgentComponent otherAgent;
+        private Vector2 dirrection;
 
         void Start()
         {
@@ -22,51 +22,55 @@ namespace Problems.Robostrike
 
         public void UpdateMissilePosAndCheckForColls()
         {
+            if(Time.timeScale == 0f) return; // Skip updates when the game is paused to avoid issues with missile movement and collision detection
             for (int i = 0; i < Missiles.Count; i++)
             {
-                // Update missile position and check if it's colliding with anything
-                //Vector3 missileNewPos = Missiles[i].transform.position += Missiles[i].MissileVelocity * Time.fixedDeltaTime;
-                //Missiles[i].transform.position += Missiles[i].MissileVelocity * Time.fixedDeltaTime;
-                Missiles[i].transform.position = Missiles[i].transform.position + Missiles[i].MissileVelocity * Time.fixedDeltaTime;
-            }
+                var newPos = Missiles[i].transform.position + Missiles[i].MissileVelocity * Time.fixedDeltaTime;
+                dirrection.x = newPos.x - Missiles[i].transform.position.x;
+                dirrection.y = newPos.y - Missiles[i].transform.position.y;
 
-            for (int i = 0; i < Missiles.Count; i++)
-            {
-                CheckMissileCollision(Missiles[i]);
+                // Check for collisions (with CircleCast) along the path of the bullet to avoid tunneling issues at high speeds
+                var hits = PhysicsUtil.PhysicsCircleCast2D(
+                    RobostrikeEnvironmentController.PhysicsScene2D,
+                    Missiles[i].gameObject,
+                    Missiles[i].transform.position,
+                    MissileRadius,
+                    dirrection.normalized,
+                    Vector2.Distance(newPos, Missiles[i].transform.position),
+                    true,
+                    LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer))
+                );
+
+                if (hits.Length > 0 && hits[0].collider != null &&
+                    hits[0].collider.gameObject != Missiles[i].gameObject &&
+                    hits[0].collider.gameObject != Missiles[i].Parent.gameObject)
+                {
+                    Missiles[i].transform.position = hits[0].point;
+                    MissileHitSomething(Missiles[i], hits);
+                }
+                else
+                {
+                    Missiles[i].transform.position = Missiles[i].transform.position + Missiles[i].MissileVelocity * Time.fixedDeltaTime;
+                }
             }
         }
 
-        void CheckMissileCollision(MissileComponent missileComponent)
+        void MissileHitSomething(MissileComponent missileComponent, RaycastHit2D[] hits)
         {
-            ResetMissileCollisions();
-            RobostrikeEnvironmentController.PhysicsScene2D.OverlapCircle(missileComponent.transform.position, MissileRadius, MissileCollisions, LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer)));
-
-            foreach (Collider2D collision in MissileCollisions)
+            foreach(RaycastHit2D hit in hits)
             {
-                if (collision == null || 
-                    collision.gameObject == missileComponent.Parent.gameObject || 
-                    collision.gameObject == missileComponent.gameObject ||
-                    collision.isTrigger)
+                if (hit.collider == null ||
+                    hit.collider.gameObject == missileComponent.Parent.gameObject ||
+                    hit.collider.gameObject == missileComponent.gameObject)
                     continue;
-
-                collision.gameObject.TryGetComponent(out otherAgent);
-
+                hit.collider.gameObject.TryGetComponent(out otherAgent);
                 if (otherAgent != null)
                 {
                     RobostrikeEnvironmentController.TankHit(missileComponent, otherAgent);
                 }
-
                 missileComponent.MissileHitTarget = true;
                 RemoveMissile(missileComponent);
                 Destroy(missileComponent.gameObject);
-            }
-        }
-
-        void ResetMissileCollisions()
-        {
-            for (int i = 0; i < MissileCollisions.Length; i++)
-            {
-                MissileCollisions[i] = null;
             }
         }
 
