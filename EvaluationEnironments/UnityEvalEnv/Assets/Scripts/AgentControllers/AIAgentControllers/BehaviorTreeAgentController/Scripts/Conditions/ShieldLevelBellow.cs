@@ -1,6 +1,3 @@
-
-using Problems.Robostrike;
-
 namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 {
     public enum ShieldLevel
