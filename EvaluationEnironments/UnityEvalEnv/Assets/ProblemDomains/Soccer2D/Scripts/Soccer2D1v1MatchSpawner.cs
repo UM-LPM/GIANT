@@ -103,6 +103,8 @@ namespace Problems.Soccer2D
                 agent.transform.position = agent.StartPosition;
                 agent.transform.rotation = agent.StartRotation;
 
+                agent.ResetVelocity();
+
             }
         }
 

@@ -1,3 +1,5 @@
+using Base;
+using System.Linq;
 using UnityEngine;
 using Utils;
 
@@ -12,7 +14,7 @@ namespace Problems.Soccer2D
         public float BallToPurpleGoalDistance { get; set; }
         public float BallToBlueGoalDistance { get; set; }
 
-        Soccer2DEnvironmentController SoccerEnvironmentController;
+        Soccer2DEnvironmentController Soccer2DEnvironmentController;
 
         public float Radius { get; private set; }
 
@@ -33,7 +35,7 @@ namespace Problems.Soccer2D
 
         private void Awake()
         {
-            SoccerEnvironmentController = GetComponentInParent<Soccer2DEnvironmentController>();
+            Soccer2DEnvironmentController = GetComponentInParent<Soccer2DEnvironmentController>();
             circleCollider = GetComponent<CircleCollider2D>();
             StartPosition = transform.position;
             StartRotation = transform.rotation;
@@ -54,10 +56,10 @@ namespace Problems.Soccer2D
         public void OnStep()
         {
             // Apply damping
-            velocity *= SoccerEnvironmentController.BallDampingFactor;
+            velocity *= Soccer2DEnvironmentController.BallDampingFactor;
 
             // Stop ball if slow
-            if (velocity.magnitude < SoccerEnvironmentController.BallMinVelocityThreshold)
+            if (velocity.magnitude < Soccer2DEnvironmentController.BallMinVelocityThreshold)
             {
                 velocity = Vector2.zero;
             }
@@ -78,7 +80,7 @@ namespace Problems.Soccer2D
             if(distance > 0f)
             {
                 hits = PhysicsUtil.PhysicsCircleCast2D(
-                SoccerEnvironmentController.PhysicsScene2D,
+                Soccer2DEnvironmentController.PhysicsScene2D,
                 gameObject,
                 currentPosition,
                 Radius,
@@ -107,23 +109,58 @@ namespace Problems.Soccer2D
             normal = hit.normal;
 
             // Reflect velocity with bounce
-            reflectedVelocity = Vector2.Reflect(velocity, normal) * SoccerEnvironmentController.BallBounceFactor;
+            reflectedVelocity = Vector2.Reflect(velocity, normal) * Soccer2DEnvironmentController.BallBounceFactor;
             velocity = reflectedVelocity;
 
             // Offset the ball slightly away from the surface
-            newPosition = hit.point + normal * (Radius + 0.001f);
+            newPosition = hit.point + normal * (Radius);
             transform.position = newPosition;
         }
 
         void CheckForObjectCollisions()
         {
-            var soccerAgent = PhysicsUtil.PhysicsOverlapSphereTargetObject<Soccer2DAgentComponent>(
-                SoccerEnvironmentController.PhysicsScene,
-                SoccerEnvironmentController.PhysicsScene2D,
-                SoccerEnvironmentController.GameType,
+            var agents = PhysicsUtil.PhysicsOverlapSphere<Soccer2DAgentComponent>(
+                Soccer2DEnvironmentController.PhysicsScene,
+                Soccer2DEnvironmentController.PhysicsScene2D,
+                Soccer2DEnvironmentController.GameType,
                 gameObject,
                 transform.position,
-                Radius + SoccerEnvironmentController.BallCollisionCheckRadius,
+                Radius + Soccer2DEnvironmentController.BallCollisionCheckRadius,
+                true,
+                gameObject.layer
+            );
+
+            if (agents == null || agents.Length == 0)
+                return;
+
+            Vector3 totalForce = Vector3.zero;
+
+            foreach (var agent in agents)
+            {
+                LastTouchedAgent = agent;
+                var dir = (transform.position - agent.transform.position).normalized;
+                var agentPower = Mathf.Max(0.05f, agent.Velocity.magnitude / Soccer2DEnvironmentController.AgentMaxAcceleration);
+
+                totalForce += dir * (Soccer2DEnvironmentController.KickPower * agentPower);
+
+                if (agentPower > 0.05f)
+                {
+                    Soccer2DEnvironmentController.AgentTouchedSoccerBall(agent);
+                }
+            }
+
+            if (totalForce != Vector3.zero)
+            {
+                AddForce(totalForce);
+            }
+
+            /*var soccerAgent = PhysicsUtil.PhysicsOverlapSphereTargetObject<Soccer2DAgentComponent>(
+                Soccer2DEnvironmentController.PhysicsScene,
+                Soccer2DEnvironmentController.PhysicsScene2D,
+                Soccer2DEnvironmentController.GameType,
+                gameObject,
+                transform.position,
+                Radius + Soccer2DEnvironmentController.BallCollisionCheckRadius,
                 true,
                 gameObject.layer
             );
@@ -131,7 +168,7 @@ namespace Problems.Soccer2D
             if (soccerAgent != null)
             {
                 soccerAgent.KickSoccerBall(this);
-            }
+            }*/
         }
 
         public Vector2 GetVelocity()
@@ -142,9 +179,9 @@ namespace Problems.Soccer2D
         public void AddForce(Vector2 force)
         {
             velocity += force;
-            if (velocity.magnitude > SoccerEnvironmentController.BallMaxVelocity)
+            if (velocity.magnitude > Soccer2DEnvironmentController.BallMaxVelocity)
             {
-                velocity = velocity.normalized * SoccerEnvironmentController.BallMaxVelocity;
+                velocity = velocity.normalized * Soccer2DEnvironmentController.BallMaxVelocity;
             }
         }
 

@@ -68,8 +68,31 @@ namespace Problems.Soccer2D
                 0, 0, agent.transform.rotation.eulerAngles.z + rotateDir * SoccerEnvironmentController.AgentRotationSpeed * Time.fixedDeltaTime
             );
 
-            // Collision check
-            if (!PhysicsUtil.PhysicsOverlapObject(
+            
+            Vector2 movement = (newAgentPos - agent.transform.position);
+            var hits = PhysicsUtil.PhysicsCircleCast2D(
+                        SoccerEnvironmentController.PhysicsScene2D,
+                        agent.gameObject,
+                        agent.transform.position,
+                        SoccerEnvironmentController.AgentColliderExtendsMultiplier.x,
+                        movement.normalized,
+                        movement.magnitude,
+                        true,
+                        gameObject.layer
+            );
+
+            if (hits.Length > 0)
+            {
+                // Handle collision (take first hit)
+                if (hits[0].collider != null && hits[0].collider.gameObject != gameObject)
+                {
+                    // Set new position to collision point (where edge of agent collider touches object)
+                    newAgentPos = hits[0].point + (hits[0].normal * SoccerEnvironmentController.AgentColliderExtendsMultiplier.x);
+                }
+            }
+
+            // TODO Remove
+            /*if (!PhysicsUtil.PhysicsOverlapObject(
                 SoccerEnvironmentController.PhysicsScene,
                 SoccerEnvironmentController.PhysicsScene2D,
                 SoccerEnvironmentController.GameType,
@@ -83,8 +106,9 @@ namespace Problems.Soccer2D
                 gameObject.layer))
             {
                 agent.transform.position = newAgentPos;
-            }
+            }*/
 
+            agent.transform.position = newAgentPos;
             agent.transform.rotation = newAgentRotation;
         }
     }
