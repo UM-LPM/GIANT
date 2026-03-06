@@ -95,7 +95,7 @@ namespace WebAPI.Controllers
                     {
                         client.Timeout = TimeSpan.FromMinutes(100);
 
-                        var task = client.PostAsync(requestBodyParams.CoordinatorURI, new StringContent(JsonConvert.SerializeObject(new CoordinatorEvalRequestData() { EvalEnvInstances = requestBodyParams.EvalEnvInstanceURIs, EvalRangeStart = 0, EvalRangeEnd = programs.Length, LastEvalIndividualFitnesses = requestBodyParams.LastEvalIndividualFitnesses }), Encoding.UTF8, "application/json"));
+                        var task = client.PostAsync(requestBodyParams.CoordinatorURI, new StringContent(JsonConvert.SerializeObject(new CoordinatorEvalRequestData() { EvalEnvInstances = requestBodyParams.EvalEnvInstanceURIs, EvalRangeStart = 0, EvalRangeEnd = programs.Length, LastEvalIndividualFitnesses = requestBodyParams.LastEvalFinalIndividualFitnesses }), Encoding.UTF8, "application/json"));
                         task.Wait();
 
                         HttpResponseMessage responseMessage = await task;
@@ -166,9 +166,9 @@ namespace WebAPI.Controllers
                 return "EvalEnvInstanceURIs is null";
             }
 
-            if(requestBodyParams.LastEvalIndividualFitnesses != null && requestBodyParams.LastEvalIndividualFitnesses.Length == 0)
+            if(requestBodyParams.LastEvalFinalIndividualFitnesses != null && requestBodyParams.LastEvalFinalIndividualFitnesses.Length == 0)
             {
-                return "LastEvalIndividualFitnesses is empty";
+                return "LastEvalFinalIndividualFitnesses is empty";
             }
 
             return null;

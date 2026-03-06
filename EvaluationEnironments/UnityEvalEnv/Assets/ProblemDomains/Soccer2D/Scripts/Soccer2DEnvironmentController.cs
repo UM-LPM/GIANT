@@ -15,6 +15,7 @@ namespace Problems.Soccer2D
         [Header("Soccer General Configuration")]
         [SerializeField] SoccerGameScenarioType GameScenarioType = SoccerGameScenarioType.GoldenGoal;
         [SerializeField] public GameObject SoccerBallPrefab;
+        [HideInInspector] float MinSoccerBallTravelDistance = 1.0f; // Ball must be able travel at least 1 unit after being hit to be considered a pass
 
         [Header("Soccer Game Configuration")]
         [SerializeField] public int MaxGoals = 10;
@@ -291,24 +292,38 @@ namespace Problems.Soccer2D
             // Only update if agent intentionaly hit the ball
             if (Mathf.Abs(SoccerBall.GetVelocity().x) > VelocityPassTreshold)
             {
-                Vector3 directionToTarget = (goal.transform.position - SoccerBall.transform.position).normalized;
-                float dotProduct = Vector3.Dot(SoccerBall.GetVelocity().normalized, directionToTarget);
+                // Check if the ball is not cornered 
+                if (PhysicsUtil.PhysicsCircleCast2D(
+                    PhysicsScene2D,
+                    SoccerBall.gameObject,
+                    SoccerBall.transform.position,
+                    SoccerBall.Radius,
+                    SoccerBall.GetVelocity().normalized,
+                    MinSoccerBallTravelDistance,
+                    true,
+                    SoccerBall.gameObject.layer).Length == 0)
+                {
+                    Vector3 directionToTarget = (goal.transform.position - SoccerBall.transform.position).normalized;
+                    float dotProduct = Vector3.Dot(SoccerBall.GetVelocity().normalized, directionToTarget);
 
-                if (dotProduct > PassTolerance)
-                {
-                    // The ball is moving towards the target
-                    agent.PassesToOponentGoal++;
+                    if (dotProduct > PassTolerance)
+                    {
+                        // The ball is moving towards the target
+                        agent.PassesToOponentGoal++;
+                    }
+                    else if (dotProduct < -PassTolerance)
+                    {
+                        // The object is not moving towards the target
+                        agent.PassesToOwnGoal++;
+                    }
+                    else
+                    {
+                        // The object is not moving in any dirrection
+                        agent.Passes++;
+                    }
                 }
-                else if (dotProduct < -PassTolerance)
-                {
-                    // The object is not moving towards the target
-                    agent.PassesToOwnGoal++;
-                }
-                else
-                {
-                    // The object is not moving in any dirrection
-                    agent.Passes++;
-                }
+
+                agent.ResetVelocity();
             }
         }
 
@@ -443,42 +458,40 @@ namespace Problems.Soccer2D
                 agent.AgentFitness.UpdateFitness(sectorExplorationFitness, Soccer2DFitness.FitnessKeys.SectorExploration.ToString());
 
                 // Goals scored
-                goalsScoredFitness = agent.GoalsScored / (float)SoccerBall.NumOfSpawns;
+                goalsScoredFitness = agent.GoalsScored / (float)MaxGoals;
                 goalsScoredFitness = (float)Math.Round(Soccer2DFitness.FitnessValues[Soccer2DFitness.FitnessKeys.GoalsScored.ToString()] * goalsScoredFitness, 4);
                 agent.AgentFitness.UpdateFitness(goalsScoredFitness, Soccer2DFitness.FitnessKeys.GoalsScored.ToString());
 
                 // Auto goals scored
-                autoGoalsScoredFitness = agent.AutoGoalsScored / (float)SoccerBall.NumOfSpawns;
+                autoGoalsScoredFitness = agent.AutoGoalsScored / (float)MaxGoals;
                 autoGoalsScoredFitness = (float)Math.Round(Soccer2DFitness.FitnessValues[Soccer2DFitness.FitnessKeys.AutoGoals.ToString()] * autoGoalsScoredFitness, 4);
                 agent.AgentFitness.UpdateFitness(autoGoalsScoredFitness, Soccer2DFitness.FitnessKeys.AutoGoals.ToString());
 
                 // Goals received (Every agents gets portion of the team goals received fitness)
-                goalsReceivedFitness = (agent.Team == SoccerTeam.Blue ? GoalBlue.GoalsReceived : GoalPurple.GoalsReceived) / (float)SoccerBall.NumOfSpawns;
+                goalsReceivedFitness = (agent.Team == SoccerTeam.Blue ? GoalBlue.GoalsReceived : GoalPurple.GoalsReceived) / (float)MaxGoals;
                 goalsReceivedFitness = (float)Math.Round(Soccer2DFitness.FitnessValues[Soccer2DFitness.FitnessKeys.GoalsReceived.ToString()] * goalsReceivedFitness, 4);
                 goalsReceivedFitness /= teamAgentCount;
                 agent.AgentFitness.UpdateFitness(goalsReceivedFitness, Soccer2DFitness.FitnessKeys.GoalsReceived.ToString());
 
                 // Passes to oponent goal
-                if (agent.PassesToOponentGoal > MaxPasses)
-                    agent.PassesToOponentGoal = MaxPasses;
-
                 passesToOponentGoalFitness = agent.PassesToOponentGoal / (float)MaxPasses;
+                passesToOponentGoalFitness = passesToOponentGoalFitness > 1 ? 1 : passesToOponentGoalFitness;
                 passesToOponentGoalFitness = (float)Math.Round(Soccer2DFitness.FitnessValues[Soccer2DFitness.FitnessKeys.PassesToOponentGoal.ToString()] * passesToOponentGoalFitness, 4);
+                passesToOponentGoalFitness /= teamAgentCount;
                 agent.AgentFitness.UpdateFitness(passesToOponentGoalFitness, Soccer2DFitness.FitnessKeys.PassesToOponentGoal.ToString());
 
                 // Passes to own goal
-                if (agent.PassesToOwnGoal > MaxPasses)
-                    agent.PassesToOwnGoal = MaxPasses;
-
                 passesToOwnGoalFitness = agent.PassesToOwnGoal / (float)MaxPasses;
+                passesToOwnGoalFitness = passesToOwnGoalFitness > 1 ? 1 : passesToOwnGoalFitness;
                 passesToOwnGoalFitness = (float)Math.Round(Soccer2DFitness.FitnessValues[Soccer2DFitness.FitnessKeys.PassesToOwnGoal.ToString()] * passesToOwnGoalFitness, 4);
+                passesFitness /= teamAgentCount;
                 agent.AgentFitness.UpdateFitness(passesToOwnGoalFitness, Soccer2DFitness.FitnessKeys.PassesToOwnGoal.ToString());
 
                 // Passes
-                if (agent.Passes > MaxPasses)
-                    agent.Passes = MaxPasses;
                 passesFitness = agent.Passes / (float)MaxPasses;
+                passesFitness = passesFitness > 1 ? 1 : passesFitness;
                 passesFitness = (float)Math.Round(Soccer2DFitness.FitnessValues[Soccer2DFitness.FitnessKeys.Passes.ToString()] * passesFitness, 4);
+                passesFitness /= teamAgentCount;
                 agent.AgentFitness.UpdateFitness(passesFitness, Soccer2DFitness.FitnessKeys.Passes.ToString());
 
                 // Agent to ball distance
@@ -631,6 +644,11 @@ namespace Problems.Soccer2D
                 if (conf.ProblemConfiguration.ContainsKey("CalculateBallToGoalDistanceEvery"))
                 {
                     CalculateBallToGoalDistanceEvery = float.Parse(conf.ProblemConfiguration["CalculateBallToGoalDistanceEvery"]);
+                }
+
+                if(conf.ProblemConfiguration.ContainsKey("MinSoccerBallTravelDistance"))
+                {
+                    MinSoccerBallTravelDistance = float.Parse(conf.ProblemConfiguration["MinSoccerBallTravelDistance"]);
                 }
             }
         }

@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using Utils;
 using UnitTests;
+using System;
 
 namespace Configuration
 {
@@ -60,7 +61,14 @@ namespace Configuration
             CoordinatorURIInputField.text = baseCoordinatorURI;
             CommunicatorURIInputField.text = baseCommunicatorURI;
 
-            await MqttNetLogger.Connect();
+            try
+            {
+                await MqttNetLogger.Connect();
+            }
+            catch (Exception ex)
+            {
+                DebugSystem.LogError("Failed to connect to MQTT broker: " + ex.ToString());
+            }
 
             if(UnitTester.Instance != null && UnitTester.Instance.CurrentTestIndex > -1)
             {

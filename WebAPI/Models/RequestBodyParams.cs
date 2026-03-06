@@ -8,6 +8,6 @@ namespace WebAPI.Models
         public string[]? EvalEnvInstanceURIs { get; set; }
         public string? ApiRequestDataSourceFilePath { get; set; }
         public string? DestinationFilePath { get; set; }
-        public IndividualFitness[]? LastEvalIndividualFitnesses { get; set; }
+        public IndividualFitness[]? LastEvalFinalIndividualFitnesses { get; set; }
     }
 }
