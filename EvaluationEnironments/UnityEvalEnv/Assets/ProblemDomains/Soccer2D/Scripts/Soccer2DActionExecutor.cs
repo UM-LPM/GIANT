@@ -91,23 +91,6 @@ namespace Problems.Soccer2D
                 }
             }
 
-            // TODO Remove
-            /*if (!PhysicsUtil.PhysicsOverlapObject(
-                SoccerEnvironmentController.PhysicsScene,
-                SoccerEnvironmentController.PhysicsScene2D,
-                SoccerEnvironmentController.GameType,
-                agent.gameObject,
-                newAgentPos,
-                SoccerEnvironmentController.AgentColliderExtendsMultiplier.x,
-                Vector3.zero,
-                newAgentRotation,
-                PhysicsOverlapType.OverlapSphere,
-                true,
-                gameObject.layer))
-            {
-                agent.transform.position = newAgentPos;
-            }*/
-
             agent.transform.position = newAgentPos;
             agent.transform.rotation = newAgentRotation;
         }
