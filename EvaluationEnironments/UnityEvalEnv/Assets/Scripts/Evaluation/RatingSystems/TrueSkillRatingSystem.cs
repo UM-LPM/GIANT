@@ -91,31 +91,6 @@ namespace Evaluators.CompetitionOrganizations
                                 trueSkillPlayer.Player = new Player(trueSkillPlayer.IndividualID, contribution);
                             }
                         }
-
-                        // TODO : Requires more testing
-                        // Alternative way using softmax (when there are negative and positive fitness values)
-                        /*var individualFitnesses = matchFitness.TeamFitnesses[i].IndividualFitness;
-                        List<float> fitnessValues = individualFitnesses.Select(f => f.Value).ToList();
-
-                        // 1. Compute softmax contributions
-                        float[] contributions = SoftmaxContributionsAdaptive(fitnessValues);
-
-                        for (int j = 0; j < individualFitnesses.Count; j++)
-                        {
-                            TrueSkillPlayer trueSkillPlayer = GetPlayer(individualFitnesses[j].IndividualID);
-                            if (trueSkillPlayer != null)
-                            {
-                                float contribution = contributions[j];
-
-                                // If the team lost, invert contribution (penalize poor contributors more)
-                                if (orderRanking[i] != 1)
-                                {
-                                    contribution = 1 - contribution;
-                                }
-
-                                trueSkillPlayer.Player = new Player(trueSkillPlayer.IndividualID, contribution);
-                            }
-                        }*/
                     }
                 }
 
@@ -217,53 +192,6 @@ namespace Evaluators.CompetitionOrganizations
             }
 
             return ratings;
-        }
-
-        public static float[] SoftmaxContributionsAdaptive(
-            List<float> fitnesses,
-            float k = 2f,
-            float alphaMin = 0.001f,
-            float alphaMax = 0.005f)
-        {
-            int n = fitnesses.Count;
-
-            if (n == 0)
-                return Array.Empty<float>();
-
-            if (n == 1)
-                return new[] { 1f };
-
-            // Compute mean
-            float mean = fitnesses.Sum() / n;
-
-            // Compute standard deviation
-            float variance = 0f;
-            foreach (float f in fitnesses)
-                variance += (f - mean) * (f - mean);
-
-            variance /= n;
-            float sigma = math.sqrt(variance);
-
-            // Adaptive alpha
-            float epsilon = 1e-6f;
-            float alpha = k / (sigma + epsilon);
-            alpha = math.clamp(alpha, alphaMin, alphaMax);
-
-            // Softmax
-            float[] expValues = new float[n];
-            float sumExp = 0f;
-
-            for (int i = 0; i < n; i++)
-            {
-                expValues[i] = (float)Math.Exp(-alpha * fitnesses[i]);
-                sumExp += expValues[i];
-            }
-
-            float[] contributions = new float[n];
-            for (int i = 0; i < n; i++)
-                contributions[i] = expValues[i] / sumExp;
-
-            return contributions;
         }
     }
 
