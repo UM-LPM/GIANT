@@ -71,6 +71,7 @@ namespace Problems.DodgeBall
         protected override void DefineAdditionalDataOnPostAwake()
         {
             ReadParamsFromMainConfiguration();
+            SetBestAndWorstFitnesses(DodgeBallFitness.FitnessValues);
 
             BallSpawner = GetComponent<DodgeBallBallSpawner>();
             if (BallSpawner == null)

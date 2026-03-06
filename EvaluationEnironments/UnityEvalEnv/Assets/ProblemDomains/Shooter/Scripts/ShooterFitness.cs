@@ -12,9 +12,10 @@ namespace Problems.Shooter
              { "ShieldItemPickUp", -20f },
              { "BulletsFired", -50f },
              { "BulletsFiredAccuracy", -200f },
-             { "OpponentDefeatedBonus", -500f },
+             { "OpponentDefeatedBonus", -1000f },
              { "SurvivalBonus", -50f },
-             { "DamageTakenPenalty", 50f }
+             { "DamageTakenPenalty", 50f },
+             { "FriendlyFirePenalty", 200f },
         };
 
         public static string[] Keys = FitnessValues.Keys.ToArray();
@@ -29,7 +30,8 @@ namespace Problems.Shooter
             BulletsFiredAccuracy,
             OpponentDefeatedBonus,
             SurvivalBonus,
-            DamageTakenPenalty
+            DamageTakenPenalty,
+            FriendlyFirePenalty
         }
     }
 }

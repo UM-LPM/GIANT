@@ -23,6 +23,7 @@ namespace Problems.Shooter
         public int SectorsExplored { get; set; }
         public int BulletsFired { get; set; }
         public int BulletsHitOpponent { get; set; }
+        public int BulletsHitTeamMate { get; set; }
         public int HitByOpponentBullets { get; set; }
         public int OpponentsDefeated { get; set; }
         public int SurvivedSimulationSteps { get; set; }
@@ -85,6 +86,11 @@ namespace Problems.Shooter
         public void HitByOpponentBullet()
         {
             HitByOpponentBullets++;
+        }
+
+        public void BulletHitTeamMate()
+        {
+            BulletsHitTeamMate++;
         }
     }
 }

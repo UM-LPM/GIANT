@@ -41,6 +41,7 @@ namespace Problems.Pong
         protected override void DefineAdditionalDataOnPostAwake()
         {
             ReadParamsFromMainConfiguration();
+            SetBestAndWorstFitnesses(PongFitness.FitnessValues);
 
             PongBallSpawner = GetComponent<PongBallSpawner>();
             if (PongBallSpawner == null)

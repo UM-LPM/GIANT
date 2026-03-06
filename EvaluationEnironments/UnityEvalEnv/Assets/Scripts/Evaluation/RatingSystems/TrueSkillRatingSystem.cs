@@ -1,11 +1,12 @@
-using System.Collections.Generic;
-using Moserware.Skills;
-using Unity.Mathematics;
-using System;
 using AgentOrganizations;
-using Fitnesses;
-using System.Linq;
 using Base;
+using Fitnesses;
+using Moserware.Skills;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Unity.Mathematics;
+using UnityEngine;
 using Utils;
 
 namespace Evaluators.CompetitionOrganizations
@@ -75,10 +76,12 @@ namespace Evaluators.CompetitionOrganizations
                 {
                     if (matchFitness.TeamFitnesses[i].IndividualFitness.Count > 1)
                     {
-                        float teamFitness = math.abs(matchFitness.TeamFitnesses[i].GetTeamFitness());
+                        float[] contributions = ComputeContributions(matchFitness.TeamFitnesses[i].IndividualFitness.Select(ind => ind.Value).ToList());
+
                         foreach (IndividualFitness individualFitness in matchFitness.TeamFitnesses[i].IndividualFitness)
                         {
-                            float contribution = teamFitness > 0 ? (math.abs(individualFitness.Value) / teamFitness) : 1;
+                            int playerIndex = matchFitness.TeamFitnesses[i].IndividualFitness.IndexOf(individualFitness);
+                            float contribution = contributions[playerIndex];
                             TrueSkillPlayer trueSkillPlayer = GetPlayer(individualFitness.IndividualID);
                             if (trueSkillPlayer != null)
                             {
@@ -87,35 +90,9 @@ namespace Evaluators.CompetitionOrganizations
                                 {
                                     contribution = 1 - contribution; // If the team lost, the contribution is inverted (i.e., a player who contributed less to the team fitness should be penalized more)
                                 }
-
                                 trueSkillPlayer.Player = new Player(trueSkillPlayer.IndividualID, contribution);
                             }
                         }
-
-                        // TODO : Requires more testing
-                        // Alternative way using softmax (when there are negative and positive fitness values)
-                        /*var individualFitnesses = matchFitness.TeamFitnesses[i].IndividualFitness;
-                        List<float> fitnessValues = individualFitnesses.Select(f => f.Value).ToList();
-
-                        // 1. Compute softmax contributions
-                        float[] contributions = SoftmaxContributionsAdaptive(fitnessValues);
-
-                        for (int j = 0; j < individualFitnesses.Count; j++)
-                        {
-                            TrueSkillPlayer trueSkillPlayer = GetPlayer(individualFitnesses[j].IndividualID);
-                            if (trueSkillPlayer != null)
-                            {
-                                float contribution = contributions[j];
-
-                                // If the team lost, invert contribution (penalize poor contributors more)
-                                if (orderRanking[i] != 1)
-                                {
-                                    contribution = 1 - contribution;
-                                }
-
-                                trueSkillPlayer.Player = new Player(trueSkillPlayer.IndividualID, contribution);
-                            }
-                        }*/
                     }
                 }
 
@@ -219,51 +196,63 @@ namespace Evaluators.CompetitionOrganizations
             return ratings;
         }
 
-        public static float[] SoftmaxContributionsAdaptive(
-            List<float> fitnesses,
-            float k = 2f,
-            float alphaMin = 0.001f,
-            float alphaMax = 0.005f)
+        // Alternative approach to compute contributions using softmax function.
+        /*public static float[] SoftmaxContributions(List<float> fitness, float T = 250f)
         {
-            int n = fitnesses.Count;
+            int n = fitness.Count;
+            float[] utilities = new float[n];
 
-            if (n == 0)
-                return Array.Empty<float>();
+            for (int i = 0; i < n; i++)
+                utilities[i] = -fitness[i];
 
-            if (n == 1)
-                return new[] { 1f };
+            float max = utilities.Max();
 
-            // Compute mean
-            float mean = fitnesses.Sum() / n;
-
-            // Compute standard deviation
-            float variance = 0f;
-            foreach (float f in fitnesses)
-                variance += (f - mean) * (f - mean);
-
-            variance /= n;
-            float sigma = math.sqrt(variance);
-
-            // Adaptive alpha
-            float epsilon = 1e-6f;
-            float alpha = k / (sigma + epsilon);
-            alpha = math.clamp(alpha, alphaMin, alphaMax);
-
-            // Softmax
-            float[] expValues = new float[n];
-            float sumExp = 0f;
+            float sum = 0f;
+            float[] expVals = new float[n];
 
             for (int i = 0; i < n; i++)
             {
-                expValues[i] = (float)Math.Exp(-alpha * fitnesses[i]);
-                sumExp += expValues[i];
+                expVals[i] = Mathf.Exp((utilities[i] - max) / T);
+                sum += expVals[i];
             }
 
             float[] contributions = new float[n];
+            float normSum = 0f;
+
             for (int i = 0; i < n; i++)
-                contributions[i] = expValues[i] / sumExp;
+            {
+                contributions[i] = expVals[i] / sum;
+                normSum += contributions[i];
+            }
+
+            // normalization
+            for (int i = 0; i < n; i++)
+                contributions[i] /= normSum;
 
             return contributions;
+        }*/
+
+        float[] ComputeContributions(List<float> fitnesses)
+        {
+            if(EnvironmentControllerBase.BEST_FITNESS == float.MinValue || EnvironmentControllerBase.WORST_FITNESS == float.MaxValue)
+            {
+                throw new Exception("Best and worst fitness values must be set in the EnvironmentController class before computing contributions!");
+            }
+            float range = EnvironmentControllerBase.WORST_FITNESS - EnvironmentControllerBase.BEST_FITNESS;
+
+            List<float> scores = new List<float>();
+
+            foreach (var f in fitnesses)
+                scores.Add((EnvironmentControllerBase.WORST_FITNESS - f) / range);
+
+            float sum = scores.Sum();
+
+            List<float> contributions = new List<float>();
+
+            foreach (var s in scores)
+                contributions.Add(sum > 0 ? s / sum : 1f / fitnesses.Count);
+
+            return contributions.ToArray();
         }
     }
 

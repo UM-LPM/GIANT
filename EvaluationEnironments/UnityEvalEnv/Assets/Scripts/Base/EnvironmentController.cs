@@ -18,6 +18,8 @@ namespace Base
     [RequireComponent(typeof(Util))]
     public abstract class EnvironmentControllerBase : MonoBehaviour
     {
+        public static float BEST_FITNESS = float.MinValue;
+        public static float WORST_FITNESS = float.MaxValue;
 
         [Header("Base Configuration")]
         [SerializeField] public ComponentSetupType EnvironmentControllerSetup = ComponentSetupType.MOCK;
@@ -364,6 +366,27 @@ namespace Base
             }
 
             return counter;
+        }
+
+        public void SetBestAndWorstFitnesses(Dictionary<string, float> FitnessValues)
+        {
+            float bestFitness = 0f;
+            float worstFitness = 0f;
+            foreach (var fitnessValue in FitnessValues)
+            {
+                if(fitnessValue.Value < 0)
+                    bestFitness += fitnessValue.Value;
+                else
+                    worstFitness += fitnessValue.Value;
+            }
+
+            if(bestFitness > worstFitness)
+            {
+                throw new Exception("Best fitness is higher than worst fitness! Check the signs of the fitness values!");
+            }
+
+            BEST_FITNESS = bestFitness;
+            WORST_FITNESS = worstFitness;
         }
     }
 

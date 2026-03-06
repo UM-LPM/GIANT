@@ -102,6 +102,7 @@ namespace Problems.Soccer2D
         protected override void DefineAdditionalDataOnPostAwake()
         {
             ReadParamsFromMainConfiguration();
+            SetBestAndWorstFitnesses(Soccer2DFitness.FitnessValues);
 
             GoalBlue = GetComponentsInChildren<Soccer2DGoalComponent>().Where(a => a.Team == SoccerTeam.Blue).First();
             GoalPurple = GetComponentsInChildren<Soccer2DGoalComponent>().Where(a => a.Team == SoccerTeam.Purple).First();

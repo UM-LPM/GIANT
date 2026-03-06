@@ -87,6 +87,7 @@ namespace Problems.Robostrike
         protected override void DefineAdditionalDataOnPostAwake()
         {
             ReadParamsFromMainConfiguration();
+            SetBestAndWorstFitnesses(RobostrikeFitness.FitnessValues);
 
             PowerUpSpawner = GetComponent<RobostrikePowerUpSpawner>();
             if (PowerUpSpawner == null)

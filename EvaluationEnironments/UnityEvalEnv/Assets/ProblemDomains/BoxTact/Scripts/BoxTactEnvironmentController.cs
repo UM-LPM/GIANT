@@ -48,6 +48,7 @@ namespace Problems.BoxTact
         protected override void DefineAdditionalDataOnPostAwake()
         {
             ReadParamsFromMainConfiguration();
+            SetBestAndWorstFitnesses(BoxTactFitness.FitnessValues);
 
             BoxSpawner = GetComponent<BoxTactBoxSpawner>();
             if (BoxSpawner == null)

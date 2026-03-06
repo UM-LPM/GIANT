@@ -73,6 +73,7 @@ namespace Problems.BombClash
         protected override void DefineAdditionalDataOnPostAwake()
         {
             ReadParamsFromMainConfiguration();
+            SetBestAndWorstFitnesses(BombClashFitness.FitnessValues);
 
             destructibleTilesCount = CountTiles(DestructibleTiles);
 

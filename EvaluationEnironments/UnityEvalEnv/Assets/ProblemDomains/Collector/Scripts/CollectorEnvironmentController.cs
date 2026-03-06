@@ -52,6 +52,7 @@ namespace Problems.Collector
         protected override void DefineAdditionalDataOnPostAwake()
         {
             ReadParamsFromMainConfiguration();
+            SetBestAndWorstFitnesses(CollectorFitness.FitnessValues);
 
             TargetSpawner = GetComponent<CollectorTargetSpawner>();
             if(TargetSpawner == null)

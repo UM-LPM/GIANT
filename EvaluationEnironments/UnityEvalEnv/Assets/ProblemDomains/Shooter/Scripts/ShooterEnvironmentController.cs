@@ -61,12 +61,16 @@ namespace Problems.Shooter
         float opponentsDefeatedBonus;
         float damageTakenPenalty;
         float survivalBonus;
+        float friendlyFirePenalty;
+
         int numOfOpponents;
         int numOfFiredOpponentBullets;
+        int opponentsHealthSum;
 
         protected override void DefineAdditionalDataOnPostAwake()
         {
             ReadParamsFromMainConfiguration();
+            SetBestAndWorstFitnesses(ShooterFitness.FitnessValues);
 
             ItemSpawner = GetComponent<ShooterItemSpawner>();
             if (ItemSpawner == null)
@@ -149,28 +153,6 @@ namespace Problems.Shooter
 
                     // Remove inactive items
                     Items.RemoveAll(i => !i.gameObject.activeSelf);
-
-                    // TODO Delete
-                    /*items = PhysicsUtil.PhysicsOverlapTargetObjects<Item>(PhysicsScene, PhysicsScene2D, GameType, agent.gameObject, agent.transform.position, AgentColliderExtendsMultiplier.x, Vector3.zero, agent.transform.rotation, PhysicsOverlapType.OverlapSphere, false, gameObject.layer);
-
-                    if (items != null && items.Count > 0)
-                    {
-                        foreach (Item item in items)
-                        {
-                            if(item is WeaponItem weaponItem)
-                                if (AgentPickedUpWeaponItem(agent, weaponItem))
-                                    Destroy(weaponItem.gameObject);
-
-                            if(item is HealthItem healthItem)
-                            {
-                                if (agent.HealthComponent.Health < AgentStartHealth)
-                                {
-                                    agent.HealthComponent.Health = AgentStartHealth;
-                                    Destroy(healthItem.gameObject);
-                                }
-                            }
-                        }
-                    }*/
                 }
             }
         }
@@ -237,13 +219,22 @@ namespace Problems.Shooter
 
         public void AgentHit(WeaponBulletComponent bullet, AgentComponent hitAgent)
         {
-            (bullet.Parent as ShooterAgentComponent).BulletHitOpponent();
-            (hitAgent as ShooterAgentComponent).HitByOpponentBullet();
-
-            UpdateAgentHealth(bullet, hitAgent as ShooterAgentComponent);
+            if(bullet.Parent.TeamIdentifier.TeamID == hitAgent.TeamIdentifier.TeamID)
+            {
+                // Friendly fire
+                (bullet.Parent as ShooterAgentComponent).BulletHitTeamMate();
+                UpdateAgentHealth(bullet, hitAgent as ShooterAgentComponent, true);
+            }
+            else
+            {
+                // Opponent hit
+                (bullet.Parent as ShooterAgentComponent).BulletHitOpponent();
+                (hitAgent as ShooterAgentComponent).HitByOpponentBullet();
+                UpdateAgentHealth(bullet, hitAgent as ShooterAgentComponent, false);
+            }
         }
 
-        void UpdateAgentHealth(WeaponBulletComponent bullet, ShooterAgentComponent hitAgent)
+        void UpdateAgentHealth(WeaponBulletComponent bullet, ShooterAgentComponent hitAgent, bool friendlyFire)
         {
             hitAgent.TakeDamage(BulletDamage);
 
@@ -251,14 +242,20 @@ namespace Problems.Shooter
             {
                 hitAgent.SurvivedSimulationSteps = CurrentSimulationSteps;
                 hitAgent.gameObject.SetActive(false);
-                (bullet.Parent as ShooterAgentComponent).OpponentsDefeated++;
+                if(!friendlyFire)
+                    (bullet.Parent as ShooterAgentComponent).OpponentsDefeated++;
             }
         }
 
         public override int GetNumOfActiveAgents()
         {
             // Check if at least two agents from different teams are alive, otherwise finish the simulation
-            int[] aliveAgentsPerTeam = new int[Match.Teams.Length];
+
+            Dictionary<int, int> aliveAgentsPerTeam = new Dictionary<int, int>();
+            for (int i = 0; i < Match.Teams.Length; i++)
+                {
+                    aliveAgentsPerTeam.Add(Match.Teams[i].TeamId, 0);
+            }
 
             foreach (var agent in Agents)
             {
@@ -267,8 +264,8 @@ namespace Problems.Shooter
             }
 
             // Check if at least two teams have alive agents
-            int numOfTeamsWithAliveAgents = aliveAgentsPerTeam.Count(count => count > 0);
-            return numOfTeamsWithAliveAgents;
+            int teamsWithAliveAgents = aliveAgentsPerTeam.Values.Count(count => count > 0);
+            return teamsWithAliveAgents;
         }
 
         public override bool IsSimulationFinished()
@@ -344,6 +341,17 @@ namespace Problems.Shooter
                     agent.AgentFitness.UpdateFitness(damageTakenPenalty, ShooterFitness.FitnessKeys.DamageTakenPenalty.ToString());
                 }
 
+                opponentsHealthSum = Agents.Where(a => a.TeamIdentifier.TeamID != agent.TeamIdentifier.TeamID).Sum(a => AgentStartHealth) - AgentStartHealth; // - AgentStartHealth because agent can't hit itself
+                // FriendlyFire penalty
+                if (agent.BulletsHitTeamMate > 0)
+                {
+                    friendlyFirePenalty = agent.BulletsHitTeamMate / (float)opponentsHealthSum;
+                    if(friendlyFirePenalty > 1)
+                        friendlyFirePenalty = 1f;
+                    friendlyFirePenalty = (float)Math.Round(ShooterFitness.FitnessValues[ShooterFitness.FitnessKeys.FriendlyFirePenalty.ToString()] * friendlyFirePenalty, 4);
+                    agent.AgentFitness.UpdateFitness(friendlyFirePenalty, ShooterFitness.FitnessKeys.FriendlyFirePenalty.ToString());
+                }
+
                 string agentFitnessLog = "========================================\n" +
                     $"[Agent]: Team ID + {agent.TeamIdentifier.TeamID} , ID: " + agent.IndividualID + "\n" +
                     $"[Sectors explored]: " + agent.SectorsExplored + " / " + Sectors.Length + " = " + sectorExplorationFitness + "\n" +
@@ -352,6 +360,8 @@ namespace Problems.Shooter
                     $"[Bullets fired accuracy]: " + agent.BulletsHitOpponent + " / " + agent.BulletsFired + " = " + bulletsFiredAccuracy + "\n" +
                     $"[Opponents defeated]: " + agent.OpponentsDefeated + " / " + numOfOpponents + " = " + opponentsDefeatedBonus + "\n" +
                     $"[Damage taken]: " + agent.HitByOpponentBullets + " / " + AgentStartHealth + " = " + damageTakenPenalty + "\n" +
+                    $"[Survival bonus]: " + (agent.SurvivedSimulationSteps == -1 ? SimulationSteps : agent.SurvivedSimulationSteps) + " / " + SimulationSteps + " = " + survivalBonus + "\n" +
+                    $"[Friendly fire penalty]: " + agent.BulletsHitTeamMate + " / " + opponentsHealthSum + " = " + (agent.BulletsHitTeamMate > 0 ? ShooterFitness.FitnessValues[ShooterFitness.FitnessKeys.FriendlyFirePenalty.ToString()] * (agent.BulletsHitTeamMate / (float)allPossibleBulletsFired) : 0) + "\n" +
                     "========================================\n";
 
                 DebugSystem.LogVerbose(agentFitnessLog);
