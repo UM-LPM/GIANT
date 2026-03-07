@@ -22,7 +22,7 @@ namespace Problems.Robostrike
 
         public void UpdateMissilePosAndCheckForColls()
         {
-            if(Time.timeScale == 0f) return; // Skip updates when the game is paused to avoid issues with missile movement and collision detection
+            if (Time.timeScale == 0f) return; // Skip updates when the game is paused to avoid issues with missile movement and collision detection
             for (int i = 0; i < Missiles.Count; i++)
             {
                 var newPos = Missiles[i].transform.position + Missiles[i].MissileVelocity * Time.fixedDeltaTime;
@@ -41,37 +41,38 @@ namespace Problems.Robostrike
                     LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer))
                 );
 
-                if (hits.Length > 0 && hits[0].collider != null &&
-                    hits[0].collider.gameObject != Missiles[i].gameObject &&
-                    hits[0].collider.gameObject != Missiles[i].Parent.gameObject)
+                var hasHit = false;
+                foreach (RaycastHit2D hit in hits)
                 {
-                    Missiles[i].transform.position = hits[0].point;
-                    MissileHitSomething(Missiles[i], hits);
+                    if (hit.collider != null &&
+                        hit.collider.gameObject != Missiles[i].gameObject &&
+                        hit.collider.gameObject != Missiles[i].Parent.gameObject)
+                    {
+                        hasHit = true;
+                        Missiles[i].transform.position = hit.point;
+                        MissileHitSomething(Missiles[i], hit);
+                        break;
+                    }
                 }
-                else
+
+                if (!hasHit)
                 {
                     Missiles[i].transform.position = Missiles[i].transform.position + Missiles[i].MissileVelocity * Time.fixedDeltaTime;
                 }
             }
         }
 
-        void MissileHitSomething(MissileComponent missileComponent, RaycastHit2D[] hits)
+        void MissileHitSomething(MissileComponent missileComponent, RaycastHit2D hit)
         {
-            foreach(RaycastHit2D hit in hits)
+            hit.collider.gameObject.TryGetComponent(out otherAgent);
+            if (otherAgent != null)
             {
-                if (hit.collider == null ||
-                    hit.collider.gameObject == missileComponent.Parent.gameObject ||
-                    hit.collider.gameObject == missileComponent.gameObject)
-                    continue;
-                hit.collider.gameObject.TryGetComponent(out otherAgent);
-                if (otherAgent != null)
-                {
-                    RobostrikeEnvironmentController.TankHit(missileComponent, otherAgent);
-                }
-                missileComponent.MissileHitTarget = true;
-                RemoveMissile(missileComponent);
-                Destroy(missileComponent.gameObject);
+                RobostrikeEnvironmentController.TankHit(missileComponent, otherAgent);
             }
+            missileComponent.MissileHitTarget = true;
+
+            RemoveMissile(missileComponent);
+            Destroy(missileComponent.gameObject);
         }
 
         public void AddMissile(MissileComponent missile)
