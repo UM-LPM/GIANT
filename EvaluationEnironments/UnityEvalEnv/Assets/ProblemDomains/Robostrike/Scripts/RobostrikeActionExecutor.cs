@@ -97,7 +97,7 @@ namespace Problems.Robostrike
 
         private void ShootMissile(RobostrikeAgentComponent agent)
         {
-            if (agent.ActionBuffer.GetDiscreteAction("shootMissile") == 1 && agent.NextShootTime <= RobostrikeEnvironmentController.CurrentSimulationTime && agent.AmmoComponent.Ammo > 0)
+            if (agent.ActionBuffer.GetDiscreteAction("shoot") == 1 && agent.NextShootTime <= RobostrikeEnvironmentController.CurrentSimulationTime && agent.AmmoComponent.Ammo > 0)
             {
                 spawnPosition = agent.MissileSpawnPoint.transform.position;
                 spawnRotation = agent.Turret.transform.rotation;

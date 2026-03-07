@@ -16,7 +16,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController.Robost
         protected override State OnUpdate()
         {
             var discreteActionsOut = blackboard.actionsOut.DiscreteActions;
-            blackboard.actionsOut.AddDiscreteAction("shootMissile", shoot);
+            blackboard.actionsOut.AddDiscreteAction("shoot", shoot);
 
             return State.Success;
         }

@@ -12,7 +12,7 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
 
         public override void Execute(ActionBuffer actionsOut)
         {
-            actionsOut.AddDiscreteAction("shootMissile", shoot);
+            actionsOut.AddDiscreteAction("shoot", shoot);
         }
     }
 }

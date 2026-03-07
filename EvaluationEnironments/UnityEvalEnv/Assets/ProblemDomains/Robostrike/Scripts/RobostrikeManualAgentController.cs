@@ -24,7 +24,7 @@ namespace Problems.Robostrike
                 actionsOut.AddDiscreteAction("rotateTurretDirection", 2);
 
             if (Input.GetKey(KeyCode.Space))
-                actionsOut.AddDiscreteAction("shootMissile", 1);
+                actionsOut.AddDiscreteAction("shoot", 1);
         }
 
         public override AgentController Clone()
