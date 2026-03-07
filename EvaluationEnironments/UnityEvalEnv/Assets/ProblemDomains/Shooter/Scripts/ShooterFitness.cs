@@ -6,7 +6,7 @@ namespace Problems.Shooter
     public class ShooterFitness
     {
         public static Dictionary<string, float> FitnessValues = new Dictionary<string, float> {
-             { "SectorExploration", -5f },
+             { "SectorExploration", -10f },
              { "WeaponItemPickUp", -30f },
              { "HealthItemPickUp", -20f },
              { "ShieldItemPickUp", -20f },
