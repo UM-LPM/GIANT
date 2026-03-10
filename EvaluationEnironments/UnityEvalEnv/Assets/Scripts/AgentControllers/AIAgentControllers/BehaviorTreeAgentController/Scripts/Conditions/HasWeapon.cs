@@ -3,7 +3,7 @@ using Problems.Shooter;
 
 namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 {
-    public class HassWeapon : ConditionNode
+    public class HasWeapon : ConditionNode
     {
         protected override void OnStart()
         {

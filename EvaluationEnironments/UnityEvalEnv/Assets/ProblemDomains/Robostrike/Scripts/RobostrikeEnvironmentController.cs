@@ -545,7 +545,7 @@ namespace Problems.Robostrike
                 // Missiles fired accuracy
                 if (agent.MissilesFired > 0)
                 {
-                    missilesFiredAccuracy = agent.MissilesHitOpponent / (float)agent.MissilesFired;
+                    missilesFiredAccuracy = agent.MissilesHitOpponent / (float)allPossibleMissilesFired;
                     missilesFiredAccuracy = (float)Math.Round(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.MissilesFiredAccuracy.ToString()] * missilesFiredAccuracy, 4);
                     agent.AgentFitness.UpdateFitness(missilesFiredAccuracy, RobostrikeFitness.FitnessKeys.MissilesFiredAccuracy.ToString());
                 }

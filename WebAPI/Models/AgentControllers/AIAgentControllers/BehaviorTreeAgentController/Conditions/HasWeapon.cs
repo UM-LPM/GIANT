@@ -2,9 +2,9 @@ using WebAPI.Models;
 
 namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 {
-    public class HassWeapon : ConditionNode
+    public class HasWeapon : ConditionNode
     {
-        public HassWeapon(Guid guid, string name, List<WebAPI.Models.Property>? properties, Position? position)
+        public HasWeapon(Guid guid, string name, List<WebAPI.Models.Property>? properties, Position? position)
             : base(guid, name, properties, position)
         {
 

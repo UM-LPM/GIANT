@@ -5,7 +5,6 @@ using Spawners;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static Unity.VisualScripting.LudiqRootObjectEditor;
 
 namespace Problems.Shooter
 {
