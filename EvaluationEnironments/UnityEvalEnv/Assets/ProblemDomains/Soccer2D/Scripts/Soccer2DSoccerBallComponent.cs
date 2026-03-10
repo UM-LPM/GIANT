@@ -65,10 +65,10 @@ namespace Problems.Soccer2D
             }
 
             // Check collisions
-            //CheckForObjectCollisions();
+            CheckForObjectCollisions();
 
             // Move
-            //Move();
+            Move();
         }
         
         void Move()

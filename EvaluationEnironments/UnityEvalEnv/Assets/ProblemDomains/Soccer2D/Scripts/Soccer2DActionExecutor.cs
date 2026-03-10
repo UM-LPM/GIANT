@@ -85,9 +85,7 @@ namespace Problems.Soccer2D
 
             foreach(RaycastHit2D hit in hits)
             {
-                if(hit.collider != null && hit.collider.gameObject != gameObject &&
-                    hit.collider.gameObject.GetComponent<Soccer2DAgentComponent>() == null
-                    )
+                if(hit.collider != null && hit.collider.gameObject != gameObject)
                 {
                     newAgentPos = hit.point + (hit.normal * SoccerEnvironmentController.AgentColliderExtendsMultiplier.x);
                     break;
