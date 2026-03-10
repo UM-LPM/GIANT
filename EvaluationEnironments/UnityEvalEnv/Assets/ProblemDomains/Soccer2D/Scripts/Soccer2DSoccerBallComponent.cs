@@ -65,10 +65,10 @@ namespace Problems.Soccer2D
             }
 
             // Check collisions
-            CheckForObjectCollisions();
+            //CheckForObjectCollisions();
 
             // Move
-            Move();
+            //Move();
         }
         
         void Move()
@@ -91,11 +91,9 @@ namespace Problems.Soccer2D
 
                 if(hits.Length > 0)
                 {
-                    // If goal was not hit, handle normal collision (take first hit)
-                    if (hits[0].collider != null && hits[0].collider.gameObject != gameObject)
-                    {
-                        HandleCollision(hits[0]);
-                    }
+                    // Take the closest hit
+                    var closestHit = hits.Where(h => h.collider != null && h.collider.gameObject != gameObject).OrderBy(h => h.distance).First();
+                    HandleCollision(closestHit);
                 }
                 else
                 {
@@ -153,22 +151,6 @@ namespace Problems.Soccer2D
             {
                 AddForce(totalForce);
             }
-
-            /*var soccerAgent = PhysicsUtil.PhysicsOverlapSphereTargetObject<Soccer2DAgentComponent>(
-                Soccer2DEnvironmentController.PhysicsScene,
-                Soccer2DEnvironmentController.PhysicsScene2D,
-                Soccer2DEnvironmentController.GameType,
-                gameObject,
-                transform.position,
-                Radius + Soccer2DEnvironmentController.BallCollisionCheckRadius,
-                true,
-                gameObject.layer
-            );
-
-            if (soccerAgent != null)
-            {
-                soccerAgent.KickSoccerBall(this);
-            }*/
         }
 
         public Vector2 GetVelocity()

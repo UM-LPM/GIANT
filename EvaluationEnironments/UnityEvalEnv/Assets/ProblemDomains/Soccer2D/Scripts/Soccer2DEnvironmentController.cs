@@ -68,7 +68,7 @@ namespace Problems.Soccer2D
 
         private float timeSinceLastAgentToBallDistanceCalc;
         private float maxAgentToBallDistance;
-        private float playgroundDiagonal = 17.493f;
+        private float playgroundDiagonal = 17.5f;
 
         private float timeSinceLastBallToGoalDistanceCalc;
         private float maxBallToGoalDistance;
@@ -242,14 +242,14 @@ namespace Problems.Soccer2D
 
         private void UpdateAgentProxityToBall()
         {
-            maxAgentToBallDistance += (playgroundDiagonal / 2);
+            maxAgentToBallDistance += (playgroundDiagonal / 2.0f);
             foreach (Soccer2DAgentComponent agent in Agents)
             {
                 if (agent.gameObject.activeSelf)
                 {
                     distance = Vector3.Distance(agent.transform.position, SoccerBall.transform.position);
-                    if (distance > (playgroundDiagonal / 2))
-                        distance = playgroundDiagonal / 2;
+                    if (distance > (playgroundDiagonal / 2.0f))
+                        distance = playgroundDiagonal / 2.0f;
 
                     agent.AgentToBallDistance += distance;
                 }
@@ -258,15 +258,15 @@ namespace Problems.Soccer2D
 
         public void UpdateBallToGoalProximity()
         {
-            maxBallToGoalDistance += (playgroundDiagonal / 2);
+            maxBallToGoalDistance += (playgroundDiagonal / 2.0f);
             distance = Vector3.Distance(SoccerBall.transform.position, GoalBlue.transform.position);
-            if (distance > (playgroundDiagonal / 2))
-                distance = playgroundDiagonal / 2;
+            if (distance > (playgroundDiagonal / 2.0f))
+                distance = playgroundDiagonal / 2.0f;
             SoccerBall.BallToBlueGoalDistance += distance;
 
             distance = Vector3.Distance(SoccerBall.transform.position, GoalPurple.transform.position);
-            if (distance > (playgroundDiagonal / 2))
-                distance = playgroundDiagonal / 2;
+            if (distance > (playgroundDiagonal / 2.0f))
+                distance = playgroundDiagonal / 2.0f;
             SoccerBall.BallToPurpleGoalDistance += distance;
         }
 
@@ -292,7 +292,7 @@ namespace Problems.Soccer2D
             // Only update if agent intentionaly hit the ball
             if (Mathf.Abs(SoccerBall.GetVelocity().x) > VelocityPassTreshold)
             {
-                // Check if the ball is not cornered 
+                // Check if the ball is not cornered
                 if (PhysicsUtil.PhysicsCircleCast2D(
                     PhysicsScene2D,
                     SoccerBall.gameObject,

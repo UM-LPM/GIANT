@@ -1,5 +1,6 @@
 using AgentControllers;
 using Base;
+using System.Linq;
 using UnityEngine;
 using Utils;
 
@@ -81,13 +82,15 @@ namespace Problems.Soccer2D
                         gameObject.layer
             );
 
-            if (hits.Length > 0)
+
+            foreach(RaycastHit2D hit in hits)
             {
-                // Handle collision (take first hit)
-                if (hits[0].collider != null && hits[0].collider.gameObject != gameObject)
+                if(hit.collider != null && hit.collider.gameObject != gameObject &&
+                    hit.collider.gameObject.GetComponent<Soccer2DAgentComponent>() == null
+                    )
                 {
-                    // Set new position to collision point (where edge of agent collider touches object)
-                    newAgentPos = hits[0].point + (hits[0].normal * SoccerEnvironmentController.AgentColliderExtendsMultiplier.x);
+                    newAgentPos = hit.point + (hit.normal * SoccerEnvironmentController.AgentColliderExtendsMultiplier.x);
+                    break;
                 }
             }
 
