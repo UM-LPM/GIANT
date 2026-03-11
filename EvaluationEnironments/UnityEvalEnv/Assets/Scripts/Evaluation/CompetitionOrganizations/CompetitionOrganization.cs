@@ -182,6 +182,7 @@ namespace Evaluators.CompetitionOrganizations
         SingleElimination, // Tournament where the loser of each match is immediately eliminated from the tournament
         DoubleElimination, // Tournament where a team is not eliminated until it has lost two matches
         KRandomOpponents, // Competition where each team plays K random opponents
-        SimilarStrengthOpponentSelection // Competition where teams are paired based on similar strength (score)
+        SimilarStrengthOpponentSelection, // Competition where teams are paired based on similar strength (score)
+        MatrixFactorizationInteractionScheme // Competition where teams are paired based on a matrix factorization of past match results, to predict the most informative matches (e.g. for active learning)
     }
 }

@@ -372,6 +372,8 @@ namespace Base
                     return new KRandomOpponentsTournament(TeamOrganizator, individuals, CreateNewTeamsEachRound, CompetitionRounds);
                 case CompetitionOrganizationType.SimilarStrengthOpponentSelection:
                     return new SimilarStrengthOpponentSelection(TeamOrganizator, individuals, CreateNewTeamsEachRound, CompetitionRounds, TeamsPerMatch);
+                case CompetitionOrganizationType.MatrixFactorizationInteractionScheme:
+                    return new MatrixFactorizationInteractionScheme(TeamOrganizator, individuals, CreateNewTeamsEachRound, CompetitionRounds);
                 default:
                     DebugSystem.LogError("Invalid competition organization type");
                     return null;
