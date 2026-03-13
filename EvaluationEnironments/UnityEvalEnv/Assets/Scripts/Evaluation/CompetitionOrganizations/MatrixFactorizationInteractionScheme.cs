@@ -42,31 +42,43 @@ namespace Evaluators.CompetitionOrganizations
             if (IsCompetitionFinished())
                 return new Match[] { };
 
-            TournamentMatches.Clear();
-            currentMatchID = 0;
+            int N = Teams.Count;
+            int targetMatches = (N * Rounds) / 2;
 
-            for (int i = 0; i < Teams.Count; i++)
+            List<(int, int)> pairs = new List<(int, int)>();
+            List<(int, int)> selectedPairs = new List<(int, int)>();
+
+            // 1. Generate all possible pairs of teams
+            for (int i = 0; i < N; i++)
             {
-                // Get all Team IDs except the current team and teams that are in matchedOpponentTeamIDs
-                freeOpponentTeamIDs = Teams.Where(team => team.TeamId != Teams[i].TeamId)
-                    .Select(team => team.TeamId).ToList();
-
-                // If there are no free opponents left, the team has played against all other teams
-                if (freeOpponentTeamIDs.Count == 0)
-                    continue;
-
-                for (int j = 0; j < Rounds; j++)
+                for (int j = i + 1; j < N; j++)
                 {
-                    int randomIndex = Coordinator.Instance.Random.Next(0, freeOpponentTeamIDs.Count);
-                    int opponentTeamID = freeOpponentTeamIDs[randomIndex];
-                    freeOpponentTeamIDs.RemoveAt(randomIndex);
-
-                    TournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { Teams[i], Teams.Find(team => team.TeamId == opponentTeamID) }));
+                    pairs.Add((i, j));
                 }
             }
 
-            // No need to shuffle TournamentMatches randomly or add swapped matches, since the matrix handles both 
-         
+            // 2. Shuffle the pairs randomly using Fisher-Yates shuffle algorithm
+            for (int i = 0; i < pairs.Count; i++)
+            {
+                int randomIndex = Coordinator.Instance.Random.Next(i, pairs.Count);
+                var temp = pairs[i];
+                pairs[i] = pairs[randomIndex];
+                pairs[randomIndex] = temp;
+            }
+
+            TournamentMatches.Clear();
+            currentMatchID = 0;
+
+            // 3. Iterate through the shuffled pairs and add them to the tournament matches if both teams have played less than Rounds matches, until we reach the target number of matches
+            foreach (var (team1, team2) in pairs)
+            {
+                TournamentMatches.Add(
+                        ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { Teams[team1], Teams[team2] }));
+
+                if (TournamentMatches.Count >= targetMatches)
+                    break;
+            }
+
             return TournamentMatches.ToArray();
         }
 
@@ -97,16 +109,33 @@ namespace Evaluators.CompetitionOrganizations
                 G[team1Id, team2Id] = matchFitness.TeamFitnesses[0].GetTeamFitness();
                 known[team1Id, team2Id] = true;
 
-                // 2. Record individual match results
-                var team = Teams.Find(t => t.TeamId == team1Id);
-                var opponents = Teams.Find(t => t.TeamId == team2Id).Individuals.Select(ind => ind.IndividualId).ToArray();
+                G[team2Id, team1Id] = matchFitness.TeamFitnesses[1].GetTeamFitness();
+                known[team2Id, team1Id] = true;
 
-                team.IndividualMatchResults.Add(new IndividualMatchResult()
+
+                // 2. Record individual match results
+                // Team 1
+                var team1 = Teams.Find(t => t.TeamId == team1Id);
+                var team1Opponents = Teams.Find(t => t.TeamId == team2Id).Individuals.Select(ind => ind.IndividualId).ToArray();
+
+                team1.IndividualMatchResults.Add(new IndividualMatchResult()
                 {
                     MatchName = matchFitness.MatchName,
-                    OpponentsIDs = opponents,
+                    OpponentsIDs = team1Opponents,
                     Value = matchFitness.TeamFitnesses[0].GetTeamFitness(),
                     IndividualValues = matchFitness.TeamFitnesses[0].GetTeamIndividualValues()
+                });
+
+                // Team 2
+                var team2 = Teams.Find(t => t.TeamId == team2Id);
+                var team2Opponents = Teams.Find(t => t.TeamId == team1Id).Individuals.Select(ind => ind.IndividualId).ToArray();
+
+                team2.IndividualMatchResults.Add(new IndividualMatchResult()
+                {
+                    MatchName = matchFitness.MatchName,
+                    OpponentsIDs = team2Opponents,
+                    Value = matchFitness.TeamFitnesses[1].GetTeamFitness(),
+                    IndividualValues = matchFitness.TeamFitnesses[1].GetTeamIndividualValues()
                 });
             }
 

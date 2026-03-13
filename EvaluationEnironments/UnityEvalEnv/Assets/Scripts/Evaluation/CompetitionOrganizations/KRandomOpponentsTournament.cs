@@ -35,56 +35,46 @@ namespace Evaluators.CompetitionOrganizations
             if (IsCompetitionFinished())
                 return new Match[] { };
 
+            int N = Teams.Count;
+            int targetMatches = (N * Rounds) / 2;
+
+            int[] degree = new int[N];
+            List<(int, int)> pairs = new List<(int, int)>();
+
+            // 1. Generate all possible pairs of teams
+            for (int i = 0; i < N; i++)
+            {
+                for (int j = i + 1; j < N; j++)
+                {
+                    pairs.Add((i, j));
+                }
+            }
+
+            // 2. Shuffle the pairs randomly using Fisher-Yates shuffle algorithm
+            for (int i = 0; i < pairs.Count; i++)
+            {
+                int randomIndex = Coordinator.Instance.Random.Next(i, pairs.Count);
+                var temp = pairs[i];
+                pairs[i] = pairs[randomIndex];
+                pairs[randomIndex] = temp;
+            }
+
             TournamentMatches.Clear();
             currentMatchID = 0;
 
-            for (int i = 0; i < Teams.Count; i++)
+            // 3. Iterate through the shuffled pairs and add them to the tournament matches if both teams have played less than Rounds matches, until we reach the target number of matches
+            foreach (var (team1, team2) in pairs)
             {
-                matchedOpponentTeamIDs = TournamentMatches.Where(match => match.Teams.Any(team => team.TeamId == Teams[i].TeamId))
-                    .Select(TournamentMatches => TournamentMatches.Teams.First(team => team.TeamId != Teams[i].TeamId).TeamId).Distinct()
-                    .ToList();
-
-                // Get all Team IDs except the current team and teams that are in matchedOpponentTeamIDs
-                freeOpponentTeamIDs = Teams.Where(team => team.TeamId != Teams[i].TeamId && !matchedOpponentTeamIDs.Contains(team.TeamId))
-                    .Select(team => team.TeamId).ToList();
-
-                // If there are no free opponents left, the team has played against all other teams
-                if (freeOpponentTeamIDs.Count == 0)
-                    continue;
-
-                for (int j = 0; j < Rounds - matchedOpponentTeamIDs.Count; j++)
+                if (degree[team1] < Rounds && degree[team2] < Rounds)
                 {
-                    int randomIndex = Coordinator.Instance.Random.Next(0, freeOpponentTeamIDs.Count);
-                    int opponentTeamID = freeOpponentTeamIDs[randomIndex];
-                    freeOpponentTeamIDs.RemoveAt(randomIndex);
+                    TournamentMatches.Add(
+                        ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { Teams[team1], Teams[team2] }));
+                    degree[team1]++;
+                    degree[team2]++;
 
-                    if (Coordinator.Instance.Random.NextDouble() > 0.5)
-                        TournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { Teams[i], Teams.Find(team => team.TeamId == opponentTeamID) }));
-                    else
-                        TournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { Teams.Find(team => team.TeamId == opponentTeamID), Teams[i] }));
+                    if (TournamentMatches.Count >= targetMatches)
+                        break;
                 }
-            }
-
-            // Shuffle the TournamentMatches randomly
-            for (int i = 0; i < TournamentMatches.Count; i++)
-            {
-                int randomIndex = Coordinator.Instance.Random.Next(i, TournamentMatches.Count);
-                Match temp = TournamentMatches[i];
-                TournamentMatches[i] = TournamentMatches[randomIndex];
-                TournamentMatches[randomIndex] = temp;
-            }
-
-            // If enabled: For each match that already exists, add another match with the teams swapped
-            if (Coordinator.Instance.SwapCompetitionMatchTeams)
-            {
-                List<Match> matchesSwapped = new List<Match>();
-                for (int i = 0; i < TournamentMatches.Count; i++)
-                {
-                    Match match = TournamentMatches[i];
-                    matchesSwapped.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { match.Teams[1], match.Teams[0] }));
-                }
-
-                TournamentMatches.AddRange(matchesSwapped);
             }
 
             return TournamentMatches.ToArray();
