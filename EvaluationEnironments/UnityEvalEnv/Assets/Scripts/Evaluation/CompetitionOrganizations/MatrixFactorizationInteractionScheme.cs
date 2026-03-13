@@ -124,7 +124,7 @@ namespace Evaluators.CompetitionOrganizations
                 latentDim: 10,
                 learningRate: 0.001,
                 lambda: 0.0001,
-                nmfIterations: 20000
+                nmfIterations: 2000
             );
 
             MFISResult mfisResult = mfis.ComputeFitness(G, known, true);
@@ -170,7 +170,7 @@ namespace Evaluators.CompetitionOrganizations
         private readonly float maxFitness;
 
         public MFIS(int populationSize, float minFitness, float maxFitness, int latentDim = 10,
-                    double learningRate = 0.00001, double lambda = 0.001, int nmfIterations = 200)
+                    double learningRate = 0.001, double lambda = 0.0001, int nmfIterations = 2000)
         {
             this.nmfCompetitors = populationSize;
             this.minFitness = minFitness;
