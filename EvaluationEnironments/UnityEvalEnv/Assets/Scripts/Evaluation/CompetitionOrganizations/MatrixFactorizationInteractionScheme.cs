@@ -46,7 +46,6 @@ namespace Evaluators.CompetitionOrganizations
             int targetMatches = (N * Rounds) / 2;
 
             List<(int, int)> pairs = new List<(int, int)>();
-            List<(int, int)> selectedPairs = new List<(int, int)>();
 
             // 1. Generate all possible pairs of teams
             for (int i = 0; i < N; i++)
@@ -69,7 +68,7 @@ namespace Evaluators.CompetitionOrganizations
             TournamentMatches.Clear();
             currentMatchID = 0;
 
-            // 3. Iterate through the shuffled pairs and add them to the tournament matches if both teams have played less than Rounds matches, until we reach the target number of matches
+            // 3. Iterate through the shuffled pairs and add them to the tournament matches until we reach the target number of matches for the current round
             foreach (var (team1, team2) in pairs)
             {
                 TournamentMatches.Add(
