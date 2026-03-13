@@ -61,17 +61,11 @@ namespace Evaluators.CompetitionOrganizations
                     int opponentTeamID = freeOpponentTeamIDs[randomIndex];
                     freeOpponentTeamIDs.RemoveAt(randomIndex);
 
-                    /*if (Coordinator.Instance.Random.NextDouble() > 0.5)
-                        TournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { Teams[i], Teams.Find(team => team.TeamId == opponentTeamID) }));
-                    else
-                        TournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { Teams.Find(team => team.TeamId == opponentTeamID), Teams[i] }));
-                    */
                     TournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { Teams[i], Teams.Find(team => team.TeamId == opponentTeamID) }));
                 }
             }
 
             // No need to shuffle TournamentMatches randomly or add swapped matches, since the matrix handles both 
-
          
             return TournamentMatches.ToArray();
         }
