@@ -67,6 +67,80 @@ namespace Evaluators.CompetitionOrganizations
             return TournamentMatches.ToArray();
         }
 
+        public override void UpdateTeamsScore(List<MatchFitness> competitionMatchFitnesses, List<CompetitionPlayer> players = null)
+        {
+            var competitionMatchFitnessesCopy = new List<MatchFitness>(competitionMatchFitnesses);
+
+            // Add played matches (ignore dummy matches)
+            PlayedMatches.AddRange(competitionMatchFitnessesCopy.Where(mf => !mf.IsDummy));
+
+            var matchFitnesses = new List<MatchFitness>();
+            var matchFitnessesSwapped = new List<MatchFitness>();
+
+            while (competitionMatchFitnessesCopy.Count > 0)
+            {
+                // 1. Get match data
+                var matchFitness = new MatchFitness();
+                MatchFitness.GetMatchFitness(
+                    competitionMatchFitnessesCopy,
+                    matchFitness,
+                    matchFitnesses,
+                    matchFitnessesSwapped,
+                    Coordinator.Instance.SwapCompetitionMatchTeams
+                );
+
+                if (matchFitness.IsDummy)
+                {
+                    continue;
+                }
+
+                // 2. Assign Score
+                for (int i = 0; i < matchFitness.TeamFitnesses.Count; i++)
+                {
+                    var tf = matchFitness.TeamFitnesses[i];
+                    var team = TeamLookup[tf.TeamID];
+
+                    team.Score += tf.GetTeamFitness(); // Use actual fitness as score (instead of points based on ranking)
+
+                    // 3. Record individual match results
+                    var opponents = matchFitness.TeamFitnesses
+                       .Where(x => x.TeamID != tf.TeamID)
+                       .SelectMany(x => TeamLookup[x.TeamID]
+                           .Individuals
+                           .Select(ind => ind.IndividualId))
+                       .ToArray();
+
+                    for (int j = 0; j < tf.IndividualFitness.Count; j++)
+                    {
+                        team.IndividualMatchResults.Add(new IndividualMatchResult()
+                        {
+                            MatchName = matchFitness.MatchName,
+                            OpponentsIDs = opponents,
+                            Value = tf.IndividualFitness[j].Value,
+                            IndividualValues = tf.IndividualFitness[j].IndividualValues
+                        });
+                    }
+                }
+            }
+
+            // Get teams that participated in the current matches
+            var matchedTeamIds = competitionMatchFitnesses.SelectMany(mf => mf.TeamFitnesses.Select(tf => tf.TeamID)).Distinct().ToList();
+
+            // Average the score of each team over all matches they participated in
+            foreach (var matchedTeamId in matchedTeamIds)
+            {
+                var team = TeamLookup[matchedTeamId];
+                int matchesPlayed = team.IndividualMatchResults.Count;
+                if (matchesPlayed > 0)
+                {
+                    team.Score /= matchesPlayed; // Average score over matches played
+                }
+            }
+
+            // Increment the number of executed rounds
+            ExecutedRounds++;
+        }
+
         public override bool IsCompetitionFinished()
         {
             if (ExecutedRounds == 1)
