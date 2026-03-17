@@ -132,6 +132,10 @@ namespace Problems.Soccer2D
             // Spawn Soccer Ball
             SoccerBall = SoccerBallSpawner.Spawn<Soccer2DSoccerBallComponent>(this)[0];
 
+            // Get Team ids from agents and assign to goals for easier access later
+            GoalBlue.TeamIdentifier.TeamID = Agents.Where(a => (a as Soccer2DAgentComponent).Team == SoccerTeam.Blue).Select(a => a.TeamIdentifier.TeamID).FirstOrDefault();
+            GoalPurple.TeamIdentifier.TeamID = Agents.Where(a => (a as Soccer2DAgentComponent).Team == SoccerTeam.Purple).Select(a => a.TeamIdentifier.TeamID).FirstOrDefault();
+
             BallDampingFactor = Mathf.Clamp01(BallDampingFactor);
             BallDampingFactor = Mathf.Max(BallDampingFactor);
         }
