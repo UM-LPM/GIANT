@@ -13,23 +13,19 @@ namespace Evaluators.CompetitionOrganizations
         List<Match> tournamentMatches;
         int currentMatchID;
 
-        public RoundRobinTournament(CompetitionTeamOrganizator teamOrganizator, Individual[] individuals, bool regenerateTeamsEachRound, int rounds = 1)
+        public RoundRobinTournament(CompetitionTeamOrganizator teamOrganizator, Individual[][] individuals, bool regenerateTeamsEachRound, int rounds = 1)
             : base(teamOrganizator, individuals, regenerateTeamsEachRound)
         {
-            Rounds = rounds < 1 ? (int)Math.Ceiling(Math.Log(Teams.Count, 2)) : rounds;
+            if (Teams.Length != 1)
+            {
+                throw new Exception("Invalid number of team groups! RoundRobinTournament requires exactly 1 group of teams.");
+            }
+
+            Rounds = rounds < 1 ? (int)Math.Ceiling(Math.Log(Teams[0].Length, 2)) : rounds;
             ExecutedRounds = 0;
             PlayedMatches = new List<MatchFitness>();
 
             tournamentMatches = new List<Match>();
-        }
-
-        public override void ResetCompetition()
-        {
-            Teams.Clear();
-            ExecutedRounds = 0;
-            PlayedMatches.Clear();
-
-            tournamentMatches.Clear();
         }
 
         public override Match[] GenerateCompetitionMatches()
@@ -40,14 +36,14 @@ namespace Evaluators.CompetitionOrganizations
             tournamentMatches.Clear();
             currentMatchID = 0;
 
-            for (int i = 0; i < Teams.Count; i++)
+            for (int i = 0; i < Teams[0].Length; i++)
             {
-                for (int j = i + 1; j < Teams.Count; j++)
+                for (int j = i + 1; j < Teams[0].Length; j++)
                 {
                     if (Coordinator.Instance.Random.NextDouble() > 0.5)
-                        tournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { Teams[i], Teams[j] }));
+                        tournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { Teams[0][i], Teams[0][j] }));
                     else
-                        tournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { Teams[j], Teams[i] }));
+                        tournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { Teams[0][j], Teams[0][i] }));
                 }
             }
 

@@ -9,7 +9,7 @@ namespace Evaluators
     public abstract class Evaluator
     {
 
-        public virtual Task<CoordinatorEvaluationResult> ExecuteEvaluation(CoordinatorEvalRequestData evalRequestData, Individual[] individuals)
+        public virtual Task<CoordinatorEvaluationResult> ExecuteEvaluation(CoordinatorEvalRequestData evalRequestData, Individual[][] individuals)
         {
             throw new System.NotImplementedException();
         }

@@ -15,19 +15,17 @@ namespace Evaluators.CompetitionOrganizations
         List<int> matchedOpponentTeamIDs;
         List<int> freeOpponentTeamIDs;
 
-        public KRandomOpponentsTournament(CompetitionTeamOrganizator teamOrganizator, Individual[] individuals, bool regenerateTeamsEachRound, int rounds)
+        public KRandomOpponentsTournament(CompetitionTeamOrganizator teamOrganizator, Individual[][] individuals, bool regenerateTeamsEachRound, int rounds)
             : base(teamOrganizator, individuals, regenerateTeamsEachRound)
         {
-            Rounds = rounds == -1 ? Teams.Count -1 : rounds >  Teams.Count -1 ? Teams.Count -1 : rounds; // If rounds is not set round robin will be performed
+            if (Teams.Length != 1)
+            {
+                throw new Exception("Invalid number of team groups! KRandomOpponentsTournament requires exactly 1 group of teams.");
+            }
+
+            Rounds = rounds == -1 ? Teams[0].Length -1 : rounds >  Teams[0].Length -1 ? Teams[0].Length -1 : rounds; // If rounds is not set round robin will be performed
             ExecutedRounds = 0;
             PlayedMatches = new List<MatchFitness>();
-        }
-
-        public override void ResetCompetition()
-        {
-            Teams.Clear();
-            ExecutedRounds = 0;
-            PlayedMatches.Clear();
         }
 
         public override Match[] GenerateCompetitionMatches()
@@ -35,7 +33,9 @@ namespace Evaluators.CompetitionOrganizations
             if (IsCompetitionFinished())
                 return new Match[] { };
 
-            int N = Teams.Count;
+            var teamGroup0 = Teams[0];
+
+            int N = teamGroup0.Length;
             int targetMatches = (N * Rounds) / 2;
 
             int[] degree = new int[N];
@@ -68,7 +68,7 @@ namespace Evaluators.CompetitionOrganizations
                 if (degree[team1] < Rounds && degree[team2] < Rounds)
                 {
                     TournamentMatches.Add(
-                        ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { Teams[team1], Teams[team2] }));
+                        ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { teamGroup0[team1], teamGroup0[team2] }));
                     degree[team1]++;
                     degree[team2]++;
 

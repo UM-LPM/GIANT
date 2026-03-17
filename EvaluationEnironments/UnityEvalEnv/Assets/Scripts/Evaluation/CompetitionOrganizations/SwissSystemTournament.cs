@@ -17,33 +17,30 @@ namespace Evaluators.CompetitionOrganizations
         int currentMatchID;
         List<int> opponentTeamIDs;
 
-        public SwissSystemTournament(CompetitionTeamOrganizator teamOrganizator, Individual[] individuals, bool regenerateTeamsEachRound, int rounds)
+        public SwissSystemTournament(CompetitionTeamOrganizator teamOrganizator, Individual[][] individuals, bool regenerateTeamsEachRound, int rounds)
             : base(teamOrganizator, individuals, regenerateTeamsEachRound)
         {
-            Rounds = rounds < 1 ? (int)Math.Ceiling(Math.Log(Teams.Count, 2)) : rounds;
+            if (Teams.Length != 1)
+            {
+                throw new Exception("Invalid number of team groups! SwissSystemTournament requires exactly 1 group of teams.");
+            }
+
+            Rounds = rounds < 1 ? (int)Math.Ceiling(Math.Log(Teams[0].Length, 2)) : rounds;
             ExecutedRounds = 0;
             PlayedMatches = new List<MatchFitness>();
-        }
-
-        public override void ResetCompetition()
-        {
-            Teams.Clear();
-            ExecutedRounds = 0;
-            PlayedMatches.Clear();
-            TeamsWhoGotBye = 0;
         }
 
         public override Match[] GenerateCompetitionMatches()
         {
             if (IsCompetitionFinished())
                 return new Match[] { };
-            if (TeamsWhoGotBye == Teams.Count)
+            if (TeamsWhoGotBye == Teams[0].Length)
             {
                 ResetTeamByes();
             }
 
             // 1. Sort teams by score
-            List<CompetitionTeam> teamsSorted = new List<CompetitionTeam>(Teams);
+            List<CompetitionTeam> teamsSorted = new List<CompetitionTeam>(Teams[0]);
             teamsSorted.Sort((team1, team2) => team2.Score.CompareTo(team1.Score));
 
             // 2. Pair teams with the closest score (starting from the top). If there's an odd number of players, one player gets a bye (no opponent)
@@ -116,7 +113,7 @@ namespace Evaluators.CompetitionOrganizations
 
         private void ResetTeamByes()
         {
-            foreach (var team in Teams)
+            foreach (var team in Teams[0])
             {
                 team.HasBye = false;
             }

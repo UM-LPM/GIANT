@@ -3,6 +3,7 @@ using Base;
 using Evaluators.CompetitionOrganizations;
 using Fitnesses;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Evaluators
@@ -16,13 +17,13 @@ namespace Evaluators
             RatingSystem = ratingSystem;
         }
 
-        public override async Task<CoordinatorEvaluationResult> ExecuteEvaluation(CoordinatorEvalRequestData evalRequestData, Individual[] individuals)
+        public override async Task<CoordinatorEvaluationResult> ExecuteEvaluation(CoordinatorEvalRequestData evalRequestData, Individual[][] individuals)
         {
             while (!CompetitionOrganization.IsCompetitionFinished())
             {
                 if (CompetitionOrganization.CreateNewTeamsEachRound)
                 {
-                    CompetitionOrganization.OrganizeTeams(RatingSystem.Players.ToArray());
+                    CompetitionOrganization.OrganizeTeams(RatingSystem.Players);
                 }
 
                 Match[] competitionMatches = CompetitionOrganization.GenerateCompetitionMatches();
@@ -35,7 +36,7 @@ namespace Evaluators
                 {
                     RatingSystem.UpdateRatings(matchesFitnesses);
 
-                    CompetitionOrganization.UpdateTeamsScore(matchesFitnesses, RatingSystem.Players);
+                    CompetitionOrganization.UpdateTeamsScore(matchesFitnesses, RatingSystem.AllPlayers);
                 }
                 else
                 {
@@ -56,28 +57,31 @@ namespace Evaluators
         }
 
 
-        public override FinalIndividualFitness[] GetEvaluationResults()
+        public override FinalIndividualFitness[][] GetEvaluationResults()
         {
-            RatingSystemRating[] finalRaitings = RatingSystem.GetFinalRatings();
-            FinalIndividualFitnessWrapper finalIndividualFitnessWrapper = new FinalIndividualFitnessWrapper();
+            RatingSystemRating[][] finalRaitings = RatingSystem.GetFinalRatings();
+            FinalIndividualFitnessWrapper[] finalIndividualFitnessWrapper = new FinalIndividualFitnessWrapper[finalRaitings.Length];
 
             for (int i = 0; i < finalRaitings.Length; i++)
             {
-                // New Version
-                FinalIndividualFitness finalIndividualFitness = new FinalIndividualFitness
+                for (int j = 0; j < finalRaitings[i].Length; j++)
                 {
-                    IndividualID = finalRaitings[i].IndividualID,
-                    Value = (float)-finalRaitings[i].AdditionalValues["Rating"],
-                    IndividualMatchResults = finalRaitings[i].IndividualMatchResults,
-                    AdditionalValues = finalRaitings[i].GetAdditionalValues()
-                };
-
-                finalIndividualFitness.CalculateAvgMatchResultFitness();
-
-                finalIndividualFitnessWrapper.AddFinalIndividualFitness(finalIndividualFitness);
+                    // New Version
+                    FinalIndividualFitness finalIndividualFitness = new FinalIndividualFitness
+                    {
+                        IndividualID = finalRaitings[i][j].IndividualID,
+                        Value = (float)-finalRaitings[i][j].AdditionalValues["Rating"],
+                        IndividualMatchResults = finalRaitings[i][j].IndividualMatchResults,
+                        AdditionalValues = finalRaitings[i][j].GetAdditionalValues()
+                    };
+                    finalIndividualFitness.CalculateAvgMatchResultFitness();
+                    if (finalIndividualFitnessWrapper[i] == null)
+                        finalIndividualFitnessWrapper[i] = new FinalIndividualFitnessWrapper();
+                    finalIndividualFitnessWrapper[i].AddFinalIndividualFitness(finalIndividualFitness);
+                }
             }
 
-            return finalIndividualFitnessWrapper.FinalIndividualFitnesses.ToArray();
+            return finalIndividualFitnessWrapper.Select(wrapper => wrapper.FinalIndividualFitnesses.ToArray()).ToArray();
         }
     }
 }

@@ -7,101 +7,138 @@ using System.Text.RegularExpressions;
 using AgentControllers;
 using UnityEditor;
 using Configuration;
+using UnityEngine;
 
 namespace Utils
 {
     public class UnityAssetParser
     {
-
-        public static Individual[] ParseIndividualsFromFolder(string folderPathJSON, int evalRangeStart, int evalRangeEnd)
+        public static Individual[][] ParseIndividualsFromFolder(string folderPathJSON, EvalRange[] evalRanges)
         {
-            Individual[] individuals = null;
+            int folderNum = (evalRanges != null && evalRanges.Length > 0) ? evalRanges.Length : Directory.GetDirectories(folderPathJSON).Length;
 
-            // Read all files in the folder
-            string[] files = Directory.GetFiles(folderPathJSON, "*.json");
-            files = files.OrderBy(file => int.Parse(Regex.Match(file, @"(\d+)(?!.*\d)").Groups[0].ToString())).ToArray();
+            Individual[][] individuals = new Individual[folderNum][];
 
-            if (evalRangeStart < 0)
+            for (int i = 0; i < folderNum; i++)
             {
-                evalRangeStart = 0;
-            }
+                string[] files = Directory.GetFiles(folderPathJSON + i + "\\", "*.json");
+                files = files.OrderBy(file => int.Parse(Regex.Match(file, @"(\d+)(?!.*\d)").Groups[0].ToString())).ToArray();
 
-            if (evalRangeEnd < 0 || evalRangeEnd > files.Length)
-            {
-                evalRangeEnd = files.Length;
-            }
+                int evalRangeStart = (evalRanges != null && evalRanges.Length > 0) ? evalRanges[i].Start : 0;
+                int evalRangeEnd = (evalRanges != null && evalRanges.Length > 0) ? evalRanges[i].End : files.Length;
 
-            individuals = new Individual[evalRangeEnd - evalRangeStart];
+                if (evalRangeStart < 0)
+                {
+                    evalRangeStart = 0;
+                }
 
-            int indx = 0;
-            for (int i = evalRangeStart; i < evalRangeEnd; i++)
-            {
-                individuals[indx++] = JsonConvert.DeserializeObject<Individual>(File.ReadAllText(files[i]), MainConfiguration.JSON_SERIALIZATION_SETTINGS);
-            }
+                if (evalRangeEnd < 0 || evalRangeEnd > files.Length)
+                {
+                    evalRangeEnd = files.Length;
+                }
 
-            if (individuals.Length == 0)
-            {
-                throw new Exception("No individuals were loaded from the IndividualsSource");
+                individuals[i] = new Individual[evalRangeEnd - evalRangeStart];
+
+                int indx = 0;
+                for (int j = evalRangeStart; j < evalRangeEnd; j++)
+                {
+                    individuals[i][indx++] = JsonConvert.DeserializeObject<Individual>(File.ReadAllText(files[j]), MainConfiguration.JSON_SERIALIZATION_SETTINGS);
+                }
+
+                if (individuals[i].Length == 0)
+                {
+                    throw new Exception("No individuals were loaded from the IndividualsSource for group: " + i + "!");
+                }
             }
 
             return individuals;
         }
 
-        public static Individual[] ParseIndividualsFromFolder(string folderPathJSON, int[] evalRange)
+        public static Individual[][] ParseIndividualsFromFolder(string folderPathJSON, int[][] evalIndividuals)
         {
-            Individual[] individuals = null;
-
-            // Read all files in the folder
-            string[] files = Directory.GetFiles(folderPathJSON, "*.json");
-            files = files.OrderBy(file => int.Parse(Regex.Match(file, @"(\d+)(?!.*\d)").Groups[0].ToString())).ToArray();
-
-            individuals = new Individual[evalRange.Length];
-
-            int indx = 0;
-            foreach (int i in evalRange)
+            if(evalIndividuals == null || evalIndividuals.Length == 0)
             {
-                individuals[indx++] = JsonConvert.DeserializeObject<Individual>(File.ReadAllText(files[i]), MainConfiguration.JSON_SERIALIZATION_SETTINGS);
+                throw new Exception("evalIndividuals parameter is null or empty!");
             }
 
-            if (individuals.Length == 0)
+            Individual[][] individuals = new Individual[evalIndividuals.Length][];
+
+            for (int i = 0; i < evalIndividuals.Length; i++)
             {
-                throw new Exception("No individuals were loaded from the IndividualsSource");
+                string[] files = Directory.GetFiles(folderPathJSON + i + "\\", "*.json");
+                files = files.OrderBy(file => int.Parse(Regex.Match(file, @"(\d+)(?!.*\d)").Groups[0].ToString())).ToArray();
+
+                individuals[i] = new Individual[evalIndividuals[i].Length];
+
+                int indx = 0;
+                foreach (int j in evalIndividuals[i])
+                {
+                    // Find file that ends with the individual index (before .json extension)
+                    string file = files.First(f => f.EndsWith(j + ".json"));
+                    if(file == null)
+                    {
+                        throw new Exception("No file found for individual index: " + j + " in group: " + i);
+                    }
+
+                    individuals[i][indx++] = JsonConvert.DeserializeObject<Individual>(File.ReadAllText(file), MainConfiguration.JSON_SERIALIZATION_SETTINGS);
+                }
+
+                if (individuals[i].Length == 0)
+                {
+                    throw new Exception("No individuals were loaded from the IndividualsSource for group: " + i);
+                }
             }
 
             return individuals;
         }
 
-
-        public static void SaveSOIndividualsToSO(Individual[] individuals, string folderPath)
+        public static void SaveSOIndividualsToSO(Individual[][] individuals, string folderPath)
         {
 #if UNITY_EDITOR
             // Save individuals to folder (.asset)
-            foreach (Individual individual in individuals)
+            for (int i = 0; i < individuals.Length; i++)
             {
-                string individualName = individual.name;
-                string individualSOPath = folderPath + "\\" + individualName + ".asset";
-                AssetDatabase.CreateAsset(individual, individualSOPath);
-
-                foreach (AgentController agentController in individual.AgentControllers)
+                for (int j = 0; j < individuals[i].Length; j++)
                 {
-                    AssetDatabase.AddObjectToAsset(agentController, individual);
-                    agentController.AddAgentControllerToSO(individual);
+                    string individualName = individuals[i][j].name;
+                    string individualSOPath = folderPath + "\\" + i + "\\" + individualName + ".asset";
+                    if(!Directory.Exists(folderPath + "\\" + i))
+                    {
+                        Directory.CreateDirectory(folderPath + "\\" + i);
+                    }
+
+                    AssetDatabase.CreateAsset(individuals[i][j], individualSOPath);
+
+                    foreach (AgentController agentController in individuals[i][j].AgentControllers)
+                    {
+                        AssetDatabase.AddObjectToAsset(agentController, individuals[i][j]);
+                        agentController.AddAgentControllerToSO(individuals[i][j]);
+                    }
                 }
             }
+
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 #endif
         }
 
-        public static void SaveSOIndividualsToJSON(Individual[] individuals, string folderPath)
+        public static void SaveSOIndividualsToJSON(Individual[][] individuals, string folderPath)
         {
 #if UNITY_EDITOR
             // Save individuals to folder (.json)
-            foreach (Individual individual in individuals)
+            for (int i = 0; i < individuals.Length; i++)
             {
-                string individualName = individual.name;
-                string individualSOPath = folderPath + "\\" + individualName + ".json";
-                File.WriteAllText(individualSOPath, JsonConvert.SerializeObject(individual, MainConfiguration.JSON_SERIALIZATION_SETTINGS));
+                string evalFolderPath = folderPath + "\\" + i;
+                if (!Directory.Exists(evalFolderPath))
+                {
+                    Directory.CreateDirectory(evalFolderPath);
+                }
+                for (int j = 0; j < individuals[i].Length; j++)
+                {
+                    string individualName = individuals[i][j].name;
+                    string individualJSONPath = evalFolderPath + "\\" + individualName + ".json";
+                    File.WriteAllText(individualJSONPath, JsonConvert.SerializeObject(individuals[i][j], MainConfiguration.JSON_SERIALIZATION_SETTINGS));
+                }
             }
 #endif
         }

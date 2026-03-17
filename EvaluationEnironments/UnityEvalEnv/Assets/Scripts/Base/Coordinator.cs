@@ -42,7 +42,7 @@ namespace Base
         [SerializeField] public bool SwapCompetitionMatchTeams = false; // Specific for games like (Robostrike, ...)
 
         [Header("Individuals Configuration")]
-        [SerializeField] public Individual[] Individuals;
+        [SerializeField] public Individual[][] Individuals;
 
         private HttpListener Listener;
         private Thread ListenerThread;
@@ -189,10 +189,12 @@ namespace Base
                 if (CoordinatorSetup == ComponentSetupType.REAL)
                 {
                     // Load Individuals from IndividualsSource
-                    if(evalRequestData.EvalRange != null && evalRequestData.EvalRange.Length > 0)
-                        LoadIndividualsFromJSON(evalRequestData.EvalRange);
+                    if(evalRequestData.EvalIndividuals != null && evalRequestData.EvalIndividuals.Length > 0)
+                        LoadIndividualsFromJSON(evalRequestData.EvalIndividuals);
                     else
-                        LoadIndividualsFromJSON(evalRequestData.EvalRangeStart.HasValue ? evalRequestData.EvalRangeStart.Value : -1, evalRequestData.EvalRangeEnd.HasValue ? evalRequestData.EvalRangeEnd.Value : -1);
+                    {
+                        LoadIndividualsFromJSON(evalRequestData.EvalRanges);
+                    }
                 }
                 else if (CoordinatorSetup == ComponentSetupType.MOCK && ConvertSOToJSON)
                 {
@@ -228,6 +230,7 @@ namespace Base
 
                     evaluator = new RatingEvaluator(ratingSystem, competitionOrganizator);
                     ratingSystem.DefinePlayers(Individuals, ratingSystem.PrepareLastEvalPopRatings(evalRequestData.LastEvalIndividualFitnesses));
+                    ratingSystem.BuildPlayerLookup();
                     evaluationResultTask = evaluator.ExecuteEvaluation(evalRequestData, Individuals);
                     break;
                 default:
@@ -289,7 +292,7 @@ namespace Base
             }
         }
 
-        public void LoadIndividualsFromJSON(int evalRangeStart, int evalRangeEnd)
+        public void LoadIndividualsFromJSON(EvalRange[] evalRanges)
         {
             if (IndividualsSourceJSON == null || IndividualsSourceJSON.Length == 0 || IndividualsSourceSO == null || IndividualsSourceSO.Length == 0)
             {
@@ -297,13 +300,13 @@ namespace Base
             }
 
             // Loading individuals from JSON files
-            Individuals = UnityAssetParser.ParseIndividualsFromFolder(IndividualsSourceJSON, evalRangeStart, evalRangeEnd);
+            Individuals = UnityAssetParser.ParseIndividualsFromFolder(IndividualsSourceJSON, evalRanges);
 
             // Save individuals to Scriptable Objects if in Editor mode
             UnityAssetParser.SaveSOIndividualsToSO(Individuals, IndividualsSourceSO);
         }
 
-        public void LoadIndividualsFromJSON(int[] evalRange)
+        public void LoadIndividualsFromJSON(int[][] evalIndividuals)
         {
             if (IndividualsSourceJSON == null || IndividualsSourceJSON.Length == 0 || IndividualsSourceSO == null || IndividualsSourceSO.Length == 0)
             {
@@ -311,7 +314,7 @@ namespace Base
             }
 
             // Loading individuals from JSON files
-            Individuals = UnityAssetParser.ParseIndividualsFromFolder(IndividualsSourceJSON, evalRange);
+            Individuals = UnityAssetParser.ParseIndividualsFromFolder(IndividualsSourceJSON, evalIndividuals);
 
             // Save individuals to Scriptable Objects if in Editor mode
             UnityAssetParser.SaveSOIndividualsToSO(Individuals, IndividualsSourceSO);
@@ -354,7 +357,7 @@ namespace Base
                 return true;
         }
 
-        private CompetitionOrganization getCompetitionOrganizator(Individual[] individuals)
+        private CompetitionOrganization getCompetitionOrganizator(Individual[][] individuals)
         {
             switch (CompetitionOrganizationType)
             {
@@ -374,6 +377,8 @@ namespace Base
                     return new SimilarStrengthOpponentSelection(TeamOrganizator, individuals, CreateNewTeamsEachRound, CompetitionRounds, TeamsPerMatch);
                 case CompetitionOrganizationType.MatrixFactorizationInteractionScheme:
                     return new MatrixFactorizationInteractionScheme(TeamOrganizator, individuals, CreateNewTeamsEachRound, CompetitionRounds);
+                case CompetitionOrganizationType.BestPreviousCompetitors:
+                    return new BestPreviousCompetitors(TeamOrganizator, individuals, CreateNewTeamsEachRound, CompetitionRounds);
                 default:
                     DebugSystem.LogError("Invalid competition organization type");
                     return null;
@@ -395,9 +400,8 @@ namespace Base
     public class CoordinatorEvalRequestData
     {
         public string[] EvalEnvInstances { get; set; }
-        public int? EvalRangeStart { get; set; }
-        public int? EvalRangeEnd { get; set; }
-        public int[] EvalRange { get; set; } // Contains the indices of the individuals to be evaluated (e.g. 1, 4, 5, 8)
+        public EvalRange[] EvalRanges { get; set; }
+        public int[][] EvalIndividuals { get; set; } // Contains the indices of the individuals to be evaluated (e.g. [[1, 4, 5], [8], ..])
         public IndividualFitness[] LastEvalIndividualFitnesses { get; set; } // TODO implement
 
         public string EvalEnvInstancesToString()
@@ -413,7 +417,7 @@ namespace Base
 
     public class CoordinatorEvaluationResult
     {
-        public FinalIndividualFitness[] IndividualFitnesses { get; set; }
+        public FinalIndividualFitness[][] IndividualFitnesses { get; set; }
 
     }
 }

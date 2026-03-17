@@ -10,7 +10,7 @@ namespace UnitTests
     {
         public string Name;
         public string ConfigFilePath;
-        public Individual[] Individuals;
+        public Individual[][] Individuals;
         public string ExpectedOutputFilePath;
     }
 }

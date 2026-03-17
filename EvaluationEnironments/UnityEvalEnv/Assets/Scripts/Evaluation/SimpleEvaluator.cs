@@ -18,8 +18,13 @@ namespace Evaluators
         {
         }
 
-        public override async Task<CoordinatorEvaluationResult> ExecuteEvaluation(CoordinatorEvalRequestData evalRequestData, Individual[] individuals)
+        public override async Task<CoordinatorEvaluationResult> ExecuteEvaluation(CoordinatorEvalRequestData evalRequestData, Individual[][] individuals)
         {
+            if(individuals.Length != 1)
+            {
+                throw new Exception("Invalid number of team groups! SimpleEvaluator should have 1 group of teams.");
+            }
+
             Match[] matches = GenerateMatches(individuals);
 
             int numOfMatches = matches.Length;
@@ -107,7 +112,7 @@ namespace Evaluators
                     // Return the final population fitnesses and BTS node call frequencies
                     return new CoordinatorEvaluationResult()
                     {
-                        IndividualFitnesses = finalIndividualFitnessWrapper.FinalIndividualFitnesses.ToArray(),
+                        IndividualFitnesses = new FinalIndividualFitness[][]{finalIndividualFitnessWrapper.FinalIndividualFitnesses.ToArray()},
                     };
                 }
             }
@@ -123,21 +128,24 @@ namespace Evaluators
             throw new Exception("No match fitnesses were returned");
         }
 
-/// <summary>
-/// For each individual, create a match with a team containing only that individual
-/// </summary>
-/// <param name="individuals"></param>
-public Match[] GenerateMatches(Individual[] individuals)
+        /// <summary>
+        /// For each individual, create a match with a team containing only that individual
+        /// </summary>
+        /// <param name="individuals"></param>
+        public Match[] GenerateMatches(Individual[][] individuals)
         {
             Match[] matches = new Match[individuals.Length];
 
             for (int i = 0; i < individuals.Length; i++)
             {
-                Team team = ScriptableObject.CreateInstance<Team>();
-                team.Initialize(i, "Team_" + i, new Individual[] { individuals[i] });
+                for (int j = 0; j < individuals[i].Length; j++)
+                {
+                    Team team = ScriptableObject.CreateInstance<Team>();
+                    team.Initialize(i, "Team_" + i, new Individual[] { individuals[i][j] });
 
-                matches[i] = ScriptableObject.CreateInstance<Match>();
-                matches[i].Initialize(i, new Team[] { team });
+                    matches[i] = ScriptableObject.CreateInstance<Match>();
+                    matches[i].Initialize(i, new Team[] { team });
+                }
             }
 
             return matches;

@@ -16,19 +16,17 @@ namespace Evaluators.CompetitionOrganizations
         int currentMatchID;
         List<int> freeOpponentTeamIDs;
 
-        public MatrixFactorizationInteractionScheme(CompetitionTeamOrganizator teamOrganizator, Individual[] individuals, bool regenerateTeamsEachRound, int rounds)
+        public MatrixFactorizationInteractionScheme(CompetitionTeamOrganizator teamOrganizator, Individual[][] individuals, bool regenerateTeamsEachRound, int rounds)
             : base(teamOrganizator, individuals, regenerateTeamsEachRound)
         {
-            Rounds = rounds == -1 ? Teams.Count -1 : rounds >  Teams.Count -1 ? Teams.Count -1 : rounds; // If rounds is not set round robin will be performed
+            if (Teams.Length != 1)
+            {
+                throw new Exception("Invalid number of team groups! MatrixFactorizationInteractionScheme requires exactly 1 group of teams.");
+            }
+
+            Rounds = rounds == -1 ? Teams[0].Length -1 : rounds >  Teams[0].Length -1 ? Teams[0].Length -1 : rounds; // If rounds is not set round robin will be performed
             ExecutedRounds = 0;
             PlayedMatches = new List<MatchFitness>();
-        }
-
-        public override void ResetCompetition()
-        {
-            Teams.Clear();
-            ExecutedRounds = 0;
-            PlayedMatches.Clear();
         }
 
         public override Match[] GenerateCompetitionMatches()
@@ -42,7 +40,7 @@ namespace Evaluators.CompetitionOrganizations
             if (IsCompetitionFinished())
                 return new Match[] { };
 
-            int N = Teams.Count;
+            int N = Teams[0].Length;
             int targetMatches = (N * Rounds) / 2;
 
             List<(int, int)> pairs = new List<(int, int)>();
@@ -72,7 +70,7 @@ namespace Evaluators.CompetitionOrganizations
             foreach (var (team1, team2) in pairs)
             {
                 TournamentMatches.Add(
-                        ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { Teams[team1], Teams[team2] }));
+                        ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { Teams[0][team1], Teams[0][team2] }));
 
                 if (TournamentMatches.Count >= targetMatches)
                     break;
@@ -84,8 +82,8 @@ namespace Evaluators.CompetitionOrganizations
         public override void UpdateTeamsScore(List<MatchFitness> competitionMatchFitnesses, List<CompetitionPlayer> players = null)
         {
             // 1. Define matrix G with dimensions [number of teams x number of teams] and initialize with zeros
-            double[, ] G = new double[Teams.Count, Teams.Count];
-            bool[,] known = new bool[Teams.Count, Teams.Count];
+            double[, ] G = new double[Teams[0].Length, Teams[0].Length];
+            bool[,] known = new bool[Teams[0].Length, Teams[0].Length];
 
             // 2. For each match fitness, fill the corresponding entry in G with the fitness value of team 1 against team 2 (e.g. G[team1Id, team2Id] = team1Fitness)
             foreach (MatchFitness matchFitness in competitionMatchFitnesses)
@@ -114,8 +112,13 @@ namespace Evaluators.CompetitionOrganizations
 
                 // 2. Record individual match results
                 // Team 1
-                var team1 = Teams.Find(t => t.TeamId == team1Id);
-                var team1Opponents = Teams.Find(t => t.TeamId == team2Id).Individuals.Select(ind => ind.IndividualId).ToArray();
+                var team1 = Teams[0].Where(t => t.TeamId == team1Id).First();
+                if(team1 == null)
+                {
+                    throw new Exception($"Invalid team ID in match fitness! Team ID {team1Id} does not match the ID of any team in the competition organization.");
+                }
+
+                var team1Opponents = Teams[0].Where(t => t.TeamId == team2Id).First().Individuals.Select(ind => ind.IndividualId).ToArray();
 
                 team1.IndividualMatchResults.Add(new IndividualMatchResult()
                 {
@@ -126,8 +129,8 @@ namespace Evaluators.CompetitionOrganizations
                 });
 
                 // Team 2
-                var team2 = Teams.Find(t => t.TeamId == team2Id);
-                var team2Opponents = Teams.Find(t => t.TeamId == team1Id).Individuals.Select(ind => ind.IndividualId).ToArray();
+                var team2 = Teams[0].Where(t => t.TeamId == team2Id).First();
+                var team2Opponents = Teams[0].Where(t => t.TeamId == team1Id).First().Individuals.Select(ind => ind.IndividualId).ToArray();
 
                 team2.IndividualMatchResults.Add(new IndividualMatchResult()
                 {
@@ -140,7 +143,7 @@ namespace Evaluators.CompetitionOrganizations
 
             // 3. Execute non-negative matrix factorization (NMF) to obtain W and H
             var mfis = new MFIS(
-                Teams.Count,
+                Teams[0].Length,
                 EnvironmentControllerBase.BEST_FITNESS,
                 EnvironmentControllerBase.WORST_FITNESS,
                 latentDim: 10,
@@ -152,12 +155,12 @@ namespace Evaluators.CompetitionOrganizations
             MFISResult mfisResult = mfis.ComputeFitness(G, known, true);
 
             // 4. For each team calculate and set fitness as the average fitness (e.g. team1IdFitness = (G''[team1Id, team2Id] + G''[team1Id, team3Id] + ...) / teamSize)
-            foreach(CompetitionTeam team in Teams)
+            foreach(CompetitionTeam team in Teams[0])
             {
                 int teamId = team.TeamId;
                 double fitnessSum = 0;
                 int count = 0;
-                for (int opponentId = 0; opponentId < Teams.Count; opponentId++)
+                for (int opponentId = 0; opponentId < Teams[0].Length; opponentId++)
                 {
                     if (teamId == opponentId) continue; // Skip self
                     fitnessSum += mfisResult.GFull[teamId, opponentId];

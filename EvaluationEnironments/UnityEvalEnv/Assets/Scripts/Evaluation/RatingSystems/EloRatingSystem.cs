@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using Utils;
 
 namespace Evaluators.CompetitionOrganizations
@@ -32,33 +33,40 @@ namespace Evaluators.CompetitionOrganizations
             SetStartKFactor();
         }
 
-        public override void DefinePlayers(Individual[] individuals, RatingSystemRating[] initialPlayerRaitings)
+        public override void DefinePlayers(Individual[][] individuals, RatingSystemRating[] initialPlayerRaitings)
         {
             if (initialPlayerRaitings != null && initialPlayerRaitings.Length < individuals.Length)
             {
                 throw new Exception("Initial individual rating array is not the same size as the number of individuals in the competition");
             }
 
-            foreach (Individual individual in individuals)
+            Players = new CompetitionPlayer[individuals.Length][];
+            for (int i = 0; i < individuals.Length; i++)
             {
-                RatingSystemRating individualRating = initialPlayerRaitings?.FirstOrDefault(x => x.IndividualID == individual.IndividualId);
-
-                if (individualRating != null && individualRating.AdditionalValues != null)
+                Players[i] = new CompetitionPlayer[individuals[i].Length];
+                for (int j = 0; j < individuals[i].Length; j++)
                 {
-                    double rating;
-                    double kFactor;
+                    var individual = individuals[i][j];
 
-                    if (!individualRating.AdditionalValues.TryGetValue("Rating", out rating))
-                        rating = (double)DefaultRating;
+                    RatingSystemRating individualRating = initialPlayerRaitings?.FirstOrDefault(x => x.IndividualID == individual.IndividualId);
 
-                    if (!individualRating.AdditionalValues.TryGetValue("KFactor", out kFactor))
-                        kFactor = GetKFactor(rating);
+                    if (individualRating != null && individualRating.AdditionalValues != null)
+                    {
+                        double rating;
+                        double kFactor;
 
-                    Players.Add(new EloPlayer(individual.IndividualId, (decimal)rating, (int)kFactor));
-                }
-                else
-                {
-                    Players.Add(new EloPlayer(individual.IndividualId, DefaultRating, startKFactor));
+                        if (!individualRating.AdditionalValues.TryGetValue("Rating", out rating))
+                            rating = (double)DefaultRating;
+
+                        if (!individualRating.AdditionalValues.TryGetValue("KFactor", out kFactor))
+                            kFactor = GetKFactor(rating);
+
+                        Players[i][j] = new EloPlayer(individual.IndividualId, (decimal)rating, (int)kFactor);
+                    }
+                    else
+                    {
+                        Players[i][j] = new EloPlayer(individual.IndividualId, DefaultRating, startKFactor);
+                    }
                 }
             }
         }
@@ -75,11 +83,6 @@ namespace Evaluators.CompetitionOrganizations
                 // 1. Get all matchFitness data
                 matchFitness = new MatchFitness();
                 MatchFitness.GetMatchFitness(competitionMatchFitnessesCopy, matchFitness, matchFitnesses, matchFitnessesSwaped, Coordinator.Instance.SwapCompetitionMatchTeams);
-
-                if (matchFitness.IsDummy)
-                {
-                    continue;
-                }
 
                 // If the matchFitness is a dummy matchFitness, skip it (this matchFitness is used for teams who got bye on a competition
                 if (matchFitness.IsDummy)
@@ -119,15 +122,19 @@ namespace Evaluators.CompetitionOrganizations
             }
         }
 
-        public override RatingSystemRating[] GetFinalRatings()
+        public override RatingSystemRating[][] GetFinalRatings()
         {
-            RatingSystemRating[] ratings = new RatingSystemRating[Players.Count];
+            RatingSystemRating[][] ratings = new RatingSystemRating[Players.Length][];
 
-            var i = 0;
-            foreach (EloPlayer ratingPlayer in Players.OfType<EloPlayer>())
+            for (int i = 0; i < Players.Length; i++)
             {
-                ratings[i] = new RatingSystemRating(Players[i].IndividualID, Players[i].IndividualMatchResults, new Dictionary<string, double> { { "Rating", (double)ratingPlayer.Rating }, { "KFactor", ratingPlayer.KFactor } });
-                i++;
+                ratings[i] = new RatingSystemRating[Players[i].Length];
+
+                for (int j = 0; j < Players[i].Length; j++)
+                {
+                    var player = Players[i][j] as EloPlayer;
+                    ratings[i][j] = new RatingSystemRating(player.IndividualID, player.IndividualMatchResults, new Dictionary<string, double> { { "Rating", (double)player.Rating }, { "KFactor", player.KFactor } });
+                }
             }
 
             return ratings;
@@ -135,7 +142,7 @@ namespace Evaluators.CompetitionOrganizations
 
         public EloPlayer GetPlayer(int id)
         {
-            var player = Players.FirstOrDefault(p => p.IndividualID.Equals(id) && p is EloPlayer);
+            var player = AllPlayers.FirstOrDefault(p => p.IndividualID.Equals(id) && p is EloPlayer);
             return player as EloPlayer;
         }
 

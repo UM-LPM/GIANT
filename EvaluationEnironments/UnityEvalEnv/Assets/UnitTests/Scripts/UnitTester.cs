@@ -156,12 +156,10 @@ namespace UnitTests {
                         CoordinatorEvalRequestData
                     {
                         EvalEnvInstances = new string[] { MenuManager.Instance.MainConfiguration.StartCommunicatorURI },
-                        EvalRangeStart = 0,
-                        EvalRangeEnd = UnitTests[Instance.CurrentTestIndex].Individuals.Length,
+                        EvalRanges = null,
                     }, MainConfiguration.JSON_SERIALIZATION_SETTINGS);
 
                     StartCoroutine(SendPostRequest(Coordinator.Instance.CoordinatorURI, json));
-
                 }
             }
         }

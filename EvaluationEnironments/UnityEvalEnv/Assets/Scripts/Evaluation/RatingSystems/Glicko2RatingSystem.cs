@@ -27,37 +27,44 @@ namespace Evaluators.CompetitionOrganizations
         }
 
 
-        public override void DefinePlayers(Individual[] individuals, RatingSystemRating[] initialPlayerRaitings)
+        public override void DefinePlayers(Individual[][] individuals, RatingSystemRating[] initialPlayerRaitings)
         {
             if (initialPlayerRaitings != null && initialPlayerRaitings.Length < individuals.Length)
             {
                 throw new Exception("Initial individual rating array is not the same size as the number of individuals in the competition");
             }
 
-            foreach (Individual individual in individuals)
+            Players = new CompetitionPlayer[individuals.Length][];
+            for (int i = 0; i < individuals.Length; i++)
             {
-                RatingSystemRating individualRating = initialPlayerRaitings?.FirstOrDefault(x => x.IndividualID == individual.IndividualId);
-
-                if (individualRating != null && individualRating.AdditionalValues != null)
+                Players[i] = new CompetitionPlayer[individuals[i].Length];
+                for (int j = 0; j < individuals[i].Length; j++)
                 {
-                    double rating;
-                    double ratingDeviation;
-                    double volatility;
+                    var individual = individuals[i][j];
 
-                    if (!individualRating.AdditionalValues.TryGetValue("Rating", out rating))
-                        rating = DefaultRating;
+                    RatingSystemRating individualRating = initialPlayerRaitings?.FirstOrDefault(x => x.IndividualID == individual.IndividualId);
 
-                    if (!individualRating.AdditionalValues.TryGetValue("RatingDeviation", out ratingDeviation))
-                        ratingDeviation = DefaultRatingDeviation;
+                    if (individualRating != null && individualRating.AdditionalValues != null)
+                    {
+                        double rating;
+                        double ratingDeviation;
+                        double volatility;
 
-                    if (!individualRating.AdditionalValues.TryGetValue("Volatility", out volatility))
-                        volatility = DefaultVolatility;
+                        if (!individualRating.AdditionalValues.TryGetValue("Rating", out rating))
+                            rating = DefaultRating;
 
-                    Players.Add(new Glicko2Player(individual.IndividualId, rating, ratingDeviation, volatility));
-                }
-                else
-                {
-                    Players.Add(new Glicko2Player(individual.IndividualId, DefaultRating, DefaultRatingDeviation, DefaultVolatility));
+                        if (!individualRating.AdditionalValues.TryGetValue("RatingDeviation", out ratingDeviation))
+                            ratingDeviation = DefaultRatingDeviation;
+
+                        if (!individualRating.AdditionalValues.TryGetValue("Volatility", out volatility))
+                            volatility = DefaultVolatility;
+
+                        Players[i][j] = new Glicko2Player(individual.IndividualId, rating, ratingDeviation, volatility);
+                    }
+                    else
+                    {
+                        Players[i][j] = new Glicko2Player(individual.IndividualId, DefaultRating, DefaultRatingDeviation, DefaultVolatility);
+                    }
                 }
             }
         }
@@ -74,11 +81,6 @@ namespace Evaluators.CompetitionOrganizations
                 // 1. Get all matchFitness data
                 matchFitness = new MatchFitness();
                 MatchFitness.GetMatchFitness(competitionMatchFitnessesCopy, matchFitness, matchFitnesses, matchFitnessesSwaped, Coordinator.Instance.SwapCompetitionMatchTeams);
-
-                if (matchFitness.IsDummy)
-                {
-                    continue;
-                }
 
                 // If the matchFitness is a dummy matchFitness, skip it (this matchFitness is used for teams who got bye on a competition
                 if (matchFitness.IsDummy)
@@ -122,15 +124,19 @@ namespace Evaluators.CompetitionOrganizations
             }
         }
 
-        public override RatingSystemRating[] GetFinalRatings()
+        public override RatingSystemRating[][] GetFinalRatings()
         {
-            RatingSystemRating[] ratings = new RatingSystemRating[Players.Count];
+            RatingSystemRating[][] ratings = new RatingSystemRating[Players.Length][];
 
-            var i = 0;
-            foreach (Glicko2Player ratingPlayer in Players.OfType<Glicko2Player>())
+            for (int i = 0; i < Players.Length; i++)
             {
-                ratings[i] = new RatingSystemRating(Players[i].IndividualID, Players[i].IndividualMatchResults, new Dictionary<string, double> { { "Rating", ratingPlayer.Player.Rating }, { "RatingDeviation", ratingPlayer.Player.RatingDeviation }, { "Volatility", ratingPlayer.Player.Volatility } });
-                i++;
+                ratings[i] = new RatingSystemRating[Players[i].Length];
+
+                for (int j = 0; j < Players[i].Length; j++)
+                {
+                    var player = Players[i][j] as Glicko2Player;
+                    ratings[i][j] = new RatingSystemRating(player.IndividualID, player.IndividualMatchResults, new Dictionary<string, double> { { "Rating", player.Player.Rating }, { "RatingDeviation", player.Player.RatingDeviation }, { "Volatility", player.Player.Volatility } });
+                }
             }
 
             return ratings;
@@ -138,7 +144,7 @@ namespace Evaluators.CompetitionOrganizations
 
         public Glicko2Player GetPlayer(int id)
         {
-            var player = Players.FirstOrDefault(p => p.IndividualID.Equals(id) && p is Glicko2Player);
+            var player = AllPlayers.FirstOrDefault(p => p.IndividualID.Equals(id) && p is Glicko2Player);
             return player as Glicko2Player;
         }
 

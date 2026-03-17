@@ -34,10 +34,15 @@ namespace Evaluators.CompetitionOrganizations
         int CurrentMatchID;
         int CurrentScore = 0;
 
-        public DoubleEliminationTournament(CompetitionTeamOrganizator teamOrganizator, Individual[] individuals, bool regenerateTeamsEachRound, int rounds)
+        public DoubleEliminationTournament(CompetitionTeamOrganizator teamOrganizator, Individual[][] individuals, bool regenerateTeamsEachRound, int rounds)
             : base(teamOrganizator, individuals, regenerateTeamsEachRound)
         {
-            Rounds = rounds < 1 ? (int)Math.Ceiling(Math.Log(Teams.Count, 2)) : rounds;
+            if (Teams.Length != 1)
+            {
+                throw new Exception("Invalid number of team groups! DoubleEliminationTournament requires exactly 1 group of teams.");
+            }
+
+            Rounds = rounds < 1 ? (int)Math.Ceiling(Math.Log(Teams[0].Length, 2)) : rounds;
             ExecutedRounds = 0;
             PlayedMatches = new List<MatchFitness>();
             TournamentStep = DoubleEliminationTournamentStep.Init;
@@ -49,24 +54,11 @@ namespace Evaluators.CompetitionOrganizations
             CurrentScore = 0;
         }
 
-        public override void ResetCompetition()
-        {
-            Teams.Clear();
-            ExecutedRounds = 0;
-            PlayedMatches.Clear();
-            TeamsWhoGotBye = 0;
-
-            EliminatedTeams.Clear();
-            WinnersBracket.Clear();
-            LosersBracket.Clear();
-            CurrentScore = 0;
-        }
-
         public override Match[] GenerateCompetitionMatches()
         {
             if (IsCompetitionFinished())
                 return new Match[] { };
-            if (TeamsWhoGotBye == Teams.Count)
+            if (TeamsWhoGotBye == Teams[0].Length)
             {
                 ResetTeamByes();
             }
@@ -111,8 +103,13 @@ namespace Evaluators.CompetitionOrganizations
                 teamFitness1 = teamFitnessRes1.GetTeamFitness();
                 teamFitness2 = teamFitnessRes2.GetTeamFitness();
 
-                var team1 = Teams.Find(team => team.TeamId == teamFitnessRes1.TeamID);
-                var team2 = Teams.Find(team => team.TeamId == teamFitnessRes2.TeamID);
+                var team1 = Teams[0].Where(team => team.TeamId == teamFitnessRes1.TeamID).First();
+                var team2 = Teams[0].Where(team => team.TeamId == teamFitnessRes2.TeamID).First();
+
+                if (team1 != null && team2 != null)
+                {
+                    throw new Exception("Invalid team IDs in match fitness! Team IDs must match the IDs of the teams in the competition organization.");
+                }
 
                 if (matchFitness.IsDummy)
                 {
@@ -253,7 +250,7 @@ namespace Evaluators.CompetitionOrganizations
 
         private void ResetTeamByes()
         {
-            foreach (var team in Teams)
+            foreach (var team in Teams[0])
             {
                 team.HasBye = false;
             }
@@ -262,8 +259,8 @@ namespace Evaluators.CompetitionOrganizations
 
         private void InitTournamentMatches()
         {
-            PairTeams(Teams);
-            WinnersBracket.AddRange(Teams);
+            PairTeams(Teams[0].ToList());
+            WinnersBracket.AddRange(Teams[0]);
         }
 
         private void GenerateWinnersBracketMatches()

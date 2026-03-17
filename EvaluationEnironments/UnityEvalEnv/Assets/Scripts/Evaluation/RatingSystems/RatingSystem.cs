@@ -1,6 +1,7 @@
 using AgentOrganizations;
 using Evaluators.CompetitionOrganizations;
 using Fitnesses;
+using Moserware.Skills;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,18 +9,18 @@ namespace Evaluators.CompetitionOrganizations
 {
     public abstract class RatingSystem
     {
-        public List<CompetitionPlayer> Players;
+        public CompetitionPlayer[][] Players;
+        public List<CompetitionPlayer> AllPlayers;
+        public Dictionary<int, CompetitionPlayer> PlayerLookup { get; private set; }
 
         public RatingSystem()
-        {
-            Players = new List<CompetitionPlayer>();
-        }
+        { }
 
         public abstract void UpdateRatings(List<MatchFitness> competitionMatchFitnesses);
 
-        public abstract void DefinePlayers(Individual[] individuals, RatingSystemRating[] initialPlayerRaitings);
+        public abstract void DefinePlayers(Individual[][] individuals, RatingSystemRating[] initialPlayerRaitings);
 
-        public abstract RatingSystemRating[] GetFinalRatings();
+        public abstract RatingSystemRating[][] GetFinalRatings();
 
         /// <summary>
         /// Checks if every value in lastEvalPopRatings is set to 0 to see if the last evaluation population fitnesses were not set or provided.
@@ -42,11 +43,17 @@ namespace Evaluators.CompetitionOrganizations
             return ratingSystemRatings;
         }
 
+        public void BuildPlayerLookup()
+        {
+            AllPlayers = Players.SelectMany(g => g).ToList();
+            PlayerLookup = AllPlayers.ToDictionary(t => t.IndividualID);
+        }
+
         public void DisplayRatings(bool sortPlayers = true)
         {
-            List<CompetitionPlayer> playersSorted = Players;
+            List<CompetitionPlayer> playersSorted = AllPlayers;
             if(sortPlayers)
-                playersSorted = Players.OrderByDescending(p => (p.GetScore())).ToList();
+                playersSorted = AllPlayers.OrderByDescending(p => (p.GetScore())).ToList();
 
             foreach (CompetitionPlayer player in playersSorted)
             {

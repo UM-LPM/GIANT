@@ -1,12 +1,13 @@
-using Fitnesses;
-using System.Collections.Generic;
 using AgentOrganizations;
-using System.Linq;
-using Unity.VisualScripting;
-using Google.Protobuf.WellKnownTypes;
-using System;
 using Base;
 using Evaluators.CompetitionOrganizations;
+using Fitnesses;
+using Google.Protobuf.WellKnownTypes;
+using Moserware.Skills;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting;
 using Utils;
 
 namespace Evaluators.CompetitionOrganizations
@@ -15,10 +16,13 @@ namespace Evaluators.CompetitionOrganizations
     {
         public CompetitionTeamOrganizator TeamOrganizator { get; set; }
         public bool CreateNewTeamsEachRound { get; set; } = false;
-        public Individual[] Individuals { get; set; }
+        public Individual[][] Individuals { get; set; }
         public int TeamsPerMatch { get; set; } = 2; // Default is 2 (1v1 matches)
 
-        public List<CompetitionTeam> Teams { get; set; }
+        public CompetitionTeam[][] Teams { get; set; }
+        public List<CompetitionTeam> AllTeams { get; private set; }
+        public Dictionary<int, CompetitionTeam> TeamLookup { get; private set; }
+
         public int Rounds { get; set; }
         public int ExecutedRounds { get; set; }
         public List<MatchFitness> PlayedMatches { get; set; }
@@ -29,7 +33,7 @@ namespace Evaluators.CompetitionOrganizations
         protected float teamFitness1;
         protected float teamFitness2;
 
-        public CompetitionOrganization(CompetitionTeamOrganizator teamOrganizator, Individual[] individuals, bool regenerateTeamsEachRound, int teamsPerMatch = 2)
+        public CompetitionOrganization(CompetitionTeamOrganizator teamOrganizator, Individual[][] individuals, bool regenerateTeamsEachRound, int teamsPerMatch = 2)
         {
             TeamOrganizator = teamOrganizator;
             Individuals = individuals;
@@ -40,9 +44,11 @@ namespace Evaluators.CompetitionOrganizations
 
         public abstract Match[] GenerateCompetitionMatches();
 
-        public void OrganizeTeams(CompetitionPlayer[] ratingPlayers)
+        public void OrganizeTeams(CompetitionPlayer[][] ratingPlayers)
         {
             Teams = TeamOrganizator.OrganizeTeams(Individuals, ratingPlayers);
+
+            BuildTeamLookup();
         }
 
         public virtual void UpdateTeamsScore(List<MatchFitness> competitionMatchFitnesses, List<CompetitionPlayer> players = null)
@@ -71,11 +77,8 @@ namespace Evaluators.CompetitionOrganizations
                 {
                     // Bye -> award fixed points ( = TeamsPerMatch)
                     foreach (var tf in matchFitness.TeamFitnesses)
-                    {
-                        var team = Teams.Find(t => t.TeamId == tf.TeamID);
-                        if (team != null)
-                            team.Score += TeamsPerMatch;
-                    }
+                        TeamLookup[tf.TeamID].Score += TeamsPerMatch;
+
                     continue;
                 }
 
@@ -83,35 +86,37 @@ namespace Evaluators.CompetitionOrganizations
                 int[] ranking = GetTeamOrders(matchFitness.TeamFitnesses);
 
                 // Point schemes
-                int[] pointsScheme = Enumerable.Range(0, TeamsPerMatch).Select(i => 2 * (TeamsPerMatch - ranking[i])).ToArray(); ;
+                int[] points = Enumerable.Range(0, TeamsPerMatch).Select(i => 2 * (TeamsPerMatch - ranking[i])).ToArray(); ;
 
                 // 3. Assign points
                 for (int i = 0; i < matchFitness.TeamFitnesses.Count; i++)
                 {
-                    var team = Teams.Find(t => t.TeamId == matchFitness.TeamFitnesses[i].TeamID);
-                    int points = i < pointsScheme.Length ? pointsScheme[i] : 0;
-                    Teams.Find(t => t.TeamId == team.TeamId).Score += points;
+                    var tf = matchFitness.TeamFitnesses[i];
+                    var team = TeamLookup[tf.TeamID];
+
+                    team.Score += (i < points.Length ? points[i] : 0);
 
                     // 4. Record individual match results
-                    var opponents = Teams
-                        .Where(x => x.TeamId != team.TeamId)
-                        .SelectMany(x => x.Individuals.Select(ind => ind.IndividualId))
-                        .ToArray();
+                    var opponents = matchFitness.TeamFitnesses
+                       .Where(x => x.TeamID != tf.TeamID)
+                       .SelectMany(x => TeamLookup[x.TeamID]
+                           .Individuals
+                           .Select(ind => ind.IndividualId))
+                       .ToArray();
 
                     team.IndividualMatchResults.Add(new IndividualMatchResult()
                     {
                         MatchName = matchFitness.MatchName,
                         OpponentsIDs = opponents,
-                        Value = matchFitness.TeamFitnesses[i].GetTeamFitness(),
-                        IndividualValues = matchFitness.TeamFitnesses[i].GetTeamIndividualValues()
+                        Value = tf.GetTeamFitness(),
+                        IndividualValues = tf.GetTeamIndividualValues()
                     });
                 }
             }
+
             // Increment the number of executed rounds
             ExecutedRounds++;
         }
-
-        public abstract void ResetCompetition();
 
         public virtual bool IsCompetitionFinished()
         {
@@ -121,30 +126,15 @@ namespace Evaluators.CompetitionOrganizations
         public void DisplayStandings()
         {
             DebugSystem.LogDetailed("Standings:");
-            foreach (var team in Teams)
+            foreach (var team in AllTeams)
             {
                 DebugSystem.LogDetailed($"{team.GetTeamName()} - {team.Score} points");
             }
         }
 
-        public void ClearTeams()
-        {
-            Teams.Clear();
-        }
-
-        public void AddTeam(CompetitionTeam team)
-        {
-            Teams.Add(team);
-        }
-
         public void AddTeams(List<CompetitionTeam> teams)
         {
             Teams.AddRange(teams);
-        }
-
-        public void SetTeams(List<CompetitionTeam> teams)
-        {
-            Teams = teams;
         }
 
         public int[] GetTeamOrders(List<TeamFitness> teamFitnesses)
@@ -172,17 +162,24 @@ namespace Evaluators.CompetitionOrganizations
 
             return orders;
         }
+
+        private void BuildTeamLookup()
+        {
+            AllTeams = Teams.SelectMany(g => g).ToList();
+            TeamLookup = AllTeams.ToDictionary(t => t.TeamId);
+        }
     }
 
     public enum CompetitionOrganizationType
     {
-        RoundRobin, // Tournament where each team plays against every other team
-        SwissSystem, // Tournament where teams are paired based on their current score
-        LastVsAll, // Special competition for the creation of convergence graph
-        SingleElimination, // Tournament where the loser of each match is immediately eliminated from the tournament
-        DoubleElimination, // Tournament where a team is not eliminated until it has lost two matches
-        KRandomOpponents, // Competition where each team plays K random opponents
-        SimilarStrengthOpponentSelection, // Competition where teams are paired based on similar strength (score)
-        MatrixFactorizationInteractionScheme // Competition where teams are paired based on a matrix factorization of past match results, to predict the most informative matches (e.g. for active learning)
+        RoundRobin = 0, // Tournament where each team plays against every other team
+        SwissSystem = 1, // Tournament where teams are paired based on their current score
+        LastVsAll = 2, // Special competition for the creation of convergence graph
+        SingleElimination = 3, // Tournament where the loser of each match is immediately eliminated from the tournament
+        DoubleElimination= 4, // Tournament where a team is not eliminated until it has lost two matches
+        KRandomOpponents = 5, // Competition where each team plays K random opponents
+        SimilarStrengthOpponentSelection = 6, // Competition where teams are paired based on similar strength (score)
+        MatrixFactorizationInteractionScheme = 7, // Competition where teams are paired based on a matrix factorization of past match results, to predict the most informative matches (e.g. for active learning)
+        BestPreviousCompetitors = 8, // Competition where teams are paired against best previous competitors from last X generations
     }
 }

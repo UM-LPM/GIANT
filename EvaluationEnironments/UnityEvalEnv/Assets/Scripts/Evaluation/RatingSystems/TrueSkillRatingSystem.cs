@@ -24,34 +24,40 @@ namespace Evaluators.CompetitionOrganizations
             MaxRating = 100;
         }
 
-        public override void DefinePlayers(Individual[] individuals, RatingSystemRating[] initialPlayerRaitings)
+        public override void DefinePlayers(Individual[][] individuals, RatingSystemRating[] initialPlayerRaitings)
         {
             if (initialPlayerRaitings != null && initialPlayerRaitings.Length < individuals.Length)
             {
                 throw new Exception("Initial individual rating array is not the same size as the number of individuals in the competition");
             }
 
-            // Find unique competition individuals in teams and add them to the list of individuals
-            foreach (Individual individual in individuals)
+            Players = new CompetitionPlayer[individuals.Length][];
+            for (int i = 0; i < individuals.Length; i++)
             {
-                RatingSystemRating individualRating = initialPlayerRaitings?.FirstOrDefault(x => x.IndividualID == individual.IndividualId);
-
-                if (individualRating != null && individualRating.AdditionalValues != null)
+                Players[i] = new CompetitionPlayer[individuals[i].Length];
+                for (int j = 0; j < individuals[i].Length; j++)
                 {
-                    double rating;
-                    double stdDeviation;
+                    var individual = individuals[i][j];
 
-                    if (!individualRating.AdditionalValues.TryGetValue("Rating", out rating))
-                        rating = GameInfo.DefaultRating.Mean;
+                    RatingSystemRating individualRating = initialPlayerRaitings?.FirstOrDefault(x => x.IndividualID == individual.IndividualId);
 
-                    if (!individualRating.AdditionalValues.TryGetValue("StdDeviation", out stdDeviation))
-                        stdDeviation = GameInfo.DefaultRating.StandardDeviation;
+                    if (individualRating != null && individualRating.AdditionalValues != null)
+                    {
+                        double rating;
+                        double stdDeviation;
 
-                    Players.Add(new TrueSkillPlayer(individual.IndividualId, new Player(individual.IndividualId), new Rating(math.abs(rating), stdDeviation)));
-                }
-                else
-                {
-                    Players.Add(new TrueSkillPlayer(individual.IndividualId, new Player(individual.IndividualId), GameInfo.DefaultRating));
+                        if (!individualRating.AdditionalValues.TryGetValue("Rating", out rating))
+                            rating = GameInfo.DefaultRating.Mean;
+
+                        if (!individualRating.AdditionalValues.TryGetValue("StdDeviation", out stdDeviation))
+                            stdDeviation = GameInfo.DefaultRating.StandardDeviation;
+
+                        Players[i][j] = new TrueSkillPlayer(individual.IndividualId, new Player(individual.IndividualId), new Rating(math.abs(rating), stdDeviation));
+                    }
+                    else
+                    {
+                        Players[i][j] = new TrueSkillPlayer(individual.IndividualId, new Player(individual.IndividualId), GameInfo.DefaultRating);
+                    }
                 }
             }
         }
@@ -179,18 +185,22 @@ namespace Evaluators.CompetitionOrganizations
 
         public TrueSkillPlayer GetPlayer(int id)
         {
-            return Players.FirstOrDefault(p => p.IndividualID.Equals(id) && p is TrueSkillPlayer) as TrueSkillPlayer;
+            return AllPlayers.FirstOrDefault(p => p.IndividualID.Equals(id) && p is TrueSkillPlayer) as TrueSkillPlayer;
         }
 
-        public override RatingSystemRating[] GetFinalRatings()
+        public override RatingSystemRating[][] GetFinalRatings()
         {
-            RatingSystemRating[] ratings = new RatingSystemRating[Players.Count];
+            RatingSystemRating[][] ratings = new RatingSystemRating[Players.Length][];
 
-            var i = 0;
-            foreach (TrueSkillPlayer ratingPlayer in Players.OfType<TrueSkillPlayer>())
+            for (int i = 0; i < Players.Length; i++)
             {
-                ratings[i] = new RatingSystemRating(Players[i].IndividualID, Players[i].IndividualMatchResults, new Dictionary<string, double> { { "Rating", ratingPlayer.Rating.Mean }, { "StdDeviation", ratingPlayer.Rating.StandardDeviation } });
-                i++;
+                ratings[i] = new RatingSystemRating[Players[i].Length];
+
+                for (int j = 0; j < Players[i].Length; j++)
+                {
+                    var player = Players[i][j] as TrueSkillPlayer;
+                    ratings[i][j] = new RatingSystemRating(player.IndividualID, player.IndividualMatchResults, new Dictionary<string, double> { { "Rating", player.Rating.Mean }, { "StdDeviation", player.Rating.StandardDeviation } });
+                }
             }
 
             return ratings;

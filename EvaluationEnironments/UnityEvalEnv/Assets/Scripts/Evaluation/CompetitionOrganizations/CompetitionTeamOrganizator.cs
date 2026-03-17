@@ -2,6 +2,7 @@ using AgentOrganizations;
 using Evaluators.CompetitionOrganizations;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Evaluators.CompetitionOrganizations
@@ -10,17 +11,41 @@ namespace Evaluators.CompetitionOrganizations
     {
         [SerializeField] private int TeamSize = 2;
 
-        public List<CompetitionTeam> OrganizeTeams(Individual[] individuals, CompetitionPlayer[] competitionPlayers)
+        public CompetitionTeam[][] OrganizeTeams(Individual[][] individuals, CompetitionPlayer[][] competitionPlayers)
         {
-            if (individuals.Length % TeamSize != 0)
+            // Check if individuals is null or empty or individuals[x] is dividable by TeamSize, otherwise throw exception
+            if (individuals == null ||
+                individuals.Length == 0 ||
+                individuals.Any(group => group == null || group.Length == 0 || group.Length % TeamSize != 0)
+                )
             {
-                throw new System.Exception($"Number of individuals must be dividable by {TeamSize} for OneTeamTwoIndividuals organization.");
+                throw new System.Exception("Invalid individuals array! Ensure it's not null, not empty, and each group has a number of individuals divisible by the team size.");
             }
 
+            CompetitionTeam[][] result = new CompetitionTeam[individuals.Length][];
+
+            int teamIdCounter = 0; // Counter to assign unique team IDs across all groups
+            for (int g = 0; g < individuals.Length; g++)
+            {
+                Individual[] groupIndividuals = individuals[g];
+                CompetitionPlayer[] groupPlayers = null;
+
+                if (competitionPlayers != null && g < competitionPlayers.Length)
+                    groupPlayers = competitionPlayers[g];
+
+                result[g] = OrganizeTeams(groupIndividuals, groupPlayers, teamIdCounter);
+                teamIdCounter += result[g].Length; // Increment team ID counter by the number of teams created in this group
+            }
+
+            return result;
+        }
+
+        private CompetitionTeam[] OrganizeTeams(Individual[] individuals, CompetitionPlayer[] competitionPlayers, int teamIdCounter)
+        {
             // If one individual per team, use the simpler organizator
             if (TeamSize == 1)
             {
-                return OrganizeTeamsOneTeamOneIndividual(individuals);
+                return OrganizeTeamsOneTeamOneIndividual(individuals, teamIdCounter);
             }
             else
             {
@@ -31,12 +56,12 @@ namespace Evaluators.CompetitionOrganizations
                 {
                     for (int i = 0; i < individuals.Length; i += TeamSize)
                     {
-                        int teamId = teams.Count;
+                        int teamId = teamIdCounter + teams.Count;
                         var teamMembers = individuals.Skip(i).Take(TeamSize).ToArray();
                         teams.Add(ScriptableObject.CreateInstance<CompetitionTeam>()
                             .Initialize(teamId, "Team " + teamId, teamMembers) as CompetitionTeam);
                     }
-                    return teams;
+                    return teams.ToArray();
                 }
 
                 // Case: use ratingPlayers to balance teams
@@ -97,20 +122,20 @@ namespace Evaluators.CompetitionOrganizations
                     });
                 }
 
-                return teams;
+                return teams.ToArray();
             }
         }
 
-        public List<CompetitionTeam> OrganizeTeamsOneTeamOneIndividual(Individual[] individuals)
+        public CompetitionTeam[] OrganizeTeamsOneTeamOneIndividual(Individual[] individuals, int teamIdCounter)
         {
             List<CompetitionTeam> teams = new List<CompetitionTeam>();
 
             for (int i = 0; i < individuals.Length; i++)
             {
-                teams.Add(ScriptableObject.CreateInstance<CompetitionTeam>().Initialize(i, "Team " + i, new Individual[] { individuals[i] }) as CompetitionTeam);
+                teams.Add(ScriptableObject.CreateInstance<CompetitionTeam>().Initialize(teamIdCounter + i, "Team " + (teamIdCounter + i), new Individual[] { individuals[i] }) as CompetitionTeam);
             }
 
-            return teams;
+            return teams.ToArray();
         }
 
         public int GetTeamSize()

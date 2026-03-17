@@ -3,6 +3,7 @@ using Base;
 using Configuration;
 using Evaluators.CompetitionOrganizations;
 using Fitnesses;
+using Moserware.Skills;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -25,7 +26,7 @@ namespace Evaluators
             MatchFitnesses = new List<MatchFitness>();
         }
 
-        public override async Task<CoordinatorEvaluationResult> ExecuteEvaluation(CoordinatorEvalRequestData evalRequestData, Individual[] individuals)
+        public override async Task<CoordinatorEvaluationResult> ExecuteEvaluation(CoordinatorEvalRequestData evalRequestData, Individual[][] individuals)
         {
             while (!CompetitionOrganization.IsCompetitionFinished())
             {
@@ -137,36 +138,40 @@ namespace Evaluators
             throw new Exception("No match fitnesses were returned");
         }
 
-        public virtual FinalIndividualFitness[] GetEvaluationResults()
+        public virtual FinalIndividualFitness[][] GetEvaluationResults()
         {
-            FinalIndividualFitnessWrapper finalIndividualFitnessWrapper = new FinalIndividualFitnessWrapper();
+            FinalIndividualFitnessWrapper[] finalIndividualFitnessWrapper = new FinalIndividualFitnessWrapper[CompetitionOrganization.Teams.Length];
 
-            foreach(CompetitionTeam team in CompetitionOrganization.Teams)
+            for (int i = 0; i < CompetitionOrganization.Teams.Length; i++)
             {
-                foreach(Individual individual in team.Individuals)
+                for (int j = 0; j < CompetitionOrganization.Teams[i].Length; j++)
                 {
-                    // Check if individual already exist in finalIndividualFitnessWrapper
-                    if (finalIndividualFitnessWrapper.IndividualAlreadyAdded(individual.IndividualId))
+                    foreach (Individual individual in CompetitionOrganization.Teams[i][j].Individuals)
                     {
-                        throw new Exception("Duplicate individual Id in finalIndividualFitnessWrapper!");
+                        // Check if individual already exist in finalIndividualFitnessWrapper[i]
+                        if (finalIndividualFitnessWrapper[i] == null)
+                        {
+                            finalIndividualFitnessWrapper[i] = new FinalIndividualFitnessWrapper();
+                        }
+                        else if (finalIndividualFitnessWrapper[i].IndividualAlreadyAdded(individual.IndividualId))
+                        {
+                            throw new Exception("Duplicate individual Id in finalIndividualFitnessWrapper!");
+                        }
+                        // If no add new individual
+                        FinalIndividualFitness finalIndividualFitness = new FinalIndividualFitness
+                        {
+                            IndividualID = individual.IndividualId,
+                            Value = -(float)CompetitionOrganization.Teams[i][j].Score,
+                            IndividualMatchResults = CompetitionOrganization.Teams[i][j].IndividualMatchResults,
+                            AdditionalValues = null
+                        };
+                        finalIndividualFitness.CalculateAvgMatchResultFitness();
+                        finalIndividualFitnessWrapper[i].AddFinalIndividualFitness(finalIndividualFitness);
                     }
-
-                    // If no add new individual
-                    FinalIndividualFitness finalIndividualFitness = new FinalIndividualFitness
-                    {
-                        IndividualID = individual.IndividualId,
-                        Value = -(float)team.Score,
-                        IndividualMatchResults = team.IndividualMatchResults,
-                        AdditionalValues = null
-                    };
-
-                    finalIndividualFitness.CalculateAvgMatchResultFitness();
-
-                    finalIndividualFitnessWrapper.AddFinalIndividualFitness(finalIndividualFitness);
                 }
             }
 
-            return finalIndividualFitnessWrapper.FinalIndividualFitnesses.ToArray();
+            return finalIndividualFitnessWrapper.Select(wrapper => wrapper.FinalIndividualFitnesses.ToArray()).ToArray();
         }
     }
 }
