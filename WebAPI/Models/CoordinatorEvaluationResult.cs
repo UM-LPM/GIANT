@@ -2,5 +2,5 @@
 
 public class CoordinatorEvaluationResult
 {
-    public FinalIndividualFitness[]? IndividualFitnesses { get; set; }
+    public FinalIndividualFitness[][]? IndividualFitnesses { get; set; }
 }

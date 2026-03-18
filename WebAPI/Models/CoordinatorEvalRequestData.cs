@@ -3,7 +3,7 @@
 public class CoordinatorEvalRequestData
 {
     public string[]? EvalEnvInstances { get; set; }
-    public int? EvalRangeStart { get; set; }
-    public int? EvalRangeEnd { get; set; }
-    public IndividualFitness[]? LastEvalIndividualFitnesses { get; set; }
+    public EvalRange[]? EvalRanges { get; set; }
+    public int[][]? EvalIndividuals { get; set; }
+    public IndividualFitness[]? LastEvalIndividualFitnesses { get; set; } // TODO implement
 }

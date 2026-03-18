@@ -15,6 +15,8 @@ namespace Evaluators.CompetitionOrganizations
         List<int> matchedOpponentTeamIDs;
         List<int> freeOpponentTeamIDs;
 
+        const int MAX_ATTEMPTS = 1000; // Maximum number of attempts to find valid matches
+
         public KRandomOpponentsTournament(CompetitionTeamOrganizator teamOrganizator, Individual[][] individuals, bool regenerateTeamsEachRound, int rounds)
             : base(teamOrganizator, individuals, regenerateTeamsEachRound)
         {
@@ -33,51 +35,62 @@ namespace Evaluators.CompetitionOrganizations
             if (IsCompetitionFinished())
                 return new Match[] { };
 
-            var teamGroup0 = Teams[0];
-
-            int N = teamGroup0.Length;
-            int targetMatches = (N * Rounds) / 2;
-
-            int[] degree = new int[N];
-            List<(int, int)> pairs = new List<(int, int)>();
-
-            // 1. Generate all possible pairs of teams
-            for (int i = 0; i < N; i++)
+            for (int attempt = 0; attempt < MAX_ATTEMPTS; attempt++)
             {
-                for (int j = i + 1; j < N; j++)
+                var teamGroup0 = Teams[0];
+
+                int N = teamGroup0.Length;
+                int targetMatches = (N * Rounds) / 2;
+
+                if(N % 2 != 0)
                 {
-                    pairs.Add((i, j));
+                    throw new Exception("Invalid number of teams! KRandomOpponentsTournament requires an even number of teams to ensure that all teams can be paired.");
                 }
-            }
 
-            // 2. Shuffle the pairs randomly using Fisher-Yates shuffle algorithm
-            for (int i = 0; i < pairs.Count; i++)
-            {
-                int randomIndex = Coordinator.Instance.Random.Next(i, pairs.Count);
-                var temp = pairs[i];
-                pairs[i] = pairs[randomIndex];
-                pairs[randomIndex] = temp;
-            }
+                int[] degree = new int[N];
+                List<(int, int)> pairs = new List<(int, int)>();
 
-            TournamentMatches.Clear();
-            currentMatchID = 0;
-
-            // 3. Iterate through the shuffled pairs and add them to the tournament matches if both teams have played less than Rounds matches, until we reach the target number of matches
-            foreach (var (team1, team2) in pairs)
-            {
-                if (degree[team1] < Rounds && degree[team2] < Rounds)
+                // 1. Generate all possible pairs of teams
+                for (int i = 0; i < N; i++)
                 {
-                    TournamentMatches.Add(
-                        ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { teamGroup0[team1], teamGroup0[team2] }));
-                    degree[team1]++;
-                    degree[team2]++;
-
-                    if (TournamentMatches.Count >= targetMatches)
-                        break;
+                    for (int j = i + 1; j < N; j++)
+                    {
+                        pairs.Add((i, j));
+                    }
                 }
+
+                // 2. Shuffle the pairs randomly using Fisher-Yates shuffle algorithm
+                for (int i = 0; i < pairs.Count; i++)
+                {
+                    int randomIndex = Coordinator.Instance.Random.Next(i, pairs.Count);
+                    var temp = pairs[i];
+                    pairs[i] = pairs[randomIndex];
+                    pairs[randomIndex] = temp;
+                }
+
+                TournamentMatches.Clear();
+                currentMatchID = 0;
+
+                // 3. Iterate through the shuffled pairs and add them to the tournament matches if both teams have played less than Rounds matches, until we reach the target number of matches
+                foreach (var (team1, team2) in pairs)
+                {
+                    if (degree[team1] < Rounds && degree[team2] < Rounds)
+                    {
+                        TournamentMatches.Add(
+                            ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { teamGroup0[team1], teamGroup0[team2] }));
+                        degree[team1]++;
+                        degree[team2]++;
+
+                        if (TournamentMatches.Count >= targetMatches)
+                            break;
+                    }
+                }
+
+                if(TournamentMatches.Count == targetMatches)
+                    return TournamentMatches.ToArray();
             }
 
-            return TournamentMatches.ToArray();
+            throw new Exception("Failed to generate valid matches after " + MAX_ATTEMPTS + " attempts!");
         }
 
         public override bool IsCompetitionFinished()

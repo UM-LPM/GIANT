@@ -133,7 +133,7 @@ namespace Evaluators.CompetitionOrganizations
                 int matchesPlayed = team.IndividualMatchResults.Count;
                 if (matchesPlayed > 0)
                 {
-                    team.Score /= matchesPlayed; // Average score over matches played
+                    team.Score = Math.Abs(team.Score / matchesPlayed); // Average score over matches played
                 }
             }
 

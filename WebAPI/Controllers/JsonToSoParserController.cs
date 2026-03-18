@@ -52,7 +52,7 @@ namespace WebAPI.Controllers
                 string jsonString = System.IO.File.ReadAllText(requestBodyParams.ApiRequestDataSourceFilePath!);
 
                 // Deserialize the JSON string to a dynamic object or a custom class
-                ProgramSolution[] programs = JsonConvert.DeserializeObject<ProgramSolution[]>(jsonString)!;
+                ProgramSolution[][] programs = JsonConvert.DeserializeObject<ProgramSolution[][]>(jsonString)!;
                 
                 ClearFolder(requestBodyParams.DestinationFilePath!);
 
@@ -63,29 +63,47 @@ namespace WebAPI.Controllers
                     return BadRequest(new { Status = "Error", Message = "Failed to parse JSON.", Error = "No behaviour trees sent in request" });
                 }
 
+                Individual[][] individuals = new Individual[programs.Length][];
+
                 int currentIndex = 0;
-                Individual[] individuals = new Individual[programs.Length];
-
-                foreach (ProgramSolution program in programs)
+                for (int i = 0; i < programs.Length; i++)
                 {
-                    foreach(ProgramSolutionPart programPart in program.SolutionParts)
+                    individuals[i] = new Individual[programs[i].Length];
+                    for (int j = 0; j < programs[i].Length; j++)
                     {
-                        programPart.Configure();
-                    }
+                        var program = programs[i][j];
+                        foreach (ProgramSolutionPart programPart in program.SolutionParts)
+                        {
+                            programPart.Configure();
+                        }
 
-                    individuals[currentIndex] = new Individual(currentIndex, program);
-                    
-                    currentIndex++;
+                        individuals[i][j] = new Individual(currentIndex++, program);
+                    }
                 }
 
-                // Save Individuals to files
-                foreach (Individual individual in individuals)
+                for (int i = 0; i < individuals.Length; i++)
                 {
-                    string individualString = JsonConvert.SerializeObject(individual, JSON_SERIALIZATION_SETTINGS);
-                    individualString = individualString.Replace(", WebAPI", ", Assembly-CSharp");
-                    individualString = individualString.Replace("System.Private.CoreLib", "mscorlib");
-                    individualString = individualString.Replace("UnityEngine.Vector2, Assembly-CSharp", "UnityEngine.Vector2, UnityEngine.CoreModule");
-                    saveBehaviourTreeToFile(individualString, requestBodyParams.DestinationFilePath + "" + individual.name + ".json");
+                    // Create a folder for the generation if it doesn't exist
+                    string individualGroupFolderPath = Path.Combine(requestBodyParams.DestinationFilePath!, i.ToString());
+                    if (!Directory.Exists(individualGroupFolderPath))
+                    {
+                        Directory.CreateDirectory(individualGroupFolderPath);
+                    }
+                    else
+                    {
+                        ClearFolder(individualGroupFolderPath);
+                    }
+
+                    for (int j = 0; j < individuals[i].Length; j++)
+                    {
+                        var individual = individuals[i][j];
+
+                        string individualString = JsonConvert.SerializeObject(individual, JSON_SERIALIZATION_SETTINGS);
+                        individualString = individualString.Replace(", WebAPI", ", Assembly-CSharp");
+                        individualString = individualString.Replace("System.Private.CoreLib", "mscorlib");
+                        individualString = individualString.Replace("UnityEngine.Vector2, Assembly-CSharp", "UnityEngine.Vector2, UnityEngine.CoreModule");
+                        saveIndividualToFile(individualString, requestBodyParams.DestinationFilePath + i + "\\" + individual.name + ".json");
+                    }
                 }
 
                 // Create a request to CoordinatorURI
@@ -95,7 +113,17 @@ namespace WebAPI.Controllers
                     {
                         client.Timeout = TimeSpan.FromMinutes(100);
 
-                        var task = client.PostAsync(requestBodyParams.CoordinatorURI, new StringContent(JsonConvert.SerializeObject(new CoordinatorEvalRequestData() { EvalEnvInstances = requestBodyParams.EvalEnvInstanceURIs, EvalRangeStart = 0, EvalRangeEnd = programs.Length, LastEvalIndividualFitnesses = requestBodyParams.LastEvalFinalIndividualFitnesses }), Encoding.UTF8, "application/json"));
+                        var task = client.PostAsync(
+                            requestBodyParams.CoordinatorURI,
+                            new StringContent(
+                                JsonConvert.SerializeObject(
+                                    new CoordinatorEvalRequestData() {
+                                        EvalEnvInstances = requestBodyParams.EvalEnvInstanceURIs,
+                                        EvalRanges = null,
+                                        LastEvalIndividualFitnesses = requestBodyParams.LastEvalFinalIndividualFitnesses
+                                    }),
+                                Encoding.UTF8, "application/json")
+                            );
                         task.Wait();
 
                         HttpResponseMessage responseMessage = await task;
@@ -174,21 +202,28 @@ namespace WebAPI.Controllers
             return null;
         }
 
-        public static void saveBehaviourTreeToFile(string behaviourTreeString, string filepath) {
+        public static void saveIndividualToFile(string individualString, string filepath) {
             using (StreamWriter outputFile = new StreamWriter(filepath)) {
-                outputFile.Write(behaviourTreeString);
+                outputFile.Write(individualString);
             }
         }
 
-        public static void ClearFolder(string path) {
+        public static void ClearFolder(string path)
+        {
+            // Delete all files in the folder
             string[] files = System.IO.Directory.GetFiles(path);
-
-            // Loop through and delete each file
-            foreach (string file in files) {
+            foreach (string file in files)
+            {
                 System.IO.File.Delete(file);
 
             }
-        }
 
+            // Delete all subfolders in the folder
+            string[] folders = System.IO.Directory.GetDirectories(path);
+            foreach (string folder in folders)
+            {
+                System.IO.Directory.Delete(folder, true);
+            }
+        }
     }
 }
