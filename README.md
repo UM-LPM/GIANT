@@ -33,7 +33,18 @@ For older releases, refer to the [Releases page](https://github.com/UM-LPM/GIANT
 If you use GIANT, please include this citation as a reference to the platform.
 
 ```
-
+@article{smid2026giant,
+  title = {GIANT: General intelligent AgeNt trainer},
+  journal = {SoftwareX},
+  volume = {34},
+  pages = {102607},
+  year = {2026},
+  issn = {2352-7110},
+  doi = {https://doi.org/10.1016/j.softx.2026.102607},
+  url = {https://www.sciencedirect.com/science/article/pii/S2352711026001007},
+  author = {Marko Šmid and Miha Ravber},
+  keywords = {Machine learning, Evolutionary algorithms, Genetic programming, Optimization, Games, Multi-agent systems}
+}
 ```
 
 ## Other Publications
