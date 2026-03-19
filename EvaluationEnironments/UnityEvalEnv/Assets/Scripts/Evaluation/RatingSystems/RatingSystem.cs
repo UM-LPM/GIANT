@@ -27,20 +27,25 @@ namespace Evaluators.CompetitionOrganizations
         /// </summary>
         /// <param name="lastEvalPopRatings"></param>
         /// <returns>lastEvalPopRatings or NULL if every value in lastEvalPopRatings is 0</returns>
-        public virtual RatingSystemRating[] PrepareLastEvalPopRatings(IndividualFitness[] lastEvalIndividualFitnesses)
+        public virtual RatingSystemRating[] PrepareLastEvalPopRatings(FinalIndividualFitness[][] lastEvalIndividualFitnesses)
         {
             if (lastEvalIndividualFitnesses == null || lastEvalIndividualFitnesses.Length == 0)
             {
                 return null;
             }
 
-            RatingSystemRating[] ratingSystemRatings = new RatingSystemRating[lastEvalIndividualFitnesses.Length];
+            RatingSystemRating[][] ratingSystemRatings = new RatingSystemRating[lastEvalIndividualFitnesses.Length][];
             for (int i = 0; i < lastEvalIndividualFitnesses.Length; i++)
             {
-                ratingSystemRatings[i] = new RatingSystemRating(lastEvalIndividualFitnesses[i].IndividualID, null, lastEvalIndividualFitnesses[i].AdditionalValues);
+                ratingSystemRatings[i] = new RatingSystemRating[lastEvalIndividualFitnesses[i].Length];
+
+                for (int j = 0; j < lastEvalIndividualFitnesses[i].Length; j++)
+                {
+                    ratingSystemRatings[i][j] = new RatingSystemRating(lastEvalIndividualFitnesses[i][j].IndividualID, null, lastEvalIndividualFitnesses[i][j].AdditionalValues);
+                }
             }
 
-            return ratingSystemRatings;
+            return ratingSystemRatings.SelectMany(r => r).ToArray();
         }
 
         public void BuildPlayerLookup()
@@ -67,9 +72,6 @@ namespace Evaluators.CompetitionOrganizations
         public int IndividualID { get; set; }
 
         public Dictionary<string, double> AdditionalValues{ get; set; } // Every rating system has its own rating values
-
-        // TODO replace Mean and StandardDeviation with:
-        //public Dictionary<string, float> RatingValues { get; set; }
 
         public List<IndividualMatchResult> IndividualMatchResults { get; set; }
 

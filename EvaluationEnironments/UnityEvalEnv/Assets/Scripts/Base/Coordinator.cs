@@ -402,7 +402,7 @@ namespace Base
         public string[] EvalEnvInstances { get; set; }
         public EvalRange[] EvalRanges { get; set; }
         public int[][] EvalIndividuals { get; set; } // Contains the indices of the individuals to be evaluated (e.g. [[1, 4, 5], [8], ..])
-        public IndividualFitness[] LastEvalIndividualFitnesses { get; set; } // TODO implement
+        public FinalIndividualFitness[][] LastEvalIndividualFitnesses { get; set; }
 
         public string EvalEnvInstancesToString()
         {
