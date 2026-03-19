@@ -377,8 +377,8 @@ namespace Base
                     return new SimilarStrengthOpponentSelection(TeamOrganizator, individuals, CreateNewTeamsEachRound, CompetitionRounds, TeamsPerMatch);
                 case CompetitionOrganizationType.MatrixFactorizationInteractionScheme:
                     return new MatrixFactorizationInteractionScheme(TeamOrganizator, individuals, CreateNewTeamsEachRound, CompetitionRounds);
-                case CompetitionOrganizationType.BestPreviousCompetitors:
-                    return new BestPreviousCompetitors(TeamOrganizator, individuals, CreateNewTeamsEachRound, CompetitionRounds);
+                case CompetitionOrganizationType.SharedCompetitors:
+                    return new SharedCompetitors(TeamOrganizator, individuals, CreateNewTeamsEachRound, CompetitionRounds);
                 default:
                     DebugSystem.LogError("Invalid competition organization type");
                     return null;

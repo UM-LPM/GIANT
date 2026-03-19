@@ -8,14 +8,14 @@ using UnityEngine;
 
 namespace Evaluators.CompetitionOrganizations
 {
-    public class BestPreviousCompetitors : CompetitionOrganization
+    public class SharedCompetitors : CompetitionOrganization
     {
         List<Match> TournamentMatches = new List<Match>();
         int currentMatchID;
         List<int> matchedOpponentTeamIDs;
         List<int> freeOpponentTeamIDs;
 
-        public BestPreviousCompetitors(CompetitionTeamOrganizator teamOrganizator, Individual[][] individuals, bool regenerateTeamsEachRound, int rounds)
+        public SharedCompetitors(CompetitionTeamOrganizator teamOrganizator, Individual[][] individuals, bool regenerateTeamsEachRound, int rounds)
             : base(teamOrganizator, individuals, regenerateTeamsEachRound)
         {
             if (Teams.Length != 2)

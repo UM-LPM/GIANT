@@ -180,6 +180,6 @@ namespace Evaluators.CompetitionOrganizations
         KRandomOpponents = 5, // Competition where each team plays K random opponents
         SimilarStrengthOpponentSelection = 6, // Competition where teams are paired based on similar strength (score)
         MatrixFactorizationInteractionScheme = 7, // Competition where teams are paired based on a matrix factorization of past match results, to predict the most informative matches (e.g. for active learning)
-        BestPreviousCompetitors = 8, // Competition where teams are paired against best previous competitors from last X generations
+        SharedCompetitors = 8, // Competition where teams are paired against best previous competitors from last X generations
     }
 }
