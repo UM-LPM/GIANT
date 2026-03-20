@@ -77,7 +77,8 @@ namespace Evaluators.CompetitionOrganizations
                 {
                     // Bye -> award fixed points ( = TeamsPerMatch)
                     foreach (var tf in matchFitness.TeamFitnesses)
-                        TeamLookup[tf.TeamID].Score += TeamsPerMatch;
+                        if(tf.TeamID != -1)
+                            TeamLookup[tf.TeamID].Score += TeamsPerMatch;
 
                     continue;
                 }

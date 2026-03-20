@@ -36,7 +36,7 @@ namespace Evaluators.CompetitionOrganizations
             var teamGroup0 = Teams[0];
             var teamGroup1 = Teams[1];
 
-            // pair all individuals from teamGroup1 (best previous competitors) with the best individual from teamGroup0 (current competitors)
+            // pair all individuals from teamGroup1 (test group) with the individuals from teamGroup0 (current competitors)
 
             TournamentMatches.Clear();
 

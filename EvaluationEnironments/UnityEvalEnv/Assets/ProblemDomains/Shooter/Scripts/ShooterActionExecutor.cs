@@ -49,7 +49,6 @@ namespace Problems.Shooter
 
             forwardAxis = agent.ActionBuffer.GetDiscreteAction("moveForwardDirection");
             rotateAxis = agent.ActionBuffer.GetDiscreteAction("rotateDirection");
-            rotateTurrentAxis = agent.ActionBuffer.GetDiscreteAction("rotateTurretDirection");
 
             switch (forwardAxis)
             {
