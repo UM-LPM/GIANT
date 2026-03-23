@@ -42,6 +42,7 @@ namespace Base
         [SerializeField] public bool SwapCompetitionMatchTeams = false; // Specific for games like (Robostrike, ...)
 
         [Header("Individuals Configuration")]
+        [SerializeField] public Individual[] IndividualsSingle;
         [SerializeField] public Individual[][] Individuals;
 
         private HttpListener Listener;
@@ -53,6 +54,12 @@ namespace Base
 
         private void Awake()
         {
+            if(IndividualsSingle != null && CoordinatorSetup == ComponentSetupType.MOCK)
+            {
+                Individuals = new Individual[1][];
+                Individuals[0] = IndividualsSingle;
+            }
+
             // Singleton pattern
             if (Instance != null)
             {
