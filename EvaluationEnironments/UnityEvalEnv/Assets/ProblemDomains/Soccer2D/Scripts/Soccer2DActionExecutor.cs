@@ -18,14 +18,13 @@ namespace Problems.Soccer2D
         public override void ExecuteActions(AgentComponent agent)
         {
             MoveAgent(agent as Soccer2DAgentComponent);
+            KickSoccerBall(agent as Soccer2DAgentComponent);
         }
 
         void MoveAgent(Soccer2DAgentComponent agent)
         {
             var moveInput = Vector3.zero;
             var rotateDir = 0f;
-
-            agent.KickPower = 0f;
 
             var forwardAxis = agent.ActionBuffer.GetDiscreteAction("moveForwardDirection");
             var rightAxis = agent.ActionBuffer.GetDiscreteAction("moveSideDirection");
@@ -51,41 +50,38 @@ namespace Problems.Soccer2D
                 case 2: rotateDir = -1f; break;
             }
 
-            // accelerate in movement direction
+            float dt = Time.fixedDeltaTime;
+
+            Vector3 movement = Vector3.zero;
             if (moveInput != Vector3.zero)
             {
-                agent.Velocity += moveInput.normalized * SoccerEnvironmentController.AgentAcceleration * Time.fixedDeltaTime;
-                agent.Velocity = Vector3.ClampMagnitude(agent.Velocity, SoccerEnvironmentController.AgentMaxAcceleration);
-            }
-            else
-            {
-                // apply damping when no input
-                agent.Velocity *= SoccerEnvironmentController.AgentMoveDamping;
+                movement = moveInput.normalized * SoccerEnvironmentController.AgentMoveSpeed * dt;
             }
 
-            // compute new position and rotation
-            Vector3 newAgentPos = agent.transform.position + agent.Velocity * Time.fixedDeltaTime;
+            // Compute new position & rotation
+            Vector3 newAgentPos = agent.transform.position + movement;
+
             Quaternion newAgentRotation = Quaternion.Euler(
-                0, 0, agent.transform.rotation.eulerAngles.z + rotateDir * SoccerEnvironmentController.AgentRotationSpeed * Time.fixedDeltaTime
+                0, 0,
+                agent.transform.rotation.eulerAngles.z +
+                rotateDir * SoccerEnvironmentController.AgentRotationSpeed * dt
             );
 
-            
-            Vector2 movement = (newAgentPos - agent.transform.position);
+            // --- Collision handling (unchanged logic) ---
             var hits = PhysicsUtil.PhysicsCircleCast2D(
-                        SoccerEnvironmentController.PhysicsScene2D,
-                        agent.gameObject,
-                        agent.transform.position,
-                        SoccerEnvironmentController.AgentColliderExtendsMultiplier.x,
-                        movement.normalized,
-                        movement.magnitude,
-                        true,
-                        gameObject.layer
+                SoccerEnvironmentController.PhysicsScene2D,
+                agent.gameObject,
+                agent.transform.position,
+                SoccerEnvironmentController.AgentColliderExtendsMultiplier.x,
+                movement.normalized,
+                movement.magnitude,
+                true,
+                gameObject.layer
             );
 
-
-            foreach(RaycastHit2D hit in hits)
+            foreach (RaycastHit2D hit in hits)
             {
-                if(hit.collider != null && hit.collider.gameObject != gameObject)
+                if (hit.collider != null && hit.collider.gameObject != gameObject)
                 {
                     newAgentPos = hit.point + (hit.normal * SoccerEnvironmentController.AgentColliderExtendsMultiplier.x);
                     break;
@@ -94,6 +90,43 @@ namespace Problems.Soccer2D
 
             agent.transform.position = newAgentPos;
             agent.transform.rotation = newAgentRotation;
+        }
+
+        void KickSoccerBall(Soccer2DAgentComponent agent)
+        {
+            if (agent.ActionBuffer.GetDiscreteAction("kick") != 1)
+                return;
+
+            // Add kick cooldown logic
+            if(agent.NextKickTime > SoccerEnvironmentController.CurrentSimulationSteps)
+                return;
+
+            var ball = SoccerEnvironmentController.SoccerBall;
+            Vector3 toBall = (ball.transform.position - agent.transform.position);
+            float distance = toBall.magnitude;
+
+            // 1. Distance check
+            if (distance > SoccerEnvironmentController.KickRange)
+                return;
+
+            // 2. Facing check (dot product)
+            Vector3 forward = agent.transform.up;
+            float alignment = Vector3.Dot(forward, toBall.normalized);
+
+            if (alignment < SoccerEnvironmentController.KickAlignmentThreshold)
+                return;
+
+            // 3. Apply impulse
+            Vector3 dir = Vector3.Lerp(forward, toBall.normalized, 0.3f).normalized;
+
+            ball.AddForce(dir * SoccerEnvironmentController.KickForce);
+
+            // Set last touched agent
+            ball.LastTouchedAgent = agent;
+
+            SoccerEnvironmentController.AgentTouchedSoccerBall(agent);
+
+            agent.NextKickTime = SoccerEnvironmentController.CurrentSimulationSteps + SoccerEnvironmentController.KickCooldown;
         }
     }
 }

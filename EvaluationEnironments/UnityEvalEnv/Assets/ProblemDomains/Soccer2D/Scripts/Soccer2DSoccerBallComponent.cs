@@ -137,14 +137,7 @@ namespace Problems.Soccer2D
             {
                 LastTouchedAgent = agent;
                 var dir = (transform.position - agent.transform.position).normalized;
-                var agentPower = Mathf.Max(0.05f, agent.Velocity.magnitude / Soccer2DEnvironmentController.AgentMaxAcceleration);
-
-                totalForce += dir * (Soccer2DEnvironmentController.KickPower * agentPower);
-
-                if (agentPower > 0.05f)
-                {
-                    Soccer2DEnvironmentController.AgentTouchedSoccerBall(agent);
-                }
+                totalForce += dir * (Soccer2DEnvironmentController.PushPower);
             }
 
             if (totalForce != Vector3.zero)

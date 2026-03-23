@@ -105,7 +105,6 @@ namespace Problems.Soccer2D
             agentComponent.IndividualID = individualId;
             agentComponent.TeamIdentifier.TeamID = teamId;
             agentComponent.Team = teamIndex == 0 ? Soccer2DUtils.SoccerTeam.Blue : Soccer2DUtils.SoccerTeam.Purple;
-            agentComponent.ResetVelocity();
 
             // Configure agent material
             if (teamIndex == 0)

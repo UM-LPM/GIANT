@@ -31,11 +31,12 @@ namespace Problems.Soccer2D
         [Header("Soccer Agent Configuration")]
         [SerializeField] public float ForwardSpeed = 1f;
         [SerializeField] public float LateralSpeed = 1f;
+        [SerializeField] public float AgentMoveSpeed = 1f;
         [SerializeField] public float AgentAcceleration = 5f;
         [SerializeField] public float AgentMaxAcceleration = 10f;
         [SerializeField] public float AgentMoveDamping = 0.9f;
         [SerializeField] public float AgentRotationSpeed = 100f;
-        [SerializeField] public float KickPower = 15f;
+        [SerializeField] public float PushPower = 15f;
         [SerializeField] public static float VelocityPassTreshold = 0.2f;
         [SerializeField] public float PassTolerance = 10f; // Tolerance in degrees.
         [SerializeField] public float CalculateAgentToBallDistanceEvery = 1f;
@@ -44,12 +45,17 @@ namespace Problems.Soccer2D
         [SerializeField] public float BallStartPushForce = 1f;
         [SerializeField] public float CalculateBallToGoalDistanceEvery = 0.5f;
 
+        [SerializeField] public float KickForce = 10f;
+        [SerializeField] public float KickRange = 1.1f;
+        [SerializeField] public int KickCooldown = 50;
+        [SerializeField] public float KickAlignmentThreshold = 0.5f;
+
         private bool NeedsRespawn = false;
         private bool maxGoalsScored = false;
 
         // Soccer Ball
         Soccer2DBallSpawner SoccerBallSpawner;
-        Soccer2DSoccerBallComponent SoccerBall;
+        [HideInInspector] public Soccer2DSoccerBallComponent SoccerBall;
 
         // Goals
         Soccer2DGoalComponent GoalPurple;
@@ -327,7 +333,7 @@ namespace Problems.Soccer2D
                     }
                 }
 
-                agent.ResetVelocity();
+                SoccerBall.LastTouchedAgent = agent;
             }
         }
 
@@ -448,6 +454,12 @@ namespace Problems.Soccer2D
             }
 
             return false;
+        }
+
+        public bool IsAgentInBallKickingRange(Soccer2DAgentComponent agent)
+        {
+            float distanceToBall = Vector3.Distance(agent.transform.position, SoccerBall.transform.position);
+            return distanceToBall <= KickRange;
         }
 
         private void SetAgentsFitness()
@@ -580,9 +592,9 @@ namespace Problems.Soccer2D
                     AgentRotationSpeed = float.Parse(conf.ProblemConfiguration["AgentRotationSpeed"]);
                 }
 
-                if (conf.ProblemConfiguration.ContainsKey("KickPower"))
+                if (conf.ProblemConfiguration.ContainsKey("PushPower"))
                 {
-                    KickPower = float.Parse(conf.ProblemConfiguration["KickPower"]);
+                    PushPower = float.Parse(conf.ProblemConfiguration["PushPower"]);
                 }
 
                 if (conf.ProblemConfiguration.ContainsKey("GameScenarioType"))
@@ -650,9 +662,29 @@ namespace Problems.Soccer2D
                     CalculateBallToGoalDistanceEvery = float.Parse(conf.ProblemConfiguration["CalculateBallToGoalDistanceEvery"]);
                 }
 
-                if(conf.ProblemConfiguration.ContainsKey("MinSoccerBallTravelDistance"))
+                if (conf.ProblemConfiguration.ContainsKey("MinSoccerBallTravelDistance"))
                 {
                     MinSoccerBallTravelDistance = float.Parse(conf.ProblemConfiguration["MinSoccerBallTravelDistance"]);
+                }
+
+                if (conf.ProblemConfiguration.ContainsKey("KickForce"))
+                {
+                    KickForce = float.Parse(conf.ProblemConfiguration["KickForce"]);
+                }
+
+                if (conf.ProblemConfiguration.ContainsKey("KickRange"))
+                {
+                    KickRange = float.Parse(conf.ProblemConfiguration["KickRange"]);
+                }
+
+                if (conf.ProblemConfiguration.ContainsKey("KickCooldown"))
+                {
+                    KickCooldown = int.Parse(conf.ProblemConfiguration["KickCooldown"]);
+                }
+
+                if (conf.ProblemConfiguration.ContainsKey("KickAlignmentThreshold"))
+                {
+                    KickAlignmentThreshold = float.Parse(conf.ProblemConfiguration["KickAlignmentThreshold"]);
                 }
             }
         }

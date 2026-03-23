@@ -1,6 +1,7 @@
 ﻿using AgentControllers.AIAgentControllers.BehaviorTreeAgentController.BombClash;
 using AgentControllers.AIAgentControllers.BehaviorTreeAgentController.DodgeBall;
 using AgentControllers.AIAgentControllers.BehaviorTreeAgentController.Robostrike;
+using AgentControllers.AIAgentControllers.BehaviorTreeAgentController.Soccer2D;
 using WebAPI.Models;
 using WebAPI.Models.EARS;
 
@@ -164,6 +165,12 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
                     break;
                 case "GoalAhead":
                     node = new GoalAhead(treeModelNode.Guid, treeModelNode.Name, treeModelNode.Properties, treeModelNode.NodePosition);
+                    break;
+                case "AgentInBallKickingRange":
+                    node = new AgentInBallKickingRange(treeModelNode.Guid, treeModelNode.Name, treeModelNode.Properties, treeModelNode.NodePosition);
+                    break;
+                case "KickBall":
+                    node = new KickBall(treeModelNode.Guid, treeModelNode.Name, treeModelNode.Properties, treeModelNode.NodePosition);
                     break;
                 default:
                     throw new Exception("Node type not recognized");

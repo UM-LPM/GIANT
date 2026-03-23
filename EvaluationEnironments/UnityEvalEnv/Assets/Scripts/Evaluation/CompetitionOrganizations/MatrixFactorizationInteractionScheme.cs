@@ -33,7 +33,7 @@ namespace Evaluators.CompetitionOrganizations
         {
             if (TeamsPerMatch != 2)
             {
-                Debug.LogError("MatrixFactorizationInteractionScheme currently only supports 1v1 matches (TeamsPerMatch = 2). Please set TeamsPerMatch to 2 and try again.");
+                Debug.LogError("MatrixFactorizationInteractionScheme currently only supports 1v1 matches (TeamsPerMatch = 2). Set TeamsPerMatch to 2 and try again.");
                 return new Match[] { };
             }
 

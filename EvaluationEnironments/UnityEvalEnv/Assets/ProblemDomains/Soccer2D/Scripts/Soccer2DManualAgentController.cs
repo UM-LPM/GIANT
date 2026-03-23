@@ -22,6 +22,9 @@ namespace Problems.Soccer2D
                 actionsOut.AddDiscreteAction("rotateDirection", 1);
             else if (Input.GetKey(KeyCode.E))
                 actionsOut.AddDiscreteAction("rotateDirection", 2);
+
+            if(Input.GetKey(KeyCode.Space))
+                actionsOut.AddDiscreteAction("kick", 1);
         }
 
         public override AgentController Clone()
