@@ -26,7 +26,7 @@ namespace Problems.Shooter
         [SerializeField] public GameObject WeaponItemPrefab;
         [SerializeField] public GameObject WeaponPrefab;
         [SerializeField] public GameObject WeaponBulletPrefab;
-        [SerializeField] public float BulletShootCooldown = 1.0f;
+        [SerializeField] public int BulletShootCooldown = 50;
         [SerializeField] public float BulletSpeed = 20f;
         [SerializeField] public int BulletDamage = 1;
 
@@ -304,15 +304,23 @@ namespace Problems.Shooter
                 }
 
                 // Bullets fired
-                allPossibleBulletsFired = (CurrentSimulationSteps * Time.fixedDeltaTime) / BulletShootCooldown;
-                bulletsFired = agent.BulletsFired / allPossibleBulletsFired;
-                bulletsFired = (float)Math.Round(ShooterFitness.FitnessValues[ShooterFitness.FitnessKeys.BulletsFired.ToString()] * bulletsFired, 4);
-                agent.AgentFitness.UpdateFitness(bulletsFired, ShooterFitness.FitnessKeys.BulletsFired.ToString());
+                if(agent.BulletsFired > 0)
+                {
+                    // Bullets fired
+                    agent.AgentFitness.UpdateFitness(ShooterFitness.FitnessValues[ShooterFitness.FitnessKeys.BulletsFired.ToString()], ShooterFitness.FitnessKeys.BulletsFired.ToString());
+                }
 
                 // Bullets fired accuracy
                 if (agent.BulletsFired > 0)
                 {
-                    bulletsFiredAccuracy = agent.BulletsHitOpponent / (float)allPossibleBulletsFired;
+                    int opponents = Agents.Where(a => a.TeamIdentifier.TeamID != agent.TeamIdentifier.TeamID).Count();
+                    int opponentsHealthSum = opponents * AgentStartHealth; // Max possible health of opponents
+                    int reuiredShots = (int)Math.Ceiling(opponentsHealthSum / (float)BulletDamage); // Minimum bullets required to defeat all opponents
+
+                    double accuracy = agent.BulletsHitOpponent / (float)agent.BulletsFired;
+                    double progress = agent.BulletsHitOpponent / (float)reuiredShots;
+
+                    bulletsFiredAccuracy = (float)(accuracy * progress);
                     bulletsFiredAccuracy = (float)Math.Round(ShooterFitness.FitnessValues[ShooterFitness.FitnessKeys.BulletsFiredAccuracy.ToString()] * bulletsFiredAccuracy, 4);
                     agent.AgentFitness.UpdateFitness(bulletsFiredAccuracy, ShooterFitness.FitnessKeys.BulletsFiredAccuracy.ToString());
                 }
@@ -388,7 +396,7 @@ namespace Problems.Shooter
 
                 if (conf.ProblemConfiguration.ContainsKey("BulletShootCooldown"))
                 {
-                    BulletShootCooldown = float.Parse(conf.ProblemConfiguration["BulletShootCooldown"]);
+                    BulletShootCooldown = int.Parse(conf.ProblemConfiguration["BulletShootCooldown"]);
                 }
 
                 if (conf.ProblemConfiguration.ContainsKey("BulletSpeed"))

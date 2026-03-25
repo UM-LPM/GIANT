@@ -172,6 +172,9 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
                 case "KickBall":
                     node = new KickBall(treeModelNode.Guid, treeModelNode.Name, treeModelNode.Properties, treeModelNode.NodePosition);
                     break;
+                case "HasWeapon":
+                    node = new HasWeapon(treeModelNode.Guid, treeModelNode.Name, treeModelNode.Properties, treeModelNode.NodePosition);
+                    break;
                 default:
                     throw new Exception("Node type not recognized");
             }

@@ -93,7 +93,7 @@ namespace Problems.Shooter
         }
     
         private void Shoot(ShooterAgentComponent agent) {
-            if (agent.ActionBuffer.GetDiscreteAction("shoot") == 1 && agent.HasWeapon() && agent.NextShootTime <= ShooterEnvironmentController.CurrentSimulationTime)
+            if (agent.ActionBuffer.GetDiscreteAction("shoot") == 1 && agent.HasWeapon() && agent.NextShootTime <= ShooterEnvironmentController.CurrentSimulationSteps)
             {
                 spawnPosition = agent.WeaponComponent.BulletSpawnPoint.transform.position;
                 spawnRotation = agent.WeaponComponent.BulletSpawnPoint.transform.rotation;
@@ -108,7 +108,7 @@ namespace Problems.Shooter
                 wbc.Parent = agent;
                 wbc.Velocity = velocity;
                 //wbc.ShooterEnvironmentController = ShooterEnvironmentController;
-                agent.NextShootTime = ShooterEnvironmentController.CurrentSimulationTime + ShooterEnvironmentController.BulletShootCooldown;
+                agent.NextShootTime = ShooterEnvironmentController.CurrentSimulationSteps + ShooterEnvironmentController.BulletShootCooldown;
 
                 agent.BulletFired();
 
