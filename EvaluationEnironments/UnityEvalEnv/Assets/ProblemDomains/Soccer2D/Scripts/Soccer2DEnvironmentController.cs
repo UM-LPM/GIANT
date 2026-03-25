@@ -32,9 +32,6 @@ namespace Problems.Soccer2D
         [SerializeField] public float ForwardSpeed = 1f;
         [SerializeField] public float LateralSpeed = 1f;
         [SerializeField] public float AgentMoveSpeed = 1f;
-        [SerializeField] public float AgentAcceleration = 5f;
-        [SerializeField] public float AgentMaxAcceleration = 10f;
-        [SerializeField] public float AgentMoveDamping = 0.9f;
         [SerializeField] public float AgentRotationSpeed = 100f;
         [SerializeField] public float PushPower = 15f;
         [SerializeField] public static float VelocityPassTreshold = 0.2f;
@@ -52,6 +49,10 @@ namespace Problems.Soccer2D
 
         private bool NeedsRespawn = false;
         private bool maxGoalsScored = false;
+
+        public bool NeedsRespawnBecauseDeadlock = false;
+        private int StepsSinceDeadlock = 0;
+        private int MaxStepsInDeadlock = 200;
 
         // Soccer Ball
         Soccer2DBallSpawner SoccerBallSpawner;
@@ -150,24 +151,33 @@ namespace Problems.Soccer2D
         {
             CheckIfGoalScored();
 
-            if (NeedsRespawn)
+            if (NeedsRespawn || NeedsRespawnBecauseDeadlock)
             {
                 MatchSpawner.Respawn<Soccer2DAgentComponent>(this, Agents as Soccer2DAgentComponent[]);
                 SoccerBallSpawner.Respawn<Soccer2DSoccerBallComponent>(this, SoccerBall);
                 ForceNewDecisions = true;
                 NeedsRespawn = false;
 
+                StepsSinceDeadlock = 0;
+                NeedsRespawnBecauseDeadlock = false;
+
                 if (GameState == GameState.RUNNING)
                 {
                     // Based on the last team that scored, push the ball towards this side after ball is respawned
-                    soccerBallPushDirection = (receivedGoalComponent.Team == SoccerTeam.Blue ? GoalBlue.transform.position : GoalPurple.transform.position) - SoccerBall.transform.position;
+                    if(receivedGoalComponent != null)
+                        soccerBallPushDirection = (receivedGoalComponent.Team == SoccerTeam.Blue ? GoalBlue.transform.position : GoalPurple.transform.position) - SoccerBall.transform.position;
+                    else
+                        soccerBallPushDirection = (Goals[Util.Rnd.Next(0, Goals.Length)].transform.position) - SoccerBall.transform.position;
+
                     soccerBallPushDirection.Normalize();
 
                     // Based on the direction, select a random angle between -30 and 30 degrees to add some noise to the push direction
                     randomAngle = Util.Rnd.Next(-30, 30);
-                    soccerBallPushDirection = Quaternion.Euler(0, randomAngle, 0) * soccerBallPushDirection;
+                    soccerBallPushDirection = Quaternion.Euler(0, 0, randomAngle) * soccerBallPushDirection;
 
                     SoccerBall.AddForce(soccerBallPushDirection * BallStartPushForce);
+
+                    receivedGoalComponent = null;
                 }
             }
         }
@@ -201,6 +211,8 @@ namespace Problems.Soccer2D
                 UpdateTimeLookingAtBall();
 
                 CheckAgentsExploration();
+
+                CheckIfDeadlock();
             }
 
         }
@@ -363,13 +375,6 @@ namespace Problems.Soccer2D
 
             // Check engind state
             CheckEndingState();
-
-            if (GameState == GameState.RUNNING)
-            {
-                // Based on the last team that scored, push the ball towards this side after ball is respawned
-                soccerBallPushDirection = (goalComponent.Team == SoccerTeam.Blue ? GoalBlue.transform.position : GoalPurple.transform.position) - SoccerBall.transform.position;
-                soccerBallPushDirection.Normalize();
-            }
         }
 
         public override void CheckEndingState()
@@ -460,6 +465,34 @@ namespace Problems.Soccer2D
         {
             float distanceToBall = Vector3.Distance(agent.transform.position, SoccerBall.transform.position);
             return distanceToBall <= KickRange;
+        }
+
+        public void CheckIfDeadlock()
+        {
+            // Check if ball is stuck in the same position for too long and is sorrunded by at least two agents
+            var agentsAroundBall = PhysicsUtil.PhysicsOverlapSphere<Soccer2DAgentComponent>(
+                    PhysicsScene,
+                    PhysicsScene2D,
+                    GameType,
+                    SoccerBall.gameObject,
+                    SoccerBall.transform.position,
+                    SoccerBall.Radius * 1.5f,
+                    true,
+                    SoccerBall.gameObject.layer
+                );
+
+            if (agentsAroundBall != null && agentsAroundBall.Length >= 2)
+            {
+                StepsSinceDeadlock++;
+                if (StepsSinceDeadlock >= MaxStepsInDeadlock)
+                {
+                    NeedsRespawnBecauseDeadlock = true;
+                }
+            }
+            else
+            {
+                StepsSinceDeadlock = 0;
+            }
         }
 
         private void SetAgentsFitness()
@@ -572,19 +605,9 @@ namespace Problems.Soccer2D
 
                 Soccer2DFitness.FitnessValues = conf.FitnessValues;
 
-                if (conf.ProblemConfiguration.ContainsKey("AgentAcceleration"))
+                if(conf.ProblemConfiguration.ContainsKey("AgentMoveSpeed"))
                 {
-                    AgentAcceleration = float.Parse(conf.ProblemConfiguration["AgentAcceleration"]);
-                }
-
-                if (conf.ProblemConfiguration.ContainsKey("AgentMaxAcceleration"))
-                {
-                    AgentMaxAcceleration = float.Parse(conf.ProblemConfiguration["AgentMaxAcceleration"]);
-                }
-
-                if (conf.ProblemConfiguration.ContainsKey("AgentMoveDamping"))
-                {
-                    AgentMoveDamping = float.Parse(conf.ProblemConfiguration["AgentMoveDamping"]);
+                    AgentMoveSpeed = float.Parse(conf.ProblemConfiguration["AgentMoveSpeed"]);
                 }
 
                 if (conf.ProblemConfiguration.ContainsKey("AgentRotationSpeed"))
