@@ -113,6 +113,16 @@ namespace Evaluators.CompetitionOrganizations
                 matchFitness = new MatchFitness();
                 MatchFitness.GetMatchFitness(tournamentMatchFitnessesCopy, matchFitness, matchFitnesses, matchFitnessesSwaped, Coordinator.Instance.SwapCompetitionMatchTeams);
 
+                if (matchFitness.IsDummy)
+                {
+                    // Bye
+                    foreach (var tf in matchFitness.TeamFitnesses)
+                        if (tf.TeamID != -1)
+                            TeamLookup[tf.TeamID].Score += 2;
+
+                    continue;
+                }
+
                 teamFitnessRes1 = matchFitness.TeamFitnesses[0];
                 teamFitnessRes2 = matchFitness.TeamFitnesses[1];
 
@@ -122,15 +132,9 @@ namespace Evaluators.CompetitionOrganizations
                 var team1 = Teams[0].Where(team => team.TeamId == teamFitnessRes1.TeamID).First();
                 var team2 = Teams[0].Where(team => team.TeamId == teamFitnessRes2.TeamID).First();
 
-                if(team1 != null && team2 != null)
+                if (team1 == null || team2 == null)
                 {
                     throw new Exception("Invalid team IDs in match fitness! Team IDs must match the IDs of the teams in the competition organization.");
-                }
-
-                if (matchFitness.IsDummy)
-                {
-                    team1.Score += 2;
-                    continue;
                 }
 
                 if (teamFitness1 < teamFitness2)
