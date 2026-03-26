@@ -97,7 +97,17 @@ namespace Fitnesses
 
                             foreach (IndividualFitness individualFitness in teamFitness.IndividualFitness)
                             {
-                                teamFitnessJoined.IndividualFitness.Add(individualFitness);
+                                IndividualFitness individualFitnessJoined =
+                                    teamFitnessJoined.IndividualFitness.Find(ifit => ifit.IndividualID == individualFitness.IndividualID);
+                                if (individualFitnessJoined == null)
+                                {
+                                    individualFitnessJoined = new IndividualFitness();
+                                    individualFitnessJoined.IndividualID = individualFitness.IndividualID;
+
+                                    teamFitnessJoined.IndividualFitness.Add(individualFitnessJoined);
+                                }
+
+                                individualFitnessJoined.AddIndividualFitness(individualFitness);
                             }
                         }
                     }

@@ -31,6 +31,7 @@ namespace Problems.TicTacToe
         protected override void DefineAdditionalDataOnPostAwake()
         {
             ReadParamsFromMainConfiguration();
+            SetBestAndWorstFitnesses(TicTacToeFitness.FitnessValues);
 
             Grid = new TicTacToeGrid(BoardSizeX, BoardSizeY, BoardSizeZ);
             Grid.Spawn(GridCellPrefab, Environment.transform);

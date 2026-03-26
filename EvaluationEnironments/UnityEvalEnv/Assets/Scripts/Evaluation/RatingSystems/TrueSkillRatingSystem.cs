@@ -64,7 +64,105 @@ namespace Evaluators.CompetitionOrganizations
 
         public override void UpdateRatings(List<MatchFitness> competitionMatchFitnesses)
         {
-            foreach(MatchFitness matchFitness in competitionMatchFitnesses)
+            List<MatchFitness> competitionMatchFitnessesCopy = new List<MatchFitness>(competitionMatchFitnesses);
+
+            MatchFitness matchFitness;
+            List<MatchFitness> matchFitnesses = new List<MatchFitness>();
+            List<MatchFitness> matchFitnessesSwaped = new List<MatchFitness>();
+
+            while (competitionMatchFitnessesCopy.Count > 0)
+            {
+                // 1. Get all matchFitness data
+                matchFitness = new MatchFitness();
+                MatchFitness.GetMatchFitness(competitionMatchFitnessesCopy, matchFitness, matchFitnesses, matchFitnessesSwaped, Coordinator.Instance.SwapCompetitionMatchTeams);
+
+                // If the matchFitness is a dummy matchFitness, skip it (this matchFitness is used for teams who got bye on a competition
+                if (matchFitness.IsDummy)
+                    continue;
+
+                // 2. Calculate new ratings
+                // 2.1 Define order ranking
+
+                int[] orderRanking = GetFitnessOrder(matchFitness.GetTeamFitnesses());
+
+                // 2.2 Calculate how much each player contributed to the team fitness
+                for (int i = 0; i < matchFitness.TeamFitnesses.Count; i++)
+                {
+                    if (matchFitness.TeamFitnesses[i].IndividualFitness.Count > 1)
+                    {
+                        float[] contributions = ComputeContributions(matchFitness.TeamFitnesses[i].IndividualFitness.Select(ind => ind.Value).ToList());
+
+                        foreach (IndividualFitness individualFitness in matchFitness.TeamFitnesses[i].IndividualFitness)
+                        {
+                            int playerIndex = matchFitness.TeamFitnesses[i].IndividualFitness.IndexOf(individualFitness);
+                            float contribution = contributions[playerIndex];
+                            TrueSkillPlayer trueSkillPlayer = GetPlayer(individualFitness.IndividualID);
+                            if (trueSkillPlayer != null)
+                            {
+                                // Check if current Team won 
+                                if (orderRanking[i] != 1)
+                                {
+                                    contribution = 1 - contribution; // If the team lost, the contribution is inverted (i.e., a player who contributed less to the team fitness should be penalized more)
+                                }
+                                trueSkillPlayer.Player = new Player(trueSkillPlayer.IndividualID, contribution);
+                            }
+                        }
+                    }
+                }
+
+                // 2.3. Create teams 
+                Moserware.Skills.Team[] teams = new Moserware.Skills.Team[matchFitness.TeamFitnesses.Count];
+
+                for (int i = 0; i < matchFitness.TeamFitnesses.Count; i++)
+                {
+                    List<TrueSkillPlayer> teamPlayers = new List<TrueSkillPlayer>();
+
+                    foreach (IndividualFitness player in matchFitness.TeamFitnesses[i].IndividualFitness)
+                    {
+                        teamPlayers.Add(GetPlayer(player.IndividualID));
+                    }
+
+                    Moserware.Skills.Team team = new Moserware.Skills.Team();
+                    foreach (TrueSkillPlayer player in teamPlayers)
+                    {
+                        team.AddPlayer(player.Player, player.Rating);
+                    }
+
+                    teams[i] = team;
+                }
+
+                // 2.4 Calculate new ratings
+                var teamsConcatinated = Teams.Concat(teams);
+                var newRatings = TrueSkillCalculator.CalculateNewRatings(GameInfo, teamsConcatinated, orderRanking);
+
+                // 2.5 Update ratings
+                for (int i = 0; i < matchFitness.TeamFitnesses.Count; i++)
+                {
+                    for (int j = 0; j < matchFitness.TeamFitnesses[i].IndividualFitness.Count; j++)
+                    {
+                        TrueSkillPlayer trueSkillPlayer = GetPlayer(matchFitness.TeamFitnesses[i].IndividualFitness[j].IndividualID);
+                        trueSkillPlayer.UpdateRating(newRatings[GetPlayer(matchFitness.TeamFitnesses[i].IndividualFitness[j].IndividualID).Player]);
+
+                        // Get opponentIDs
+                        List<int> opponentIDs = new List<int>();
+                        for (int k = 0; k < matchFitness.TeamFitnesses.Count; k++)
+                        {
+                            if (k != i)
+                            {
+                                foreach (IndividualFitness individualFitness in matchFitness.TeamFitnesses[k].IndividualFitness)
+                                {
+                                    if ((!opponentIDs.Contains(individualFitness.IndividualID)) && (individualFitness.IndividualID != matchFitness.TeamFitnesses[i].IndividualFitness[j].IndividualID))
+                                        opponentIDs.Add(individualFitness.IndividualID);
+                                }
+                            }
+                        }
+
+                        trueSkillPlayer.AddIndividualMatchResult(matchFitness.MatchName, matchFitness.TeamFitnesses[i].IndividualFitness[j], opponentIDs.ToArray());
+                    }
+                }
+            }
+
+            /*foreach(MatchFitness matchFitness in competitionMatchFitnesses)
             {
                 // 1. Check if the match is dummy
                 if (matchFitness.IsDummy)
@@ -152,7 +250,7 @@ namespace Evaluators.CompetitionOrganizations
                         trueSkillPlayer.AddIndividualMatchResult(matchFitness.MatchName, matchFitness.TeamFitnesses[i].IndividualFitness[j], opponentIDs.ToArray());
                     }
                 }
-            }
+            }*/
         }
 
         public static int[] GetFitnessOrder(float[] fitnesses)

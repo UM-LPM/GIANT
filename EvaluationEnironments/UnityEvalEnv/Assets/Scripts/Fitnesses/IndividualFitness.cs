@@ -91,6 +91,40 @@ namespace Fitnesses
                 AdditionalValues.Add(key, value);
             }
         }
+
+        public void AddIndividualFitness(IndividualFitness individualFitness)
+        {
+            if(IndividualID != individualFitness.IndividualID)
+            {
+                throw new System.Exception("Individual ID does not match");
+            }
+
+            // Implement: Transfer all values from individualFitness to this individual fitness
+            Value += individualFitness.Value;
+            foreach(var individualValue in individualFitness.IndividualValues)
+            {
+                if (IndividualValues.ContainsKey(individualValue.Key))
+                {
+                    IndividualValues[individualValue.Key] += individualValue.Value;
+                }
+                else
+                {
+                    IndividualValues.Add(individualValue.Key, individualValue.Value);
+                }
+            }
+
+            foreach(var additionalValue in individualFitness.AdditionalValues)
+            {
+                if (AdditionalValues.ContainsKey(additionalValue.Key))
+                {
+                    AdditionalValues[additionalValue.Key] += additionalValue.Value;
+                }
+                else
+                {
+                    AdditionalValues.Add(additionalValue.Key, additionalValue.Value);
+                }
+            }
+        }
     }
 
     public class FinalIndividualFitness

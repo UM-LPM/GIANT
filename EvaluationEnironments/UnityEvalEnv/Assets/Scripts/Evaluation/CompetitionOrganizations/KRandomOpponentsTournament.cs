@@ -11,7 +11,7 @@ namespace Evaluators.CompetitionOrganizations
     public class KRandomOpponentsTournament : CompetitionOrganization
     {
         List<Match> TournamentMatches = new List<Match>();
-        int currentMatchID;
+        int CurrentMatchID;
         List<int> matchedOpponentTeamIDs;
         List<int> freeOpponentTeamIDs;
 
@@ -69,7 +69,7 @@ namespace Evaluators.CompetitionOrganizations
                 }
 
                 TournamentMatches.Clear();
-                currentMatchID = 0;
+                CurrentMatchID = 0;
 
                 // 3. Iterate through the shuffled pairs and add them to the tournament matches if both teams have played less than Rounds matches, until we reach the target number of matches
                 foreach (var (team1, team2) in pairs)
@@ -77,7 +77,7 @@ namespace Evaluators.CompetitionOrganizations
                     if (degree[team1] < Rounds && degree[team2] < Rounds)
                     {
                         TournamentMatches.Add(
-                            ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { teamGroup0[team1], teamGroup0[team2] }));
+                            ScriptableObject.CreateInstance<Match>().Initialize(CurrentMatchID++, new Team[] { teamGroup0[team1], teamGroup0[team2] }));
                         degree[team1]++;
                         degree[team2]++;
 
@@ -86,8 +86,23 @@ namespace Evaluators.CompetitionOrganizations
                     }
                 }
 
-                if(TournamentMatches.Count == targetMatches)
+                if (TournamentMatches.Count == targetMatches)
+                {
+                    // If enabled: For each match that already exists, add another match with the teams swapped
+                    if (Coordinator.Instance.SwapCompetitionMatchTeams)
+                    {
+                        List<Match> matchesSwapped = new List<Match>();
+                        for (int i = 0; i < TournamentMatches.Count; i++)
+                        {
+                            Match match = TournamentMatches[i];
+                            matchesSwapped.Add(ScriptableObject.CreateInstance<Match>().Initialize(CurrentMatchID++, new Team[] { match.Teams[1], match.Teams[0] }));
+                        }
+
+                        TournamentMatches.AddRange(matchesSwapped);
+                    }
+
                     return TournamentMatches.ToArray();
+                }
             }
 
             throw new Exception("Failed to generate valid matches after " + MAX_ATTEMPTS + " attempts!");

@@ -13,7 +13,7 @@ namespace Evaluators.CompetitionOrganizations
     public class MatrixFactorizationInteractionScheme : CompetitionOrganization
     {
         List<Match> TournamentMatches = new List<Match>();
-        int currentMatchID;
+        int CurrentMatchID;
         List<int> freeOpponentTeamIDs;
 
         public MatrixFactorizationInteractionScheme(CompetitionTeamOrganizator teamOrganizator, Individual[][] individuals, bool regenerateTeamsEachRound, int rounds)
@@ -64,16 +64,29 @@ namespace Evaluators.CompetitionOrganizations
             }
 
             TournamentMatches.Clear();
-            currentMatchID = 0;
+            CurrentMatchID = 0;
 
             // 3. Iterate through the shuffled pairs and add them to the tournament matches until we reach the target number of matches for the current round
             foreach (var (team1, team2) in pairs)
             {
                 TournamentMatches.Add(
-                        ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { Teams[0][team1], Teams[0][team2] }));
+                        ScriptableObject.CreateInstance<Match>().Initialize(CurrentMatchID++, new Team[] { Teams[0][team1], Teams[0][team2] }));
 
                 if (TournamentMatches.Count >= targetMatches)
                     break;
+            }
+
+            // If enabled: For each match that already exists, add another match with the teams swapped
+            if (Coordinator.Instance.SwapCompetitionMatchTeams)
+            {
+                List<Match> matchesSwapped = new List<Match>();
+                for (int i = 0; i < TournamentMatches.Count; i++)
+                {
+                    Match match = TournamentMatches[i];
+                    matchesSwapped.Add(ScriptableObject.CreateInstance<Match>().Initialize(CurrentMatchID++, new Team[] { match.Teams[1], match.Teams[0] }));
+                }
+
+                TournamentMatches.AddRange(matchesSwapped);
             }
 
             return TournamentMatches.ToArray();
