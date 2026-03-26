@@ -97,6 +97,12 @@ namespace Evaluators.CompetitionOrganizations
                 matchFitness = new MatchFitness();
                 MatchFitness.GetMatchFitness(tournamentMatchFitnessesCopy, matchFitness, matchFitnesses, matchFitnessesSwaped, Coordinator.Instance.SwapCompetitionMatchTeams);
 
+                if (matchFitness.IsDummy)
+                {
+                    continue;
+                }
+
+
                 teamFitnessRes1 = matchFitness.TeamFitnesses[0];
                 teamFitnessRes2 = matchFitness.TeamFitnesses[1];
 
@@ -106,14 +112,9 @@ namespace Evaluators.CompetitionOrganizations
                 var team1 = Teams[0].Where(team => team.TeamId == teamFitnessRes1.TeamID).First();
                 var team2 = Teams[0].Where(team => team.TeamId == teamFitnessRes2.TeamID).First();
 
-                if (team1 != null && team2 != null)
+                if (team1 == null || team2 == null)
                 {
                     throw new Exception("Invalid team IDs in match fitness! Team IDs must match the IDs of the teams in the competition organization.");
-                }
-
-                if (matchFitness.IsDummy)
-                {
-                    continue;
                 }
 
                 if (teamFitness1 < teamFitness2)
@@ -165,11 +166,6 @@ namespace Evaluators.CompetitionOrganizations
 
         public void UpdateWinnerLoserBrackets()
         {
-            if (LoserTeams.Count == 0)
-            {
-                throw new Exception("No loser teams to update bracket for");
-            }
-
             int counter = 0;
             bool teamsEliminated = false;
             for (int i = 0; i < LoserTeams.Count; i++)
