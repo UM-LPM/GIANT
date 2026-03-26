@@ -27,7 +27,7 @@ namespace Base
         [SerializeField] public int SimulationSteps = 10000;
         [SerializeField] public float SimulationTime = 0f;
         [SerializeField] public LayerMask DefaultLayer = 0;
-        [SerializeField] GameObject Environment;
+        [SerializeField] protected GameObject Environment;
         [SerializeField] public bool IncludeNodeCallFrequencyCounts = false;
         [HideInInspector] public bool ForceNewDecisions = false;
 

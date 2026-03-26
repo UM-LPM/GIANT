@@ -159,6 +159,9 @@ namespace Configuration
                 case "Shooter":
                     UnityEngine.SceneManagement.SceneManager.LoadScene("ShooterBaseScene");
                     break;
+                case "TicTacToe":
+                    UnityEngine.SceneManagement.SceneManager.LoadScene("TicTacToeBaseScene");
+                    break;
                 default:
                     DebugSystem.LogError("Problem domain not found");
                     break;
