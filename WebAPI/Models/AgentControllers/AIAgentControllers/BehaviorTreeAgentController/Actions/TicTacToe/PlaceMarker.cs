@@ -1,0 +1,29 @@
+﻿using AgentControllers.AIAgentControllers.BehaviorTreeAgentController;
+using WebAPI.Models;
+
+namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController.TicTacToe
+{
+    public class PlaceMarker: ActionNode
+    {
+        public int placeMarker;
+        public int gridPositionX;
+        public int gridPositionY;
+        public int gridPositionZ;
+
+        public PlaceMarker(Guid guid, string name, List<Property>? properties, Position position)
+            : base(guid, name, properties, position)
+        {
+        }
+
+        protected override void MapProperties(List<Property>? properties)
+        {
+            if (properties != null)
+            {
+                placeMarker = properties.Find(p => p.Name == "placeMarker")?.Value ?? 1;
+                gridPositionX = properties.Find(p => p.Name == "gridPositionX")?.Value ?? 0;
+                gridPositionY = properties.Find(p => p.Name == "gridPositionY")?.Value ?? 0;
+                gridPositionZ = properties.Find(p => p.Name == "gridPositionZ")?.Value ?? 0;
+            }
+        }
+    }
+}

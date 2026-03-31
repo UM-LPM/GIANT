@@ -2,6 +2,7 @@
 using AgentControllers.AIAgentControllers.BehaviorTreeAgentController.DodgeBall;
 using AgentControllers.AIAgentControllers.BehaviorTreeAgentController.Robostrike;
 using AgentControllers.AIAgentControllers.BehaviorTreeAgentController.Soccer2D;
+using AgentControllers.AIAgentControllers.BehaviorTreeAgentController.TicTacToe;
 using WebAPI.Models;
 using WebAPI.Models.EARS;
 
@@ -174,6 +175,21 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
                     break;
                 case "HasWeapon":
                     node = new HasWeapon(treeModelNode.Guid, treeModelNode.Name, treeModelNode.Properties, treeModelNode.NodePosition);
+                    break;
+                case "IsCellMarkedByOpponent":
+                    node = new IsCellMarkedByOpponent(treeModelNode.Guid, treeModelNode.Name, treeModelNode.Properties, treeModelNode.NodePosition);
+                    break;
+                case "IsCellMarkedByAgent":
+                    node = new IsCellMarkedByAgent(treeModelNode.Guid, treeModelNode.Name, treeModelNode.Properties, treeModelNode.NodePosition);
+                    break;
+                case "IsCellEmpty":
+                    node = new IsCellEmpty(treeModelNode.Guid, treeModelNode.Name, treeModelNode.Properties, treeModelNode.NodePosition);
+                    break;
+                case "PlaceMarker":
+                    node = new PlaceMarker(treeModelNode.Guid, treeModelNode.Name, treeModelNode.Properties, treeModelNode.NodePosition);
+                    break;
+                case "PlaceRandomMarker":
+                    node = new PlaceRandomMarker(treeModelNode.Guid, treeModelNode.Name, treeModelNode.Properties, treeModelNode.NodePosition);
                     break;
                 default:
                     throw new Exception("Node type not recognized");

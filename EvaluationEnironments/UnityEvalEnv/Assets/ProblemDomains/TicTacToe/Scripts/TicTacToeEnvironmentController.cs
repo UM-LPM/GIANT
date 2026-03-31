@@ -2,6 +2,7 @@ using Base;
 using Configuration;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using Utils;
 
@@ -25,15 +26,16 @@ namespace Problems.TicTacToe
         private TicTacToeMarker MarkerAgentA;
         private TicTacToeMarker MarkerAgentB;
 
-        private bool marksInRowAchieved = false;
-        private int winIndividualID = -1;
+        public bool MarksInRowAchieved = false;
+        public int WinIndividualID = -1;
 
         protected override void DefineAdditionalDataOnPostAwake()
         {
             ReadParamsFromMainConfiguration();
             SetBestAndWorstFitnesses(TicTacToeFitness.FitnessValues);
 
-            Grid = new TicTacToeGrid(BoardSizeX, BoardSizeY, BoardSizeZ);
+            Grid = GetComponent<TicTacToeGrid>();
+            Grid.Init(BoardSizeX, BoardSizeY, BoardSizeZ);
             Grid.Spawn(GridCellPrefab, Environment.transform);
 
             MarkerAgentA = MarkerAgentAPrefab.GetComponent<TicTacToeMarker>();
@@ -44,11 +46,20 @@ namespace Problems.TicTacToe
         protected override void OnPostFixedUpdate()
         {
             CheckIfMarksInRowAchieved();
+            ResetAgentMarkerPlacedCurrentRound();
         }
 
         public void CheckIfMarksInRowAchieved()
         {
-            (marksInRowAchieved, winIndividualID) = Grid.XInRowAchieved(MarksInARow);
+            (MarksInRowAchieved, WinIndividualID) = Grid.MarksInRowAchieved();
+        }
+
+        public void ResetAgentMarkerPlacedCurrentRound()
+        {
+            foreach (TicTacToeAgentComponent agent in Agents)
+            {
+                agent.MarkerPlacedCurrentRound = false;
+            }
         }
 
         public TicTacToeMarker GetAgentMarker(TicTacToeAgentComponent agent)
@@ -76,7 +87,7 @@ namespace Problems.TicTacToe
 
         public override bool IsSimulationFinished()
         {
-            return base.IsSimulationFinished() || marksInRowAchieved || Grid.AllMarkersPlaced();
+            return base.IsSimulationFinished() || MarksInRowAchieved || Grid.AllMarkersPlaced();
         }
 
         protected override void OnPreFinishGame()
@@ -89,19 +100,45 @@ namespace Problems.TicTacToe
             foreach (TicTacToeAgentComponent agent in Agents)
             {
                 // Draw
-                if(winIndividualID == -1)
+                if (WinIndividualID == -1)
                 {
-                    agent.AgentFitness.UpdateFitness(TicTacToeFitness.FitnessValues[TicTacToeFitness.FitnessKeys.Win.ToString()] / Agents.Length, TicTacToeFitness.FitnessKeys.Win.ToString());
+                    agent.AgentFitness.UpdateFitness(TicTacToeFitness.FitnessValues[TicTacToeFitness.FitnessKeys.Draw.ToString()], TicTacToeFitness.FitnessKeys.Draw.ToString());
                 }
-                else if (agent.IndividualID == winIndividualID)
+                else if (agent.IndividualID == WinIndividualID)
                 {
                     agent.AgentFitness.UpdateFitness(TicTacToeFitness.FitnessValues[TicTacToeFitness.FitnessKeys.Win.ToString()], TicTacToeFitness.FitnessKeys.Win.ToString());
                 }
 
-                if(agent.MarkersPlaced > 0)
+                if (agent.MarkersPlaced > 0)
                 {
                     agent.AgentFitness.UpdateFitness(TicTacToeFitness.FitnessValues[TicTacToeFitness.FitnessKeys.PlaceMarker.ToString()], TicTacToeFitness.FitnessKeys.PlaceMarker.ToString());
                 }
+
+                if(agent.OpportunitiesCreated > 0)
+                {
+                    agent.AgentFitness.UpdateFitness(TicTacToeFitness.FitnessValues[TicTacToeFitness.FitnessKeys.OpportunitiesCreated.ToString()] * agent.OpportunitiesCreated, TicTacToeFitness.FitnessKeys.OpportunitiesCreated.ToString());
+                }
+
+                if(agent.OpponnentBlocked > 0)
+                {
+                    agent.AgentFitness.UpdateFitness(TicTacToeFitness.FitnessValues[TicTacToeFitness.FitnessKeys.OpponentBlocked.ToString()] * agent.OpponnentBlocked, TicTacToeFitness.FitnessKeys.OpponentBlocked.ToString());
+                }
+
+                if(agent.OptimalMoves > 0)
+                {
+                    agent.AgentFitness.UpdateFitness(TicTacToeFitness.FitnessValues[TicTacToeFitness.FitnessKeys.OptimalMove.ToString()] * agent.OptimalMoves, TicTacToeFitness.FitnessKeys.OptimalMove.ToString());
+                }
+
+                string agentFitnessLog = "========================================\n" +
+                                  $"[Agent]: TeamID {agent.TeamIdentifier.TeamID}, ID: {agent.IndividualID} \n" +
+                                  $"[Win]: {((WinIndividualID == agent.IndividualID) ? '1' : '0')}\n" +
+                                  $"[Draw]: {((WinIndividualID == -1) ? '1' : '0')}\n" +
+                                  $"[PlaceMarker]: {agent.MarkersPlaced} = {(agent.MarkersPlaced > 0 ? TicTacToeFitness.FitnessKeys.PlaceMarker.ToString() : '0')}\n" +
+                                  $"[OpportunitiesCreated]: {agent.OpportunitiesCreated} = {TicTacToeFitness.FitnessValues[TicTacToeFitness.FitnessKeys.OpportunitiesCreated.ToString()] * agent.OpportunitiesCreated} \n" +
+                                  $"[OpponentsBlocked]: {agent.OpponnentBlocked} = {TicTacToeFitness.FitnessValues[TicTacToeFitness.FitnessKeys.OpponentBlocked.ToString()] * agent.OpponnentBlocked} \n" +
+                                  $"[OptimalMoves]: {agent.OptimalMoves} = {TicTacToeFitness.FitnessValues[TicTacToeFitness.FitnessKeys.OptimalMove.ToString()] * agent.OptimalMoves} \n";
+
+                DebugSystem.LogVerbose(agentFitnessLog);
             }
         }
 
