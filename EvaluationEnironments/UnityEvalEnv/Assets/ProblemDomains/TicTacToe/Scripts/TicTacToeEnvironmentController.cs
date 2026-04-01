@@ -85,6 +85,14 @@ namespace Problems.TicTacToe
             }
         }
 
+        public int GetAgentOpponentMarkerID(int markerId)
+        {
+            if(markerId == Agents[0].IndividualID)
+                return Agents[1].IndividualID;
+            else
+                return Agents[0].IndividualID;
+        }
+
         public override bool IsSimulationFinished()
         {
             return base.IsSimulationFinished() || MarksInRowAchieved || Grid.AllMarkersPlaced();
@@ -133,7 +141,7 @@ namespace Problems.TicTacToe
                                   $"[Agent]: TeamID {agent.TeamIdentifier.TeamID}, ID: {agent.IndividualID} \n" +
                                   $"[Win]: {((WinIndividualID == agent.IndividualID) ? '1' : '0')}\n" +
                                   $"[Draw]: {((WinIndividualID == -1) ? '1' : '0')}\n" +
-                                  $"[PlaceMarker]: {agent.MarkersPlaced} = {(agent.MarkersPlaced > 0 ? TicTacToeFitness.FitnessKeys.PlaceMarker.ToString() : '0')}\n" +
+                                  $"[PlaceMarker]: {agent.MarkersPlaced} = {(agent.MarkersPlaced > 0 ? TicTacToeFitness.FitnessValues[TicTacToeFitness.FitnessKeys.PlaceMarker.ToString()] : '0')}\n" +
                                   $"[OpportunitiesCreated]: {agent.OpportunitiesCreated} = {TicTacToeFitness.FitnessValues[TicTacToeFitness.FitnessKeys.OpportunitiesCreated.ToString()] * agent.OpportunitiesCreated} \n" +
                                   $"[OpponentsBlocked]: {agent.OpponnentBlocked} = {TicTacToeFitness.FitnessValues[TicTacToeFitness.FitnessKeys.OpponentBlocked.ToString()] * agent.OpponnentBlocked} \n" +
                                   $"[OptimalMoves]: {agent.OptimalMoves} = {TicTacToeFitness.FitnessValues[TicTacToeFitness.FitnessKeys.OptimalMove.ToString()] * agent.OptimalMoves} \n";

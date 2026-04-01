@@ -11,6 +11,9 @@ namespace Problems.TicTacToe
 {
     public class TicTacToeGrid : MonoBehaviour
     {
+        private static Dictionary<string, Vector3Int> BestMoveCache = new Dictionary<string, Vector3Int>();
+        private static object cacheLock = new object();
+
         TicTacToeGridCell[,,] Cells { get; set; }
         TicTacToeEnvironmentController TicTacToeEnvironmentController { get; set; }
 
@@ -358,6 +361,14 @@ namespace Problems.TicTacToe
         private Vector3Int GetBestMove(int markerId) // markerId represents the agent for which we want to find the best move
         {
             int[,,] state = CaptureState();
+            string key = SerializeState(state);
+
+            lock (cacheLock)
+            {
+                if (BestMoveCache.TryGetValue(key, out var cachedMove))
+                    return cachedMove;
+            }
+
 
             int bestScore = int.MinValue;
             Vector3Int bestMove = new Vector3Int(-1, -1, -1);
@@ -384,6 +395,13 @@ namespace Problems.TicTacToe
                 }
             }
 
+            lock (cacheLock)
+            {
+                if (!BestMoveCache.ContainsKey(key))
+                    BestMoveCache[key] = bestMove;
+            }
+
+
             return bestMove;
         }
 
@@ -406,6 +424,22 @@ namespace Problems.TicTacToe
             return state;
         }
 
+        static string SerializeState(int[,,] state)
+        {
+            int sx = state.GetLength(0);
+            int sy = state.GetLength(1);
+            int sz = state.GetLength(2);
+
+            StringBuilder sb = new StringBuilder(sx * sy * sz);
+
+            for (int x = 0; x < sx; x++)
+                for (int y = 0; y < sy; y++)
+                    for (int z = 0; z < sz; z++)
+                        sb.Append(state[x, y, z] + 1); // convert -1 → 0, 0 → 1, 1 → 2, etc.
+
+            return sb.ToString();
+        }
+
         int Minimax(int[,,] state, int depth, bool isMaximizing, int markerId, int alpha, int beta)
         {
             var (terminal, winner) = CheckWinner(state);
@@ -419,7 +453,7 @@ namespace Problems.TicTacToe
 
             // TODO : Heuristic evaluation for non-terminal states when depth limit is reached (for larger boards) - If needed
             //if (depth >= MAX_DEPTH)
-            //    return Heuristic(state, myId);
+            //    return Heuristic(state, markerId);
 
             var moves = GetAvailableMoves(state);
 
@@ -487,14 +521,14 @@ namespace Problems.TicTacToe
             state[move.x, move.y, move.z] = -1;
         }
 
-        int GetOpponentId(int[,,] state, int myId)
+        int GetOpponentId(int[,,] state, int markerId)
         {
             foreach (var v in state)
             {
-                if (v != -1 && v != myId)
+                if (v != -1 && v != markerId)
                     return v;
             }
-            return myId == 0 ? 1 : 0; // fallback
+            return TicTacToeEnvironmentController.GetAgentOpponentMarkerID(markerId); // fallback
         }
 
         (bool, int) CheckWinner(int[,,] state)
