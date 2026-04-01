@@ -84,6 +84,8 @@ namespace Evaluators.CompetitionOrganizations
 
         public override void UpdateTeamsScore(List<MatchFitness> tournamentMatchFitnesses, List<CompetitionPlayer> players = null)
         {
+            bool usePlayers = players != null && players.Count > 0;
+
             List<MatchFitness> tournamentMatchFitnessesCopy = new List<MatchFitness>(tournamentMatchFitnesses);
             // Add played TournamentMatches to the list of played TournamentMatches (add only matchFitnesses that are not dummy)
             PlayedMatches.AddRange(tournamentMatchFitnessesCopy.FindAll(matchFitness => !matchFitness.IsDummy));
@@ -106,8 +108,42 @@ namespace Evaluators.CompetitionOrganizations
                 teamFitnessRes1 = matchFitness.TeamFitnesses[0];
                 teamFitnessRes2 = matchFitness.TeamFitnesses[1];
 
-                teamFitness1 = teamFitnessRes1.GetTeamFitness();
-                teamFitness2 = teamFitnessRes2.GetTeamFitness();
+                if (usePlayers)
+                {
+                    teamFitness1 = 0;
+                    teamFitness2 = 0;
+
+                    foreach (var individualFitness in teamFitnessRes1.IndividualFitness)
+                    {
+                        var player = players.Where(p => p.IndividualID == individualFitness.IndividualID).FirstOrDefault();
+                        if (player != null)
+                        {
+                            teamFitness1 -= (float)player.GetScore();
+                        }
+                        else
+                        {
+                            throw new Exception("Invalid player ID in match fitness! Player IDs must match the IDs of the players in the competition organization.");
+                        }
+                    }
+
+                    foreach (var individualFitness in teamFitnessRes2.IndividualFitness)
+                    {
+                        var player = players.Where(p => p.IndividualID == individualFitness.IndividualID).FirstOrDefault();
+                        if (player != null)
+                        {
+                            teamFitness2 -= (float)player.GetScore();
+                        }
+                        else
+                        {
+                            throw new Exception("Invalid player ID in match fitness! Player IDs must match the IDs of the players in the competition organization.");
+                        }
+                    }
+                }
+                else
+                {
+                    teamFitness1 = teamFitnessRes1.GetTeamFitness();
+                    teamFitness2 = teamFitnessRes2.GetTeamFitness();
+                }
 
                 var team1 = Teams[0].Where(team => team.TeamId == teamFitnessRes1.TeamID).First();
                 var team2 = Teams[0].Where(team => team.TeamId == teamFitnessRes2.TeamID).First();
@@ -156,15 +192,15 @@ namespace Evaluators.CompetitionOrganizations
                 });
             }
 
-            UpdateWinnerLoserBrackets();
+            UpdateWinnerLoserBrackets(players);
 
-            UpdateTournamentStep();
+            UpdateTournamentStep(players);
 
             // Increment the number of executed rounds
             ExecutedRounds++;
         }
 
-        public void UpdateWinnerLoserBrackets()
+        public void UpdateWinnerLoserBrackets(List<CompetitionPlayer> players = null)
         {
             int counter = 0;
             bool teamsEliminated = false;
@@ -174,14 +210,51 @@ namespace Evaluators.CompetitionOrganizations
                 {
                     WinnersBracket.Remove(LoserTeams[i]);
                     EliminatedTeams.Add(LoserTeams[i]);
-                    LoserTeams[i].Score = CurrentScore;
+
+                    if (players != null && players.Count > 0)
+                    {
+                        double teamRating = 0;
+                        foreach (var individual in LoserTeams[i].Individuals)
+                        {
+                            var player = players.FirstOrDefault(p => p.IndividualID == individual.IndividualId);
+                            if (player != null)
+                            {
+                                teamRating += player.GetScore();
+                            }
+                        }
+
+                        LoserTeams[i].Score = teamRating;
+                    }
+                    else
+                    {
+                        LoserTeams[i].Score = CurrentScore;
+                    }
                     teamsEliminated = true;
                 }
                 else if (LosersBracket.Contains(LoserTeams[i]))
                 {
                     LosersBracket.Remove(LoserTeams[i]);
                     EliminatedTeams.Add(LoserTeams[i]);
-                    LoserTeams[i].Score = CurrentScore;
+
+                    if (players != null && players.Count > 0)
+                    {
+                        double teamRating = 0;
+                        foreach (var individual in LoserTeams[i].Individuals)
+                        {
+                            var player = players.FirstOrDefault(p => p.IndividualID == individual.IndividualId);
+                            if (player != null)
+                            {
+                                teamRating += player.GetScore();
+                            }
+                        }
+
+                        LoserTeams[i].Score = teamRating;
+                    }
+                    else
+                    {
+                        LoserTeams[i].Score = CurrentScore;
+                    }
+
                     teamsEliminated = true;
                 }
                 else
@@ -204,7 +277,7 @@ namespace Evaluators.CompetitionOrganizations
             LoserTeams.Clear();
         }
 
-        public void UpdateTournamentStep()
+        public void UpdateTournamentStep(List<CompetitionPlayer> players)
         {
             if (WinnersBracket.Count == 1 && LosersBracket.Count == 1)
             {
@@ -229,7 +302,7 @@ namespace Evaluators.CompetitionOrganizations
                     TournamentStep = DoubleEliminationTournamentStep.WinnersBracket;
                     break;
                 case DoubleEliminationTournamentStep.GrandFinals:
-                    UpdateTournamentWinnerScore();
+                    UpdateTournamentWinnerScore(players);
                     TournamentStep = DoubleEliminationTournamentStep.Finished;
                     break;
             }
@@ -324,15 +397,49 @@ namespace Evaluators.CompetitionOrganizations
             return TournamentMatches.ToArray();
         }
 
-        private void UpdateTournamentWinnerScore()
+        private void UpdateTournamentWinnerScore(List<CompetitionPlayer> players)
         {
-            if(WinnersBracket.Count == 1)
+            if (WinnersBracket.Count == 1)
             {
-                WinnersBracket[0].Score = CurrentScore;
+                if (players != null && players.Count > 0)
+                {
+                    double teamRating = 0;
+                    foreach (var individual in WinnersBracket[0].Individuals)
+                    {
+                        var player = players.FirstOrDefault(p => p.IndividualID == individual.IndividualId);
+                        if (player != null)
+                        {
+                            teamRating += player.GetScore();
+                        }
+                    }
+
+                    WinnersBracket[0].Score = teamRating;
+                }
+                else
+                {
+                    WinnersBracket[0].Score = CurrentScore;
+                }
             }
             else if(LosersBracket.Count == 1)
             {
-                LosersBracket[0].Score = CurrentScore;
+                if (players != null && players.Count > 0)
+                {
+                    double teamRating = 0;
+                    foreach (var individual in LosersBracket[0].Individuals)
+                    {
+                        var player = players.FirstOrDefault(p => p.IndividualID == individual.IndividualId);
+                        if (player != null)
+                        {
+                            teamRating += player.GetScore();
+                        }
+                    }
+
+                    LosersBracket[0].Score = teamRating;
+                }
+                else
+                {
+                    LosersBracket[0].Score = CurrentScore;
+                }
             }
             else
             {

@@ -44,7 +44,7 @@ namespace AgentOrganizations
             {
                 teamName += "_" + individual.name;
             }
-            return teamName.Substring(0, teamName.Length - 1);
+            return teamName; //teamName.Substring(0, teamName.Length - 1);
         }
     }
 }

@@ -32,18 +32,15 @@ namespace Evaluators
 
                 List<MatchFitness> matchesFitnesses = await EvaluateCompetitionMatches(evalRequestData, competitionMatches);
 
-                if (CompetitionOrganization is SimilarStrengthOpponentSelection)
-                {
-                    RatingSystem.UpdateRatings(matchesFitnesses);
 
-                    CompetitionOrganization.UpdateTeamsScore(matchesFitnesses, RatingSystem.AllPlayers);
-                }
-                else
+                if(CompetitionOrganization is MatrixFactorizationInteractionScheme)
                 {
-                    CompetitionOrganization.UpdateTeamsScore(matchesFitnesses);
-
-                    RatingSystem.UpdateRatings(matchesFitnesses);
+                    throw new System.NotImplementedException("MatrixFactorizationInteractionScheme is not supported in RatingEvaluator!");
                 }
+
+                RatingSystem.UpdateRatings(matchesFitnesses);
+
+                CompetitionOrganization.UpdateTeamsScore(matchesFitnesses, RatingSystem.AllPlayers);
             }
 
             CompetitionOrganization.DisplayStandings();

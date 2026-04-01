@@ -100,6 +100,8 @@ namespace Evaluators.CompetitionOrganizations
 
         public override void UpdateTeamsScore(List<MatchFitness> tournamentMatchFitnesses, List<CompetitionPlayer> players = null)
         {
+            bool usePlayers = players != null && players.Count > 0;
+
             List<MatchFitness> tournamentMatchFitnessesCopy = new List<MatchFitness>(tournamentMatchFitnesses);
             // Add played TournamentMatches to the list of played TournamentMatches (add only matchFitnesses that are not dummy)
             PlayedMatches.AddRange(tournamentMatchFitnessesCopy.FindAll(matchFitness => !matchFitness.IsDummy));
@@ -117,7 +119,7 @@ namespace Evaluators.CompetitionOrganizations
                 {
                     // Bye
                     foreach (var tf in matchFitness.TeamFitnesses)
-                        if (tf.TeamID != -1)
+                        if (tf.TeamID != -1 && (!usePlayers))
                             TeamLookup[tf.TeamID].Score += 2;
 
                     continue;
@@ -126,8 +128,42 @@ namespace Evaluators.CompetitionOrganizations
                 teamFitnessRes1 = matchFitness.TeamFitnesses[0];
                 teamFitnessRes2 = matchFitness.TeamFitnesses[1];
 
-                teamFitness1 = teamFitnessRes1.GetTeamFitness();
-                teamFitness2 = teamFitnessRes2.GetTeamFitness();
+                if (usePlayers)
+                {
+                    teamFitness1 = 0;
+                    teamFitness2 = 0;
+
+                    foreach (var individualFitness in teamFitnessRes1.IndividualFitness)
+                    {
+                        var player = players.Where(p => p.IndividualID == individualFitness.IndividualID).FirstOrDefault();
+                        if (player != null)
+                        {
+                            teamFitness1 -= (float)player.GetScore();
+                        }
+                        else
+                        {
+                            throw new Exception("Invalid player ID in match fitness! Player IDs must match the IDs of the players in the competition organization.");
+                        }
+                    }
+
+                    foreach (var individualFitness in teamFitnessRes2.IndividualFitness)
+                    {
+                        var player = players.Where(p => p.IndividualID == individualFitness.IndividualID).FirstOrDefault();
+                        if (player != null)
+                        {
+                            teamFitness2 -= (float)player.GetScore();
+                        }
+                        else
+                        {
+                            throw new Exception("Invalid player ID in match fitness! Player IDs must match the IDs of the players in the competition organization.");
+                        }
+                    }
+                }
+                else
+                {
+                    teamFitness1 = teamFitnessRes1.GetTeamFitness();
+                    teamFitness2 = teamFitnessRes2.GetTeamFitness();
+                }
 
                 var team1 = Teams[0].Where(team => team.TeamId == teamFitnessRes1.TeamID).First();
                 var team2 = Teams[0].Where(team => team.TeamId == teamFitnessRes2.TeamID).First();
@@ -139,12 +175,15 @@ namespace Evaluators.CompetitionOrganizations
 
                 if (teamFitness1 < teamFitness2)
                 {
-                    team1.Score += 2;
+                    
+                    team1.Score = usePlayers? teamFitness1 * - 1 : team1.Score + 2;
+                    team2.Score = usePlayers? teamFitness2 * - 1 : team2.Score;
                     EliminatedTeams.Add(team2);
                 }
                 else if (teamFitness1 > teamFitness2)
                 {
-                    team2.Score += 2;
+                    team2.Score = usePlayers? teamFitness2 * -1 : team2.Score + 2;
+                    team1.Score = usePlayers ? teamFitness1 * -1 : team1.Score;
                     EliminatedTeams.Add(team1);
                 }
                 else
@@ -152,12 +191,14 @@ namespace Evaluators.CompetitionOrganizations
                     // Random choose the winner if the scores are equal
                     if (Coordinator.Instance.Random.NextDouble() > 0.5)
                     {
-                        team1.Score += 2;
+                        team1.Score = usePlayers ? teamFitness1 * -1 : team1.Score + 2;
+                        team2.Score = usePlayers ? teamFitness2 * -1 : team2.Score;
                         EliminatedTeams.Add(team2);
                     }
                     else
                     {
-                        team2.Score += 2;
+                        team2.Score = usePlayers ? teamFitness2 * -1 : team2.Score + 2;
+                        team1.Score = usePlayers ? teamFitness1 * -1 : team1.Score;
                         EliminatedTeams.Add(team1);
                     }
                 }

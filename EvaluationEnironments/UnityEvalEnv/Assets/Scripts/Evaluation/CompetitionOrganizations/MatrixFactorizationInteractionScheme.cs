@@ -98,19 +98,35 @@ namespace Evaluators.CompetitionOrganizations
             double[, ] G = new double[Teams[0].Length, Teams[0].Length];
             bool[,] known = new bool[Teams[0].Length, Teams[0].Length];
 
+
             // 2. For each match fitness, fill the corresponding entry in G with the fitness value of team 1 against team 2 (e.g. G[team1Id, team2Id] = team1Fitness)
-            foreach (MatchFitness matchFitness in competitionMatchFitnesses)
+            List<MatchFitness> competitionMatchFitnessesCopy = new List<MatchFitness>(competitionMatchFitnesses);
+            // Add played TournamentMatches to the list of played TournamentMatches (add only matchFitnesses that are not dummy)
+            PlayedMatches.AddRange(competitionMatchFitnessesCopy.FindAll(matchFitness => !matchFitness.IsDummy));
+
+            MatchFitness matchFitness;
+            List<MatchFitness> matchFitnesses = new List<MatchFitness>();
+            List<MatchFitness> matchFitnessesSwaped = new List<MatchFitness>();
+            while (competitionMatchFitnessesCopy.Count > 0)
             {
-                if(matchFitness.TeamFitnesses.Count != 2)
+                matchFitness = new MatchFitness();
+                MatchFitness.GetMatchFitness(competitionMatchFitnessesCopy, matchFitness, matchFitnesses, matchFitnessesSwaped, Coordinator.Instance.SwapCompetitionMatchTeams);
+
+                if (matchFitness.TeamFitnesses.Count != 2)
                 {
                     Debug.LogError($"MatchFitness for match {matchFitness.MatchName} does not contain exactly 2 teams. This implementation of MatrixFactorizationInteractionScheme only supports 1v1 matches. Please check the match fitness data for inconsistencies.");
                     continue; // Skip this match fitness if it doesn't have exactly 2 teams
                 }
 
+                if (matchFitness.IsDummy)
+                {
+                    throw new Exception($"MatrixFactorizationInteractionScheme does not support dummy matches (byes)!");
+                }
+
                 int team1Id = matchFitness.TeamFitnesses[0].TeamID;
                 int team2Id = matchFitness.TeamFitnesses[1].TeamID;
 
-                if(G[team1Id, team2Id] != 0)
+                if (G[team1Id, team2Id] != 0)
                 {
                     Debug.LogError($"Matrix G already contains a fitness value for teams {team1Id} and {team2Id}. This should not happen in a well-defined competition. Please check the match fitness data for duplicates or inconsistencies.");
                 }
@@ -126,7 +142,7 @@ namespace Evaluators.CompetitionOrganizations
                 // 2. Record individual match results
                 // Team 1
                 var team1 = Teams[0].Where(t => t.TeamId == team1Id).First();
-                if(team1 == null)
+                if (team1 == null)
                 {
                     throw new Exception($"Invalid team ID in match fitness! Team ID {team1Id} does not match the ID of any team in the competition organization.");
                 }

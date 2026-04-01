@@ -87,7 +87,7 @@ namespace Evaluators.CompetitionOrganizations
                 int[] ranking = GetTeamOrders(matchFitness.TeamFitnesses);
 
                 // Point schemes
-                int[] points = Enumerable.Range(0, TeamsPerMatch).Select(i => 2 * (TeamsPerMatch - ranking[i])).ToArray(); ;
+                int[] points = Enumerable.Range(0, TeamsPerMatch).Select(i => 2 * (TeamsPerMatch - ranking[i])).ToArray();
 
                 // 3. Assign points
                 for (int i = 0; i < matchFitness.TeamFitnesses.Count; i++)
@@ -127,9 +127,10 @@ namespace Evaluators.CompetitionOrganizations
         public void DisplayStandings()
         {
             DebugSystem.LogDetailed("Standings:");
-            foreach (var team in AllTeams)
+            var sortedTeams = AllTeams.OrderByDescending(t => t.Score).ToList();
+            foreach (var team in sortedTeams)
             {
-                DebugSystem.LogDetailed($"{team.GetTeamName()} - {team.Score} points");
+                DebugSystem.LogDetailed($"{team.GetTeamName()} = score: {team.Score}");
             }
         }
 
