@@ -5,10 +5,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Utils;
 
 namespace Problems.TicTacToe
 {
+    public enum TicTacToeBestMoveAlgorithm
+    {
+        Minimax,
+        MCTS
+    }
+
     public class TicTacToeGrid : MonoBehaviour
     {
         private static Dictionary<string, Vector3Int> BestMoveCache = new Dictionary<string, Vector3Int>();
@@ -17,7 +24,10 @@ namespace Problems.TicTacToe
         TicTacToeGridCell[,,] Cells { get; set; }
         TicTacToeEnvironmentController TicTacToeEnvironmentController { get; set; }
 
-        int MAX_DEPTH = 10; // For Minimax algorithm - can be adjusted based on grid size and performance needs
+        public static int MINIMAX_MAX_DEPTH = 10; // For Minimax algorithm - can be adjusted based on grid size and performance needs
+
+        public static int MCTS_ITERATIONS = 1000;
+        public static TicTacToeBestMoveAlgorithm BEST_MOVE_ALG = TicTacToeBestMoveAlgorithm.Minimax;
 
         private void Awake()
         {
@@ -102,13 +112,13 @@ namespace Problems.TicTacToe
             return PlaceMarker(cell, marker, agent);
         }
 
-        public bool PlaceRandomMarker(TicTacToeMarker marker, Util util, TicTacToeAgentComponent agent)
+        public bool PlaceRandomMarker(TicTacToeMarker marker, TicTacToeAgentComponent agent)
         {
             List<TicTacToeGridCell> emptyCells = GetEmptyCells();
 
             if (emptyCells.Count > 0)
             {
-                int randomIndex = util.Rnd.Next(0, emptyCells.Count);
+                int randomIndex = TicTacToeEnvironmentController.Util.Rnd.Next(0, emptyCells.Count);
                 return PlaceMarker(emptyCells[randomIndex], marker, agent);
             }
 
@@ -123,7 +133,7 @@ namespace Problems.TicTacToe
                 return false;
 
             if (cell.Marker != null)
-                throw new Exception($"Trying to place a marker on an occupied cell at position {cell.Position}");
+                return false;
 
             Vector3Int bestMove = GetBestMove(marker.MarkerId);
             if(bestMove == cell.Position)
@@ -357,52 +367,134 @@ namespace Problems.TicTacToe
         }
 
         // Minimax algorithm logic for determining the best move for a given marker
-        
+
         private Vector3Int GetBestMove(int markerId) // markerId represents the agent for which we want to find the best move
         {
-            int[,,] state = CaptureState();
-            string key = SerializeState(state);
-
-            lock (cacheLock)
+            if (BEST_MOVE_ALG == TicTacToeBestMoveAlgorithm.MCTS)
             {
-                if (BestMoveCache.TryGetValue(key, out var cachedMove))
-                    return cachedMove;
-            }
+                // MCTS 
+                int[,,] rootState = CaptureState();
+                string key = SerializeState(rootState);
 
-
-            int bestScore = int.MinValue;
-            Vector3Int bestMove = new Vector3Int(-1, -1, -1);
-
-            foreach (var move in GetAvailableMoves(state))
-            {
-                Apply(state, move, markerId);
-
-                int score = Minimax(
-                    state,
-                    depth: 0,
-                    isMaximizing: false,
-                    markerId: markerId,
-                    alpha: int.MinValue,
-                    beta: int.MaxValue
-                );
-
-                Undo(state, move);
-
-                if (score > bestScore)
+                lock (cacheLock)
                 {
-                    bestScore = score;
-                    bestMove = move;
+                    if (BestMoveCache.TryGetValue(key, out var cachedMove))
+                        return cachedMove;
                 }
-            }
 
-            lock (cacheLock)
+                var root = new MCTSNode(rootState, null, default, markerId, this);
+
+                int iterations = MCTS_ITERATIONS; // tune (500–5000 typical)
+
+                for (int i = 0; i < iterations; i++)
+                {
+                    var node = root;
+
+                    // 1. Selection
+                    while (node.IsFullyExpanded() && node.Children.Count > 0)
+                        node = node.SelectChild();
+
+                    // 2. Expansion
+                    if (!node.IsTerminal())
+                        node = node.Expand();
+
+                    // 3. Simulation
+                    double result = Rollout(node.State, markerId);
+
+                    // 4. Backpropagation
+                    node.Backpropagate(result);
+                }
+
+                // pick most visited move
+                Vector3Int bestMove = root.Children
+                    .OrderByDescending(c => c.Visits)
+                    .First().Move;
+
+                lock (cacheLock)
+                {
+                    if (!BestMoveCache.ContainsKey(key))
+                        BestMoveCache[key] = bestMove;
+                }
+
+                return bestMove;
+            }
+            else if (BEST_MOVE_ALG == TicTacToeBestMoveAlgorithm.Minimax)
             {
-                if (!BestMoveCache.ContainsKey(key))
-                    BestMoveCache[key] = bestMove;
+                // Minimax with alpha-beta pruning and caching
+                int[,,] state = CaptureState();
+                string key = SerializeState(state);
+
+                lock (cacheLock)
+                {
+                    if (BestMoveCache.TryGetValue(key, out var cachedMove))
+                        return cachedMove;
+                }
+
+                int bestScore = int.MinValue;
+                Vector3Int bestMove = new Vector3Int(-1, -1, -1);
+
+                foreach (var move in GetAvailableMoves(state))
+                {
+                    Apply(state, move, markerId);
+
+                    int score = Minimax(
+                        state,
+                        depth: 0,
+                        isMaximizing: false,
+                        markerId: markerId,
+                        alpha: int.MinValue,
+                        beta: int.MaxValue
+                    );
+
+                    Undo(state, move);
+
+                    if (score > bestScore)
+                    {
+                        bestScore = score;
+                        bestMove = move;
+                    }
+                }
+
+                lock (cacheLock)
+                {
+                    if (!BestMoveCache.ContainsKey(key))
+                        BestMoveCache[key] = bestMove;
+                }
+
+
+                return bestMove;
             }
+            else
+            {
+                throw new Exception("Invalid best move algorithm selected");
+            }
+        }
 
+        double Rollout(int[,,] state, int rootPlayer)
+        {
+            var simState = (int[,,])state.Clone();
 
-            return bestMove;
+            int currentPlayer = rootPlayer;
+
+            while (true)
+            {
+                var (terminal, winner) = CheckWinner(simState);
+
+                if (terminal)
+                {
+                    if (winner == rootPlayer) return 1.0;
+                    if (winner == -1) return 0.5;
+                    return 0.0;
+                }
+
+                var moves = GetAvailableMoves(simState);
+
+                // simple random playout
+                var move = moves[TicTacToeEnvironmentController.Util.Rnd.Next(0, moves.Count)];
+
+                Apply(simState, move, currentPlayer);
+                currentPlayer = GetOpponentId(simState, currentPlayer);
+            }
         }
 
         int[,,] CaptureState()
@@ -444,16 +536,18 @@ namespace Problems.TicTacToe
         {
             var (terminal, winner) = CheckWinner(state);
 
-            if (terminal)
+            if (terminal || depth >= MINIMAX_MAX_DEPTH)
             {
-                if (winner == markerId) return MAX_DEPTH - depth;
+                if (winner == markerId) return MINIMAX_MAX_DEPTH - depth;
                 if (winner == -1) return 0;
-                return -MAX_DEPTH + depth;
+                return -MINIMAX_MAX_DEPTH + depth;
             }
 
             // TODO : Heuristic evaluation for non-terminal states when depth limit is reached (for larger boards) - If needed
-            //if (depth >= MAX_DEPTH)
-            //    return Heuristic(state, markerId);
+            /*if (depth >= MAX_DEPTH)
+            {
+                return Heuristic(state, markerId);
+            }*/
 
             var moves = GetAvailableMoves(state);
 
@@ -511,7 +605,7 @@ namespace Problems.TicTacToe
             return moves;
         }
 
-        void Apply(int[,,] state, Vector3Int move, int playerId)
+        public void Apply(int[,,] state, Vector3Int move, int playerId)
         {
             state[move.x, move.y, move.z] = playerId;
         }
@@ -521,7 +615,7 @@ namespace Problems.TicTacToe
             state[move.x, move.y, move.z] = -1;
         }
 
-        int GetOpponentId(int[,,] state, int markerId)
+        public int GetOpponentId(int[,,] state, int markerId)
         {
             foreach (var v in state)
             {
@@ -531,7 +625,7 @@ namespace Problems.TicTacToe
             return TicTacToeEnvironmentController.GetAgentOpponentMarkerID(markerId); // fallback
         }
 
-        (bool, int) CheckWinner(int[,,] state)
+        public (bool, int) CheckWinner(int[,,] state)
         {
             int marksInRow = TicTacToeEnvironmentController.MarksInARow;
 

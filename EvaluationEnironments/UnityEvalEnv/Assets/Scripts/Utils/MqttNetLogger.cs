@@ -47,7 +47,7 @@ namespace Utils
                 }
                 catch (Exception ex)
                 {
-                    DebugSystem.LogError(ex.ToString());
+                    //DebugSystem.LogError(ex.ToString());
                 }
             }
         }

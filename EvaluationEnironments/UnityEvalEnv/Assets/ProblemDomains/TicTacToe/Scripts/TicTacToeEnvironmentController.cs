@@ -177,6 +177,30 @@ namespace Problems.TicTacToe
                 {
                     MarksInARow = int.Parse(conf.ProblemConfiguration["MarksInARow"]);
                 }
+
+                if (conf.ProblemConfiguration.ContainsKey("MctsIterations"))
+                {
+                    TicTacToeGrid.MCTS_ITERATIONS = int.Parse(conf.ProblemConfiguration["MctsIterations"]);
+                }
+                
+                if (conf.ProblemConfiguration.ContainsKey("MinimaxMaxDepth"))
+                {
+                    TicTacToeGrid.MINIMAX_MAX_DEPTH = int.Parse(conf.ProblemConfiguration["MinimaxMaxDepth"]);
+                }
+
+                if (conf.ProblemConfiguration.ContainsKey("BestMoveAlg"))
+                {
+                    var bestMoveAlg = conf.ProblemConfiguration["BestMoveAlg"];
+
+                    if(bestMoveAlg == "MCTS")
+                    {
+                        TicTacToeGrid.BEST_MOVE_ALG = TicTacToeBestMoveAlgorithm.MCTS;
+                    }
+                    else if (bestMoveAlg == "Minimax")
+                    {
+                        TicTacToeGrid.BEST_MOVE_ALG = TicTacToeBestMoveAlgorithm.Minimax;
+                    }
+                }
             }
         }
     }

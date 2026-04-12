@@ -38,7 +38,6 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController.TicTac
 
             if (grid.PlaceRandomMarker(
                 ticTacToeEnvironmentController.GetAgentMarker(ticTacToeAgentComponent),
-                ticTacToeEnvironmentController.Util,
                 ticTacToeAgentComponent
                 ))
                 return State.Success;

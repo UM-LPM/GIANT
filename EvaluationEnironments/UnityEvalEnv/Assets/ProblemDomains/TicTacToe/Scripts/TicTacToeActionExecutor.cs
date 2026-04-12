@@ -40,7 +40,7 @@ namespace Problems.TicTacToe
             }
             else if (agent.ActionBuffer.GetDiscreteAction("placeRandomMarker") == 1)
             {
-                TicTacToeEnvironmentController.Grid.PlaceRandomMarker(TicTacToeEnvironmentController.GetAgentMarker(agent), TicTacToeEnvironmentController.Util, agent);
+                TicTacToeEnvironmentController.Grid.PlaceRandomMarker(TicTacToeEnvironmentController.GetAgentMarker(agent), agent);
             }
         }
     }
