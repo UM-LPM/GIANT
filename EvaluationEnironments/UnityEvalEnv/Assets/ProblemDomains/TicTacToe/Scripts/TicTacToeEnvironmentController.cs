@@ -200,6 +200,10 @@ namespace Problems.TicTacToe
                     {
                         TicTacToeGrid.BEST_MOVE_ALG = TicTacToeBestMoveAlgorithm.Minimax;
                     }
+                    else if(bestMoveAlg == "Heuristic")
+                    {
+                        TicTacToeGrid.BEST_MOVE_ALG = TicTacToeBestMoveAlgorithm.Heuristic;
+                    }
                 }
             }
         }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using UnityEngine;
 
 namespace Problems.TicTacToe
@@ -51,7 +52,8 @@ namespace Problems.TicTacToe
 
         public MCTSNode Expand()
         {
-            var move = UntriedMoves[UntriedMoves.Count - 1];
+
+            var move = UntriedMoves[UntriedMoves.Count - 1]; // Get last move
             UntriedMoves.RemoveAt(UntriedMoves.Count - 1);
 
             var newState = (int[,,])State.Clone();

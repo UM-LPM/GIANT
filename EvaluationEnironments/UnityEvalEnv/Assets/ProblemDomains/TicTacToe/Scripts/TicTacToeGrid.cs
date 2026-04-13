@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Utils;
@@ -13,7 +14,8 @@ namespace Problems.TicTacToe
     public enum TicTacToeBestMoveAlgorithm
     {
         Minimax,
-        MCTS
+        MCTS,
+        Heuristic
     }
 
     public class TicTacToeGrid : MonoBehaviour
@@ -28,6 +30,22 @@ namespace Problems.TicTacToe
 
         public static int MCTS_ITERATIONS = 1000;
         public static TicTacToeBestMoveAlgorithm BEST_MOVE_ALG = TicTacToeBestMoveAlgorithm.Minimax;
+
+        private static readonly (int dx, int dy, int dz)[] Directions =
+        {
+            (1,0,0),(0,1,0),(0,0,1),
+            (1,1,0),(1,-1,0),(1,0,1),(1,0,-1),
+            (0,1,1),(0,1,-1),
+            (1,1,1),(1,1,-1),(1,-1,1),(1,-1,-1)
+        };
+
+        const int WIN_SCORE = 1_000_000;
+        const int BLOCK_SCORE = 500_000;
+        const int FORK_SCORE = 50_000;
+        const int OPPORTUNITY_SCORE = 10_000; // creating a (marksInARow - 1) with an open cell is good, but much less than an immediate win or fork
+        const int CENTER_SCORE = 500;
+        const int CORNER_SCORE = 200;
+        const int OTHER_SCORE = 50;
 
         private void Awake()
         {
@@ -148,7 +166,7 @@ namespace Problems.TicTacToe
             markerComponent.MarkerId = marker.MarkerId;
             cell.Marker = markerComponent;
 
-            if(OpportunityCreated(cell, markerComponent, agent))
+            if(OpportunityCreated(cell, markerComponent.MarkerId) > 0)
                 agent.OpportunitiesCreated++;
 
             if(OpponentBlocked(cell, markerComponent, agent))
@@ -168,19 +186,12 @@ namespace Problems.TicTacToe
             return GetEmptyCells().Count == 0;
         }
 
-        public bool OpportunityCreated(TicTacToeGridCell cell, TicTacToeMarker marker, TicTacToeAgentComponent agent)
+        public int OpportunityCreated(TicTacToeGridCell cell, int markerId)
         {
+            int opportunitiesCreated = 0;
             int marksInRow = TicTacToeEnvironmentController.MarksInARow;
-            int markerId = marker.MarkerId;
 
-            (int dx, int dy, int dz)[] directions = new (int, int, int)[]
-            {
-                (1,0,0), (0,1,0), (0,0,1),
-                (1,1,0), (1,-1,0), (1,0,1), (1,0,-1), (0,1,1), (0,1,-1),
-                (1,1,1), (1,1,-1), (1,-1,1), (1,-1,-1)
-            };
-
-            foreach (var (dx, dy, dz) in directions)
+            foreach (var (dx, dy, dz) in Directions)
             {
                 var line = GetLine(cell, dx, dy, dz);
 
@@ -198,12 +209,12 @@ namespace Problems.TicTacToe
                     }
 
                     if (myCount == marksInRow - 1 && emptyCount == 1)
-                        return true;
+                        opportunitiesCreated++;
                 }
             }
 
 
-            return false;
+            return opportunitiesCreated;
         }
 
         public bool OpponentBlocked(TicTacToeGridCell cell, TicTacToeMarker marker, TicTacToeAgentComponent agent)
@@ -211,14 +222,7 @@ namespace Problems.TicTacToe
             int marksInRow = TicTacToeEnvironmentController.MarksInARow;
             int markerId = marker.MarkerId;
 
-            (int dx, int dy, int dz)[] directions = new (int, int, int)[]
-            {
-                (1,0,0), (0,1,0), (0,0,1),
-                (1,1,0), (1,-1,0), (1,0,1), (1,0,-1), (0,1,1), (0,1,-1),
-                (1,1,1), (1,1,-1), (1,-1,1), (1,-1,-1)
-            };
-
-            foreach (var (dx, dy, dz) in directions)
+            foreach (var (dx, dy, dz) in Directions)
             {
                 var line = GetLine(cell, dx, dy, dz);
 
@@ -311,14 +315,6 @@ namespace Problems.TicTacToe
             int sizeY = Cells.GetLength(1);
             int sizeZ = Cells.GetLength(2);
 
-            // All relevant directions
-            (int dx, int dy, int dz)[] directions = new (int, int, int)[]
-            {
-                (1,0,0), (0,1,0), (0,0,1),
-                (1,1,0), (1,-1,0), (1,0,1), (1,0,-1), (0,1,1), (0,1,-1),
-                (1,1,1), (1,1,-1), (1,-1,1), (1,-1,-1)
-            };
-
             for (int x = 0; x < sizeX; x++)
             {
                 for (int y = 0; y < sizeY; y++)
@@ -330,7 +326,7 @@ namespace Problems.TicTacToe
 
                         int markerId = startCell.Marker.MarkerId;
 
-                        foreach (var (dx, dy, dz) in directions)
+                        foreach (var (dx, dy, dz) in Directions)
                         {
                             int count = 1;
                             //List<TicTacToeGridCell> cellsInLine = new List<TicTacToeGridCell> { startCell };
@@ -370,7 +366,47 @@ namespace Problems.TicTacToe
 
         private Vector3Int GetBestMove(int markerId) // markerId represents the agent for which we want to find the best move
         {
-            if (BEST_MOVE_ALG == TicTacToeBestMoveAlgorithm.MCTS)
+            if(BEST_MOVE_ALG == TicTacToeBestMoveAlgorithm.Heuristic)
+            {
+                int[,,] rootState = CaptureState();
+                string key = SerializeState(rootState);
+
+                lock (cacheLock)
+                {
+                    if (BestMoveCache.TryGetValue(key, out var cachedMove))
+                        return cachedMove;
+                }
+
+                var moves = GetAvailableMoves(rootState);
+
+                Vector3Int bestMove = default;
+                int bestScore = int.MinValue;
+
+                foreach (var move in moves)
+                {
+                    int score = EvaluateMove(rootState, move, markerId);
+
+                    if (score > bestScore)
+                    {
+                        bestScore = score;
+                        bestMove = move;
+                    }
+
+                    if(score == WIN_SCORE) // can't do better than an immediate win, stop searching
+                        break;
+                }
+
+                lock (cacheLock)
+                {
+                    if (!BestMoveCache.ContainsKey(key))
+                        BestMoveCache[key] = bestMove;
+                }
+
+
+                return bestMove;
+
+            }
+            else if (BEST_MOVE_ALG == TicTacToeBestMoveAlgorithm.MCTS)
             {
                 // MCTS 
                 int[,,] rootState = CaptureState();
@@ -495,6 +531,136 @@ namespace Problems.TicTacToe
                 Apply(simState, move, currentPlayer);
                 currentPlayer = GetOpponentId(simState, currentPlayer);
             }
+        }
+
+        private int EvaluateMove(int[,,] state, Vector3Int move, int playerId)
+        {
+            int sx = state.GetLength(0);
+            int sy = state.GetLength(1);
+            int sz = state.GetLength(2);
+
+            int x = move.x;
+            int y = move.y;
+            int z = move.z;
+
+            Apply(state, move, playerId);
+
+            var (terminal, winner) = CheckWinner(state);
+
+            // 1. Immediate win
+            if (terminal && winner == playerId)
+            {
+                Undo(state, move);
+                return WIN_SCORE;
+            }
+
+            int opponentId = GetOpponentId(state, playerId);
+
+            // 2. Block opponent win (ONLY win-level blocking)
+            state[x, y, z] = opponentId;
+            var (oppTerminal, oppWinner) = CheckWinner(state);
+            state[x, y, z] = playerId;
+
+            if (oppTerminal && oppWinner == opponentId)
+            {
+                Undo(state, move);
+                return BLOCK_SCORE;
+            }
+
+            // 3. Opportunity creation and fork detection (count immediate winning threats created)
+            int opportunities = CountForkOpportunities(state, move, playerId);
+            if (opportunities >= 2)
+            {
+                Undo(state, move);
+                return FORK_SCORE;
+            }
+            else if (opportunities == 1) {
+                Undo(state, move);
+                return OPPORTUNITY_SCORE;
+            }
+
+            // 5. Positional heuristics (center → corners → others)
+            int score = EvaluatePosition(move, sx, sy, sz, CENTER_SCORE, CORNER_SCORE, OTHER_SCORE);
+
+            Undo(state, move);
+
+            return score;
+        }
+
+        private bool HasPotentialWinLine(int[,,] state, Vector3Int origin, int dx, int dy, int dz, int playerId)
+        {
+            int marksInRow = TicTacToeEnvironmentController.MarksInARow;
+
+            int sx = state.GetLength(0);
+            int sy = state.GetLength(1);
+            int sz = state.GetLength(2);
+
+            int count = 1;
+            int empty = 0;
+
+            int nx = origin.x;
+            int ny = origin.y;
+            int nz = origin.z;
+
+            for (int i = 1; i < marksInRow; i++)
+            {
+                nx += dx;
+                ny += dy;
+                nz += dz;
+
+                if ((uint)nx >= sx || (uint)ny >= sy || (uint)nz >= sz)
+                    break;
+
+                int v = state[nx, ny, nz];
+
+                if (v == playerId)
+                    count++;
+                else if (v == -1)
+                    empty++;
+            }
+
+            return count == marksInRow - 1 && empty >= 0;
+        }
+
+        private int CountForkOpportunities(int[,,] state, Vector3Int move, int playerId)
+        {
+            int count = 0;
+
+            foreach (var dir in Directions)
+            {
+                int threats = 0;
+
+                // scan line through move
+                if (HasPotentialWinLine(state, move, dir.dx, dir.dy, dir.dz, playerId))
+                    threats++;
+
+                if (threats >= 1)
+                    count++;
+            }
+
+            return count;
+        }
+
+        private int EvaluatePosition(Vector3Int move, int sx, int sy, int sz, int centerScore, int cornerScore, int otherScore)
+        {
+            int cx = sx / 2;
+            int cy = sy / 2;
+            int cz = sz / 2;
+
+            // center
+            if (move.x == cx && move.y == cy && move.z == cz)
+                return centerScore;
+
+            // corners
+            bool isCorner =
+                (move.x == 0 || move.x == sx - 1) &&
+                (move.y == 0 || move.y == sy - 1) &&
+                (move.z == 0 || move.z == sz - 1);
+
+            if (isCorner)
+                return cornerScore;
+
+            return otherScore;
         }
 
         int[,,] CaptureState()
@@ -633,13 +799,6 @@ namespace Problems.TicTacToe
             int sy = state.GetLength(1);
             int sz = state.GetLength(2);
 
-            (int dx, int dy, int dz)[] dirs = new (int, int, int)[]
-            {
-                (1,0,0),(0,1,0),(0,0,1),
-                (1,1,0),(1,-1,0),(1,0,1),(1,0,-1),(0,1,1),(0,1,-1),
-                (1,1,1),(1,1,-1),(1,-1,1),(1,-1,-1)
-            };
-
             for (int x = 0; x < sx; x++)
                 for (int y = 0; y < sy; y++)
                     for (int z = 0; z < sz; z++)
@@ -647,7 +806,7 @@ namespace Problems.TicTacToe
                         int player = state[x, y, z];
                         if (player == -1) continue;
 
-                        foreach (var (dx, dy, dz) in dirs)
+                        foreach (var (dx, dy, dz) in Directions)
                         {
                             int count = 1;
 
