@@ -13,6 +13,7 @@ namespace Problems.Robostrike
     {
         [Header("Robostrike 1vs1 Match Configuration")]
         [SerializeField] public Transform[] SpawnPoints;
+        [SerializeField] public float SpawnRadius = 3f;
 
         // Respawn variables
         Vector3 respawnPos = Vector3.zero;
@@ -77,7 +78,16 @@ namespace Problems.Robostrike
                     foreach(AgentController agentController in individual.AgentControllers)
                     {
                         // Instantiate and configure agent
-                        GameObject agentGameObject = Instantiate(environmentController.AgentPrefab, SpawnPoints[i].position, SpawnPoints[i].rotation, gameObject.transform);
+                        var x = environmentController.Util.NextFloat(-SpawnRadius, SpawnRadius);
+                        var y = environmentController.Util.NextFloat(-SpawnRadius, SpawnRadius);
+                        var newSpawnPoint = SpawnPoints[i].position + new Vector3(x, y, 0);
+
+                        // Random rotation for the agent (between 0 and 360 degrees on the Y axis)
+                        var randomYRotation = environmentController.Util.NextFloat(0, 360);
+                        var agentRotation = Quaternion.Euler(0, randomYRotation, 0);
+
+                        GameObject agentGameObject = Instantiate(environmentController.AgentPrefab, newSpawnPoint, agentRotation, gameObject.transform);
+                        //GameObject agentGameObject = Instantiate(environmentController.AgentPrefab, SpawnPoints[i].position, SpawnPoints[i].rotation, gameObject.transform);
 
                         // Configure agent
                         T agent = agentGameObject.GetComponent<T>();

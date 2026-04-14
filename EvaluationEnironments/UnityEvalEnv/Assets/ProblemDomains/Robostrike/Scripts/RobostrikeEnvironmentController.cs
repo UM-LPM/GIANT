@@ -537,14 +537,15 @@ namespace Problems.Robostrike
                 }
 
                 // Missiles fired
-                allPossibleMissilesFired = (CurrentSimulationSteps * Time.fixedDeltaTime) / MissileShootCooldown;
-                missilesFired = agent.MissilesFired / allPossibleMissilesFired;
-                missilesFired = (float)Math.Round(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.MissilesFired.ToString()] * missilesFired, 4);
-                agent.AgentFitness.UpdateFitness(missilesFired, RobostrikeFitness.FitnessKeys.MissilesFired.ToString());
+                if (agent.MissilesFired > 0)
+                {
+                    agent.AgentFitness.UpdateFitness(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.MissilesFired.ToString()], RobostrikeFitness.FitnessKeys.MissilesFired.ToString());
+                }
 
                 // Missiles fired accuracy
                 if (agent.MissilesFired > 0)
                 {
+                    allPossibleMissilesFired = (CurrentSimulationSteps * Time.fixedDeltaTime) / MissileShootCooldown;
                     missilesFiredAccuracy = agent.MissilesHitOpponent / (float)allPossibleMissilesFired;
                     missilesFiredAccuracy = (float)Math.Round(RobostrikeFitness.FitnessValues[RobostrikeFitness.FitnessKeys.MissilesFiredAccuracy.ToString()] * missilesFiredAccuracy, 4);
                     agent.AgentFitness.UpdateFitness(missilesFiredAccuracy, RobostrikeFitness.FitnessKeys.MissilesFiredAccuracy.ToString());
