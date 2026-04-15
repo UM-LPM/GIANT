@@ -67,7 +67,7 @@ namespace Configuration
             }
             catch (Exception ex)
             {
-                DebugSystem.LogError("Failed to connect to MQTT broker: " + ex.ToString());
+                //DebugSystem.LogError("Failed to connect to MQTT broker: " + ex.ToString());
             }
 
             if(UnitTester.Instance != null && UnitTester.Instance.CurrentTestIndex > -1)

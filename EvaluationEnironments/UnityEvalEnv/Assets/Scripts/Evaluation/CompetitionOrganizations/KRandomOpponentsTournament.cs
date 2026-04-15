@@ -40,12 +40,13 @@ namespace Evaluators.CompetitionOrganizations
                 var teamGroup0 = Teams[0];
 
                 int N = teamGroup0.Length;
-                int targetMatches = (N * Rounds) / 2;
 
-                if(N % 2 != 0)
+                if ((N * Rounds) % 2 != 0)
                 {
-                    throw new Exception("Invalid number of teams! KRandomOpponentsTournament requires an even number of teams to ensure that all teams can be paired.");
+                    throw new Exception("Invalid number of teams! KRandomOpponentsTournament requires (N*K) to be an even number to ensure that all teams can be paired.");
                 }
+
+                int targetMatches = (N * Rounds) / 2;
 
                 int[] degree = new int[N];
                 List<(int, int)> pairs = new List<(int, int)>();
