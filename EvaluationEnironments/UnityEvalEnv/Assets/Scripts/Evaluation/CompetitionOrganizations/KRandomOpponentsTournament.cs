@@ -77,8 +77,7 @@ namespace Evaluators.CompetitionOrganizations
                 {
                     if (degree[team1] < Rounds && degree[team2] < Rounds)
                     {
-                        TournamentMatches.Add(
-                            ScriptableObject.CreateInstance<Match>().Initialize(CurrentMatchID++, new Team[] { teamGroup0[team1], teamGroup0[team2] }));
+                        TournamentMatches.Add(new Match(CurrentMatchID++, new Team[] { teamGroup0[team1], teamGroup0[team2] }));
                         degree[team1]++;
                         degree[team2]++;
 
@@ -96,7 +95,7 @@ namespace Evaluators.CompetitionOrganizations
                         for (int i = 0; i < TournamentMatches.Count; i++)
                         {
                             Match match = TournamentMatches[i];
-                            matchesSwapped.Add(ScriptableObject.CreateInstance<Match>().Initialize(CurrentMatchID++, new Team[] { match.Teams[1], match.Teams[0] }));
+                            matchesSwapped.Add(new Match(CurrentMatchID++, new Team[] { match.Teams[1], match.Teams[0] }));
                         }
 
                         TournamentMatches.AddRange(matchesSwapped);

@@ -94,7 +94,7 @@ namespace Utils
 
         public static void SaveSOIndividualsToSO(Individual[][] individuals, string folderPath)
         {
-#if UNITY_EDITOR
+/*#if UNITY_EDITOR
             // Save individuals to folder (.asset)
             for (int i = 0; i < individuals.Length; i++)
             {
@@ -119,12 +119,12 @@ namespace Utils
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
-#endif
+#endif*/
         }
 
         public static void SaveSOIndividualsToJSON(Individual[][] individuals, string folderPath)
         {
-#if UNITY_EDITOR
+/*#if UNITY_EDITOR
             // Save individuals to folder (.json)
             for (int i = 0; i < individuals.Length; i++)
             {
@@ -140,7 +140,7 @@ namespace Utils
                     File.WriteAllText(individualJSONPath, JsonConvert.SerializeObject(individuals[i][j], MainConfiguration.JSON_SERIALIZATION_SETTINGS));
                 }
             }
-#endif
+#endif*/
         }
     }
 }

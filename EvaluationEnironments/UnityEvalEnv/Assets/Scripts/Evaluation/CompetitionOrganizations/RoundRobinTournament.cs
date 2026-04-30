@@ -42,9 +42,9 @@ namespace Evaluators.CompetitionOrganizations
                 for (int j = i + 1; j < Teams[0].Length; j++)
                 {
                     if (Coordinator.Instance.Random.NextDouble() > 0.5)
-                        tournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { Teams[0][i], Teams[0][j] }));
+                        tournamentMatches.Add(new Match(currentMatchID++, new Team[] { Teams[0][i], Teams[0][j] }));
                     else
-                        tournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { Teams[0][j], Teams[0][i] }));
+                        tournamentMatches.Add(new Match(currentMatchID++, new Team[] { Teams[0][j], Teams[0][i] }));
                 }
             }
 
@@ -64,7 +64,7 @@ namespace Evaluators.CompetitionOrganizations
                 for (int i = 0; i < tournamentMatches.Count; i++)
                 {
                     Match match = tournamentMatches[i];
-                    matchesSwapped.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { match.Teams[1], match.Teams[0] }));
+                    matchesSwapped.Add(new Match(currentMatchID++, new Team[] { match.Teams[1], match.Teams[0] }));
                 }
 
                 tournamentMatches.AddRange(matchesSwapped);

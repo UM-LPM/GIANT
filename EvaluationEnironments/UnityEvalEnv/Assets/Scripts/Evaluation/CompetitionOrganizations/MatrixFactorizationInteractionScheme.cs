@@ -69,8 +69,7 @@ namespace Evaluators.CompetitionOrganizations
             // 3. Iterate through the shuffled pairs and add them to the tournament matches until we reach the target number of matches for the current round
             foreach (var (team1, team2) in pairs)
             {
-                TournamentMatches.Add(
-                        ScriptableObject.CreateInstance<Match>().Initialize(CurrentMatchID++, new Team[] { Teams[0][team1], Teams[0][team2] }));
+                TournamentMatches.Add(new Match(CurrentMatchID++, new Team[] { Teams[0][team1], Teams[0][team2] }));
 
                 if (TournamentMatches.Count >= targetMatches)
                     break;
@@ -83,7 +82,7 @@ namespace Evaluators.CompetitionOrganizations
                 for (int i = 0; i < TournamentMatches.Count; i++)
                 {
                     Match match = TournamentMatches[i];
-                    matchesSwapped.Add(ScriptableObject.CreateInstance<Match>().Initialize(CurrentMatchID++, new Team[] { match.Teams[1], match.Teams[0] }));
+                    matchesSwapped.Add(new Match(CurrentMatchID++, new Team[] { match.Teams[1], match.Teams[0] }));
                 }
 
                 TournamentMatches.AddRange(matchesSwapped);

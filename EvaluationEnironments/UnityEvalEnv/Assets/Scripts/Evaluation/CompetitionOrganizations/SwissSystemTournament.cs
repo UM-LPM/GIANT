@@ -62,7 +62,7 @@ namespace Evaluators.CompetitionOrganizations
                     byeTeam.HasBye = true;
                     TeamsWhoGotBye++;
                     unpairedTeams.Remove(byeTeam);
-                    tournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { byeTeam, ScriptableObject.CreateInstance<CompetitionTeam>().Initialize(-1, "Dummy", new Individual[] { }) })); // Add a bye pairing with dummy team
+                    tournamentMatches.Add(new Match(currentMatchID++, new Team[] { byeTeam, new CompetitionTeam(-1, "Dummy", new Individual[] { }) })); // Add a bye pairing with dummy team
                 }
             }
 
@@ -90,9 +90,9 @@ namespace Evaluators.CompetitionOrganizations
                 unpairedTeams.Remove(t2);
 
                 if (Coordinator.Instance.Random.NextDouble() > 0.5)
-                    tournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { t1, t2 }));
+                    tournamentMatches.Add(new Match(currentMatchID++, new Team[] { t1, t2 }));
                 else
-                    tournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { t2, t1 }));
+                    tournamentMatches.Add(new Match(currentMatchID++, new Team[] { t2, t1 }));
             }
 
             // If enabled: For each match that already exists, add another match with the teams swapped
@@ -102,7 +102,7 @@ namespace Evaluators.CompetitionOrganizations
                 for (int i = 0; i < tournamentMatches.Count; i++)
                 {
                     Match match = tournamentMatches[i];
-                    matchesSwapped.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { match.Teams[1], match.Teams[0] }));
+                    matchesSwapped.Add(new Match(currentMatchID++, new Team[] { match.Teams[1], match.Teams[0] }));
                 }
 
                 tournamentMatches.AddRange(matchesSwapped);

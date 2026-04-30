@@ -140,11 +140,13 @@ namespace Evaluators
             {
                 for (int j = 0; j < individuals[i].Length; j++)
                 {
-                    Team team = ScriptableObject.CreateInstance<Team>();
-                    team.Initialize(i, "Team_" + i, new Individual[] { individuals[i][j] });
+                    //Team team = ScriptableObject.CreateInstance<Team>();
+                    //team.Initialize(i, "Team_" + i, new Individual[] { individuals[i][j] });
+                    Team team = new Team(i, "Team_" + i, new Individual[] { individuals[i][j] });
 
-                    matches[i] = ScriptableObject.CreateInstance<Match>();
-                    matches[i].Initialize(i, new Team[] { team });
+                    //matches[i] = ScriptableObject.CreateInstance<Match>();
+                    //matches[i].Initialize(i, new Team[] { team });
+                    matches[i] = new Match(i, new Team[] { team });
                 }
             }
 

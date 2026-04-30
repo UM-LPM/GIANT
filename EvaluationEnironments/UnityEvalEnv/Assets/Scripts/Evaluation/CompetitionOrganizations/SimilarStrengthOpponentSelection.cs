@@ -69,15 +69,15 @@ namespace Evaluators.CompetitionOrganizations
 
                     // Dummy opponents fill the match
                     var dummyTeams = Enumerable.Range(0, TeamsPerMatch - 1)
-                        .Select(_ => ScriptableObject.CreateInstance<CompetitionTeam>().Initialize(-1, "Dummy", Array.Empty<Individual>()))
+                        //.Select(_ => ScriptableObject.CreateInstance<CompetitionTeam>().Initialize(-1, "Dummy", Array.Empty<Individual>()))
+                        .Select(_ => new CompetitionTeam(-1, "Dummy", Array.Empty<Individual>()))
                         .ToArray();
 
                     var teamsForByeMatch = new List<Team> { byeTeam };
                     teamsForByeMatch.AddRange(dummyTeams);
 
-                    competitionMatches.Add(
-                        ScriptableObject.CreateInstance<Match>()
-                            .Initialize(currentMatchID++, teamsForByeMatch.ToArray()));
+                    //competitionMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, teamsForByeMatch.ToArray()));
+                    competitionMatches.Add(new Match(currentMatchID++, teamsForByeMatch.ToArray()));
                 }
             }
 
@@ -102,9 +102,8 @@ namespace Evaluators.CompetitionOrganizations
                 if (Coordinator.Instance.Random.NextDouble() < 0.5)
                     matchTeams.Reverse();
 
-                competitionMatches.Add(
-                    ScriptableObject.CreateInstance<Match>()
-                        .Initialize(currentMatchID++, matchTeams.ToArray()));
+                //competitionMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, matchTeams.ToArray()));
+                competitionMatches.Add(new Match(currentMatchID++, matchTeams.ToArray()));
             }
 
             // Optional: create mirrored matches with swapped order
@@ -114,7 +113,8 @@ namespace Evaluators.CompetitionOrganizations
                 foreach (var match in competitionMatches)
                 {
                     var reversedTeams = match.Teams.Reverse().ToArray();
-                    swapped.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, reversedTeams));
+                    //swapped.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, reversedTeams));
+                    swapped.Add(new Match(match.MatchId, reversedTeams));
                 }
                 competitionMatches.AddRange(swapped);
             }

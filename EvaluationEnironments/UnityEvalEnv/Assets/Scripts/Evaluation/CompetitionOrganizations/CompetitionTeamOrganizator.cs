@@ -58,8 +58,8 @@ namespace Evaluators.CompetitionOrganizations
                     {
                         int teamId = teamIdCounter + teams.Count;
                         var teamMembers = individuals.Skip(i).Take(TeamSize).ToArray();
-                        teams.Add(ScriptableObject.CreateInstance<CompetitionTeam>()
-                            .Initialize(teamId, "Team " + teamId, teamMembers) as CompetitionTeam);
+                        //teams.Add(ScriptableObject.CreateInstance<CompetitionTeam>().Initialize(teamId, "Team " + teamId, teamMembers) as CompetitionTeam);
+                        teams.Add(new CompetitionTeam(teamId, "Team " + teamId, teamMembers));
                     }
                     return teams.ToArray();
                 }
@@ -108,8 +108,8 @@ namespace Evaluators.CompetitionOrganizations
 
                     int teamId = teams.Count;
                     var teamMembers = currentTeam.Select(idx => individuals[idx]).ToArray();
-                    teams.Add(ScriptableObject.CreateInstance<CompetitionTeam>()
-                        .Initialize(teamId, "Team " + teamId, teamMembers) as CompetitionTeam);
+                    //teams.Add(ScriptableObject.CreateInstance<CompetitionTeam>().Initialize(teamId, "Team " + teamId, teamMembers) as CompetitionTeam);
+                    teams.Add(new CompetitionTeam(teamId, "Team " + teamId, teamMembers));
                 }
 
                 // Assign team scores
@@ -132,7 +132,8 @@ namespace Evaluators.CompetitionOrganizations
 
             for (int i = 0; i < individuals.Length; i++)
             {
-                teams.Add(ScriptableObject.CreateInstance<CompetitionTeam>().Initialize(teamIdCounter + i, "Team " + (teamIdCounter + i), new Individual[] { individuals[i] }) as CompetitionTeam);
+                //teams.Add(ScriptableObject.CreateInstance<CompetitionTeam>().Initialize(teamIdCounter + i, "Team " + (teamIdCounter + i), new Individual[] { individuals[i] }) as CompetitionTeam);
+                teams.Add(new CompetitionTeam(teamIdCounter + i, "Team " + (teamIdCounter + i), new Individual[] { individuals[i] }));
             }
 
             return teams.ToArray();

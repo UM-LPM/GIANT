@@ -63,7 +63,7 @@ namespace Evaluators.CompetitionOrganizations
                     byeTeam.HasBye = true;
                     TeamsWhoGotBye++;
                     UnpairedTeams.Remove(byeTeam);
-                    TournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(CurrentMatchID++, new Team[] { byeTeam, ScriptableObject.CreateInstance<CompetitionTeam>().Initialize(-1, "Dummy", new Individual[] { }) })); // Add a bye pairing with dummy team
+                    TournamentMatches.Add(new Match(CurrentMatchID++, new Team[] { byeTeam, new CompetitionTeam(-1, "Dummy", new Individual[] { }) })); // Add a bye pairing with dummy team
                 }
             }
 
@@ -77,9 +77,9 @@ namespace Evaluators.CompetitionOrganizations
                 UnpairedTeams.RemoveAt(0);
 
                 if (Coordinator.Instance.Random.NextDouble() > 0.5)
-                    TournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(CurrentMatchID++, new Team[] { t1, t2 }));
+                    TournamentMatches.Add(new Match(CurrentMatchID++, new Team[] { t1, t2 }));
                 else
-                    TournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(CurrentMatchID++, new Team[] { t2, t1 }));
+                    TournamentMatches.Add(new Match(CurrentMatchID++, new Team[] { t2, t1 }));
             }
 
             // If enabled: For each match that already exists, add another match with the teams swapped
@@ -89,7 +89,7 @@ namespace Evaluators.CompetitionOrganizations
                 for (int i = 0; i < TournamentMatches.Count; i++)
                 {
                     Match match = TournamentMatches[i];
-                    matchesSwapped.Add(ScriptableObject.CreateInstance<Match>().Initialize(CurrentMatchID++, new Team[] { match.Teams[1], match.Teams[0] }));
+                    matchesSwapped.Add(new Match(CurrentMatchID++, new Team[] { match.Teams[1], match.Teams[0] }));
                 }
 
                 TournamentMatches.AddRange(matchesSwapped);

@@ -43,9 +43,9 @@ namespace Evaluators.CompetitionOrganizations
             for (int i = 0; i < teamGroup0.Length - 1; i++)
             {
                 if (Coordinator.Instance.Random.NextDouble() > 0.5)
-                    tournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { teamGroup0[i], lastTeam }));
+                    tournamentMatches.Add(new Match(currentMatchID++, new Team[] { teamGroup0[i], lastTeam }));
                 else
-                    tournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { lastTeam, teamGroup0[i] }));
+                    tournamentMatches.Add(new Match(currentMatchID++, new Team[] { lastTeam, teamGroup0[i] }));
             }
 
             // If enabled: For each match that already exists, add another match with the teams swapped
@@ -55,7 +55,7 @@ namespace Evaluators.CompetitionOrganizations
                 for (int i = 0; i < tournamentMatches.Count; i++)
                 {
                     Match match = tournamentMatches[i];
-                    matchesSwapped.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { match.Teams[1], match.Teams[0] }));
+                    matchesSwapped.Add(new Match(currentMatchID++, new Team[] { match.Teams[1], match.Teams[0] }));
                 }
 
                 tournamentMatches.AddRange(matchesSwapped);

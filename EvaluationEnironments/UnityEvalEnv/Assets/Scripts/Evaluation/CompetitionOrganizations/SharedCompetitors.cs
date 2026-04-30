@@ -45,9 +45,9 @@ namespace Evaluators.CompetitionOrganizations
                 foreach (CompetitionTeam team1 in teamGroup1)
                 {
                     if (Coordinator.Instance.Random.NextDouble() > 0.5)
-                        TournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { team0, team1}));
+                        TournamentMatches.Add(new Match(currentMatchID++, new Team[] { team0, team1 }));
                     else
-                        TournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { team1, team0 }));
+                        TournamentMatches.Add(new Match(currentMatchID++, new Team[] { team1, team0 }));
                 }
             }
 
@@ -60,7 +60,7 @@ namespace Evaluators.CompetitionOrganizations
                     Match originalMatch = TournamentMatches[i];
                     Team team1 = originalMatch.Teams[0];
                     Team team2 = originalMatch.Teams[1];
-                    TournamentMatches.Add(ScriptableObject.CreateInstance<Match>().Initialize(currentMatchID++, new Team[] { team2, team1 }));
+                    TournamentMatches.Add(new Match(currentMatchID++, new Team[] { team2, team1 }));
                 }
             }
 

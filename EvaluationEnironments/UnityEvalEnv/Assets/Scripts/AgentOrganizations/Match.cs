@@ -4,9 +4,10 @@ using UnityEngine;
 namespace AgentOrganizations
 {
     [Serializable]
-    [CreateAssetMenu(fileName = "Match", menuName = "AgentOrganizations/Match")]
-    public class Match : ScriptableObject
+    //[CreateAssetMenu(fileName = "Match", menuName = "AgentOrganizations/Match")]
+    public class Match //: ScriptableObject
     {
+        public string name;
         public int MatchId;
         public Team[] Teams;
 

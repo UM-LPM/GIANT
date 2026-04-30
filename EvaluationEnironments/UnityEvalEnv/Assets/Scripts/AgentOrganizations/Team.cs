@@ -7,9 +7,10 @@ using UnityEngine;
 namespace AgentOrganizations
 {
     [Serializable]
-    [CreateAssetMenu(fileName = "Team", menuName = "AgentOrganizations/Team")]
-    public class Team: ScriptableObject
+    //[CreateAssetMenu(fileName = "Team", menuName = "AgentOrganizations/Team")]
+    public class Team //: ScriptableObject
     {
+        public string name;
         public int TeamId;
         public Individual[] Individuals;
 
