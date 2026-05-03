@@ -249,6 +249,10 @@ namespace Base
                 yield return null;
             }
 
+            // force cleanup
+            yield return Resources.UnloadUnusedAssets();
+            GC.Collect();
+
             try {
                 CoordinatorEvaluationResult evaluationResult = evaluationResultTask.Result;
                 string responseJson_ = JsonConvert.SerializeObject(evaluationResult);

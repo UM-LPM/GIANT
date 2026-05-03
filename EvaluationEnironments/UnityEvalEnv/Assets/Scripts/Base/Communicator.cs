@@ -272,6 +272,10 @@ namespace Base
                 yield return null;
             }
 
+            // force cleanup
+            yield return Resources.UnloadUnusedAssets();
+            GC.Collect();
+
             try
             {
                 CommunicatorEvalResponseData evalResponseData = new CommunicatorEvalResponseData() { MatchFitnesses = MatchFitnesses };
