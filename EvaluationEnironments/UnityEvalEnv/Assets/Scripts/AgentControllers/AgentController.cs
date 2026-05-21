@@ -11,10 +11,22 @@ namespace AgentControllers
     }
 
     [Serializable]
-    public abstract class AgentController : ScriptableObject
+    public abstract class AgentController //: ScriptableObject
     {
+        public string name;
         public int AgentControllerId;
         public ControllerType ControllerType;
+
+        public AgentController()
+        {
+        }
+
+        public AgentController(AgentController other)
+        {
+            this.name = other.name;
+            this.AgentControllerId = other.AgentControllerId;
+            this.ControllerType = other.ControllerType;
+        }
 
         public virtual void Initialize(Dictionary<string, object> initParams) { }
 

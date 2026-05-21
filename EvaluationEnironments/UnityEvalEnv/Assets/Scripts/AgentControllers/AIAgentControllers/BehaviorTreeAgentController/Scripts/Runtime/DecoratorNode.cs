@@ -4,10 +4,14 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
     public abstract class DecoratorNode : BTNode {
         [HideInInspector] public BTNode child;
 
-        public override BTNode Clone() {
-            DecoratorNode node = Instantiate(this);
-            node.child = child.Clone();
-            return node;
+        public DecoratorNode(DecoratorNode other) : base(other)
+        {
+            if (other == null)
+                return;
+
+            if (other.child != null) {
+                    this.child = other.child.Clone();
+            }
         }
     }
 }

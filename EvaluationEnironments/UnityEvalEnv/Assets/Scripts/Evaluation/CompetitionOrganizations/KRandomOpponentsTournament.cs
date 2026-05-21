@@ -108,30 +108,6 @@ namespace Evaluators.CompetitionOrganizations
             throw new Exception("Failed to generate valid matches after " + MAX_ATTEMPTS + " attempts!");
         }
 
-        public override void UpdateTeamsScore(List<MatchFitness> competitionMatchFitnesses, List<CompetitionPlayer> players = null)
-        {
-            // 1. Call base UpdateTeamsScore
-            base.UpdateTeamsScore(competitionMatchFitnesses, players);
-
-            // 2. Optional: Update team scores based on their players' ratings (sum of player ratings from each team)
-            if (players != null && players.Count > 0)
-            {
-                foreach (var team in Teams[0])
-                {
-                    double teamRating = 0;
-                    foreach (var individual in team.Individuals)
-                    {
-                        var player = players.FirstOrDefault(p => p.IndividualID == individual.IndividualId);
-                        if (player != null)
-                        {
-                            teamRating += player.GetScore();
-                        }
-                    }
-                    team.Score = teamRating;
-                }
-            }
-        }
-
         public override bool IsCompetitionFinished()
         {
             if (ExecutedRounds == 1)

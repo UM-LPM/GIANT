@@ -12,6 +12,11 @@
     {
         public HealthLevel healthLevel;
 
+        public HealthLevelBellow(HealthLevelBellow other) : base(other)
+        {
+            this.healthLevel = other.healthLevel;
+        }
+
         public override void Init()
         {
             return;
@@ -45,6 +50,11 @@
                 default:
                     return 0;
             }
+        }
+
+        public override ADiSComponent Clone()
+        {
+            return new HealthLevelBellow(this);
         }
 
     }

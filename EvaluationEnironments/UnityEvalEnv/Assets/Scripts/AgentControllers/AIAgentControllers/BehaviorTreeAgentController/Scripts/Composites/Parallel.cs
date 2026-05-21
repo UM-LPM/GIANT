@@ -5,6 +5,14 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
     public class Parallel : CompositeNode {
         List<State> childrenLeftToExecute = new List<State>();
 
+        public Parallel(Parallel other) : base(other)
+        {
+            if (other == null)
+                return;
+
+            this.childrenLeftToExecute = new List<State>(other.childrenLeftToExecute);
+        }
+
         protected override void OnStart() {
             childrenLeftToExecute.Clear();
             children.ForEach(a => {
@@ -42,6 +50,11 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
                     children[i].Abort();
                 }
             }
+        }
+
+        public override BTNode Clone()
+        {
+            return new Parallel(this);
         }
     }
 }

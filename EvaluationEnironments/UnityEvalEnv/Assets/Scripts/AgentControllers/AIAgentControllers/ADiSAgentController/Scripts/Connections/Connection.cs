@@ -11,6 +11,23 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
         public List<Action> Actions = new List<Action>();
         public double Weight = 1.0;
 
+        public Connection(Connection other) : base(other)
+        {
+            this.Weight = other.Weight;
+            this.Actions = new List<Action>();
+            foreach (var action in other.Actions)
+            {
+                this.Actions.Add(action.Clone() as Action);
+            }
+
+            this.ActivatorConnections = new List<ActivatorConnection>();
+            foreach (var activatorConnection in other.ActivatorConnections)
+            {
+                var activatorClone = activatorConnection.Activator.Clone() as Activator;
+                this.ActivatorConnections.Add(new ActivatorConnection(activatorConnection));
+            }
+        }
+
         public bool IsActivated()
         {
             foreach (var activatorConnection in ActivatorConnections)
@@ -52,29 +69,7 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
 
         public override ADiSComponent Clone()
         {
-            var clone = Instantiate(this);
-            clone.Weight = Weight;
-
-            clone.ActivatorConnections = new List<ActivatorConnection>();
-            foreach (var activatorConnection in ActivatorConnections)
-            {
-                var activatorClone = activatorConnection.Activator.Clone() as Activator;
-                var activatorConnectionClone = new ActivatorConnection
-                {
-                    Activator = activatorClone,
-                    IsNegated = activatorConnection.IsNegated
-                };
-                clone.ActivatorConnections.Add(activatorConnectionClone);
-            }
-
-            clone.Actions = new List<Action>();
-            foreach (var action in Actions)
-            {
-                var actionClone = action.Clone() as Action;
-                clone.Actions.Add(actionClone);
-            }
-
-            return clone;
+            return new Connection(this);
         }
 
         public override void Init()

@@ -13,6 +13,16 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController.TicTac
         private TicTacToeGrid grid;
         private TicTacToeAgentComponent ticTacToeAgentComponent;
 
+        public IsCellMarkedByAgent(IsCellMarkedByAgent other) : base(other)
+        {
+            if (other == null)
+                return;
+
+            this.gridPositionX = other.gridPositionX;
+            this.gridPositionY = other.gridPositionY;
+            this.gridPositionZ = other.gridPositionZ;
+        }
+
         protected override void OnStart()
         {
         }
@@ -35,6 +45,11 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController.TicTac
                 ticTacToeAgentComponent = context.gameObject.GetComponent<TicTacToeAgentComponent>();
 
             return grid.IsCellOccupiedByAgent(gridPositionX, gridPositionY, gridPositionZ, ticTacToeAgentComponent.IndividualID);
+        }
+
+        public override BTNode Clone()
+        {
+            return new IsCellMarkedByAgent(this);
         }
     }
 }

@@ -185,11 +185,11 @@ namespace Configuration
 
         void ConfigureDebugModes()
         {
-            if(MainConfiguration == null || MainConfiguration.DebugCategories == null || MainConfiguration.DebugCategories.Length == 0)
+            /*if(MainConfiguration == null || MainConfiguration.DebugCategories == null || MainConfiguration.DebugCategories.Length == 0)
             {
                 DebugSystem.EnableAll(true);
                 return;
-            }
+            }*/
             DebugSystem.EnableAll(false);
 
             foreach (var category in MainConfiguration.DebugCategories)

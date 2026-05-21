@@ -50,6 +50,14 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
         private TeamIdentifier baseGameObjectTeam;
         private TeamIdentifier targetGameObjectTeam;
 
+        public RayHitObject(RayHitObject other) : base(other)
+        {
+            this.targetGameObject = other.targetGameObject;
+            this.side = other.side;
+            this.rayIndex = other.rayIndex;
+            this.targetTeamType = other.targetTeamType;
+        }
+
         public override void Init()
         {
             raySensor = context.gameObject.GetComponentInChildren<RaySensorBase>();
@@ -164,6 +172,11 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
                 }
             }
             return true;
+        }
+
+        public override ADiSComponent Clone()
+        {
+            return new RayHitObject(this);
         }
     }
     public class OnTargetHitEventargs : EventArgs

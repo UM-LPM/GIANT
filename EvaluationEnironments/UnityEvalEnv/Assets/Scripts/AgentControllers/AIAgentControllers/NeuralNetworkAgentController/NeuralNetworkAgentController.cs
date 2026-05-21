@@ -19,6 +19,13 @@ namespace AgentControllers.AIAgentControllers.NeuralNetworkAgentController
         private Model Model;
         private IWorker Worker;
 
+        public NeuralNetworkAgentController(NeuralNetworkAgentController other)
+        {
+            this.ModelAsset = other.ModelAsset;
+            if (other.ActionObservationProcessor != null)
+                this.ActionObservationProcessor = other.ActionObservationProcessor.Clone();
+        }
+
         public override void Initialize(Dictionary<string, object> initParams)
         {
             if (ModelAsset == null)
@@ -44,7 +51,7 @@ namespace AgentControllers.AIAgentControllers.NeuralNetworkAgentController
 
         override public AgentController Clone()
         {
-            NeuralNetworkAgentController clone = Instantiate(this);
+            NeuralNetworkAgentController clone = new NeuralNetworkAgentController(this);
             clone.ModelAsset = ModelAsset;
             if (ActionObservationProcessor != null)
                 clone.ActionObservationProcessor = ActionObservationProcessor.Clone();

@@ -29,7 +29,7 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
             wnd.minSize = new Vector2(800, 600);
         }
 
-        [OnOpenAsset]
+        /*[OnOpenAsset]
         public static bool OnOpenAsset(int instanceId, int line)
         {
             if (Selection.activeObject is ADiSAgentController)
@@ -193,6 +193,6 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
             AssetDatabase.SaveAssets();
             Selection.activeObject = adis;
             EditorGUIUtility.PingObject(adis);
-        }
+        }*/
     }
 }

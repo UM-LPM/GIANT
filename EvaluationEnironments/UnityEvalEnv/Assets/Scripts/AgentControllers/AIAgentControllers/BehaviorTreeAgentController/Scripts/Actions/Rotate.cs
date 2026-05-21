@@ -16,6 +16,15 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
         public RotateDirection rotateDirection = RotateDirection.Random;
 
         private Util Util;
+
+        public Rotate(Rotate other) : base(other)
+        {
+            if (other == null)
+                return;
+
+            this.rotateDirection = other.rotateDirection;
+        }
+
         protected override void OnStart()
         {
             Util = context.gameObject.GetComponentInParent<Util>();
@@ -31,6 +40,11 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
             blackboard.actionsOut.AddDiscreteAction("rotateDirection", rotateDirection == RotateDirection.Random ? Util.NextIntAC(this.context.transform.GetInstanceID(), 3) : (int)rotateDirection);
 
             return State.Success;
+        }
+
+        public override BTNode Clone()
+        {
+            return new Rotate(this);
         }
     }
 }

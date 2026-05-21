@@ -15,6 +15,17 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
         public List<BTNode> Nodes = new List<BTNode>();
         public Blackboard Blackboard = new Blackboard(); // Blackboard for all Nodes
 
+        public BehaviorTreeAgentController(BehaviorTreeAgentController other)
+        {
+            if (other == null)
+                return;
+
+            RootNode = other.RootNode;
+            TreeState = other.TreeState;
+            Nodes = new List<BTNode>(other.Nodes);
+            Blackboard = other.Blackboard;
+        }
+
         public override void GetActions(in ActionBuffer actionsOut)
         {
             UpdateTree(actionsOut);
@@ -22,7 +33,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 
         public override AgentController Clone()
         {
-            BehaviorTreeAgentController tree = Instantiate(this);
+            BehaviorTreeAgentController tree = new BehaviorTreeAgentController(this);
             tree.RootNode = tree.RootNode.Clone();
             tree.Nodes = new List<BTNode>();
             Traverse(tree.RootNode, (n) => {
@@ -137,12 +148,12 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 
         public override void AddAgentControllerToSO(ScriptableObject parent)
         {
-#if UNITY_EDITOR
+/*#if UNITY_EDITOR
             foreach (var node in Nodes)
             {
                 AssetDatabase.AddObjectToAsset(node, parent);
             }
-#endif
+#endif*/
         }
 
         #region Editor Compatibility
@@ -150,31 +161,32 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 
         public BTNode CreateNode(System.Type type)
         {
-            BTNode node = ScriptableObject.CreateInstance(type) as BTNode;
+            throw new NotImplementedException("Not implemented.");
+            /*BTNode node = ScriptableObject.CreateInstance(type) as BTNode;
             node.name = type.Name;
             node.guid = GUID.Generate().ToString();
 
-            Undo.RecordObject(this, "Behaviour Tree (CreateNode)");
+            //Undo.RecordObject(this, "Behaviour Tree (CreateNode)");
             Nodes.Add(node);
 
             if (!Application.isPlaying)
             {
-                AssetDatabase.AddObjectToAsset(node, this);
+                //AssetDatabase.AddObjectToAsset(node, this);
             }
 
-            Undo.RegisterCreatedObjectUndo(node, "Behaviour Tree (CreateNode)");
+            //Undo.RegisterCreatedObjectUndo(node, "Behaviour Tree (CreateNode)");
 
             AssetDatabase.SaveAssets();
-            return node;
+            return node;*/
         }
 
         public void DeleteNode(BTNode node)
         {
-            Undo.RecordObject(this, "Behaviour Tree (DeleteNode)");
+            //Undo.RecordObject(this, "Behaviour Tree (DeleteNode)");
             Nodes.Remove(node);
 
             //AssetDatabase.RemoveObjectFromAsset(node);
-            Undo.DestroyObjectImmediate(node);
+            //Undo.DestroyObjectImmediate(node);
 
             AssetDatabase.SaveAssets();
         }
@@ -183,23 +195,23 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
         {
             if (parent is DecoratorNode decorator)
             {
-                Undo.RecordObject(decorator, "Behaviour Tree (AddChild)");
+                //Undo.RecordObject(decorator, "Behaviour Tree (AddChild)");
                 decorator.child = child;
-                EditorUtility.SetDirty(decorator);
+                //EditorUtility.SetDirty(decorator);
             }
 
             if (parent is RootNode rootNode)
             {
-                Undo.RecordObject(rootNode, "Behaviour Tree (AddChild)");
+                //Undo.RecordObject(rootNode, "Behaviour Tree (AddChild)");
                 rootNode.child = child;
-                EditorUtility.SetDirty(rootNode);
+                //EditorUtility.SetDirty(rootNode);
             }
 
             if (parent is CompositeNode composite)
             {
-                Undo.RecordObject(composite, "Behaviour Tree (AddChild)");
+                //Undo.RecordObject(composite, "Behaviour Tree (AddChild)");
                 composite.children.Add(child);
-                EditorUtility.SetDirty(composite);
+                //EditorUtility.SetDirty(composite);
             }
         }
 
@@ -207,23 +219,23 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
         {
             if (parent is DecoratorNode decorator)
             {
-                Undo.RecordObject(decorator, "Behaviour Tree (RemoveChild)");
+                //Undo.RecordObject(decorator, "Behaviour Tree (RemoveChild)");
                 decorator.child = null;
-                EditorUtility.SetDirty(decorator);
+                //EditorUtility.SetDirty(decorator);
             }
 
             if (parent is RootNode rootNode)
             {
-                Undo.RecordObject(rootNode, "Behaviour Tree (RemoveChild)");
+                //Undo.RecordObject(rootNode, "Behaviour Tree (RemoveChild)");
                 rootNode.child = null;
-                EditorUtility.SetDirty(rootNode);
+                //EditorUtility.SetDirty(rootNode);
             }
 
             if (parent is CompositeNode composite)
             {
-                Undo.RecordObject(composite, "Behaviour Tree (RemoveChild)");
+                //Undo.RecordObject(composite, "Behaviour Tree (RemoveChild)");
                 composite.children.Remove(child);
-                EditorUtility.SetDirty(composite);
+                //EditorUtility.SetDirty(composite);
             }
         }
 #endif

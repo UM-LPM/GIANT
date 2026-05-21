@@ -5,6 +5,11 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
     {
         public int shoot = 1;
 
+        public Shoot(Shoot other) : base(other)
+        {
+            this.shoot = other.shoot;
+        }
+
         public override void Init()
         {
             return;
@@ -13,6 +18,11 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
         public override void Execute(ActionBuffer actionsOut)
         {
             actionsOut.AddDiscreteAction("shoot", shoot);
+        }
+
+        public override ADiSComponent Clone()
+        {
+            return new Shoot(this);
         }
     }
 }

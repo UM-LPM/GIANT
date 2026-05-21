@@ -87,6 +87,10 @@ namespace Evaluators.CompetitionOrganizations
             bool usePlayers = players != null && players.Count > 0;
 
             List<MatchFitness> tournamentMatchFitnessesCopy = new List<MatchFitness>(tournamentMatchFitnesses);
+            
+            // Sort matches by MatchId
+            tournamentMatchFitnessesCopy = tournamentMatchFitnessesCopy.OrderBy(mf => mf.MatchId).ToList();
+
             // Add played TournamentMatches to the list of played TournamentMatches (add only matchFitnesses that are not dummy)
             PlayedMatches.AddRange(tournamentMatchFitnessesCopy.FindAll(matchFitness => !matchFitness.IsDummy));
 

@@ -5,6 +5,14 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController.DodgeB
     {
 
         public int pickupBall = 1;
+
+        public PickUpBall(PickUpBall other) : base(other)
+        {
+            if (other == null)
+                return;
+
+            this.pickupBall = other.pickupBall;
+        }
         protected override void OnStart()
         {
         }
@@ -19,6 +27,11 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController.DodgeB
             blackboard.actionsOut.AddDiscreteAction("pickupBall", pickupBall);
 
             return State.Success;
+        }
+
+        public override BTNode Clone()
+        {
+            return new PickUpBall(this);
         }
     }
 }

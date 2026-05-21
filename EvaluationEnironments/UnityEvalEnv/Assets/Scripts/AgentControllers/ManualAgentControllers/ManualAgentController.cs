@@ -6,5 +6,10 @@ namespace AgentControllers
         {
             ControllerType = ControllerType.Manual;
         }
+
+        public ManualAgentController(ManualAgentController other) : base(other)
+        {
+            ControllerType = other.ControllerType;
+        }
     }
 }

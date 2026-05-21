@@ -6,6 +6,14 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController.BombCl
 
         public int placeBomb = 1;
 
+        public PlaceBomb(PlaceBomb other) : base(other)
+        {
+            if (other == null)
+                return;
+
+            this.placeBomb = other.placeBomb;
+        }
+
         protected override void OnStart()
         {
         }
@@ -20,6 +28,11 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController.BombCl
             blackboard.actionsOut.AddDiscreteAction("placeBomb", placeBomb);
 
             return State.Success;
+        }
+
+        public override BTNode Clone()
+        {
+            return new PlaceBomb(this);
         }
     }
 }

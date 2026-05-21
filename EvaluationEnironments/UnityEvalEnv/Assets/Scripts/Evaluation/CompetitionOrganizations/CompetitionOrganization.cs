@@ -53,7 +53,13 @@ namespace Evaluators.CompetitionOrganizations
 
         public virtual void UpdateTeamsScore(List<MatchFitness> competitionMatchFitnesses, List<CompetitionPlayer> players = null)
         {
+            if (UpdateTeamsScoreFromPlayerRatings(players))
+                return;
+
             var competitionMatchFitnessesCopy = new List<MatchFitness>(competitionMatchFitnesses);
+
+            // Sort matches by MatchId
+            competitionMatchFitnessesCopy = competitionMatchFitnessesCopy.OrderBy(mf => mf.MatchId).ToList();
 
             // Add played matches (ignore dummy matches)
             PlayedMatches.AddRange(competitionMatchFitnessesCopy.Where(mf => !mf.IsDummy));
@@ -117,6 +123,30 @@ namespace Evaluators.CompetitionOrganizations
 
             // Increment the number of executed rounds
             ExecutedRounds++;
+        }
+
+        public bool UpdateTeamsScoreFromPlayerRatings(List<CompetitionPlayer> players)
+        {
+            if (players == null || players.Count == 0)
+                return false;
+       
+            foreach (var team in Teams[0])
+            {
+                double teamRating = 0;
+                foreach (var individual in team.Individuals)
+                {
+                    var player = players.FirstOrDefault(p => p.IndividualID == individual.IndividualId);
+                    if (player != null)
+                    {
+                        teamRating += player.GetScore();
+                    }
+                }
+                team.Score = teamRating;
+            }
+
+            ExecutedRounds++;
+
+            return true;
         }
 
         public virtual bool IsCompetitionFinished()

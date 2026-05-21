@@ -34,7 +34,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
             wnd.minSize = new Vector2(800, 600);
         }
 
-        [OnOpenAsset]
+        /*[OnOpenAsset]
         public static bool OnOpenAsset(int instanceId, int line) {
             if (Selection.activeObject is BehaviorTreeAgentController) {
                 OpenWindow();
@@ -188,6 +188,6 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
             AssetDatabase.SaveAssets();
             Selection.activeObject = tree;
             EditorGUIUtility.PingObject(tree);
-        }
+        }*/
     }
 }

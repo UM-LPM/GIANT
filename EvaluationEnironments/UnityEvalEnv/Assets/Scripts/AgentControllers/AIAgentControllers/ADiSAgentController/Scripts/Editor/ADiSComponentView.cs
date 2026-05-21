@@ -89,16 +89,16 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
         {
             Label descriptionLabel = this.Q<Label>("description");
             descriptionLabel.bindingPath = "description";
-            descriptionLabel.Bind(new SerializedObject(component));
+            //descriptionLabel.Bind(new SerializedObject(component));
         }
 
         public override void SetPosition(Rect newPos)
         {
             base.SetPosition(newPos);
-            Undo.RecordObject(component, "ADiS (Set Position");
+            //Undo.RecordObject(component, "ADiS (Set Position");
             component.position.x = newPos.xMin;
             component.position.y = newPos.yMin;
-            EditorUtility.SetDirty(component);
+            //EditorUtility.SetDirty(component);
         }
 
         public override void OnSelected()

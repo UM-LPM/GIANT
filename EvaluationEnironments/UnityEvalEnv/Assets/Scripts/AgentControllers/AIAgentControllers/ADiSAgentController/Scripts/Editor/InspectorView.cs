@@ -20,7 +20,7 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
 
             UnityEngine.Object.DestroyImmediate(editor);
 
-            editor = Editor.CreateEditor(nodeView.component);
+            //editor = Editor.CreateEditor(nodeView.component);
             IMGUIContainer container = new IMGUIContainer(() => {
                 if (editor && editor.target)
                 {

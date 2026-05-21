@@ -4,6 +4,10 @@ using UnityEngine;
 
 namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
     public class Failure : DecoratorNode {
+        public Failure(Failure other) : base(other)
+        {
+        }
+
         protected override void OnStart() {
         }
 
@@ -16,6 +20,11 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
                 return State.Failure;
             }
             return state;
+        }
+
+        public override BTNode Clone()
+        {
+            return new Failure(this);
         }
     }
 }

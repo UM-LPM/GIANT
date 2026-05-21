@@ -54,7 +54,11 @@ namespace Base
 
         private void Awake()
         {
-            if(IndividualsSingle != null && CoordinatorSetup == ComponentSetupType.MOCK)
+            Application.SetStackTraceLogType(LogType.Warning, StackTraceLogType.None);
+            Application.SetStackTraceLogType(LogType.Error, StackTraceLogType.ScriptOnly);
+            Application.SetStackTraceLogType(LogType.Exception, StackTraceLogType.ScriptOnly);
+
+            if (IndividualsSingle != null && CoordinatorSetup == ComponentSetupType.MOCK)
             {
                 Individuals = new Individual[1][];
                 Individuals[0] = IndividualsSingle;

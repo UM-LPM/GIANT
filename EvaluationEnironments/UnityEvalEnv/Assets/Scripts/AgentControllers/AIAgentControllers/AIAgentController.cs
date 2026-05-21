@@ -9,5 +9,10 @@ namespace AgentControllers.AIAgentControllers
         {
             ControllerType = ControllerType.AI;
         }
+
+        public AIAgentController(AIAgentController other) : base(other)
+        {
+            ControllerType = other.ControllerType;
+        }
     }
 }

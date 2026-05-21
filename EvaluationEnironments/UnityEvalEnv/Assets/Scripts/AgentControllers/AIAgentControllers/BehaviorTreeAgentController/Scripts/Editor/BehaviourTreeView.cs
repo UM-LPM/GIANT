@@ -67,7 +67,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
             // Automatically create RootNode if behaviour Tree is empty
             if (tree.RootNode == null) {
                 tree.RootNode = tree.CreateNode(typeof(RootNode)) as RootNode;
-                EditorUtility.SetDirty(tree);
+                //EditorUtility.SetDirty(tree);
                 AssetDatabase.SaveAssets();
             }
 

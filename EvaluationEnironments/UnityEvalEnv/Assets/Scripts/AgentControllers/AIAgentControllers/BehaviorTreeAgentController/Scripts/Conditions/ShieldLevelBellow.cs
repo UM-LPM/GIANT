@@ -11,6 +11,14 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
     {
         public ShieldLevel shieldLevel;
 
+        public ShieldLevelBellow(ShieldLevelBellow other) : base(other)
+        {
+            if (other == null)
+                return;
+
+            this.shieldLevel = other.shieldLevel;
+        }
+
         protected override void OnStart()
         {
         }
@@ -49,5 +57,9 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
             }
         }
 
+        public override BTNode Clone()
+        {
+            return new ShieldLevelBellow(this);
+        }
     }
 }

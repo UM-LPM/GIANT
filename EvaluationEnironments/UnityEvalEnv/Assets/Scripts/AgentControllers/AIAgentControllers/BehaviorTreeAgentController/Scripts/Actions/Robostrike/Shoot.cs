@@ -5,6 +5,15 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController.Robost
     {
 
         public int shoot = 1;
+
+        public Shoot(Shoot other) : base(other)
+        {
+            if (other == null)
+                return;
+
+            this.shoot = other.shoot;
+        }
+
         protected override void OnStart()
         {
         }
@@ -19,6 +28,11 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController.Robost
             blackboard.actionsOut.AddDiscreteAction("shoot", shoot);
 
             return State.Success;
+        }
+
+        public override BTNode Clone()
+        {
+            return new Shoot(this);
         }
     }
 }

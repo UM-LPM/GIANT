@@ -7,6 +7,11 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
         public RotateDirection rotateDirection = RotateDirection.Random;
         private Util Util;
 
+        public Rotate(Rotate other) : base(other)
+        {
+            this.rotateDirection = other.rotateDirection;
+        }
+
         public override void Init()
         {
             Util = context.gameObject.GetComponentInParent<Util>();
@@ -15,6 +20,11 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
         public override void Execute(ActionBuffer actionsOut)
         {
             actionsOut.AddDiscreteAction("rotateDirection", rotateDirection == RotateDirection.Random ? Util.NextIntAC(context.transform.GetInstanceID(), 3) : (int)rotateDirection);
+        }
+
+        public override ADiSComponent Clone()
+        {
+            return new Rotate(this);
         }
     }
 

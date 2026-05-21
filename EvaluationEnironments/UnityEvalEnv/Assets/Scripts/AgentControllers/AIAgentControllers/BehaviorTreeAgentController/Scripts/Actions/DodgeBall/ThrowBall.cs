@@ -5,6 +5,15 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController.DodgeB
     {
 
         public int throwBall = 1;
+
+        public ThrowBall(ThrowBall other) : base(other)
+        {
+            if (other == null)
+                return;
+
+            this.throwBall = other.throwBall;
+        }
+
         protected override void OnStart()
         {
         }
@@ -19,6 +28,11 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController.DodgeB
             blackboard.actionsOut.AddDiscreteAction("throwBall", throwBall);
 
             return State.Success;
+        }
+
+        public override BTNode Clone()
+        {
+            return new ThrowBall(this);
         }
     }
 }

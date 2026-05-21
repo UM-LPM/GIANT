@@ -3,6 +3,13 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
     public class Sequencer : CompositeNode {
         protected int current;
 
+        public Sequencer(Sequencer other) : base(other)
+        {
+            if (other == null)
+                return;
+
+            this.current = other.current;
+        }
         protected override void OnStart() {
             current = 0;
         }
@@ -26,6 +33,11 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
             }
 
             return State.Success;
+        }
+
+        public override BTNode Clone()
+        {
+            return new Sequencer(this);
         }
     }
 }

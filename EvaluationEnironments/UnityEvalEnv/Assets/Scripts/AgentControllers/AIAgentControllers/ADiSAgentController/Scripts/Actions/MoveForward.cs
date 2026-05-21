@@ -7,6 +7,11 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
         public MoveForwardDirection moveForwardDirection = MoveForwardDirection.Random;
         private Util Util;
 
+        public MoveForward(MoveForward other) : base(other)
+        {
+            this.moveForwardDirection = other.moveForwardDirection;
+        }
+
         public override void Init()
         {
             Util = context.gameObject.GetComponentInParent<Util>();
@@ -15,6 +20,11 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
         public override void Execute(ActionBuffer actionsOut)
         {
             actionsOut.AddDiscreteAction("moveForwardDirection", moveForwardDirection == MoveForwardDirection.Random ? Util.NextIntAC(context.transform.GetInstanceID(), 3) : (int)moveForwardDirection);
+        }
+
+        public override ADiSComponent Clone()
+        {
+            return new MoveForward(this);
         }
     }
 

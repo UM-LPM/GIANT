@@ -5,6 +5,9 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 {
     public class AgentInBallKickingRange : ConditionNode
     {
+        public AgentInBallKickingRange(AgentInBallKickingRange other) : base(other)
+        {
+        }
         protected override void OnStart()
         {
         }
@@ -22,6 +25,11 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
             }
 
             return false;
+        }
+
+        public override BTNode Clone()
+        {
+            return new AgentInBallKickingRange(this);
         }
     }
 }

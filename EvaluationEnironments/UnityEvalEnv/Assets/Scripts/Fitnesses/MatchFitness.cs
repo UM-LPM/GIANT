@@ -18,11 +18,26 @@ namespace Fitnesses
 
         public void AddAgentFitness(AgentComponent agent, bool includeNodeCallFrequencyCounts)
         {
-            TeamFitness teamFitness = TeamFitnesses.Find(tf => tf.TeamID == agent.TeamIdentifier.TeamID);
-            if(teamFitness == null)
+            int teamId = agent.TeamIdentifier.TeamID;
+
+            TeamFitness teamFitness = null;
+
+            for (int i = 0; i < TeamFitnesses.Count; i++)
             {
-                teamFitness = new TeamFitness();
-                teamFitness.TeamID = agent.TeamIdentifier.TeamID;
+                if (TeamFitnesses[i].TeamID == teamId)
+                {
+                    teamFitness = TeamFitnesses[i];
+                    break;
+                }
+            }
+
+            if (teamFitness == null)
+            {
+                teamFitness = new TeamFitness
+                {
+                    TeamID = teamId
+                };
+
                 TeamFitnesses.Add(teamFitness);
             }
 
@@ -31,96 +46,202 @@ namespace Fitnesses
 
         public float[] GetTeamFitnesses()
         {
-            float[] teamFitnesses = new float[TeamFitnesses.Count];
-            for(int i = 0; i < TeamFitnesses.Count; i++)
+            int count = TeamFitnesses.Count;
+
+            float[] result = new float[count];
+
+            for (int i = 0; i < count; i++)
             {
-                teamFitnesses[i] = TeamFitnesses[i].GetTeamFitness();
+                result[i] = TeamFitnesses[i].GetTeamFitness();
             }
 
-            return teamFitnesses;
+            return result;
         }
 
-        public bool ContainsSameTeams(MatchFitness matchFitness2)
+        /// <summary>
+        /// Fast deterministic key for grouping matches with same teams.
+        /// </summary>
+        public string GetTeamsKey()
         {
-            if (TeamFitnesses.Count != matchFitness2.TeamFitnesses.Count)
+            int count = TeamFitnesses.Count;
+
+            int[] ids = new int[count];
+
+            for (int i = 0; i < count; i++)
             {
-                return false;
+                ids[i] = TeamFitnesses[i].TeamID;
             }
 
-            foreach (var teamFitness1 in TeamFitnesses)
-            {
-                if (!matchFitness2.TeamFitnesses.Exists(tf => tf.TeamID == teamFitness1.TeamID))
-                {
-                    return false;
-                }
-            }
+            System.Array.Sort(ids);
 
-            return true;
+            return string.Join("_", ids);
         }
 
-        public static void GetMatchFitness(List<MatchFitness> competitionMatchFitnesses, MatchFitness matchFitness, List<MatchFitness> matchFitnesses, List<MatchFitness> matchFitnessesSwaped, bool swapCompetitionMatchTeams)
+        public static void GetMatchFitness(
+            List<MatchFitness> competitionMatchFitnesses,
+            MatchFitness matchFitness,
+            List<MatchFitness> matchFitnesses,
+            List<MatchFitness> matchFitnessesSwaped,
+            bool swapCompetitionMatchTeams)
         {
-            matchFitnesses.Add(competitionMatchFitnesses[0]);
+            // Take first match
+            MatchFitness firstMatch = competitionMatchFitnesses[0];
+
+            matchFitnesses.Add(firstMatch);
+
+            // Faster than Remove(object)
             competitionMatchFitnesses.RemoveAt(0);
 
-            if (swapCompetitionMatchTeams)
+            // No swap -> direct copy
+            if (!swapCompetitionMatchTeams)
             {
-                // Find all matchFitnesses with the same TeamIDs
-                matchFitnessesSwaped = competitionMatchFitnesses.FindAll(match => matchFitnesses[0].ContainsSameTeams(match));
+                matchFitness.MatchId = firstMatch.MatchId;
+                matchFitness.MatchName = firstMatch.MatchName;
+                matchFitness.IsDummy = firstMatch.IsDummy;
+                matchFitness.TeamFitnesses = firstMatch.TeamFitnesses;
 
-                if (matchFitnessesSwaped.Count > 0)
+                matchFitnesses.Clear();
+                matchFitnessesSwaped.Clear();
+
+                return;
+            }
+
+            // =========================================================
+            // Build fast lookup for first match team IDs
+            // =========================================================
+
+            int teamCount = firstMatch.TeamFitnesses.Count;
+
+            HashSet<int> firstMatchTeamIds = new HashSet<int>(teamCount);
+
+            for (int i = 0; i < teamCount; i++)
+            {
+                firstMatchTeamIds.Add(firstMatch.TeamFitnesses[i].TeamID);
+            }
+
+            // =========================================================
+            // Find matches with same teams
+            // (iterate backwards so RemoveAt is safe)
+            // =========================================================
+
+            for (int i = competitionMatchFitnesses.Count - 1; i >= 0; i--)
+            {
+                MatchFitness candidate = competitionMatchFitnesses[i];
+
+                if (candidate.TeamFitnesses.Count != teamCount)
                 {
-                    // Add all matchFitnesses with the same TeamIDs to the list of matchFitnesses
-                    matchFitnesses.AddRange(matchFitnessesSwaped);
+                    continue;
+                }
 
-                    // Remove all matchFitnesses with the same TeamIDs from the list of competition matchFitnesses
-                    foreach (MatchFitness matchSwaped in matchFitnessesSwaped)
+                bool sameTeams = true;
+
+                for (int t = 0; t < candidate.TeamFitnesses.Count; t++)
+                {
+                    if (!firstMatchTeamIds.Contains(candidate.TeamFitnesses[t].TeamID))
                     {
-                        competitionMatchFitnesses.Remove(matchSwaped);
-                    }
-
-                    // Join all matchFitnesses with the same TeamIDs
-                    matchFitness.MatchName = matchFitnesses[0].MatchName;
-                    matchFitness.IsDummy = matchFitnesses[0].IsDummy;
-                    matchFitness.TeamFitnesses = new List<TeamFitness>();
-                    foreach (MatchFitness matchJoined in matchFitnesses)
-                    {
-                        foreach (TeamFitness teamFitness in matchJoined.TeamFitnesses)
-                        {
-                            TeamFitness teamFitnessJoined = matchFitness.TeamFitnesses.Find(tf => tf.TeamID == teamFitness.TeamID);
-                            if (teamFitnessJoined == null)
-                            {
-                                teamFitnessJoined = new TeamFitness();
-                                teamFitnessJoined.TeamID = teamFitness.TeamID;
-                                matchFitness.TeamFitnesses.Add(teamFitnessJoined);
-                            }
-
-                            foreach (IndividualFitness individualFitness in teamFitness.IndividualFitness)
-                            {
-                                IndividualFitness individualFitnessJoined =
-                                    teamFitnessJoined.IndividualFitness.Find(ifit => ifit.IndividualID == individualFitness.IndividualID);
-                                if (individualFitnessJoined == null)
-                                {
-                                    individualFitnessJoined = new IndividualFitness();
-                                    individualFitnessJoined.IndividualID = individualFitness.IndividualID;
-
-                                    teamFitnessJoined.IndividualFitness.Add(individualFitnessJoined);
-                                }
-
-                                individualFitnessJoined.AddIndividualFitness(individualFitness);
-                            }
-                        }
+                        sameTeams = false;
+                        break;
                     }
                 }
+
+                if (!sameTeams)
+                {
+                    continue;
+                }
+
+                matchFitnessesSwaped.Add(candidate);
+                matchFitnesses.Add(candidate);
+
+                // MUCH faster than Remove(object)
+                competitionMatchFitnesses.RemoveAt(i);
+            }
+
+            // =========================================================
+            // Merge all matches
+            // =========================================================
+
+            matchFitness.MatchId = firstMatch.MatchId;
+            matchFitness.MatchName = firstMatch.MatchName;
+            matchFitness.IsDummy = firstMatch.IsDummy;
+
+            // Reuse existing list if possible
+            if (matchFitness.TeamFitnesses == null)
+            {
+                matchFitness.TeamFitnesses = new List<TeamFitness>();
             }
             else
             {
-                matchFitness.MatchName = matchFitnesses[0].MatchName;
-                matchFitness.IsDummy = matchFitnesses[0].IsDummy;
-                matchFitness.TeamFitnesses = matchFitnesses[0].TeamFitnesses;
+                matchFitness.TeamFitnesses.Clear();
             }
 
-            // Clear current data
+            // TeamID -> merged TeamFitness
+            Dictionary<int, TeamFitness> teamMap =
+                new Dictionary<int, TeamFitness>();
+
+            // TeamID -> (IndividualID -> IndividualFitness)
+            Dictionary<int, Dictionary<int, IndividualFitness>> individualMaps =
+                new Dictionary<int, Dictionary<int, IndividualFitness>>();
+
+            for (int m = 0; m < matchFitnesses.Count; m++)
+            {
+                MatchFitness sourceMatch = matchFitnesses[m];
+
+                for (int t = 0; t < sourceMatch.TeamFitnesses.Count; t++)
+                {
+                    TeamFitness sourceTeam = sourceMatch.TeamFitnesses[t];
+
+                    if (!teamMap.TryGetValue(sourceTeam.TeamID, out TeamFitness mergedTeam))
+                    {
+                        mergedTeam = new TeamFitness
+                        {
+                            TeamID = sourceTeam.TeamID
+                        };
+
+                        teamMap.Add(sourceTeam.TeamID, mergedTeam);
+
+                        individualMaps.Add(
+                            sourceTeam.TeamID,
+                            new Dictionary<int, IndividualFitness>());
+
+                        matchFitness.TeamFitnesses.Add(mergedTeam);
+                    }
+
+                    Dictionary<int, IndividualFitness> individualMap =
+                        individualMaps[sourceTeam.TeamID];
+
+                    List<IndividualFitness> sourceIndividuals =
+                        sourceTeam.IndividualFitness;
+
+                    for (int j = 0; j < sourceIndividuals.Count; j++)
+                    {
+                        IndividualFitness sourceIndividual =
+                            sourceIndividuals[j];
+
+                        if (!individualMap.TryGetValue(
+                            sourceIndividual.IndividualID,
+                            out IndividualFitness mergedIndividual))
+                        {
+                            mergedIndividual = new IndividualFitness
+                            {
+                                IndividualID = sourceIndividual.IndividualID
+                            };
+
+                            individualMap.Add(
+                                sourceIndividual.IndividualID,
+                                mergedIndividual);
+
+                            mergedTeam.IndividualFitness.Add(mergedIndividual);
+                        }
+
+                        mergedIndividual.AddIndividualFitness(sourceIndividual);
+                    }
+                }
+            }
+
+            // =========================================================
+            // Cleanup
+            // =========================================================
+
             matchFitnesses.Clear();
             matchFitnessesSwaped.Clear();
         }

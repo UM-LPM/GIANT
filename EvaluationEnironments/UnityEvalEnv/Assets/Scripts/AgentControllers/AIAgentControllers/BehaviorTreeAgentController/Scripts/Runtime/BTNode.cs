@@ -14,6 +14,17 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
         [HideInInspector] public Context context;
         public int callFrequencyCount;
 
+        public BTNode(BTNode other) : base(other)
+        {
+            if (other == null)
+                return;
+            this.state = other.state;
+            this.started = other.started;
+            this.blackboard = other.blackboard;
+            this.context = other.context; //Context.CreateFromGameObject(other.context.gameObject);
+            this.callFrequencyCount = other.callFrequencyCount;
+        }
+
         public State Update() {
 
             if (!started) {
@@ -34,9 +45,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
             return state;
         }
 
-        public virtual BTNode Clone() {
-            return Instantiate(this);
-        }
+        public abstract BTNode Clone();
 
         public void Abort() {
             BehaviorTreeAgentController.Traverse(this, (node) => {

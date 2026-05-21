@@ -5,6 +5,9 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 {
     public class BallInHand : ConditionNode
     {
+        public BallInHand(BallInHand other) : base(other)
+        {
+        }
         protected override void OnStart()
         {
         }
@@ -21,8 +24,12 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
                 // Check if the agent has the ball in hand
                 return agentComponent.BallInHand;
             }
-            
+
             return false;
+        }
+        override public BTNode Clone()
+        {
+            return new BallInHand(this);
         }
     }
 }

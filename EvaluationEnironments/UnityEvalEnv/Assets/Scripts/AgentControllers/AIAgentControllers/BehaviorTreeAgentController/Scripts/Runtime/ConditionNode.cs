@@ -47,6 +47,11 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
             "Object39",
             "Object40"
         };
+        
+        public ConditionNode(ConditionNode other) : base(other)
+        {
+        }
+
         protected abstract bool CheckConditions();
 
         protected override State OnUpdate() {

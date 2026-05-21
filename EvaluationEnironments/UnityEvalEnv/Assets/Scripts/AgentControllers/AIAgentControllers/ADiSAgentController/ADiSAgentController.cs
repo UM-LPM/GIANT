@@ -14,9 +14,26 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
 
         public List<ADiSComponent> Components = new List<ADiSComponent>();
 
+        public ADiSAgentController(ADiSAgentController other): base(other)
+        {
+            Connections.Clear();
+            foreach (var connection in other.Connections)
+            {
+                Connections.Add(connection.Clone() as Connection);
+            }
+
+            Components.Clear();
+            foreach (var connection in Connections)
+            {
+                Components.Add(connection);
+                connection.Actions.ForEach(x => Components.Add(x));
+                connection.ActivatorConnections.ForEach(ac => Components.Add(ac.Activator));
+            }
+        }
+
         public override void AddAgentControllerToSO(ScriptableObject parent)
         {
-#if UNITY_EDITOR
+/*#if UNITY_EDITOR
             foreach (var component in Components)
             {
                 AssetDatabase.AddObjectToAsset(component, parent);
@@ -29,27 +46,12 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
                     AssetDatabase.AddObjectToAsset(activatorConnection, parent);
                 }
             }
-#endif
+#endif*/
         }
 
         public override AgentController Clone()
         {
-            var clone = Instantiate(this);
-            clone.Connections = new List<Connection>();
-            foreach (var connection in Connections)
-            {
-                clone.Connections.Add(connection.Clone() as Connection);
-            }
-
-            clone.Components = new List<ADiSComponent>();
-            foreach (var connection in clone.Connections)
-            {
-                clone.Components.Add(connection);
-                connection.Actions.ForEach(x => clone.Components.Add(x));
-                connection.ActivatorConnections.ForEach(ac => clone.Components.Add(ac.Activator));
-            }
-
-            return clone;
+            return new ADiSAgentController(this);
         }
 
         public override void GetActions(in ActionBuffer actionsOut)
@@ -97,7 +99,8 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
 #if UNITY_EDITOR
         public ADiSComponent CreateComponent(System.Type type)
         {
-            ADiSComponent component = ScriptableObject.CreateInstance(type) as ADiSComponent;
+            throw new NotImplementedException("Not implemented.");
+            /*ADiSComponent component = ScriptableObject.CreateInstance(type) as ADiSComponent;
             component.name = type.Name;
             component.guid = GUID.Generate().ToString();
 
@@ -111,21 +114,22 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
 
             if (!Application.isPlaying)
             {
-                AssetDatabase.AddObjectToAsset(component, this);
+                //AssetDatabase.AddObjectToAsset(component, this);
             }
 
-            Undo.RegisterCreatedObjectUndo(component, "ADiS (CreateComponent)");
+            //Undo.RegisterCreatedObjectUndo(component, "ADiS (CreateComponent)");
 
             AssetDatabase.SaveAssets();
             return component;
+            */
         }
 
         public void DeleteComponent(ADiSComponent component)
         {
-            Undo.RecordObject(this, "ADiS (DeleteComponent)");
+            //Undo.RecordObject(this, "ADiS (DeleteComponent)");
             Components.Remove(component);
 
-            Undo.DestroyObjectImmediate(component);
+            //Undo.DestroyObjectImmediate(component);
 
             AssetDatabase.SaveAssets();
         }
@@ -151,16 +155,15 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
 
         private ActivatorConnection CreateActivatorConnection(Activator activator)
         {
-            var ac = ScriptableObject.CreateInstance<ActivatorConnection>();
-            ac.Activator = activator;
-            ac.IsNegated = false;
+            //var ac = ScriptableObject.CreateInstance<ActivatorConnection>();
+            var ac = new ActivatorConnection(activator, false);
             ac.name = "ActivatorConnection";
             ac.guid = GUID.Generate().ToString();
 
             if (!Application.isPlaying)
             {
-                AssetDatabase.AddObjectToAsset(ac, this);
-                AssetDatabase.SaveAssets();
+                //AssetDatabase.AddObjectToAsset(ac, this);
+                //AssetDatabase.SaveAssets();
             }
 
             return ac;
@@ -178,7 +181,7 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
             {
                 var activatorConnection = connection2.ActivatorConnections.Where(ac => ac.Activator == activator1).First();
                 connection2.ActivatorConnections.Remove(activatorConnection);
-                AssetDatabase.RemoveObjectFromAsset(activatorConnection);
+                //AssetDatabase.RemoveObjectFromAsset(activatorConnection);
             }
         }
 #endif

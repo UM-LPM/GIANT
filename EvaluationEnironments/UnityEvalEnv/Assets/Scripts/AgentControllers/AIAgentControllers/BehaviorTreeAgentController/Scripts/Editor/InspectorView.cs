@@ -19,7 +19,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
 
             UnityEngine.Object.DestroyImmediate(editor);
 
-            editor = Editor.CreateEditor(nodeView.node);
+            //editor = Editor.CreateEditor(nodeView.node);
             IMGUIContainer container = new IMGUIContainer(() => {
                 if (editor && editor.target) {
                     editor.OnInspectorGUI();

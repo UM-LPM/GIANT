@@ -5,6 +5,10 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 {
     public class HasWeapon : ConditionNode
     {
+        public HasWeapon(HasWeapon other) : base(other)
+        {
+        }
+        
         protected override void OnStart()
         {
         }
@@ -22,6 +26,11 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
             }
 
             return false;
+        }
+
+        public override BTNode Clone()
+        {
+            return new HasWeapon(this);
         }
     }
 }

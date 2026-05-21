@@ -100,6 +100,10 @@ namespace Evaluators.CompetitionOrganizations
 
             // 2. For each match fitness, fill the corresponding entry in G with the fitness value of team 1 against team 2 (e.g. G[team1Id, team2Id] = team1Fitness)
             List<MatchFitness> competitionMatchFitnessesCopy = new List<MatchFitness>(competitionMatchFitnesses);
+
+            // Sort matches by MatchId
+            competitionMatchFitnessesCopy = competitionMatchFitnessesCopy.OrderBy(mf => mf.MatchId).ToList();
+
             // Add played TournamentMatches to the list of played TournamentMatches (add only matchFitnesses that are not dummy)
             PlayedMatches.AddRange(competitionMatchFitnessesCopy.FindAll(matchFitness => !matchFitness.IsDummy));
 

@@ -7,7 +7,11 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 {
 	public class Encapsulator : DecoratorNode
 	{
-		protected override void OnStart()
+		public Encapsulator(Encapsulator other) : base(other)
+		{
+        }
+
+        protected override void OnStart()
 		{
 		}
 
@@ -28,5 +32,10 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 			}
 			return State.Failure;
 		}
+
+        public override BTNode Clone()
+        {
+            return new Encapsulator(this);
+        }
 	}
 }

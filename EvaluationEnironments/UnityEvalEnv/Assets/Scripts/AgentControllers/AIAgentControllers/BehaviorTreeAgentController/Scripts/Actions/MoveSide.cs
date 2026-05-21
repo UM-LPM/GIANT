@@ -16,6 +16,15 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
         public MoveSideDirection moveSideDirection = MoveSideDirection.Random;
 
         private Util Util;
+
+        public MoveSide(MoveSide other) : base(other)
+        {
+            if (other == null)
+                return;
+
+            this.moveSideDirection = other.moveSideDirection;
+        }
+
         protected override void OnStart()
         {
             Util = context.gameObject.GetComponentInParent<Util>();
@@ -31,6 +40,11 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
             blackboard.actionsOut.AddDiscreteAction("moveSideDirection", moveSideDirection == MoveSideDirection.Random ? Util.NextIntAC(this.context.transform.GetInstanceID(), 3) : (int)moveSideDirection);
 
             return State.Success;
+        }
+
+        public override BTNode Clone()
+        {
+            return new MoveSide(this);
         }
     }
 }

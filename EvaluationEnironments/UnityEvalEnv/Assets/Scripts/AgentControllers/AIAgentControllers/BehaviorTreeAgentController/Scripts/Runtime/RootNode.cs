@@ -5,6 +5,16 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
     public class RootNode : BTNode {
         [HideInInspector] public BTNode child;
 
+        public RootNode(RootNode other): base(other)
+        {
+            if (other == null)
+                return;
+
+            if (other.child != null) {
+                    this.child = other.child.Clone();
+            }
+        }
+
         protected override void OnStart() {
 
         }
@@ -18,9 +28,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
         }
 
         public override BTNode Clone() {
-            RootNode node = Instantiate(this);
-            node.child = child.Clone();
-            return node;
+            return new RootNode(this);
         }
     }
 }

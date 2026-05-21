@@ -13,6 +13,16 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController.TicTac
         private TicTacToeGrid grid;
         private TicTacToeAgentComponent ticTacToeAgentComponent;
 
+        public IsCellEmpty(IsCellEmpty other) : base(other)
+        {
+            if (other == null)
+                return;
+
+            this.gridPositionX = other.gridPositionX;
+            this.gridPositionY = other.gridPositionY;
+            this.gridPositionZ = other.gridPositionZ;
+        }
+
         protected override void OnStart()
         {
         }
@@ -32,6 +42,11 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController.TicTac
                  grid = context.gameObject.GetComponentInParent<TicTacToeGrid>();
 
             return grid.IsCellOccupied(gridPositionX, gridPositionY, gridPositionZ);
+        }
+
+        public override BTNode Clone()
+        {
+            return new IsCellEmpty(this);
         }
     }
 }

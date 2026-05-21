@@ -1,4 +1,6 @@
-﻿namespace AgentControllers.AIAgentControllers.ADiSAgentController
+﻿using System.Runtime.InteropServices.WindowsRuntime;
+
+namespace AgentControllers.AIAgentControllers.ADiSAgentController
 {
     public enum AmmoLevel
     {
@@ -11,6 +13,11 @@
     public class AmmoLevelBellow : Activator
     {
         public AmmoLevel ammoLevel;
+
+        public AmmoLevelBellow(AmmoLevelBellow other) : base(other)
+        {
+            this.ammoLevel = other.ammoLevel;
+        }
 
         public override void Init()
         {
@@ -45,6 +52,11 @@
                 default:
                     return 0;
             }
+        }
+
+        public override ADiSComponent Clone()
+        {
+            return new AmmoLevelBellow(this);
         }
 
     }

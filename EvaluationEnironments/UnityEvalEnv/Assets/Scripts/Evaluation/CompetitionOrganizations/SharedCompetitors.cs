@@ -73,6 +73,9 @@ namespace Evaluators.CompetitionOrganizations
 
             var competitionMatchFitnessesCopy = new List<MatchFitness>(competitionMatchFitnesses);
 
+            // Sort matches by MatchId
+            competitionMatchFitnessesCopy = competitionMatchFitnessesCopy.OrderBy(mf => mf.MatchId).ToList();
+
             // Add played matches (ignore dummy matches)
             PlayedMatches.AddRange(competitionMatchFitnessesCopy.Where(mf => !mf.IsDummy));
 

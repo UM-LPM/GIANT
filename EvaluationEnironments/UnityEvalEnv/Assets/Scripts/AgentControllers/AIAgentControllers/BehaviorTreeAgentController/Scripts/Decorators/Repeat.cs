@@ -9,6 +9,15 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
         public bool restartOnSuccess = true;
         public bool restartOnFailure = false;
 
+        public Repeat(Repeat other) : base(other)
+        {
+            if (other == null)
+                return;
+
+            this.restartOnSuccess = other.restartOnSuccess;
+            this.restartOnFailure = other.restartOnFailure;
+        }
+
         protected override void OnStart() {
 
         }
@@ -36,7 +45,10 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
             }
             return State.Running;
         }
-    }
 
-    
+        public override BTNode Clone()
+        {
+            return new Repeat(this);
+        }
+    }
 }

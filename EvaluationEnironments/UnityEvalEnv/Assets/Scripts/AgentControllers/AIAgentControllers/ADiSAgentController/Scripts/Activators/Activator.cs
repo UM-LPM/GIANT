@@ -52,6 +52,10 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
             "Object40"
         };
 
+        public Activator(Activator other) : base(other)
+        {
+        }
+
         public abstract bool IsActivated();
     }
 }

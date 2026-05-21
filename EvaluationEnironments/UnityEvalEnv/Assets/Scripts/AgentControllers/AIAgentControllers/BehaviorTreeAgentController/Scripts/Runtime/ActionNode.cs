@@ -5,6 +5,8 @@ using UnityEngine;
 
 namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
     public abstract class ActionNode : BTNode {
-
+        public ActionNode(ActionNode other) : base(other)
+        {
+        }
     }
 }

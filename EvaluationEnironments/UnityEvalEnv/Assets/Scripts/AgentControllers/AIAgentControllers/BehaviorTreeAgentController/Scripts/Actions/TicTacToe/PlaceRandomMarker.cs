@@ -17,6 +17,14 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController.TicTac
         private TicTacToeEnvironmentController ticTacToeEnvironmentController;
         private TicTacToeAgentComponent ticTacToeAgentComponent;
 
+        public PlaceRandomMarker(PlaceRandomMarker other) : base(other)
+        {
+            if (other == null)
+                return;
+
+            this.placeRandomMarker = other.placeRandomMarker;
+        }
+
         protected override void OnStart()
         {
         }
@@ -49,6 +57,11 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController.TicTac
             //blackboard.actionsOut.AddDiscreteAction("placeRandomMarker", placeRandomMarker);
 
             //return State.Success;
+        }
+
+        public override BTNode Clone()
+        {
+            return new PlaceRandomMarker(this);
         }
     }
 }

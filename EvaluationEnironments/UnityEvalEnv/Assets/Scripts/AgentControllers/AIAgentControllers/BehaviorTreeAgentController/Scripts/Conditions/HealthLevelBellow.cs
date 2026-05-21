@@ -13,6 +13,14 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
     {
         public HealthLevel healthLevel;
 
+        public HealthLevelBellow(HealthLevelBellow other) : base(other)
+        {
+            if (other == null)
+                return;
+
+            this.healthLevel = other.healthLevel;
+        }
+
         protected override void OnStart()
         {
         }
@@ -52,5 +60,9 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
             }
         }
 
+        public override BTNode Clone()
+        {
+            return new HealthLevelBellow(this);
+        }
     }
 }

@@ -38,8 +38,10 @@ namespace Evaluators
                     throw new System.NotImplementedException("MatrixFactorizationInteractionScheme is not supported in RatingEvaluator!");
                 }
 
+                // 1. Update Ratings based on match results
                 RatingSystem.UpdateRatings(matchesFitnesses);
 
+                // 2. Update team scores based on match results
                 CompetitionOrganization.UpdateTeamsScore(matchesFitnesses, RatingSystem.AllPlayers);
             }
 

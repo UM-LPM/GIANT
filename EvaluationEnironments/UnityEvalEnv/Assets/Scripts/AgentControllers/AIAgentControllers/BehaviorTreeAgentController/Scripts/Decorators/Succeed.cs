@@ -4,6 +4,11 @@ using UnityEngine;
 
 namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
     public class Succeed : DecoratorNode {
+
+        public Succeed(Succeed other) : base(other)
+        {
+        }
+
         protected override void OnStart() {
         }
 
@@ -16,6 +21,11 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
                 return State.Success;
             }
             return state;
+        }
+
+        override public BTNode Clone()
+        {
+            return new Succeed(this);
         }
     }
 }

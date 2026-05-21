@@ -7,6 +7,14 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
         public float duration = 1.0f;
         float startTime;
 
+        public Timeout(Timeout other) : base(other)
+        {
+            if (other == null)
+                return;
+
+            this.duration = other.duration;
+        }
+
         protected override void OnStart() {
             startTime = Time.time;
         }
@@ -20,6 +28,11 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
             }
 
             return child.Update();
+        }
+
+        public override BTNode Clone()
+        {
+            return new Timeout(this);
         }
     }
 }

@@ -14,6 +14,11 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
     {
         public ShieldLevel shieldLevel;
 
+        public ShieldLevelBellow(ShieldLevelBellow other) : base(other)
+        {
+            this.shieldLevel = other.shieldLevel;
+        }
+
         public override void Init()
         {
             return;
@@ -48,6 +53,9 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
                     return 0;
             }
         }
-
+        public override ADiSComponent Clone()
+        {
+            return new ShieldLevelBellow(this);
+        }
     }
 }

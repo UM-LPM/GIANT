@@ -3,6 +3,14 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
     public class Selector : CompositeNode {
         protected int current;
 
+        public Selector(Selector other) : base(other)
+        {
+            if (other == null)
+                return;
+
+            this.current = other.current;
+        }
+
         protected override void OnStart() {
             current = 0;
         }
@@ -28,5 +36,9 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
             return State.Failure;
         }
 
+        public override BTNode Clone()
+        {
+            return new Selector(this);
+        }
     }
 }

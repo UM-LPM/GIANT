@@ -33,7 +33,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
         private void SetupDataBinding() {
             Label descriptionLabel = this.Q<Label>("description");
             descriptionLabel.bindingPath = "description";
-            descriptionLabel.Bind(new SerializedObject(node));
+            //descriptionLabel.Bind(new SerializedObject(node));
         }
 
         private void SetupClasses() {
@@ -93,10 +93,10 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
 
         public override void SetPosition(Rect newPos) {
             base.SetPosition(newPos);
-            Undo.RecordObject(node, "Behaviour Tree (Set Position");
+            //Undo.RecordObject(node, "Behaviour Tree (Set Position");
             node.position.x = newPos.xMin;
             node.position.y = newPos.yMin;
-            EditorUtility.SetDirty(node);
+            //EditorUtility.SetDirty(node);
         }
 
         public override void OnSelected() {

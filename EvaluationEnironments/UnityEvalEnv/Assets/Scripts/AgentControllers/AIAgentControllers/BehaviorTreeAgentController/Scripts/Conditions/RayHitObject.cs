@@ -52,6 +52,17 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
         private TeamIdentifier baseGameObjectTeam;
         private TeamIdentifier targetGameObjectTeam;
 
+        public RayHitObject(RayHitObject other) : base(other)
+        {
+            if (other == null)
+                return;
+
+            this.targetGameObject = other.targetGameObject;
+            this.side = other.side;
+            this.rayIndex = other.rayIndex;
+            this.targetTeamType = other.targetTeamType;
+        }
+
         protected override void OnStart()
         {
         }
@@ -166,6 +177,11 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
                 }
             }
             return true;
+        }
+
+        public override BTNode Clone()
+        {
+            return new RayHitObject(this);
         }
     }
     public class OnTargetHitEventargs : EventArgs

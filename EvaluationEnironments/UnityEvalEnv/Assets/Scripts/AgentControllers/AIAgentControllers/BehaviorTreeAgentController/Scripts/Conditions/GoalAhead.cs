@@ -14,6 +14,14 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 
         private Soccer2DGoalComponent goalComponent;
 
+        public GoalAhead(GoalAhead other) : base(other)
+        {
+            if (other == null)
+                return;
+
+            this.goalType = other.goalType;
+        }
+
         protected override void OnStart()
         {
         }
@@ -38,8 +46,13 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
                     }
                 }
             }
-            
+
             return false;
+        }
+
+        override public BTNode Clone()
+        {
+            return new GoalAhead(this);
         }
     }
 }

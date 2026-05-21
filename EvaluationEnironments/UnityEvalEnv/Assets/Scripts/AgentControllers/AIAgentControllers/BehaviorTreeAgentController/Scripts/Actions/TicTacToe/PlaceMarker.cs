@@ -19,6 +19,17 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController.TicTac
         private TicTacToeEnvironmentController ticTacToeEnvironmentController;
         private TicTacToeAgentComponent ticTacToeAgentComponent;
 
+        public PlaceMarker(PlaceMarker other) : base(other)
+        {
+            if (other == null)
+                return;
+
+            this.placeMarker = other.placeMarker;
+            this.gridPositionX = other.gridPositionX;
+            this.gridPositionY = other.gridPositionY;
+            this.gridPositionZ = other.gridPositionZ;
+        }
+
         protected override void OnStart()
         {
         }
@@ -56,6 +67,11 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController.TicTac
             blackboard.actionsOut.AddDiscreteAction("gridPositionZ", gridPositionZ);
 
             return State.Success;*/
+        }
+
+        public override BTNode Clone()
+        {
+            return new PlaceMarker(this);
         }
     }
 }

@@ -5,6 +5,11 @@ using UnityEngine;
 
 namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
     public class Inverter : DecoratorNode {
+
+        public Inverter(Inverter other) : base(other)
+        {
+        }
+
         protected override void OnStart() {
         }
 
@@ -21,6 +26,11 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
                     return State.Failure;
             }
             return State.Failure;
+        }
+
+        public override BTNode Clone()
+        {
+            return new Inverter(this);
         }
     }
 }

@@ -14,6 +14,18 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
         private TeamIdentifier baseGameObjectTeam;
         private TeamIdentifier targetGameObjectTeam;
 
+        public GridCellContainsComponent(GridCellContainsComponent other) : base(other)
+        {
+            if (other == null)
+                return;
+
+            this.targetGameObject = other.targetGameObject;
+            this.targetTeamType = other.targetTeamType;
+            this.gridPositionX = other.gridPositionX;
+            this.gridPositionY = other.gridPositionY;
+            this.gridPositionZ = other.gridPositionZ;
+        }
+
         protected override void OnStart()
         {
         }
@@ -85,6 +97,11 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
                 }
             }
             return true;
+        }
+
+        public override BTNode Clone()
+        {
+            return new GridCellContainsComponent(this);
         }
     }
 }

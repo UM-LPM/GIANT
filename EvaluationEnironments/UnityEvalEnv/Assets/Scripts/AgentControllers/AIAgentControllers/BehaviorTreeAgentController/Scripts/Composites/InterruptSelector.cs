@@ -1,6 +1,10 @@
 
 namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
     public class InterruptSelector : Selector {
+        public InterruptSelector(InterruptSelector other) : base(other)
+        {
+        }
+
         protected override State OnUpdate() {
             int previous = current;
             base.OnStart();
@@ -12,6 +16,11 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController {
             }
 
             return status;
+        }
+
+        public override BTNode Clone()
+        {
+            return new InterruptSelector(this);
         }
     }
 }

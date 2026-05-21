@@ -78,7 +78,7 @@ namespace Evaluators
             {
                 using (HttpClient client = new HttpClient())
                 {
-                    client.Timeout = TimeSpan.FromMinutes(120); // Set timeout to 120 minutes
+                    client.Timeout = TimeSpan.FromMinutes(240); // Set timeout to 240 minutes
 
                     // Send request to the EvalEnvInstances
                     Task<HttpResponseMessage>[] tasks = new Task<HttpResponseMessage>[numOfRequiredInstances];

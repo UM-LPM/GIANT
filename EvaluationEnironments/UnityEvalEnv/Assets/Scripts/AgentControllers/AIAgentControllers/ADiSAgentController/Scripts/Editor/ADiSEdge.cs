@@ -30,9 +30,9 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
 
             toggle.RegisterValueChangedCallback(evt =>
             {
-                Undo.RecordObject(activator, "Toggle Edge Negation");
+                //Undo.RecordObject(activator, "Toggle Edge Negation");
                 activator.IsNegated = evt.newValue;
-                EditorUtility.SetDirty(activator);
+                //EditorUtility.SetDirty(activator);
             });
 
             // IMPORTANT: edgeControl is where overlays belong

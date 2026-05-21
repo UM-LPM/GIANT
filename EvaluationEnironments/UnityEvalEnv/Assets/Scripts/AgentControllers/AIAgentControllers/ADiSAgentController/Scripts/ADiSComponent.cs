@@ -9,6 +9,12 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
         [HideInInspector] public Context context;
         [HideInInspector] public bool IsExecuting = false;
 
+        public ADiSComponent(ADiSComponent other) : base(other)
+        {
+            context = Context.CreateFromGameObject(other.context.gameObject);
+            IsExecuting = other.IsExecuting;
+        }
+
         public virtual void ToggleIsExecuting(bool isExecuting)
         {
             IsExecuting = isExecuting;
@@ -22,9 +28,6 @@ namespace AgentControllers.AIAgentControllers.ADiSAgentController
             Init();
         }
 
-        public virtual ADiSComponent Clone()
-        {
-            return Instantiate(this);
-        }
+        public abstract ADiSComponent Clone();
     }
 }

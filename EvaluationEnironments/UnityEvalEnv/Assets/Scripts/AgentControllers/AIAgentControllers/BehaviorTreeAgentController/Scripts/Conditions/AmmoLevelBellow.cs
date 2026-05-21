@@ -12,6 +12,14 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
     {
         public AmmoLevel ammoLevel;
 
+        public AmmoLevelBellow(AmmoLevelBellow other) : base(other)
+        {
+            if (other == null)
+                return;
+
+            this.ammoLevel = other.ammoLevel;
+        }
+
         protected override void OnStart()
         {
         }
@@ -51,5 +59,9 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
             return 0;
         }
 
+        public override BTNode Clone()
+        {
+            return new AmmoLevelBellow(this);
+        }
     }
 }
