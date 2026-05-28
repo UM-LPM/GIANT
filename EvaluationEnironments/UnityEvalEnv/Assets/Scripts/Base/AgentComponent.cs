@@ -14,7 +14,7 @@ namespace Base
         public Vector3 StartPosition { get; set; }
         public Quaternion StartRotation { get; set; }
         public Vector3? LastSectorPosition { get; set; }
-        public List<Vector3> LastKnownSectorPositions { get; set; }
+        public HashSet<Vector3> LastKnownSectorPositions { get; set; }
         public ActionBuffer ActionBuffer { get; set; }
 
         // New properties
@@ -35,7 +35,8 @@ namespace Base
             StartRotation = transform.rotation;
 
             LastSectorPosition = null;
-            LastKnownSectorPositions = new List<Vector3>
+            LastKnownSectorPositions = 
+            new HashSet<Vector3>
             {
                 transform.position
             };

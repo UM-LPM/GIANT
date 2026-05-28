@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 using System;
-using System.Collections.Generic;
 using Base;
-using System.Linq;
 
 namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 {
@@ -49,6 +47,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
         private SensorPerceiveOutput[] sensorPerceiveOutputs;
         private bool targetHit;
 
+        private AgentComponent agentComponent;
         private TeamIdentifier baseGameObjectTeam;
         private TeamIdentifier targetGameObjectTeam;
 
@@ -73,11 +72,13 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 
         protected override bool CheckConditions()
         {
+            //return Coordinator.Instance.Random.NextDouble() < 0.5; // Temporary random condition for testing purposes, replace with actual ray hit logic below
+
             if (raySensor == null)
             {
                 raySensor = context.gameObject.GetComponentInChildren<RaySensorBase>();
                 raySensor.SetLayerMask((1 << context.gameObject.layer));
-
+                agentComponent = context.gameObject.GetComponent<AgentComponent>();
                 GetBaseGameObjectTeam();
             }
 
@@ -91,17 +92,12 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
                 if (sensorPerceiveOutputs[rayIndex].HasHit && sensorPerceiveOutputs[rayIndex].HitGameObjects[0].tag.Contains(TargetGameObjects[targetGameObject]) && TargetTeamHit(sensorPerceiveOutputs[rayIndex].HitGameObjects[0]))
                 {
                     targetHit = true;
-
-                    // Trigger the event
-                    OnTargetHit?.Invoke(this, new OnTargetHitEventargs { TargetGameObject = sensorPerceiveOutputs[rayIndex].HitGameObjects[0], Agent = context.gameObject.GetComponent<AgentComponent>() });
+                    OnTargetHit?.Invoke(this, new OnTargetHitEventargs { TargetGameObject = sensorPerceiveOutputs[rayIndex].HitGameObjects[0], Agent = agentComponent });
                 }
             }
-
-            if (RAY_HIT_OBJECT_DETECTION_TYPE == RayHitObjectDetectionType.RaySide)
+            else if (RAY_HIT_OBJECT_DETECTION_TYPE == RayHitObjectDetectionType.RaySide)
             {
                 // Option 2 : Check if the target game object is hit by any of the rays based on Side
-                //sensorPerceiveOutputs = raySensor.PerceiveAll();
-
                 int hitIndex = -1;
                 if (side == AgentSideAdvanced.Center)
                 {
@@ -114,7 +110,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
                 }
                 else if (side == AgentSideAdvanced.Left)
                 {
-                    sensorPerceiveOutputs = raySensor.PerceiveRange(2, raySensor.GetRayPerceptionInput().Angles.Count, 2);
+                    sensorPerceiveOutputs = raySensor.PerceiveRange(2, raySensor.RayCount, 2);
                     for (int i = 2; i < sensorPerceiveOutputs.Length; i += 2)
                     {
                         if (sensorPerceiveOutputs[i].HasHit && sensorPerceiveOutputs[i].HitGameObjects[0].tag.Contains(TargetGameObjects[targetGameObject]) && TargetTeamHit(sensorPerceiveOutputs[i].HitGameObjects[0]))
@@ -126,7 +122,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
                 }
                 else if (side == AgentSideAdvanced.Right)
                 {
-                    sensorPerceiveOutputs = raySensor.PerceiveRange(1, raySensor.GetRayPerceptionInput().Angles.Count, 2);
+                    sensorPerceiveOutputs = raySensor.PerceiveRange(1, raySensor.RayCount, 2);
                     for (int i = 1; i < sensorPerceiveOutputs.Length; i += 2)
                     {
                         if (sensorPerceiveOutputs[i].HasHit && sensorPerceiveOutputs[i].HitGameObjects[0].tag.Contains(TargetGameObjects[targetGameObject]) && TargetTeamHit(sensorPerceiveOutputs[i].HitGameObjects[0]))
@@ -139,8 +135,7 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 
                 if (targetHit)
                 {
-                    // Trigger the event
-                    OnTargetHit?.Invoke(this, new OnTargetHitEventargs { TargetGameObject = sensorPerceiveOutputs[hitIndex].HitGameObjects[0], Agent = context.gameObject.GetComponent<AgentComponent>() });
+                    OnTargetHit?.Invoke(this, new OnTargetHitEventargs { TargetGameObject = sensorPerceiveOutputs[hitIndex].HitGameObjects[0], Agent = agentComponent });
                 }
             }
 
@@ -159,24 +154,16 @@ namespace AgentControllers.AIAgentControllers.BehaviorTreeAgentController
 
         public bool TargetTeamHit(GameObject hitGameObject)
         {
-            if (baseGameObjectTeam != null)
-            {
-                targetGameObjectTeam = hitGameObject.GetComponent<TeamIdentifier>();
+            if (targetTeamType == ObjectTeamType.Default || baseGameObjectTeam == null)
+                return true;
 
-                if(targetGameObjectTeam != null)
-                {
-                    switch (targetTeamType)
-                    {
-                        case ObjectTeamType.Default:
-                            break;
-                        case ObjectTeamType.Teammate:
-                            return baseGameObjectTeam.TeamID == targetGameObjectTeam.TeamID;
-                        case ObjectTeamType.Opponent:
-                            return baseGameObjectTeam.TeamID != targetGameObjectTeam.TeamID;
-                    }
-                }
-            }
-            return true;
+            targetGameObjectTeam = hitGameObject.GetComponent<TeamIdentifier>();
+            if (targetGameObjectTeam == null)
+                return true;
+
+            return targetTeamType == ObjectTeamType.Teammate
+                ? baseGameObjectTeam.TeamID == targetGameObjectTeam.TeamID
+                : baseGameObjectTeam.TeamID != targetGameObjectTeam.TeamID;
         }
 
         public override BTNode Clone()

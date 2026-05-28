@@ -1,14 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine.Serialization;
 using UnityEngine;
-using UnityEngine.Windows;
-using Unity.Collections;
-using Unity.Jobs;
-using Unity.VisualScripting.Antlr3.Runtime.Collections;
 
 public abstract class RaySensorBase : Sensor<SensorPerceiveOutput[]> {
 
@@ -67,10 +58,7 @@ public abstract class RaySensorBase : Sensor<SensorPerceiveOutput[]> {
         input.LayerMask = LayerMask;
     }
 
-    NativeArray<RaycastHit> results;
-    NativeArray<SpherecastCommand> commands;
-    JobHandle jobHandle;
-    QueryParameters queryParameters;
+    public int RayCount => input.Angles.Count;
 
     public override SensorPerceiveOutput[] PerceiveAll()
     {
@@ -166,9 +154,6 @@ public abstract class RaySensorBase : Sensor<SensorPerceiveOutput[]> {
             hitObject = castHit ? rayHit2D.collider.gameObject : null;
         }
 
-        if(rayOutputs[rayIndex] == null)
-            rayOutputs[rayIndex] = new SensorPerceiveOutput();
-
         rayOutputs[rayIndex].HasHit = castHit;
         rayOutputs[rayIndex].HitFraction = hitFraction;
         rayOutputs[rayIndex].HasHitTaggedObject = false;
@@ -208,14 +193,14 @@ public abstract class RaySensorBase : Sensor<SensorPerceiveOutput[]> {
     {
         input = GetRayPerceptionInput();
         rayOutputs = new SensorPerceiveOutput[input.Angles.Count];
+        for (int i = 0; i < rayOutputs.Length; i++)
+            rayOutputs[i] = new SensorPerceiveOutput();
     }
 
     public void ResetRayOutputs()
     {
         for (int i = 0; i < rayOutputs.Length; i++)
-        {
-            rayOutputs[i] = null;
-        }
+            rayOutputs[i].Reset();
     }
 
 

@@ -12,6 +12,13 @@ namespace Problems.Soccer2D
 {
     public class Soccer2DEnvironmentController : EnvironmentControllerBase
     {
+        private struct SectorData
+        {
+            public Vector3 Position;
+            public Bounds Bounds;
+        }
+
+
         [Header("Soccer General Configuration")]
         [SerializeField] SoccerGameScenarioType GameScenarioType = SoccerGameScenarioType.GoldenGoal;
         [SerializeField] public GameObject SoccerBallPrefab;
@@ -64,6 +71,7 @@ namespace Problems.Soccer2D
         Soccer2DGoalComponent[] Goals;
 
         SectorComponent[] Sectors;
+        SectorData[] sectorData;
 
         Vector3 soccerBallPushDirection;
         Soccer2DGoalComponent receivedGoalComponent;
@@ -90,6 +98,10 @@ namespace Problems.Soccer2D
 
         Soccer2DAgentComponent agent;
         Vector3 sectorPosition;
+
+        RaycastHit2D[] hits = new RaycastHit2D[32];
+
+        ContactFilter2D filter;
 
         // Fitness calculation
         private float sectorExplorationFitness;
@@ -123,6 +135,13 @@ namespace Problems.Soccer2D
             }
 
             Sectors = GetComponentsInChildren<SectorComponent>();
+            sectorData = Sectors
+                .Select(s => new SectorData
+                {
+                    Position = s.transform.position,
+                    Bounds = s.GetComponent<Collider2D>().bounds
+                })
+                .ToArray();
 
             if (SimulationSteps > 0)
             {
@@ -138,6 +157,13 @@ namespace Problems.Soccer2D
         {
             // Spawn Soccer Ball
             SoccerBall = SoccerBallSpawner.Spawn<Soccer2DSoccerBallComponent>(this)[0];
+
+            filter = new()
+            {
+                layerMask = 1 << SoccerBall.gameObject.layer,
+                useLayerMask = true,
+                useTriggers = false
+            };
 
             // Get Team ids from agents and assign to goals for easier access later
             GoalBlue.TeamIdentifier.TeamID = Agents.Where(a => (a as Soccer2DAgentComponent).Team == SoccerTeam.Blue).Select(a => a.TeamIdentifier.TeamID).FirstOrDefault();
@@ -186,6 +212,7 @@ namespace Problems.Soccer2D
         {
             SoccerBall.OnStep();
 
+            
             if (GameState == GameState.RUNNING)
             {
                 UpdateAgentTimeWithoutGoal();
@@ -214,39 +241,39 @@ namespace Problems.Soccer2D
 
                 CheckIfDeadlock();
             }
-
+            
         }
 
         private void CheckAgentsExploration()
         {
-            // Exploration bonus
             for (int i = 0; i < Agents.Length; i++)
             {
-                agent = Agents[i] as Soccer2DAgentComponent;
-                if (agent.gameObject.activeSelf)
+                Soccer2DAgentComponent agent = (Soccer2DAgentComponent)Agents[i];
+
+                if (!agent.gameObject.activeSelf)
+                    continue;
+
+                Vector3 agentPosition = agent.transform.position;
+
+                for (int j = 0; j < sectorData.Length; j++)
                 {
-                    foreach (SectorComponent sector in Sectors)
+                    ref readonly SectorData sector = ref sectorData[j];
+
+                    if (!sector.Bounds.Contains(agentPosition))
+                        continue;
+
+                    if (agent.LastSectorPosition != sector.Position)
                     {
-                        sectorPosition = sector.transform.position;
-                        if (IsAgentInSector(agent.transform.position, sector.gameObject.GetComponent<Collider2D>()))
+                        if (agent.LastKnownSectorPositions.Add(sector.Position))
                         {
-                            if (agent.LastSectorPosition == null || agent.LastSectorPosition != sectorPosition)
-                            {
-                                if (!agent.LastKnownSectorPositions.Contains(sectorPosition))
-                                {
-                                    // Agent explored new sector
-                                    agent.SectorsExplored++;
-
-                                    agent.LastKnownSectorPositions.Add(sectorPosition);
-                                }
-
-                                agent.LastSectorPosition = sector.transform.position;
-                            }
-
-                            // Agent can only be in one sector at once
-                            break;
+                            agent.SectorsExplored++;
                         }
+
+                        agent.LastSectorPosition = sector.Position;
                     }
+
+                    // Agent can only be in one sector.
+                    break;
                 }
             }
         }
@@ -322,8 +349,8 @@ namespace Problems.Soccer2D
                     SoccerBall.Radius,
                     SoccerBall.GetVelocity().normalized,
                     MinSoccerBallTravelDistance,
-                    true,
-                    SoccerBall.gameObject.layer).Length == 0)
+                    filter,
+                    hits) == 0)
                 {
                     Vector3 directionToTarget = (goal.transform.position - SoccerBall.transform.position).normalized;
                     float dotProduct = Vector3.Dot(SoccerBall.GetVelocity().normalized, directionToTarget);
@@ -428,16 +455,6 @@ namespace Problems.Soccer2D
 
             // Return null if agent is not facing any goal
             return null;
-        }
-
-        private bool IsAgentInSector(Vector3 agentPosition, Collider2D colliderComponent)
-        {
-            if (colliderComponent.bounds.Contains(agentPosition))
-            {
-                return true;
-            }
-
-            return false;
         }
 
         private bool CheckIfGoalScored()

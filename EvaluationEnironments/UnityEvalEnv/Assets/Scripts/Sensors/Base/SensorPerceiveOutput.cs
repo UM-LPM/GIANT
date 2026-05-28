@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class SensorPerceiveOutput {
     public bool HasHit;
@@ -17,7 +12,14 @@ public class SensorPerceiveOutput {
     public SensorPerceiveOutput()
     {
         HitGameObjects = new GameObject[1];
-        StartPositionWorld = Vector3.zero;
-        EndPositionWorld = Vector3.zero;
+    }
+
+    public void Reset()
+    {
+        HasHit = false;
+        HasHitTaggedObject = false;
+        HitTagIndex = -1;
+        HitFraction = 1f;
+        HitGameObjects[0] = null;
     }
 }

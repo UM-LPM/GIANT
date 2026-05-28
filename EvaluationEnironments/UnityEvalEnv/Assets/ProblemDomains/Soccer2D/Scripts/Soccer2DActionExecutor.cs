@@ -10,9 +10,20 @@ namespace Problems.Soccer2D
     {
         private Soccer2DEnvironmentController SoccerEnvironmentController;
 
+        RaycastHit2D[] hits = new RaycastHit2D[32];
+
+        ContactFilter2D filter;
+
         private void Awake()
         {
             SoccerEnvironmentController = GetComponentInParent<Soccer2DEnvironmentController>();
+
+            filter = new()
+            {
+                layerMask = 1 << gameObject.layer,
+                useLayerMask = true,
+                useTriggers = false
+            };
         }
 
         public override void ExecuteActions(AgentComponent agent)
@@ -68,19 +79,20 @@ namespace Problems.Soccer2D
             );
 
             // --- Collision handling (unchanged logic) ---
-            var hits = PhysicsUtil.PhysicsCircleCast2D(
+            int count = PhysicsUtil.PhysicsCircleCast2D(
                 SoccerEnvironmentController.PhysicsScene2D,
                 agent.gameObject,
                 agent.transform.position,
                 SoccerEnvironmentController.AgentColliderExtendsMultiplier.x,
                 movement.normalized,
                 movement.magnitude,
-                true,
-                gameObject.layer
+                filter,
+                hits
             );
 
-            foreach (RaycastHit2D hit in hits)
+            for (int i = 0; i < count; i++)
             {
+                RaycastHit2D hit = hits[i];
                 if (hit.collider != null && hit.collider.gameObject != gameObject)
                 {
                     newAgentPos = hit.point + (hit.normal * SoccerEnvironmentController.AgentColliderExtendsMultiplier.x);

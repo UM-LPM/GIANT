@@ -482,29 +482,38 @@ namespace Utils
             throw new NotImplementedException();
         }
 
-        public static RaycastHit2D[] PhysicsCircleCast2D(
+        public static int PhysicsCircleCast2D(
             PhysicsScene2D physicsScene2D,
             GameObject caller,
             Vector3 position,
             float radius,
             Vector2 direction,
             float distance,
-            bool ignoreTriggerGameObjs,
-            int layer)
+            ContactFilter2D filter,
+            RaycastHit2D[] results)
         {
-            var results = new List<RaycastHit2D>();
-            var filter = new ContactFilter2D { layerMask = 1 << layer, useTriggers = !ignoreTriggerGameObjs };
+            int hitCount = physicsScene2D.CircleCast(
+                position,
+                radius,
+                direction,
+                distance,
+                filter,
+                RaycastHit2DBuffer);
 
-            int count = physicsScene2D.CircleCast(position, radius, direction, distance, filter, RaycastHit2DBuffer);
+            int validCount = 0;
 
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < hitCount; i++)
             {
                 var hit = RaycastHit2DBuffer[i];
-                if (hit.collider == null || hit.collider.gameObject == caller) continue;
-                results.Add(hit);
+
+                if (hit.collider == null ||
+                    hit.collider.gameObject == caller)
+                    continue;
+
+                results[validCount++] = hit;
             }
 
-            return results.Count == 0 ? Array.Empty<RaycastHit2D>() : results.ToArray();
+            return validCount;
         }
 
         public static Collider2D[] PhysicsOverlapBox2D(

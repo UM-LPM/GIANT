@@ -14,10 +14,20 @@ namespace Problems.Robostrike
         private AgentComponent otherAgent;
         private Vector2 dirrection;
 
+        RaycastHit2D[] hits = new RaycastHit2D[32]; // Reusable array for storing raycast hits to avoid allocations
+
+        ContactFilter2D filter;
+
         void Start()
         {
             RobostrikeEnvironmentController = gameObject.GetComponent<RobostrikeEnvironmentController>();
             Missiles = new List<MissileComponent>();
+
+            filter = new ContactFilter2D()
+            {
+                layerMask = 1 << gameObject.layer,
+                useTriggers = false
+            };
         }
 
         public void UpdateMissilePosAndCheckForColls()
@@ -30,20 +40,22 @@ namespace Problems.Robostrike
                 dirrection.y = newPos.y - Missiles[i].transform.position.y;
 
                 // Check for collisions (with CircleCast) along the path of the bullet to avoid tunneling issues at high speeds
-                var hits = PhysicsUtil.PhysicsCircleCast2D(
+                int count = PhysicsUtil.PhysicsCircleCast2D(
                     RobostrikeEnvironmentController.PhysicsScene2D,
                     Missiles[i].gameObject,
                     Missiles[i].transform.position,
                     MissileRadius,
                     dirrection.normalized,
                     Vector2.Distance(newPos, Missiles[i].transform.position),
-                    true,
-                    LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer))
+                    filter,
+                    hits
                 );
 
                 var hasHit = false;
-                foreach (RaycastHit2D hit in hits)
+                for (int j = 0; j < count; j++)
                 {
+                    var hit = hits[j];
+
                     if (hit.collider != null &&
                         hit.collider.gameObject != Missiles[i].gameObject &&
                         hit.collider.gameObject != Missiles[i].Parent.gameObject)

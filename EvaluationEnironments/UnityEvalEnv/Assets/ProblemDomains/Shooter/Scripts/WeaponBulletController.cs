@@ -14,10 +14,20 @@ namespace Problems.Shooter
         private AgentComponent otherAgent;
         private Vector2 dirrection;
 
+        RaycastHit2D[] hits = new RaycastHit2D[32]; // Reusable array for storing raycast hits to avoid allocations
+
+        ContactFilter2D filter;
+
         void Start()
         {
             ShooterEnvironmentController = gameObject.GetComponent<ShooterEnvironmentController>();
             Bullets = new List<WeaponBulletComponent>();
+
+            filter = new ContactFilter2D()
+            {
+                layerMask = 1 << gameObject.layer,
+                useTriggers = false
+            };
         }
 
         public void UpdateBulletPosAndCheckForColls()
@@ -29,23 +39,28 @@ namespace Problems.Shooter
                 dirrection.y = newPos.y - Bullets[i].transform.position.y;
 
                 // Check for collisions (with CircleCast) along the path of the bullet to avoid tunneling issues at high speeds
-                var hits = PhysicsUtil.PhysicsCircleCast2D(
+                int count = PhysicsUtil.PhysicsCircleCast2D(
                     ShooterEnvironmentController.PhysicsScene2D,
                     Bullets[i].gameObject,
                     Bullets[i].transform.position,
                     BulletRadius,
                     dirrection.normalized,
                     Vector2.Distance(newPos, Bullets[i].transform.position),
-                    true,
-                    LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer))
+                    filter,
+                    hits
                 );
 
-                if (hits.Length > 0 && hits[0].collider != null &&
-                    hits[0].collider.gameObject != Bullets[i].gameObject &&
-                    hits[0].collider.gameObject != Bullets[i].Parent.gameObject)
+                if(count > 0)
                 {
-                    Bullets[i].transform.position = hits[0].point;
-                    BulletHitSomething(Bullets[i], hits);
+                    var hit = hits[0];
+
+                    if(hit.collider != null &&
+                        hit.collider.gameObject != Bullets[i].gameObject &&
+                        hit.collider.gameObject != Bullets[i].Parent.gameObject)
+                    {
+                        Bullets[i].transform.position = hit.point;
+                        BulletHitSomething(Bullets[i], hits);
+                    }
                 }
                 else
                 {

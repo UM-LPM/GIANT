@@ -21,7 +21,9 @@ namespace Problems.Pong
         Vector2 displacement;
         float distance;
 
-        RaycastHit2D[] hits;
+        RaycastHit2D[] hits = new RaycastHit2D[32]; // Reusable array for storing raycast hits to avoid allocations
+
+        ContactFilter2D filter;
 
         private void Awake()
         {
@@ -39,6 +41,12 @@ namespace Problems.Pong
             }
 
             Radius = circleCollider.radius * transform.localScale.x;
+
+            filter = new ContactFilter2D()
+            {
+                layerMask = 1 << gameObject.layer,
+                useTriggers = false
+            };
         }
 
         public void OnStep()
@@ -77,17 +85,17 @@ namespace Problems.Pong
 
             if (distance > 0f)
             {
-                hits = PhysicsUtil.PhysicsCircleCast2D(
+                int count = PhysicsUtil.PhysicsCircleCast2D(
                 PongEnvironmentController.PhysicsScene2D,
                 gameObject,
                 currentPosition,
                 Radius,
                 velocity.normalized,
                 distance,
-                true,
-                gameObject.layer);
+                filter,
+                hits);
 
-                if (hits.Length > 0)
+                if (count > 0)
                 {
                     // Handle collision (take first hit)
                     if (hits[0].collider != null && hits[0].collider.gameObject != gameObject)

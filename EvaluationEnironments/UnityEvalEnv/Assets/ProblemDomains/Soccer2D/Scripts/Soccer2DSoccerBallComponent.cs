@@ -23,7 +23,7 @@ namespace Problems.Soccer2D
         private Vector2 velocity;
         private CircleCollider2D circleCollider;
 
-        RaycastHit2D[] hits;
+        RaycastHit2D[] hits = new RaycastHit2D[32];
 
         Vector2 normal;
         Vector2 reflectedVelocity;
@@ -32,6 +32,8 @@ namespace Problems.Soccer2D
         Vector2 currentPosition;
         Vector2 displacement;
         float distance;
+
+        ContactFilter2D filter;
 
         private void Awake()
         {
@@ -51,6 +53,13 @@ namespace Problems.Soccer2D
             }
 
             Radius = circleCollider.radius * transform.localScale.x;
+
+            filter = new()
+            {
+                layerMask = 1 << gameObject.layer,
+                useLayerMask = true,
+                useTriggers = false
+            };
         }
 
         public void OnStep()
@@ -79,20 +88,20 @@ namespace Problems.Soccer2D
 
             if(distance > 0f)
             {
-                hits = PhysicsUtil.PhysicsCircleCast2D(
+                int count = PhysicsUtil.PhysicsCircleCast2D(
                 Soccer2DEnvironmentController.PhysicsScene2D,
                 gameObject,
                 currentPosition,
                 Radius,
                 velocity.normalized,
                 distance,
-                true,
-                gameObject.layer);
+                filter,
+                hits);
 
-                if(hits.Length > 0)
+                if(count > 0)
                 {
-                    // Take the closest hit
-                    var closestHit = hits.Where(h => h.collider != null && h.collider.gameObject != gameObject).OrderBy(h => h.distance).First();
+                    // Take the closest hit (but look only count hits, not the whole array)
+                    var closestHit = hits.Take(count).Where(h => h.collider != null && h.collider.gameObject != gameObject).OrderBy(h => h.distance).First();
                     HandleCollision(closestHit);
                 }
                 else
